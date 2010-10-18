@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="content-type" content="text-html; charset=utf-8">
+<title>open experiment</title>
+<script type="text/javascript" src="../js/jquery-1.4.2.min.js"></script>
+<style type='text/css'>
+body {
+	overflow-x:hidden;
+}
+	
+	.tgEvent, .widthTest {
+		width:auto;
+		font-size:12px;
+		font-family:Arial;
+	}
+	/* other event class things */
+	.tgEvent {
+		color:green;
+	}
+	
+	#output {
+		color:#333;
+		font-size:12px;
+		font-family:Arial;
+	}
+</style>
+
+<script language='javascript'>
+
+	
+		/* a div with id of "hiddenDiv" has to be pre-loaded! */
+		function getStringWidth (obj) {
+			var str = obj.text;
+			var size = obj.fontSize; 
+			var div = $("#hiddenDiv").append("<span id='getwidth' class='widthTest'>" + str + "</span>");
+			var w = $("#getwidth").width()
+			$("#getwidth").remove();
+			return w;
+		}
+		
+		function output (str) {
+			$("#output").append(str + "<br>");
+		}
+
+
+
+</script>
+
+</head>
+<body>
+	
+	<div id='output'>....</div>
+	
+	<div style='width:4000px'>
+	<span id='actual' class='tgEvent'>....</span>
+</div>
+
+	<!-- <div id='testFrame'></div> -->
+	
+	
+	<script>
+	$(document).ready(function () {
+		
+		// Preload a div for size testing...
+		$("body").append("<div style='position:absolute;width:2000px;top:-1000px' id='hiddenDiv'></div>");
+
+		var str = "汉语／漢語 Hànyǔ; 华语／華語 Huáyǔ";
+		
+		var start = +new Date();
+		
+		var obj = {text:str, fontSize:12}
+		var testWidth=0;
+		
+		for (var tt=0; tt<1000; tt++) testWidth = getStringWidth(obj);
+		var end = +new Date();
+		
+		////// WITH DIV PRELOADED
+		// 	1000 iterations 560 ms	
+		
+		////// WITH TEST DIV LOADED/UNLOADED IN getStringWidth()f
+		// 	1000 iterations 860 ms
+		
+		output("testWidth:" + testWidth);
+		output("time:" + (end-start));
+		
+		$("#actual").text(str);
+		
+		output("real width:" + $("#actual").width());
+				
+		
+		
+	});
+	
+	
+	</script>
+
+</body>
+</html>

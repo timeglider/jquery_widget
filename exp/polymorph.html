@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>polymorph</title>
+<script type="text/javascript" src="../js/jquery-1.4.2.min.js"></script>
+
+<script type='text/javascript'>
+
+var TG_Date = {
+   
+	_monthNames:["","jan","feb","mar","apr","may","jun","jul","aug","sep","oct","nov","dec","jan"],
+	_dayNamesShort:["","sun","mon","tue","wed","thu","fri","sat","sun"],
+	_dayNamesLong:["","Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"],
+	dayName : function (i,type) {
+			switch (type) {
+				case "short": return this._dayNamesShort[i]; break;
+				default : return this._dayNamesLong[i];
+			}
+	},
+	
+	monthName : function (i) {
+		return this._monthNames[i];
+	}
+
+};
+
+	
+	
+</script>
+</head>
+<body>
+	
+	<div id='output'></div>
+	
+	<script type='text/javascript'>
+	$(document).ready(function () {
+		
+		//var tgd = new TG_Date();
+		//tgd.bar = "fump";
+		
+		$("#output").append("<br>1:" + TG_Date.dayName(1));
+		
+		$("#output").append("<br>2:" + TG_Date.dayName(1, "short"));
+		
+		
+		
+		
+	});
+	
+	
+	</script>
+
+</body>
+</html>

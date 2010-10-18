@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+ 
+<link href='css/utils.css' rel='stylesheet' media='screen'>
+
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<title>high low</title>
+		
+</head>
+<body>
+
+
+<div id='output'>...</div>
+
+
+
+<script type="text/javascript" src="../js/jquery-1.4.2.min.js"></script>
+
+<script type='text/javascript'>
+
+
+	function getLowHigh(arr) {
+		
+		var i, n, high = arr[0], low=arr[0];
+		
+		for(i=0; i<arr.length; i++) {
+			n = parseFloat(arr[i]);
+			if (n<low) low = n;
+			if (n>high) high = n;
+		}
+		
+		return ("high":high, "low":low);
+		
+	}
+
+
+	$(document).ready(function () { 
+	
+	
+		var test = [1,2,3,"A",5,6,7]
+		
+		var hl = getLowHigh(test);
+		
+		$("#output").text("high:" + hl.high + "...low:" + hl.low);
+	
+	
+	
+	
+	
+	
+    }); // end document-ready
+	
+
+</script>
+
+</body>
+</html>
+
+

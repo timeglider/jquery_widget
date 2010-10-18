@@ -1,0 +1,357 @@
+@charset "UTF-8";
+/* CSS Document */
+
+
+
+#timeglider-container {
+
+	height:450px;
+	
+	/* these will not change */
+	position:relative;
+  	overflow:hidden;
+	border:2px solid black;
+	background-color:#ffffff;
+	
+	font-family:Arial, sans-serif;
+	
+  }
+  
+#timeglider-footer {
+	position:absolute;
+	bottom:0px;
+	left:0px;
+	height:24px;
+	width:100%;
+	background-color:#333;
+	color:#ccc;
+	font-size:10px;
+	padding:3px;
+}
+
+#timeglider-footer ul {
+	list-style:none;
+	}
+	
+#timeglider-footer ul li {
+	display:inline;
+	cursor:pointer;
+}
+
+
+
+.TGTimelineEnvelope {
+	width:100%;
+	height:100px;
+	vertical-align:bottom;
+}
+
+.TGTimelineEnvelope #titleBar {
+	background-color:#444;
+	color:#FFF;
+	height:14px;
+	width:auto;
+	padding:4px;
+	position:absolute;
+	-moz-border-radius:4px;
+	border-radius:4px;
+}
+
+.TGTimelineEnvelope #titleBar #title {
+	color:#FFF;
+	font-size:11px;
+	width:auto;
+	position:absolute;
+	display:inline;
+}
+
+
+#timeglider-slider-container {
+  	width:32px;
+	position:absolute;
+	top:0px;
+	right:0px;
+	height:188px;
+	background-color:#DDD;
+	border-bottom:1px solid #555;
+	border-left:1px solid #555;
+	padding-top:8px;
+  }
+
+#timeglider-slider {
+	float:right;
+	width:32px;
+	clear:right;
+	border:none;
+	background-color:none;
+	/*overflow:hidden;*/
+  }
+  
+  #timeglider-centerline {
+  	border-left:1px dashed #000;
+	position:absolute;
+  }
+  
+  
+  #timeglider-truck {
+   position:relative;
+   }
+   
+   .TGDateLabel {
+   		position:absolute;
+		top:4px;
+		left:4px;
+		color:#000;
+	}
+  
+ #timeglider-ticks {
+	top:0px;
+	position:relative;
+	height:900px;
+ }
+  
+ .TimegliderTick {
+  	/* defaults on arrival in ticks */
+	
+	background-image:url("../img/tickbg.jpg");
+	background-repeat:repeat-x;
+	position:absolute;
+	/*border-right:1px dashed black;
+	border-left:1px dashed black;*/
+	top:390px;
+	height:30px;
+	font-size:11px;
+	color:#333;
+	opacity:.8;
+	
+ }
+  
+  #timeglider-handle {
+		position:absolute;
+		top:0px;
+		height:1000px;
+		width:100%;
+		
+		filter:alpha(opacity=1);
+		-moz-opacity:0.01;
+		-khtml-opacity: 0.01;
+		opacity: 0.01;
+		
+	}
+	
+	#timeglider-timeline-menu {
+		position:absolute;
+		top:0px;
+		left:0px;
+		width:200px;
+		height:500px;
+		background-color:#333;
+		z-index:5000;
+	}
+	
+	#timeglider-timeline-menu ul {
+		margin:2px;
+		padding:0px;	
+		color:#CCC;
+		
+		}
+	#timeglider-timeline-menu ul li {
+		font-size:10px;
+		list-style:none;
+		margin:0;
+		padding:0;
+		cursor:pointer;
+	}
+	
+	#timeglider-timeline-menu h3 {
+			font-size:10px;
+			margin:0px;
+			margin-left:3px;
+			margin-top:3px;
+			font-weight:normal;
+			color:#888;
+	}
+	
+	#timeglider-timeline-menu-handle {
+		height:15px;
+		width:60px;
+		background-color:#727BA5;
+		float:right;
+		font-size:10px;
+		text-align:center;
+		margin-right:-60px;
+		margin-top:0px;
+		opacity:.9;
+		color:white;
+	}
+
+
+.activeTimeline {
+	color:yellow;
+}
+
+
+
+.shadow {
+	-moz-box-shadow: 3px 3px 4px #333;
+	-webkit-box-shadow: 3px 3px 4px #333;
+	box-shadow: 3px 3px 4px #333;
+	/* For IE 8 */
+	-ms-filter: "progid:DXImageTransform.Microsoft.Shadow(Strength=4, Direction=135, Color='#333333')";
+	/* For IE 5.5 - 7 */
+	filter: progid:DXImageTransform.Microsoft.Shadow(Strength=4, Direction=135, Color='#333333');
+}
+
+
+/* make panel class, too */
+#Timeglider_rzBox {
+	position:absolute;
+	left:0px;
+	top:-500px;
+	width:258px;
+	height:78px;
+	border:1px solid #CCC;
+	background-color:#CCC;
+	-moz-border-radius:7px;
+	border-radius:7px;
+	color:#444;
+	font-size:9px;
+	
+	opacity:.85;
+	filter:alpha(opacity=85);
+	filter:"alpha(opacity=85)";
+	
+}
+
+.closeBt {
+	float:right;
+	cursor:pointer;
+	color:#e61e1e;
+	margin-right:-22px;
+	margin-top:-20px;
+}
+
+#Timeglider_rzSlider {
+	margin-top:24px;
+	margin-left:10px;
+	width:200px;
+	height:2px;
+	border:1px dotted black;
+ }
+
+#Timeglider_rzVal {
+	clear:both;
+	float:right;
+	margin-top:6px;
+	margin-right:10px;
+	font-size:18px;
+	color:#333;
+	width:30px;
+	text-align:center;
+
+}
+
+#Timeglider_rzPntr {
+	color:#CCC;
+	margin-top:-28px;
+	font-size:32px;
+	margin-left:12px;
+}
+
+#TimegliderMeasureSpan {
+	font-size:11px;
+	width:auto;
+	font-family:Arial;
+}
+
+.okBt {
+	color:white;
+	background-color:green;
+	font-size:14px; font-weight:bold;
+	cursor:pointer;
+	padding:2px;
+	width:26px;
+	text-align:center;
+}
+.okBt#Timeglider_rzOk {
+	clear:both;
+	margin-left:auto;
+	margin-right:auto;
+	margin-top:16px; 
+}
+.roundedSmall {
+	-moz-border-radius:3px;
+	border-radius:3px;
+}
+
+
+/* TEMP */
+.timeglider-timeline-event {
+	position:absolute;
+	overflow:hidden;
+	/* background-color:white; */
+	padding:0px;
+	font-size:11px;
+	cursor:pointer;
+}
+
+#evtitle {
+	width:auto;
+	color:#444;
+}
+
+#clps {
+	color:#AAA;
+	cursor:pointer;
+	font-size:10px;
+	padding-left:18px;
+}
+
+#evicon {
+	padding-right:5px;
+}
+
+.evCollapsed {
+	position:absolute;
+	border-left:1px solid red;
+	top:0px;
+	height:20px;
+	width:1px;
+}
+
+
+.TimegliderEvModal {
+	-moz-border-radius:7px;
+	border-radius:7px;
+	background:#FFF;
+	border:1px solid #333;
+	width:250px;
+	padding:8px;
+	
+}
+.TimegliderEvModal p {
+	font-size:11px;
+	color:#555;
+	margin-right:14px;
+}
+.TimegliderEvModal h4 {
+	margin:0;padding:0;
+	margin-top:6px;
+	margin-bottom:4px;
+	color:#222;
+	font-size:12px;
+}
+
+.TimegliderEvModal .startdate {
+	font-size:10px;
+	color:#666;
+}
+.TimegliderEvModal #link {
+	float:right;
+}
+.TimegliderEvModal #link a {
+	font-size:10px;
+	color:#374b99;
+}
+	
+

@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+	<head>
+    
+    
+    <style>
+	
+  body { font-family:Arial;background-color:#FFF;margin:0px;padding:0px; }
+  
+
+	a {
+		cursor:pointer;
+		color:#CC3300;
+		text-decoration:none;
+	}
+	
+	.timelineCard {
+		border:8px solid black;
+		padding:32px;
+		background-color:white;
+	}
+	
+  
+  </style>
+
+		<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+
+		<title>Timeglider jQuery Plugin</title>
+		
+		<script type="text/javascript" src="js/jquery-1.4.3rc1.min.js"></script>
+		<script type="text/javascript" src="utils/qunit.js"></script>
+		
+		<link type="text/css" href='timeglider/Timeglider.css' rel='stylesheet' media='screen'>
+	  	<link type="text/css" href='css/utils.css' rel='stylesheet' media='screen'>
+		<link type="text/css" href="css/ui-lightness/jquery-ui-1.8.custom.css" rel="stylesheet" />	
+		
+		<!-- Qunit -->
+		<link rel="stylesheet" href="utils/qunit.css" type="text/css"/>
+	    
+</head>
+<body>
+
+
+<div id='bt'>click to change title</div>
+
+
+
+<div id='trace_box'>
+<div id='trace_head'>trace
+<div id='trace_x' onclick='trace("x")'>x</div>
+<div id='trace_clear' onclick='trace("c")'>clear</div>
+</div>
+<div id='trace_content'>
+...</div>
+</div>
+
+<!-- end visible -->
+
+
+<script type="text/javascript" src="js/underscore.js"></script>  
+<script type="text/javascript" src="js/json2.js"></script>  
+<script type="text/javascript" src="js/backbone.js"></script>  
+<script type="text/javascript" src="js/jquery.templ.js"></script>  
+
+
+<script type='text/javascript'>
+
+
+var GistApp = Backbone.View.extend({
+
+  events : {
+    'submit #picker': 'loadAccount'
+  },
+
+  initialize : function() {
+    this.handleEvents();
+  },
+
+  loadAccount : function() {
+    var name = this.$("#github_account").val();
+    this.account = new GithubAccount({username : name});
+    this.accountView = new AccountView({model: this.account});
+    this.$('#account_container').html(this.accountView.el);
+    return false;
+  }
+
+});
+
+var GithubAccount = Backbone.Model.extend({
+
+  initialize : function() {
+    $.getJSON(this.url(), {}, _.bind(function(resp) {
+      this.set(resp.user);
+    }, this));
+  },
+
+  url : function() {
+    return 'http://gist.github.com/630538';
+  }
+
+});
+
+var AccountView = Backbone.View.extend({
+
+  template : $('#accountTemplate'),
+
+  initialize : function() {
+    _.bindAll(this, 'render');
+    this.model.bind("change", this.render);
+  },
+
+  render : function() {
+    console.log(this.model);
+    var ui = $('#accountTemplate').tmpl({account : this.model});
+    $(this.el).html(ui);
+  }
+
+});
+
+var GistList = Backbone.View.extend({
+
+  id : 'gists'
+
+});
+
+$(function() {
+  new GistApp({el: document.body});
+});
+	
+</script>
+
+
+
+
+  <style>
+    #gists {
+      margin: 50px;
+      border: 1px solid gray;
+      min-height: 100px;
+    }
+  </style>
+
+  <script id="accountTemplate" type="text/x-jquery-tmpl">
+    <div class="account">
+      <div class="name">${ account.get("name") }</div>
+      <div class="location">${ account.get("location") }</div>
+      <div class="blog">${ account.get("blog") }</div>
+    </div>
+  </script>
+
+  <script src="gist.js"></script>
+</head>
+<body>
+
+  <form id="picker">
+    <label for="github_account">Enter a Github Account:</label>
+    <input id="github_account" type="text" value="documentcloud" />
+    <button>Go</button>
+  </form>
+
+  <div id="account_container">
+
+  </div>
+
+
+
+</body>
+</html>
+
+

@@ -1,0 +1,7 @@
+# ignore these files!
+
+__past
+_future
+_notes*
+_tests
+.DS_Store

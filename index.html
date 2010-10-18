@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html>
+	<head>
+    
+    
+    <style>
+	
+  body { font-family:Arial;background-color:#FFF;margin:0px;padding:0px; }
+  
+
+	a {
+		cursor:pointer;
+		color:#CC3300;
+		text-decoration:none;
+	}
+	
+	h1 {
+		font-size:18px;
+		padding:0;
+		color:#ebb93b;
+	}
+	
+	h2 {
+		font-size:14px;
+		padding:0;
+		color:#ebb93b;
+		margin-bottom:0px;
+		margin-top:12px;
+	}
+	
+	
+	#header {
+		background-color:#FFF;
+		width:1000px;
+		margin:8px auto 14px auto;
+	}
+	.message {
+		color:#444;
+		font-size:14px;
+		width:800px;
+		margin:24px auto 0 auto;
+	}
+
+	/* IMPLEMENTATION */
+	#placement {
+		width:800px;
+		height:450px;
+		margin-left:auto;
+		margin-right:auto;
+		margin-top:14px;
+		margin-bottom:14px;
+	}
+	
+	pre {
+		font-family:Monaco, Courier;
+		background-color:#F5F5F5;
+		color:#313543;
+		padding:12px;
+		font-size:12px;
+		border:1px solid #333;
+		color:#555;
+		margin:32px;
+	}
+	
+	.prehtml {
+		color:#003399;
+		font-size:14px;
+	}
+	
+	.prejs {
+		color:#CC3300;
+		font-size:14px;
+	}
+	
+	.controls { clear:both;margin-top:12px; display:none; }
+	.controls table {
+		width:100%;
+		border-collapse:collapse;
+	}
+
+	.controls table td {
+		border:1px dotted #666;
+		background-color:#F3F3F3;color:#444;
+		padding:4px;
+		font-size:11px;
+	}
+  
+  </style>
+
+		<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+
+		<title>Timeglider jQuery Plugin</title>
+		
+		<script type="text/javascript" src="js/jquery-1.4.3rc1.min.js"></script>
+		<script type="text/javascript" src="utils/qunit.js"></script>
+		
+		<link type="text/css" href='timeglider/Timeglider.css' rel='stylesheet' media='screen'>
+	  	<link type="text/css" href='css/utils.css' rel='stylesheet' media='screen'>
+		<link type="text/css" href="css/ui-lightness/jquery-ui-1.8.custom.css" rel="stylesheet" />	
+		
+		<!-- Qunit -->
+		<link rel="stylesheet" href="utils/qunit.css" type="text/css"/>
+	    
+</head>
+<body>
+
+<div id='header'>
+<img src='img/pres_header.jpg'>
+</div>
+
+<div id='placement'></div>
+
+<div class='controls'>
+<table>
+<tr><td id='zoomlevel' width='33%'>...</td><td id='tickwidth' width='33%'>tw</td><td id='focusdate'>...</td></tr>
+<tr><td id='tickpos'></td><td colspan='2' id='note'>...</td></tr>
+</table>
+</div>
+
+
+<div class='message'>
+	<h1>The Timeglider jQuery Plugin</h1>
+	<p>
+	This is a prototype of a <a href='http://jquery.com' target='_blank'>jQuery</a> plugin for Timeglider. It's still got lots of scaffolding, is fairly buggy &mdash; but you get the idea of what's possible. <a target="_blank" href="http://timeglider.com/app/viewer.php?uid=idaho">You can see our current (Flash-based) system here.</a> Still to come in this jQuery version: event spans, legends, timezones, images, and more.
+	This currently seems to work on all Mac browsers, IE8, and Windows Firefox. More extensive browser testing to come. as well as updating to new jQuery/jQuery UI</p>
+	<p>Some goals:
+	<ul>
+		<li>images and image albums presented as events</li>
+		<li>color settings for event spans</li>
+		<li>multiple options for modal windows</li>
+		<li>multiple file links, i.e. with audio, video etc.</li>
+		<li>interpreting existing HTML as a simple alternative to JSON</li>
+		<li>importers for event-oriented APIs</li>
+        <li>full gesture actions on ipads and other larger mobile devices</li>
+	</ul>
+		
+    <h2>The code</h2>
+    <p>For developers/designers, the jQuery code will be very simple:
+<pre>
+&lt;!-- html: --&gt;
+   <span class='prehtml'>&lt;div id='placement'&gt;&lt;/div&gt;</span>
+    
+&lt;!-- js: --&gt;<span class='prejs'>
+   $(document).ready(function () { 
+
+      var tg1 = $("#placement").timeglider({
+         "max_zoom":60, 
+         "backgroundColor":"#F3F3F3", 
+         "initial_timeline_id": "jshist",
+         "data_source":"json_tests/js_history.json"
+     });
+   });
+    </span>
+</pre>
+    Using CSS, one can style/size the "placement" div, also. The jQuery setup (starting with the dollar sign)  indicates some of the initial settings; there will also be public methods so that the reference (in this case "tg1" can use methods like "zoomTo()" or "gotoDate()", etc.  Data sources will use either JSON or XML; eventually we'll provide a way to take an HTML table of dates/events/etc, and transform it into a viewer instance. 
+    </p>
+    
+	<p>The general plan is to offer this plugin as a free and open-source resource, but for sites publishing at high volume, and/or where it is used as part of a commercial enterprise, a commercial license will apply. The ultimate goal is to have a thriving ecosystem module, context, and other code development.</p>
+    
+	<p>There are many possibilities. I'm sharing this early iteration with the jQuery Conference in Boston this coming weekend and will be seeking javascript developers to contribute to the open source project (which will be at Github). Please let me know if you're interested in contributing, or if you have any thoughts
+    <br>
+<br>
+ Michael Richardson<br>Boise, ID<br>
+michael@timeglider.com</p>
+	</div>
+
+
+<div id='trace_box'>
+<div id='trace_head'>trace
+<div id='trace_x' onclick='trace("x")'>x</div>
+<div id='trace_clear' onclick='trace("c")'>clear</div>
+</div>
+<div id='trace_content'>
+...</div>
+</div>
+
+
+<br style='clear:both'>
+<h2 id="qunit-banner"></h2>
+<h2 id="qunit-userAgent"></h2>
+<ol id="qunit-tests">
+</ol>
+
+
+<!-- end visible -->
+
+
+<script type="text/javascript" src="js/underscore.js"></script>  
+<script type="text/javascript" src="js/json2.js"></script>  
+<script type="text/javascript" src="js/jquery-ui-1.8.custom.min.js"></script>   
+<script type="text/javascript" src="js/backbone.js"></script>  
+<script type="text/javascript" src="js/jquery.ui.ipad.js"></script>
+<script type="text/javascript" src="js/raphael-min.js"></script>
+<script type="text/javascript" src="js/jquery.mousewheel.min.js"></script>
+
+
+<!-- pack these eventually into plugin...? -->
+<script type="text/javascript" src="timeglider/TG_ZoomTree.js"></script>
+<script type="text/javascript" src="timeglider/TG_Signals.js"></script>
+<script type="text/javascript" src="timeglider/TG_Date.js"></script>
+<script type="text/javascript" src="timeglider/TG_Org.js"></script>
+<script type="text/javascript" src="timeglider/TG_Utils.js"></script>
+<script type="text/javascript" src="timeglider/jquery.timeglider.js"></script>
+
+<script type='text/javascript'>
+
+
+
+	// listener for zoom level off the model
+
+	$(document).ready(function () { 
+
+	 
+		
+    }); // end document-ready
+	
+</script>
+
+
+
+
+</body>
+</html>
+
+

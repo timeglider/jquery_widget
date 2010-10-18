@@ -1,0 +1,59 @@
+@charset "UTF-8";
+/* CSS Document */
+
+
+  #trace_box {
+  	clear:both;
+	
+	width:200px;
+	
+	border:2px solid black;
+	font-family:Monaco, Courier;
+	filter:alpha(opacity=70);
+	-moz-opacity:0.7;
+	-khtml-opacity: 0.7;
+	opacity: 0.7;
+	z-index:1000;
+	
+	position:absolute;
+	left:10px;
+	top:150px;
+	
+  }
+  #trace_head{
+  	background-color:black;
+	padding:2px;
+	color:white;
+	margin:0px;
+	padding:4px;
+	font-size:12px;
+	height:14px;
+	font-family:Arial
+  }
+  
+#trace_x {
+	width:16px;
+	display:inline;
+	float:right;
+	color:red;
+	cursor:pointer;
+	font-size:12px;
+}
+#trace_clear {
+	width:28px;
+	display:inline;
+	float:right;
+	color:green;
+	cursor:pointer;
+	font-size:12px;
+	margin-right:16px;
+}
+
+  #trace_content {
+  	overflow-y:scroll;
+	height:330px;
+     padding:4px;
+	 font-size:11px;
+	 background-color:#F3F3F3;
+
+  }
