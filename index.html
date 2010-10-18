@@ -204,15 +204,18 @@ michael@timeglider.com</p>
 
 <script type='text/javascript'>
 
+$(document).ready(function () { 
 
+	var tg1 = $("#placement").timeglider({
+			"max_zoom":60, 
+			"backgroundColor":"#F3F3F3", 
+			"show_centerline":true,
+			"initial_timeline_id": "jshist",
+			"data_source":"json_tests/js_history.json"
+			});
+	
+}); // end document-ready
 
-	// listener for zoom level off the model
-
-	$(document).ready(function () { 
-
-	 
-		
-    }); // end document-ready
 	
 </script>
 

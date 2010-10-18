@@ -7,9 +7,7 @@
 			}
 	
 	TGOrg.prototype = {
-		/* need to make public/private stuff /*
-				
-			
+	
 				
 				freshTree : function () {
 					this.tree = [];
