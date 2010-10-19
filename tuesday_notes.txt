@@ -1,0 +1,9 @@
+how to create static methods like Math.abs()
+with my own class ---- TimegliderDate.makeDateObject()
+make a shortcut TD.makeDateObject() ?
+
+?? 
+eventPool
+timelinePool
+Where to put them?
+
