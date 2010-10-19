@@ -1,0 +1,224 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"   "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>widget_test_1</title>
+
+    <link rel="stylesheet" href="base.css" type="text/css" media="screen" title="no title" charset="utf-8">
+    <script src="jquery-1.4.2.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="jquery-ui-1.8.5.js" type="text/javascript" charset="utf-8"></script>
+
+    <style type='text/css'>
+      body {
+        padding: 2em;
+      }
+    
+      .bar {
+          background-color:#ccc;
+          width:100px;
+          position:absolute;
+          top:300px;
+          left:100px;
+          height:20px;
+      }
+    
+      .slider {
+          position:absolute;
+          top:30px;
+          left:150px;
+      }
+      
+      /* WIDGET CSS */
+      .ui-container {
+        padding: 2em 1em;
+      }
+      
+      .track {
+        height: 2px;
+        
+        background-color: #888;
+        border-top: 1px solid #AAA;
+        
+        width: 200px;
+        
+        z-index:0;
+      }
+      
+      .handle {
+        margin-top: -11px;
+        background-color: #b9b9b9;
+        border: 1px solid red;
+        width: 20px;
+        height: 20px;
+        
+      }
+      
+      #drag-outer {
+        width: 400px;
+        height: 100px;
+        outline: 1px solid #f00;
+        overflow: hidden;
+      }
+      
+      #drag {
+        width: 600px;
+        height: 100px;
+        outline: 1px solid #0f0;
+      }
+      
+      .fancy {
+        font-style: italic;
+      }
+    </style>
+    <script>    
+      $(function() {
+      
+        // $(".dragger").draggable({axis:'x'});
+        
+        // $(".slider").slider({ 
+        //     steps: 100,
+        //     orientation: 'vertical',
+        // 
+        //       /* "min" here is really the _highest_ zoom value @ upside down */
+        //       min:1,
+        // 
+        //       /* "max" actually takes (inverse value of) low zoom level */
+        //       max:100,
+        // 
+        //       value:33,
+        // 
+        //       start: function (e, ui) {
+        //           // show zoom level legend
+        //       },
+        // 
+        //       stop: function (e, ui) {
+        //           // hide zoom level legend
+        //       },
+        // 
+        //       change: function(e,ui){
+        //           // i.e. on-release handler
+        //           // possibly load throttled back events
+        //       }, 
+        // 
+        //       slide: function(e, ui) {
+        //           // sets model zoom level to INVERSE of slider value
+        //           setZoomLevel(ui.value);
+        //       }
+        // });
+        //     
+        // function setZoomLevel(v) {
+        //     $("#zoomLevel").val(v);
+        // }
+        
+        var Slider = {
+          
+          options: {
+            min_zoom: 1,
+            max_zoom: 100,
+            initial_zoom: 20            
+          },
+
+          _create: function() {
+            var o = this.options;
+            
+            $(this.element).addClass('ui-container');
+            $('<input type="text" size="3" id="zoomLevel" />').insertBefore(this.element);
+            
+            
+            o.track = $('<div></div>').addClass('track').appendTo(this.element);
+            o.handle = $('<div></div>').addClass('handle').appendTo(this.element);
+            
+            o.handle.draggable({
+                axis:'x',
+                drag: function(e, ui) {
+                  
+                  if(o.track.offset().left > o.handle.offset().left) {
+                    //return false;
+                  }
+                  
+                  if(o.track.offset().left + o.track.width() < o.handle.offset().left) {
+                    //return false;
+                  }
+                  
+                },
+              });
+          },
+            
+        }
+        
+        $.widget('tg.sliderz', Slider);
+        
+        $('#slider').sliderz();
+        
+    });
+      
+    
+    </script>
+    <script type="text/javascript" charset="utf-8">
+      $(function(){
+        $('#drag').draggable({
+          containment: $('#drag-outer')
+        });
+      });
+      
+      
+      $(function() {
+        var obj = {},
+          now = +new Date(),
+          keys = [];
+
+        $('#tg-table').find('tr').each(function(i){
+          var children = $(this).children(),
+            row_obj;
+          
+          if ( i === 0 ) {
+            keys = children.map(function(){
+              return $(this).attr( 'class' ).replace( /^.*?\btg-(\S+)\b.*?$/, '$1' );
+            }).get();
+
+          } else {
+            row_obj = {};
+
+            children.each(function(i){
+              row_obj[ keys[i] ] = $(this).text();
+            });
+
+            obj[ 'prefix' + now++ ] = row_obj;
+          }
+        });
+
+        console.log( obj );
+        
+      });
+      
+    </script>
+</head>
+<body>
+    <div id='slider'></div>
+    
+    <table id="tg-table">
+      <tr>
+        <th class="fancy tg-age">Age</th>
+        <th class="tg-first fancy">First</th>
+        <th class="tg-last">Last</th>
+      </tr>
+      <tr>
+        <td>34</td>
+        <td>ben</td>
+        <td>alman</td>
+      </tr>
+      <tr>
+        <td>42</td>
+        <td>mike</td>
+        <td>richardson</td>
+      </tr>
+      <tr>
+        <td>29</td>
+        <td>rick</td>
+        <td>waldron</td>
+      </tr>
+    </table>
+    
+    <!-- <div class='dragger bar'></div> -->
+</body>
+</html>

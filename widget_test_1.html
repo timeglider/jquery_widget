@@ -1,0 +1,95 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+   "http://www.w3.org/TR/html4/loose.dtd">
+
+
+<link rel="stylesheet" href="css/ui-lightness/jquery-ui-1.8.custom.css" type="text/css" media="screen" title="no title" charset="utf-8">
+
+
+<script src="js/jquery-1.4.2.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="js/jquery-ui-1.8.custom.min.js" type="text/javascript" charset="utf-8"></script>
+
+
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>widget_test_1</title>
+
+	<style type='text/css'>
+	
+	.bar {
+		background-color:#ccc;
+		width:100px;
+		position:absolute;
+		top:300px;
+		left:100px;
+		height:20px;
+	}
+	
+	.slider {
+		position:absolute;
+		top:30px;
+		left:150px;
+	}
+	
+	</style>
+</head>
+<body>
+	
+	<input type='text' size='3' id='zoomLevel'>
+	
+	<div class='slider'></div>
+	
+	<div class='dragger bar'></div>
+	
+	<script>
+	(function($){
+		
+		$(".dragger").draggable({axis:'x'});
+		
+		$(".slider").slider({ 
+			steps: 100,
+			orientation: 'vertical',
+
+			/* "min" here is really the _highest_ zoom value @ upside down */
+			min:1,
+
+			/* "max" actually takes (inverse value of) low zoom level */
+			max:100,
+
+			value:33,
+
+			start: function (e, ui) {
+				// show zoom level legend
+				
+			},
+
+			stop: function (e, ui) {
+				// hide zoom level legend
+			},
+
+			change: function(e,ui){
+				// i.e. on-release handler
+				// possibly load throttled back events
+			}, 
+
+			slide: function(e, ui) {
+				// sets model zoom level to INVERSE of slider value
+				setZoomLevel(ui.value);
+			}
+		});
+			
+			
+			
+			function setZoomLevel(v) {
+				$("#zoomLevel").val(v);
+			}
+	
+		
+	})(jQuery);
+	
+	
+	
+	</script>
+
+</body>
+</html>
