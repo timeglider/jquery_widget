@@ -66,6 +66,7 @@
 		
 
 	     // default settings 
+	/// in a widget, would be "options"
 	     var settings = $.extend(
 	          {},
 	          {
