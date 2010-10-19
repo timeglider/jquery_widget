@@ -7,38 +7,39 @@
 		<link rel="stylesheet" href="css/base.css" type="text/css" media="screen" title="no title" charset="utf-8">
 		<link rel="stylesheet" href="css/utils.css" type="text/css" media="screen" title="no title" charset="utf-8">
 		<link rel="stylesheet" href="js/timeglider/Timeglider.css" type="text/css" media="screen" title="no title" charset="utf-8">
+	<link rel="stylesheet" href="js/jquery-ui-1.8.5.custom/css/ui-lightness/jquery-ui-1.8.5.custom.css" type="text/css" media="screen" title="no title" charset="utf-8">
 		
 		
-		<!-- 3rd party libs -->
-		<script src="js/jquery-1.4.2.min.js" type="text/javascript" charset="utf-8"></script>
-		<script src="js/jquery-ui-1.8.5.js" type="text/javascript" charset="utf-8"></script>
-		<script src="js/jquery.mousewheel.min.js" type="text/javascript" charset="utf-8"></script>
-		<script src="js/jquery.ui.ipad.js" type="text/javascript" charset="utf-8"></script>
-		<script src="js/raphael-min.js" type="text/javascript" charset="utf-8"></script>
-		<script src="js/timeglider/htmlentities.js" type="text/javascript" charset="utf-8"></script>
+	<!-- 3rd party libs -->
+	<script src="js/jquery-1.4.2.min.js" type="text/javascript" charset="utf-8"></script>
+
+	<script src="js/jquery-ui-1.8.5.custom.min.js" type="text/javascript" charset="utf-8"></script>
+
+
+	<script src="js/jquery.mousewheel.min.js" type="text/javascript" charset="utf-8"></script>
+	<script src="js/jquery.ui.ipad.js" type="text/javascript" charset="utf-8"></script>
+	<script src="js/raphael-min.js" type="text/javascript" charset="utf-8"></script>
+	<script src="js/timeglider/htmlentities.js" type="text/javascript" charset="utf-8"></script>
 		
-		<!-- QUNIT! -->
-		<link rel="stylesheet" href="js/testing/qunit.css" type="text/css" media="screen" title="no title" charset="utf-8">
-		<script src="js/testing/qunit.js" type="text/javascript" charset="utf-8"></script>
+	<!-- QUNIT! -->
+	<link rel="stylesheet" href="js/testing/qunit.css" type="text/css" media="screen" title="no title" charset="utf-8">
+	<script src="js/testing/qunit.js" type="text/javascript" charset="utf-8"></script>
 		
-		<!-- TIMEGLIDER -->
-		<script src="js/timeglider/timeglider.js" type="text/javascript" charset="utf-8"></script>
-		
-    <!-- 
+	<!-- TIMEGLIDER -->
     <script src="js/timeglider/TG_Coordinizer.js" type="text/javascript" charset="utf-8"></script>
     <script src="js/timeglider/TG_Date.js" type="text/javascript" charset="utf-8"></script>
     <script src="js/timeglider/TG_Org.js" type="text/javascript" charset="utf-8"></script>
     <script src="js/timeglider/TG_Signals.js" type="text/javascript" charset="utf-8"></script>
     <script src="js/timeglider/TG_Utils.js" type="text/javascript" charset="utf-8"></script>
     <script src="js/timeglider/TG_ZoomTree.js" type="text/javascript" charset="utf-8"></script> 
-    -->
+
+	<script src="timeglider/timeglider.widget.js" type="text/javascript" charset="utf-8"></script>
+
+  
 		
-  </head>◊
+  </head>
 <body>
 
-<div id='header'>
-  <img src='img/pres_header.jpg'>
-</div>
 
 <div id='placement'></div>
 
@@ -50,45 +51,41 @@
 </div>
 
 
-<div class='message'>
-	<h1>The Timeglider jQuery Plugin</h1>
+<div id='trace_box'>
+<div id='trace_head'>trace
+<div id='trace_x' onclick='trace("x")'>x</div>
+<div id='trace_clear' onclick='trace("c")'>clear</div>
 </div>
+<div id='trace_content'>
+...</div>
+</div>
+
 
 <!-- end visible -->
 
-<<<<<<< HEAD
-
-<script type="text/javascript" src="js/underscore.js"></script>  
-<script type="text/javascript" src="js/json2.js"></script>  
-<script type="text/javascript" src="js/jquery-ui-1.8.custom.min.js"></script>   
-<script type="text/javascript" src="js/backbone.js"></script>  
-<script type="text/javascript" src="js/jquery.ui.ipad.js"></script>
-<script type="text/javascript" src="js/raphael-min.js"></script>
-<script type="text/javascript" src="js/jquery.mousewheel.min.js"></script>
-
-
-<!-- pack these eventually into plugin...? -->
-<script type="text/javascript" src="timeglider/TG_ZoomTree.js"></script>
-<script type="text/javascript" src="timeglider/TG_Signals.js"></script>
-<script type="text/javascript" src="timeglider/TG_Date.js"></script>
-<script type="text/javascript" src="timeglider/TG_Org.js"></script>
-<script type="text/javascript" src="timeglider/TG_Utils.js"></script>
-<script type="text/javascript" src="timeglider/timeglider.widget.js"></script>
-
-=======
->>>>>>> 77ddbd8b7922322a834236388e704b6766c7f2df
 <script type='text/javascript'>
 	// listener for zoom level off the model
 
 	$(function () { 
 
-		var tg1 = $("#placement").timeglider({
+		var tg1 = $("#placement").timeline2({
 				"max_zoom":60, 
-				"backgroundColor":"#F3F3F3", 
 				"show_centerline":true,
 				"initial_timeline_id": "jshist",
 				"data_source":"json_tests/large.json"
 				});
+		
+		/*
+		$('.slider').slider({
+			change: function(event, ui){
+				console.log(event)
+				
+				// $('#placement').timeglider({
+				// 	zoom: ui.val
+				// })
+			}
+		})
+		*/
 		
     }); // end document-ready
 	
