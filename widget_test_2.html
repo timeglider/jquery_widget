@@ -1,0 +1,250 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+   "http://www.w3.org/TR/html4/loose.dtd">
+
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>widget_test_2</title>
+	<link rel="stylesheet" href="css/ui-lightness/jquery-ui-1.8.custom.css" type="text/css" media="screen" title="no title" charset="utf-8">
+	
+	
+	<script src="js/jquery-1.4.2.min.js" type="text/javascript" charset="utf-8"></script>
+	<script src="js/jquery-ui-1.8.custom.min.js" type="text/javascript" charset="utf-8"></script>
+
+	<style type='text/css'>
+	body {
+		font-family:Arial;
+	}
+	
+	a {
+		cursor:pointer;
+		color:green;
+	}
+	.empty {
+		background-color:red;
+	}
+	h1 { font-size:14px; clear:both; margin-top:14px; }
+	
+	.sodamachine {
+		background-color:#F3F3F3;
+		border:1px solid black;
+		width:300px;
+		height:200px;
+		text-align:center;
+		padding:16px;
+		-moz-border-radius:17px;
+	}
+
+	.highlight {
+		background-color:orange;
+	}
+		
+	ul.choices {
+		font-size:9px;
+		list-style:none;
+	}
+	
+	ul.choices li {
+		display:inline;
+		font-size:10px;	
+		margin-right:10px;
+	}
+	
+	.coinSlot {
+		margin-top:10px;
+		color:green;
+		font-size:14px;
+		width:100px;
+		float:right;
+		margin-bottom:14px;
+	}
+	</style>
+	<script language='javascript'>
+	
+	
+	
+	
+	(function( $, undefined ) {
+	
+	/* Any reason these ought to be anywhere else? */
+	var Manager = function(startingBalance) {
+		this._balance = startingBalance;
+		this._startingBalance = startingBalance;
+	}
+	
+	Manager.prototype = {
+		
+		addToBalance : function(amt) {
+			this._balance += amt;
+		},
+		
+		getBalance : function() {
+			return this._balance;
+		},
+		
+		fix:function() { 
+			alert("machine is fixed!");
+		}, 
+		
+		getMoney:function () {
+			var ret = this._balance - this._startingBalance;
+			this._balance = this._startingBalance;
+			return ret;
+		}
+		
+	}
+	
+
+	
+	$.widget( "tg.sodamachine", {
+		
+		// listener on tValue, too
+		_tValue:0,
+		
+		/// listener on _ready 
+		_ready:false,
+		
+		_change:0,
+		
+		_startingBalance:0,
+		
+		options: {
+			choices:["coke","sprite"],
+			size:"16 oz",
+			price:1,
+			starting_balance:0
+		},
+
+		_create: function() {
+			var c, $choices, 
+			chArray = this.options.choices,			
+			machine = this,
+			elem = this.element;
+			
+			this._manage = new Manager(this.options.starting_balance),
+			
+			this.element
+				.append("<div class='coinSlot'>insert <a id='q'>q</a> | <a id='d'>d</a> | <a id='n'>n</a></div><h1>Mmmmm, " + this.options.brand + "</h1><div id='price'>just $" + this.options.price + "</div><div id='added'></div><ul class='choices'></ul><div id='maint'><ul><li id='bal'>balance</li><li id='emp'>empty</li></ul></div>")
+				.addClass("ui-widget sodamachine");
+							
+			$.each(chArray, function (index, value) {
+				$(".choices").append("<li>" + chArray[index] + "</li>");
+			});
+	
+			$(".coinSlot").delegate("a", "click", function () { 
+				var coin = $(this).attr("id"); 
+				machine._addCoin(coin);
+			});
+			
+			$(".choices").delegate("li", "click", function () {
+				var choice = $(this).text();
+				machine._tryBuy(choice);
+			});
+			
+			$("#bal").click(function() { machine._getBalance(); });
+			
+			$("#emp").click(function() { machine._getMoney(); });
+						
+		},
+
+		
+		
+		_tryBuy : function (choice) {
+			if (this._ready == true) {
+				alert("Here ya go: " + choice);
+				alert("Here's your change: $" + this._change);
+				this._reset();
+				this._manage.addToBalance(this.options.price);
+			} else {
+				alert("You haven't inserted enough money yet!");
+			}
+			
+		},
+		
+		_reset : function () {
+				this._change = 0;
+				this._inProgress = false;
+				this._ready=false;
+				$("#added").text("");
+				$(".choices").removeClass("highlight");
+				this._tValue=0;
+		},
+		
+		_getBalance : function () {
+			var bal = this._manage.getBalance();
+			alert ("here's the balance: $" + bal);
+		},
+		
+		_getMoney : function () {
+			var mon = this._manage.getMoney();
+			alert ("here's what the machine has earned: $" + mon);
+		},
+		
+		_addCoin : function (coin) {
+			var amt = 0, change;
+			
+			switch (coin) {
+			 	case "q": amt = .25; break;
+				case "d": amt = .1; break;
+				case "n": amt = .05; break;
+				case "p": amt = .01; break;
+			}
+			
+			this._tValue = this._tValue + amt;
+			
+			// move all this to listener on tValue change
+			$("#added").text(this._tValue);
+			
+			if (this._tValue >= this.options.price) {
+				this._change = this._tValue - this.options.price;
+				this._ready = true;
+				// alert("choose your soda!");
+				$(".choices").addClass("highlight");
+			}
+		},
+		
+		
+		destroy: function() {
+			this.element
+				.removeClass( "sodamachine" )
+				.removeAttr( "container" )
+				.html("")
+				.css("display", "none");
+				
+			$.Widget.prototype.destroy.apply( this, arguments );
+		},
+
+
+		_setOption: function( key, value ) {
+			$.Widget.prototype._setOption.apply( this, arguments );
+		},
+	});
+
+
+	})( jQuery );
+	
+	</script>
+</head>
+<body>
+
+
+<div class='empty' id='myMachine'></div>
+
+
+<script>
+$(document).ready(function () {
+	
+	$machine = $("#myMachine").sodamachine({
+		brand:"Schweppes", 
+		choices:["fanta", "schweppes","moxie","dr. pepper"],
+		price:1.25,
+		starting_balance:5
+		}
+	);
+		
+	
+});
+
+</script>
+</body>
+</html>
