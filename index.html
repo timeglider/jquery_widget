@@ -31,6 +31,8 @@
     <script src="js/timeglider/TG_Signals.js" type="text/javascript" charset="utf-8"></script>
     <script src="js/timeglider/TG_Utils.js" type="text/javascript" charset="utf-8"></script>
     <script src="js/timeglider/TG_ZoomTree.js" type="text/javascript" charset="utf-8"></script> 
+	<script src="js/timeglider/TG_TimelineView.js" type="text/javascript" charset="utf-8"></script> 
+	<script src="js/timeglider/TG_Mediator.js" type="text/javascript" charset="utf-8"></script> 
 
 	<script src="js/timeglider/timeglider.timeline.widget.js" type="text/javascript" charset="utf-8"></script>
 
@@ -67,7 +69,7 @@
 
 	$(function () { 
 
-		var tg1 = $("#placement").timeline2({
+		var tg1 = $("#placement").timeline({
 				"max_zoom":60, 
 				"show_centerline":true,
 				"initial_timeline_id": "jshist",

@@ -1,32 +1,24 @@
 // JavaScript Document
 
-function TimegliderDate(){
+var TGDate = {
 	
-	this.monthNamesFull = ["","January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-	this.monthNamesAbbr = ["","Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-	this.monthsDayNums = [0,31,28,31,30,31,30,31,31,30,31,30,31,29];
-	this.monthNamesLet = ["","J","F","M","A","M","J","J","A","S","O","N","D"];
-	
-	this.dayNamesFull = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-	this.dayNamesAbbr = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-	this.dayNamesLet = ["S", "M", "T", "W", "T", "F", "S"];
-	
-	this.units = ["da", "mo", "ye", "de", "ce", "thou"];
-	
-	}
-
-TimegliderDate.prototype = {
+	monthNamesFull : ["","January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
+	monthNamesAbbr : ["","Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+	monthsDayNums : [0,31,28,31,30,31,30,31,31,30,31,30,31,29],
+	monthNamesLet : ["","J","F","M","A","M","J","J","A","S","O","N","D"],
+	dayNamesFull : ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+	dayNamesAbbr : ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
+	dayNamesLet : ["S", "M", "T", "W", "T", "F", "S"],
+	units : ["da", "mo", "ye", "de", "ce", "thou"],
 
 	isLeapYear: function(y) {
-
-	if ((y % 100  == 0) && ( y % 400  != 0)) {
-		return false;
-	}  else if (y % 4 == 0) {
-		return true;
-	} else {
-		return false;
-	}
-
+    if ((y % 100  == 0) && ( y % 400  != 0)) {
+      return false;
+    }  else if (y % 4 == 0) {
+      return true;
+    } else {
+      return false;
+    }
 	},
 	
 
@@ -114,11 +106,11 @@ TimegliderDate.prototype = {
 	
 	isValidDate : function (ye, mo, da) {
 		var ld = this.getMonthDays(mo, ye);
-		if ((da > ld) || (da <= 0)) return false;  
-		if ((mo > 12) || (mo < 0)) return false;
-		if (ye == 0) return false;
+		if ((da > ld) || (da <= 0)) { return false; }  
+		if ((mo > 12) || (mo < 0)) { return false; }
+		if (ye == 0) { return false; }
 		var pat = new RegExp(/([0-9]+)/);
-		if (ye.match(Math.abs(pat)) == false) return false;
+		if (ye.match(Math.abs(pat)) == false) { return false; }
 	
 		return true;
 	},
@@ -136,10 +128,8 @@ TimegliderDate.prototype = {
 		if (fd.rd < 0) bc = -1;
 		return bc * (daSec + hoSec + miSec);
 	},
-	/* How to get the inverse of sist?!! */
-	
-	
-	
+
+
 	twentyFourToTwelve : function (e) {
 		
 		var dob = {};
@@ -248,9 +238,7 @@ TimegliderDate.prototype = {
 		return {ye:ye, mo:mo};
 	},
 	
-	
-	
-	
+
 	getMonthWidth : function(mo,ye,tickWidth) {
 
 		var dayWidth = t / 28;
@@ -518,12 +506,3 @@ Date.replaceChars = {
 	r: function() { return this.toString(); },
 	U: function() { return this.getTime() / 1000; }
 };
-
-
-
-/////
-
-	
-	
-
-
