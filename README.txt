@@ -1,14 +1,14 @@
 
-TIMEGLIDER jQUERY PLUGIN
+TIMEGLIDER jQUERY WIDGET/PLUGIN
 
 
-Welcome to the nascent Timeglider jQuery plugin. Timeglider is a web-based timeline application currently running in Flash, and this is the transition to a free viewer module.
+Welcome to the nascent Timeglider jQuery widget project. Timeglider is a web-based timeline application currently running in Flash: this is the transition to a free viewer module.
 
 Project director: 
 Michael Richardson
 michael@timeglider.com
 
-The goal here is to create a lightweight, extensible time-viewer-explorer which can zoom/pan and otherwise explore future/past events easily. Timeglider.com provides an authoring environment for creating hosted timelines; this plug in is meant for enterprise media, medical software, private legal workspaces, etc. all of which may have APIs of their own such that they can output a JSON file.
+Our goal here is to create a lightweight, extensible time-viewer-explorer which can zoom/pan and otherwise explore future/past events easily. Timeglider.com provides an authoring environment for creating hosted timelines; this plug in is meant for enterprise media, medical software, private legal workspaces, etc. all of which may have APIs of their own such that they can output a JSON file.
 
 TIMEGLIDER DATA FORMAT
 See a sample json file @ json_tests/idaho.json.
