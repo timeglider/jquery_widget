@@ -739,9 +739,9 @@ TimegliderTimelineView.prototype = {
 			foSec = M.getFocusDate().sec,
 			spp = M.getZoomInfo().spp,
 			zl = M.getZoomInfo().level,
-			idArr;
-			
-			var levHt = 24;
+			idArr,
+			levHt = 24,
+			buffer = 18;
 			
 		//////////////////////////////////////////
 		// different kind of loop here for array?
@@ -795,7 +795,13 @@ TimegliderTimelineView.prototype = {
 							impq = (ev.importance / zl);
 							
 						if (expCol == "expanded") {
-							ev.width = (ev.basicWidth * impq) + 18;									
+							ev.width = (ev.titleWidth * impq) + buffer;
+							if (ev.span == true) {
+							  ev.spanwidth = (ev.enddateObj.sec - ev.startdateObj.sec) / spp;
+							  if (ev.spanwidth > ev.width) { ev.width = ev.spanwidth; }
+							}	else {
+							  ev.spanwidth = 0;
+							}					
 							ev.fontsize = basicFontSize * impq;
 							// !TODO isolate these into position object
 							ev.left = posx; // will remain constant
@@ -804,12 +810,12 @@ TimegliderTimelineView.prototype = {
 							ev.height = 18;
 							borg.addBlock(ev, "sweep");
 							// no stuff yet...
-					  	} else if (expCol == "collapsed") {
+					  } else if (expCol == "collapsed") {
 							stuff += "<div id='ev_" + ev.id + 
 							"' class='evCollapsed' style='top:" + 
 							(ht-2) + "px;left:" +
 							posx + "px'></div>";
-					  	}
+					  }
 	
 					}	
 			}
@@ -841,7 +847,8 @@ TimegliderTimelineView.prototype = {
 			var tl, ev, posx, expCol, ht, borg, stuff, impq, ids,
 				foSec = M._startSec, 
 				spp = M.getZoomInfo().spp,
-				zl = M.getZoomInfo().level;
+				zl = M.getZoomInfo().level,
+				buffer = 18;
 				
 			/// !!TODO --- dynamic heights in TGOrg.js
 			var levHt = 24;
@@ -861,20 +868,25 @@ TimegliderTimelineView.prototype = {
 					
 					for (i=0; i<ids; i++) {
 
-						// WET
+						// !! WET WITH freshTimelines
 						ev = M.eventPool["ev_" + idArr[i]];
 						// !!TODO ==> TIMEZONE SETTING...
 						posx = cx + ((ev.startdateObj.sec - foSec) / spp);
 						
 						if (expCol == "expanded") {
+						  
 							ev.left = posx; // will remain constant
 							// !TODO --- ACCURATE WIDTH BASELINE FROM chewTimeline()
 							impq = (ev.importance / zl);
-							trace ("bw:" + ev.basicWidth + "; imp:" + ev.importance + "; zl:" + zl);
-							
-							ev.width = (ev.basicWidth * impq) + 18;
-							
-							
+							ev.fontsize = basicFontSize * impq;
+							ev.width = (ev.titleWidth * impq) + buffer;
+							if (ev.span == true) {
+  							ev.spanwidth = (ev.enddateObj.sec - ev.startdateObj.sec) / spp;
+  							if (ev.spanwidth > ev.width) { ev.width = ev.spanwidth; }
+  						}	else {
+  							 ev.spanwidth = 0;
+  						}
+  							
 							ev.top = ht - levHt; // 330; ///// TODO ==> add to timeline div
 							ev.height = 18;
 							borg.addBlock(ev, tick.serial);

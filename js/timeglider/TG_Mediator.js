@@ -115,7 +115,8 @@ Put this stuff into backbone collection of TimelineModel() instances
 					ev.startdateObj = startEnd.s; // TGDate.makeDateObject(ev.startdate);
 					ev.enddateObj = startEnd.e; // TGDate.makeDateObject(ev.enddate);
 					
-					ev.basicWidth = getStringWidth(ev.title) + 20;
+					// this gets the title width at 12px
+					ev.titleWidth = getStringWidth(ev.title) + 20;
 				
 					// microtimeline for collapsed view and other metrics
 					tdata.startSeconds.push(ev.startdateObj.sec);
@@ -144,6 +145,7 @@ Put this stuff into backbone collection of TimelineModel() instances
 				
 			}// end cycling through timeline's events
 			
+			// adding event secs to catalog of entire timeline
 			var allsec = $.merge(tdata.startSeconds,tdata.endSeconds);
 			var fl = getLowHigh(allsec);
 			/// bounds of timeline

@@ -288,17 +288,12 @@
 /* TEMP */
 .timeglider-timeline-event {
 	position:absolute;
-	overflow:hidden;
 	/* background-color:white; */
 	padding:0px;
 	font-size:11px;
 	cursor:pointer;
 }
 
-#evtitle {
-	width:auto;
-	color:#444;
-}
 
 #clps {
 	color:#AAA;
@@ -307,8 +302,24 @@
 	padding-left:18px;
 }
 
-#evicon {
-	padding-right:5px;
+.timeglider-event-icon {
+	margin-right:5px;
+	width:auto;
+	position:absolute;
+}
+
+.timeglider-event-spanner {
+  position:absolute;
+  background-color:#ccc;
+	height:15px;
+	position:absolute;
+	z-index:1;
+}
+.timeglider-event-title {
+	width:auto;
+	color:#444;
+	position:absolute;
+	z-index:5;
 }
 
 .evCollapsed {
@@ -341,6 +352,8 @@
 	color:#222;
 	font-size:12px;
 }
+
+
 
 .TimegliderEvModal .startdate {
 	font-size:10px;

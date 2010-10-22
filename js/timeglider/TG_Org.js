@@ -1,4 +1,9 @@
-
+/*
+* TG_Org
+* sub-constructor of TimegliderTimelineView
+*
+*
+*/
 
 	var TGOrg = function(args) {
 				this.blocks = [];
@@ -51,30 +56,38 @@
 					
 					this.blocks.sort(this.sortBlocksByImportance);
 					// cycle through them and move overlapping event
-					var positioned = [], blHeight, lastPos, padding = 6;
-					var html = '', b;
+					var positioned = [], blHeight, lastPos, padding = 6,
+					    span_selector_class, span_div, html = '', b;
 					// is this redundant with getHTML?:
+					
 					for (var i=0; i<this.blocks.length; i++) {
-						var b = this.blocks[i];
+						b = this.blocks[i];
 						
 						if (b.tickScope == tickScope) {
 						
-						this.checkAgainstLevel(b, 0);
+						this.checkAgainstLevel(b, 0); 
 
 						b.fontsize < 10 ? b.opacity = b.fontsize / 10 : b.opacity=1;
-					
-						html += "<div class='timeglider-timeline-event' id='ev_" + b.id + "' "
+						if (b.span == true) {
+						    span_selector_class = "timeglider-event-spanning";
+						    span_div = "<div class='timeglider-event-spanner' style='width:" + b.spanwidth + "px'></div>"
+						} else {
+						    span_selector_class = ""; 
+						    span_div = "";
+					  }
+												
+						html += "<div class='timeglider-timeline-event " + span_selector_class + "' id='ev_" + b.id + "' "
 						+ "style='width:" + b.width  + "px;"
 						+ "height:" + b.height + "px;"
 						+ "left:" + b.left  + "px;" 
 						+ "opacity:" + b.opacity + ";"
 						+ "top:" + b.top + "px;"
 						+ "font-size:" + b.fontsize  + "px;'>"
-						+ "<span id='evicon'><img src='img/test_icon.png' style='height:"
-						+ b.fontsize + "px; width:auto'></span>"
-						+ "<span id='evtitle'>" 
+						+ "<img class='timeglider-event-icon' src='img/test_icon.png' style='height:"
+						+ b.fontsize + "px;left:-" + (b.fontsize + 2) + "px'>" + span_div 
+						+ "<div class='timeglider-event-title'>" 
 						+ b.title
-						+ "</span></div>";
+						+ "</div></div>";
 					} // end tickScope check
 					}// end for()
 					
