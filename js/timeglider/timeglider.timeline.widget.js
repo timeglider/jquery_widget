@@ -13,10 +13,6 @@
 ;(function($){
 
 
-
-
-
-
 	// default options 
 	/// in a widget, would be "options"
 	/*
@@ -115,7 +111,6 @@
 		};
 
 
-	
 
   /* TODO Use this to set options defaults, too */ 
   var optionsMaster = { initial_focus:{type:"date"}, 

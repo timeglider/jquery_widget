@@ -1,4 +1,14 @@
 /*
+* Timeglider jQuery plugin Timeglider
+* jquery.timeglider.js
+* http://timeglider.com/jquery
+*
+* © 2010 Timeglider / Mnemograph LLC
+* Author: Michael Richardson
+* Licences are still to be determined : )
+*
+*/
+/*
 ****************************************
 TimegliderTimelineView
 ****************************************
@@ -265,9 +275,9 @@ TimegliderTimelineView.prototype = {
 
 	registerTitles : function () {
 		
-		var toff, w, tw, pos, titx;
-		
-		var mo = $(this._views.CONTAINER).offset().left;
+		var toff, w, tw, sw, pos, titx, 
+		  $elem, env, tb, ti, relPos, tbWidth,
+		  mo = $(this._views.CONTAINER).offset().left;
 		
 		/*
 		!!!TODO  inefficient, redundant
@@ -277,30 +287,36 @@ TimegliderTimelineView.prototype = {
 		// $(".timeglider-timeline-event").each(
 			// !TODO find out if it's a span
 			// use ba-cond or ba-iff
-		$(".timeglider-spanning-event").each(
+		$(".timeglider-event-spanning").each(
 			function() {
+			  // !TODO  needs optimizing of DOM "touching"
 			 	toff = $(this).offset().left - mo;
 				w = $(this).outerWidth();
-				tw = $("#evtitle",this).outerWidth() + 5;
-				// trace ("title width:" + tw);
-				if ((toff < 0) && (Math.abs(toff) < (w-tw))) {
-						$("#evtitle", this).css({marginLeft:(-1 * toff)+5});
-				} 
+				$elem = $(".timeglider-event-title",this);
+				tw = $elem.outerWidth() + 5;
+				sw = $elem.siblings(".timeglider-event-spanner").outerWidth();
+			  console.log("tw:" + tw + "...sw:" + sw);
+				if (sw > tw) {
+          if ((toff < 0) && (Math.abs(toff) < (w-tw))) {
+            $elem.css({marginLeft:(-1 * toff)+5});
+          } 
+			  }
 				
 				// is offscreen == false: $(this).removeClass('timeglider-event-offscreen')
 			 }
 		);
-		
+
 		$(".TGTimelineEnvelope").each(
 				function() {
-					var env = $(this).offset().left - mo;
-					var tb = $("#titleBar", this);
-					var ti = $("#titleBar #title", this);
+				  // !TODO  needs optimizing of DOM "touching"
+					env = $(this).offset().left - mo;
+					tb = $("#titleBar", this);
+					ti = $("#titleBar #title", this);
 					pos = tb.position().left;
-				 	var relPos = pos + env;
-					var tbWidth = tb.outerWidth();
+				 	relPos = pos + env;
+					tbWidth = tb.outerWidth();
 					
-					output ("relpos:" + relPos, "note");
+				// 	output ("relpos:" + relPos, "note");
 					tw = tb.outerWidth();
 					
 				   	titx = (-1 * relPos);
@@ -310,7 +326,8 @@ TimegliderTimelineView.prototype = {
 							ti.css({marginLeft:titx+5});
 						} 
 				 }
-		);
+		); 
+		
 	},
 	
 	

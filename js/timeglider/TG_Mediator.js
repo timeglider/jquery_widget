@@ -1,3 +1,14 @@
+/*
+* Timeglider jQuery plugin Timeglider
+* jquery.timeglider.js
+* http://timeglider.com/jquery
+*
+* © 2010 Timeglider / Mnemograph LLC
+* Author: Michael Richardson
+* Licences are still to be determined : )
+*
+*/
+
 /*******************************
 TIMELINE MEDIATOR
 handles timeline behavior, 
