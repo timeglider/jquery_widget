@@ -931,7 +931,7 @@ TimegliderTimelineView.prototype = {
   							 ev.spanwidth = 0;
   						}
   							
-							ev.top = ht - levHt; // 330; ///// TODO ==> add to timeline div
+							ev.top = ht - levHt; 
 							ev.height = 18;
 							borg.addBlock(ev, tick.serial);
 								

@@ -4,55 +4,69 @@
 *
 *
 */
-
-	var TGOrg = function(args) {
+var TGOrg = function(args) {
+				
 				this.blocks = [];
+				this.ids = [];
+				this.vis = [];
 				this.tree = [];
 				this.levelHeight = args.level_height;
-			}
-	
-	TGOrg.prototype = {
-			
-				freshTree : function () {
+		
+				this.freshTree = function () {
 					this.tree = [];
 					for (var a=0; a < 100; a++) {
 						// create 50 empty nested arrays for "quad tree"
 						this.tree[a] = [];
 					}
-				},
+				};
 				
 				/// TODO::: REMOVE BLOCK (i.e. to/from same arrangement);
 				///////////////////////
 					
 				// public method
 				/*
-				@param evob ==>  event object including position values
-				@param tickScope ==>  "sweep" or single tick serial (Number)
+				* @param evob ==>  event object including position values
+				* @param tickScope ==>  "sweep" or single tick serial (Number)
 				*/
-				addBlock : function (evob, tickScope) {
-					/// WILL INCLUDE TITLE, ID, CLASS
-					/// 
+				this.addBlock = function (evob, tickScope) {
+					
+					var brg = this;
+					
 					evob.right = evob.left + evob.width;
 					evob.bottom = evob.top + evob.height;
 					evob.tickScope = tickScope;
-					this.blocks.push(evob);
-				}, 
+					brg.blocks.push(evob);
+				  
+					/*
+					if ($.inArray(evob.id, this.ids) == -1) {
+					  brg.blocks.push(evob);
+					  brg.ids.push(evob.id);
+					  if (evob.id == 1416) {
+					    debug.log ("MINING STRIKE");
+				    }
+				  }
+				  */
+
+				}; 
 				
 				
-				getBorg : function () {
+				this.getBorg = function () {
 					return this;
-				},
+				};
 				
-				getBlocks : function () {
+				this.getBlocks = function () {
 					return this.blocks;
-				},
+				};
 				
 				/*
 				@param ==> serial would be to get just the new HTML for that tick
 				*/
-				getHTML : function (tickScope) {
+				this.getHTML = function (tickScope) {
 					
-					if (tickScope == "sweep") this.freshTree();
+					if (tickScope == "sweep") { 
+					  this.freshTree();
+					  this.vis = [];
+				  }
 					
 					this.blocks.sort(this.sortBlocksByImportance);
 					// cycle through them and move overlapping event
@@ -65,45 +79,50 @@
 						
 						if (b.tickScope == tickScope) {
 						
-						this.checkAgainstLevel(b, 0); 
+              if ($.inArray(b.id, this.vis) == -1) {
+                this.vis.push(b.id);
 
-						b.fontsize < 10 ? b.opacity = b.fontsize / 10 : b.opacity=1;
-						if (b.span == true) {
-						    span_selector_class = "timeglider-event-spanning";
-						    span_div = "<div class='timeglider-event-spanner' style='width:" + b.spanwidth + "px'></div>"
-						} else {
-						    span_selector_class = ""; 
-						    span_div = "";
-					  }
-												
-						html += "<div class='timeglider-timeline-event " + span_selector_class + "' id='ev_" + b.id + "' "
-						+ "style='width:" + b.width  + "px;"
-						+ "height:" + b.height + "px;"
-						+ "left:" + b.left  + "px;" 
-						+ "opacity:" + b.opacity + ";"
-						+ "top:" + b.top + "px;"
-						+ "font-size:" + b.fontsize  + "px;'>"
-						+ "<img class='timeglider-event-icon' src='img/test_icon.png' style='height:"
-						+ b.fontsize + "px;left:-" + (b.fontsize + 2) + "px'>" + span_div 
-						+ "<div class='timeglider-event-title'>" 
-						+ b.title
-						+ "</div></div>";
+                this.checkAgainstLevel(b, 0); 
+
+                b.fontsize < 10 ? b.opacity = b.fontsize / 10 : b.opacity=1;
+                if (b.span == true) {
+                  span_selector_class = "timeglider-event-spanning";
+                  span_div = "<div class='timeglider-event-spanner' style='width:" + b.spanwidth + "px'></div>"
+                } else {
+                  span_selector_class = ""; 
+                  span_div = "";
+                }
+
+                html += "<div class='timeglider-timeline-event " + span_selector_class + "' id='ev_" + b.id + "' "
+                + "style='width:" + b.width  + "px;"
+                + "height:" + b.height + "px;"
+                + "left:" + b.left  + "px;" 
+                + "opacity:" + b.opacity + ";"
+                + "top:" + b.top + "px;"
+                + "font-size:" + b.fontsize  + "px;'>"
+                + "<img class='timeglider-event-icon' src='img/test_icon.png' style='height:"
+                + b.fontsize + "px;left:-" + (b.fontsize + 2) + "px'>" + span_div 
+                + "<div class='timeglider-event-title'>" 
+                + b.title
+                + "</div></div>";
+
+                } // end check for visible... EXPENSIVE!!!!
 					} // end tickScope check
-					}// end for()
+					} // end for()
 					
 					return html;
-				},
+				};
 		
 		
-				sortBlocksByImportance : function (a, b) {
+				this.sortBlocksByImportance = function (a, b) {
 					    var x = b.importance, y = a.importance;
 						/// !TODO  
 						/// if either is missing or invalid,. return -1
 					    return ((x < y) ? -1 : ((x > y) ? 1 : 0));
-				},
+				};
 			
 			
-				is_overlapping : function (b1, b2) {
+				this.is_overlapping = function (b1, b2) {
 				
 					if ((b2.left > b1.right) || (b2.right < b1.left)) {
 					  // it's clear to left or right
@@ -134,9 +153,9 @@
 
 					return false;
 					
-				},
+				};
 				
-				checkAgainstLevel : function (block, l_index) {
+				this.checkAgainstLevel = function (block, l_index) {
 
 						var tree = this.tree;
 						var next_level = l_index + 1;
@@ -164,7 +183,7 @@
 							// ADD TO TREE OF PLACED EVENTS
 							tree[l_index].push(block);
 						}
-				},
+				};
 
-			}; // END TGOrg METHODS
+}; // END
 		
