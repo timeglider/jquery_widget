@@ -80,7 +80,7 @@
 		*/
 		
 		
-		function parseTableOfDates() {
+		function parseTimelineTable() {
 			var obj = {},
 			now = +new Date(),
 			keys = [];
@@ -179,7 +179,7 @@
       },
 	
       doSomething : function () {
-        console.log("this is the original constructor");
+        debug.log("this is the original constructor");
       }
 
 			

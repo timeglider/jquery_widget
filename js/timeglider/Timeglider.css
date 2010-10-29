@@ -4,8 +4,6 @@
 
 
 .timeglider-container {
-
-	height:450px;
 	
 	/* these will not change */
 	position:relative;
@@ -118,7 +116,6 @@
 	position:absolute;
 	/*border-right:1px dashed black;
 	border-left:1px dashed black;*/
-	top:390px;
 	height:30px;
 	font-size:11px;
 	color:#333;

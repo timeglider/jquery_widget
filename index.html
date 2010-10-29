@@ -8,6 +8,91 @@
 		<link rel="stylesheet" href="css/utils.css" type="text/css" media="screen" title="no title" charset="utf-8">
 		<link rel="stylesheet" href="js/timeglider/Timeglider.css" type="text/css" media="screen" title="no title" charset="utf-8">
 		<link rel="stylesheet" href="js/jquery-ui-1.8.5.custom/css/ui-lightness/jquery-ui-1.8.5.custom.css" type="text/css" media="screen" title="no title" charset="utf-8">
+        
+           <style>
+	
+  body { font-family:Arial;background-color:#FFF;margin:0px;padding:0px; }
+  
+
+	a {
+		cursor:pointer;
+		color:#CC3300;
+		text-decoration:none;
+	}
+	
+	h1 {
+		font-size:18px;
+		padding:0;
+		color:#ebb93b;
+	}
+	
+	h2 {
+		font-size:14px;
+		padding:0;
+		color:#ebb93b;
+		margin-bottom:0px;
+		margin-top:12px;
+	}
+	
+	
+	#header {
+		background-color:#FFF;
+		width:800px;
+		margin:4px auto 4px auto;
+	}
+	.message {
+		color:#444;
+		font-size:14px;
+		width:800px;
+		margin:24px auto 0 auto;
+	}
+
+	/* IMPLEMENTATION */
+	#placement {
+		width:800px;
+		height:450px;
+		margin-left:auto;
+		margin-right:auto;
+		margin-top:14px;
+		margin-bottom:14px;
+	}
+	
+	pre {
+		font-family:Monaco, Courier;
+		background-color:#F5F5F5;
+		color:#313543;
+		padding:12px;
+		font-size:12px;
+		border:1px solid #333;
+		color:#555;
+		margin:32px;
+	}
+	
+	.prehtml {
+		color:#003399;
+		font-size:14px;
+	}
+	
+	.prejs {
+		color:#CC3300;
+		font-size:14px;
+	}
+	
+	.controls { clear:both;margin-top:12px; display:none; }
+	.controls table {
+		width:100%;
+		border-collapse:collapse;
+	}
+
+	.controls table td {
+		border:1px dotted #666;
+		background-color:#F3F3F3;color:#444;
+		padding:4px;
+		font-size:11px;
+	}
+  
+  </style>
+  
 		
 		
 	<!-- 3rd party libs -->
@@ -23,6 +108,9 @@
 	<!-- QUNIT! -->
 	<link rel="stylesheet" href="js/testing/qunit.css" type="text/css" media="screen" title="no title" charset="utf-8">
 	<script src="js/testing/qunit.js" type="text/javascript" charset="utf-8"></script>
+	
+	<script src="js/ba-debug.min.js" type="text/javascript" charset="utf-8"></script>
+  
 		
 	<!-- TIMEGLIDER -->
     <script src="js/timeglider/TG_Coordinizer.js" type="text/javascript" charset="utf-8"></script>
@@ -40,26 +128,61 @@
 		
   </head>
 <body>
+<div id='header'>
+<img src='img/pres_header.jpg'>
+</div>
 
 
 <div id='placement'></div>
 
-<div class='controls'>
-  <table>
-    <tr><td id='zoomlevel' width='33%'>...</td><td id='tickwidth' width='33%'>tw</td><td id='focusdate'>...</td></tr>
-    <tr><td id='tickpos'></td><td colspan='2' id='note'>...</td></tr>
-  </table>
-</div>
 
 
-<div id='trace_box'>
-<div id='trace_head'>trace
-<div id='trace_x' onclick='trace("x")'>x</div>
-<div id='trace_clear' onclick='trace("c")'>clear</div>
-</div>
-<div id='trace_content'>
-...</div>
-</div>
+<div class='message'>
+	<h1>The Timeglider jQuery Plugin</h1>
+	<p>
+	This is a prototype of a <a href='http://jquery.com' target='_blank'>jQuery</a> plugin for Timeglider. It's still got lots of scaffolding, is fairly buggy &mdash; but you get the idea of what's possible. <a target="_blank" href="http://timeglider.com/app/viewer.php?uid=idaho">You can see our current (Flash-based) system here.</a> Still to come in this jQuery version: event spans, legends, timezones, images, and more.
+	This currently seems to work on all Mac browsers, IE8, and Windows Firefox. More extensive browser testing to come. as well as updating to new jQuery/jQuery UI</p>
+	<p>Some goals:
+	<ul>
+		<li>images and image albums presented as events</li>
+		<li>color settings for event spans</li>
+		<li>multiple options for modal windows</li>
+		<li>multiple file links, i.e. with audio, video etc.</li>
+		<li>interpreting existing HTML as a simple alternative to JSON</li>
+		<li>importers for event-oriented APIs</li>
+        <li>full gesture actions on ipads and other larger mobile devices</li>
+	</ul>
+		
+    <h2>The code</h2>
+    <p>For developers/designers, the jQuery code will be very simple:
+<pre>
+&lt;!-- html: --&gt;
+   <span class='prehtml'>&lt;div id='placement'&gt;&lt;/div&gt;</span>
+    
+&lt;!-- js: --&gt;<span class='prejs'>
+   $(document).ready(function () { 
+
+      var tg1 = $("#placement").timeglider({
+         "max_zoom":60, 
+         "backgroundColor":"#F3F3F3", 
+         "initial_timeline_id": "jshist",
+         "data_source":"json_tests/js_history.json"
+     });
+   });
+    </span>
+</pre>
+    Using CSS, one can style/size the "placement" div, also. The jQuery setup (starting with the dollar sign)  indicates some of the initial settings; there will also be public methods so that the reference (in this case "tg1" can use methods like "zoomTo()" or "gotoDate()", etc.  Data sources will use either JSON or XML; eventually we'll provide a way to take an HTML table of dates/events/etc, and transform it into a viewer instance. 
+    </p>
+    
+	<p>The general plan is to offer this plugin as a free and open-source resource, but for sites publishing at high volume, and/or where it is used as part of a commercial enterprise, a commercial license will apply. The ultimate goal is to have a thriving ecosystem module, context, and other code development.</p>
+    
+	<p>There are many possibilities. I'm sharing this early iteration with the jQuery Conference in Boston this coming weekend and will be seeking javascript developers to contribute to the open source project (which will be at Github). Please let me know if you're interested in contributing, or if you have any thoughts
+    <br>
+<br>
+ Michael Richardson<br>Boise, ID<br>
+michael@timeglider.com</p>
+	</div>
+
 
 
 <!-- end visible -->

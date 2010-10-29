@@ -15,9 +15,10 @@ TimegliderTimelineView
 */
 function TimegliderTimelineView (widget, mediator) {
 	
-	var options = widget.options;
-	var PL = "#" + widget._id;
-
+	var options = widget.options,
+	    PL = "#" + widget._id,
+	    pl_ht = $(PL).height();
+	    	      
 	this._views = {
 		PLACE:PL,
 		CONTAINER : PL + " .timeglider-container", 
@@ -30,7 +31,9 @@ function TimegliderTimelineView (widget, mediator) {
 		CENTERLINE : PL + " .timeglider-centerline", 
 		TICKS : PL + " .timeglider-ticks", 
 		HANDLE : PL + " .timeglider-handle"
-	}
+		}
+	
+	$(this._views.CONTAINER).css("height", pl_ht);
 	
 	me = this,
 	M = this.M = mediator,
@@ -44,7 +47,7 @@ function TimegliderTimelineView (widget, mediator) {
 	M.setZoomLevel(options.initial_zoom);
 	
 	this.dragSpeed = 0;
-	this.dimensions = this.getTimelineDimensions();
+	this.dimensions = this.getWidgetDimensions();
 	this.tickNum = 0;
 	this.leftside = 0;
 	this.rightside = 0;
@@ -99,15 +102,15 @@ function TimegliderTimelineView (widget, mediator) {
 		
 	// TURN TO FUNCTION centerline show/hide
 	if (options.show_centerline === true) {
-		$(this._views.CENTERLINE).css({"height":me.dimensions.height, "left": me.dimensions.centerx});
+		$(this._views.CENTERLINE).css({"height":me.dimensions.container.height, "left": me.dimensions.container.centerx});
 	} else {
 		$(this._views.CENTERLINE).css({"display":"none"});
 	}	
 																					
 	$(this._views.TRUCK)
 		.dblclick(function(e) {
-			 	Cw = me.dimensions.width;
-				var Cx = e.pageX - (me.dimensions.offset.left);
+			 	Cw = me.dimensions.container.width;
+				var Cx = e.pageX - (me.dimensions.container.offset.left);
 				var offMid = Cx - Cw/2;
 				var secPerPx = M.getZoomInfo().spp;
 				// don't need mouse_y yet :
@@ -295,7 +298,6 @@ TimegliderTimelineView.prototype = {
 				$elem = $(".timeglider-event-title",this);
 				tw = $elem.outerWidth() + 5;
 				sw = $elem.siblings(".timeglider-event-spanner").outerWidth();
-			  console.log("tw:" + tw + "...sw:" + sw);
 				if (sw > tw) {
           if ((toff < 0) && (Math.abs(toff) < (w-tw))) {
             $elem.css({marginLeft:(-1 * toff)+5});
@@ -422,8 +424,8 @@ TimegliderTimelineView.prototype = {
 			fDate = M.getFocusDate(),
 			tickWidth = M.getZoomInfo().width,
 			twTotal = 0,
-			ctr = this.dimensions.centerx,
-			nTicks = Math.ceil(this.dimensions.width / tickWidth) + 4,
+			ctr = this.dimensions.container.centerx,
+			nTicks = Math.ceil(this.dimensions.container.width / tickWidth) + 4,
 			leftright = 'l';
 	
 		this.clearTicks();
@@ -458,7 +460,12 @@ TimegliderTimelineView.prototype = {
 			$tickDiv = {}, tInfo = {}, pack = {}, label = {}, mInfo = {}, 
 			tickUnit = M.getZoomInfo().unit,
 			tickWidth = M.getZoomInfo().width,
-			focusDate = M.getFocusDate();
+			focusDate = M.getFocusDate(),
+			// !TODO 60 below needs to reflect bottom minus footer, minus tick height
+			// somehow get CSS rules right away
+			tick_top = parseInt(this.dimensions.tick.top),
+			me = this;
+			debug.log("tick top:" + tick_top);
 		
 			serial = M.addToTicksArray({type:info.type, unit:tickUnit}, focusDate);
 						
@@ -476,7 +483,7 @@ TimegliderTimelineView.prototype = {
 		if (info.type == "init") {
 			
 		   	var shiftLeft = this.tickOffsetFromDate(M.getZoomInfo(), M.getFocusDate(), tickWidth);
-			pos = Math.ceil(this.dimensions.centerx + shiftLeft);
+			pos = Math.ceil(this.dimensions.container.centerx + shiftLeft);
 			this.leftside = pos;
 			this.rightside = (pos + tickWidth);
 			
@@ -496,11 +503,13 @@ TimegliderTimelineView.prototype = {
 		
 		tid = this._views.PLACE + "_" + tickUnit + "_" + serial + "-" + this.tickNum;
 
-		$tickDiv= $("<div class='timeglider-tick' id='" + tid + "'><div class='TGDateLabel' id='label'></div></div>").appendTo(this._views.TICKS);
+		$tickDiv= $("<div class='timeglider-tick' id='" + tid + "'><div class='TGDateLabel' id='label'></div></div>")
+		  .appendTo(this._views.TICKS);
+		
 		
 		// $(this._views.TICKS).append(tickHtml);
 
-		$tickDiv.css({width:tickWidth, left:pos});
+		$tickDiv.css({width:tickWidth, left:pos, top:tick_top});
 						
 		// GET TICK DIVS FOR unit AND width
 		tInfo = this.getTickMarksInfo({unit:tickUnit, width:tickWidth});
@@ -582,7 +591,7 @@ TimegliderTimelineView.prototype = {
 	tickHangies : function () {
 		var tPos = $(this._views.TICKS).position().left;
 		var lHangie = this.leftside + tPos;
-		var rHangie = this.rightside + tPos - this.dimensions.width;
+		var rHangie = this.rightside + tPos - this.dimensions.container.width;
 		// output("HANGIES left:" + lHangie + " / right:" + (rHangie));
 		var tick, added = false;
 		var me = this;
@@ -597,21 +606,23 @@ TimegliderTimelineView.prototype = {
 	},
 	
 
-	getTimelineDimensions : function () {
-	
-			console.log(this._views.foo2);
-		
-			var container = $(this._views.CONTAINER),
-				w = container.width(),
-				wc = Math.floor(w / 2) + 1,
-				h = container.height(),
-				hc = Math.floor(h/2);
-					console.log("container:" + container.attr("id"));
-					
-				var lft = container.position().left,
-				offset = container.offset();
+	getWidgetDimensions : function () {
 			
-			return {"width":w, "height":h, "centerx":wc, "centery":hc, "left": lft, "offset": offset};
+			var c = $(this._views.CONTAINER),
+				w = c.width(),
+				wc = Math.floor(w / 2) + 1,
+				h = c.height(),
+				hc = Math.floor(h/2);
+					
+				var lft = c.position().left,
+				offset = c.offset();
+			
+			var container = {"width":w, "height":h, "centerx":wc, "centery":hc, "left": lft, "offset": offset};
+			var footer = {"height":$(this._views.CONTAINER + " .timeglider-footer").height()};
+			var tick = {"top":h - footer.height - 30};
+			
+			return {container:container, tick:tick, footer:footer}
+		
 	},
 
 																				//---( VIEW
@@ -752,7 +763,7 @@ TimegliderTimelineView.prototype = {
 			evid, ev, $ev, impq,
 			stuff = '', 
 			posx = 0,
-			cx = me.dimensions.centerx,
+			cx = me.dimensions.container.centerx,
 			foSec = M.getFocusDate().sec,
 			spp = M.getZoomInfo().spp,
 			zl = M.getZoomInfo().level,
@@ -860,7 +871,7 @@ TimegliderTimelineView.prototype = {
 
 			var M = this.M;
 			var active = M._activeTimelines; 
-			var cx = this.dimensions.centerx;
+			var cx = this.dimensions.container.centerx;
 			var tl, ev, posx, expCol, ht, borg, stuff, impq, ids,
 				foSec = M._startSec, 
 				spp = M.getZoomInfo().spp,
