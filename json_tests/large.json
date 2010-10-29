@@ -2,8 +2,8 @@
 {
     "id": "idahoTimeline",
     "title": "History of Idaho",
-    "focus_date": "1891-02-20 2:00:00",
-    "initial_zoom": "42",
+    "focus_date": "1863-02-29 2:00:00",
+    "initial_zoom": "39",
 	"color": "#82530d",
     "events":
     [

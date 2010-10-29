@@ -45,7 +45,7 @@ function TimegliderMediator () {
 	this.gesturing = false;
 	this.gestureStartZoom = 0;
 	
-	this.eventPool = [], 
+	this.eventPool = [],
   this.timelinePool = {};
   
 		
@@ -99,6 +99,7 @@ Put this stuff into backbone collection of TimelineModel() instances
 			var units = TGDate.units; 
 				tdata.startSeconds = [];
 				tdata.endSeconds = [];
+				tdata.spans = [];
 		
 				// TODO: VALIDATE COLOR, centralize default color(options?)
 				if (!tdata.color) { tdata.color="#333333"; }
@@ -134,7 +135,12 @@ Put this stuff into backbone collection of TimelineModel() instances
 					tdata.endSeconds.push(ev.enddateObj.sec);
 					
 					// time span?
-					ev.span = (ev.enddateObj.sec > ev.startdateObj.sec) ? true : false;
+					if (ev.enddateObj.sec > ev.startdateObj.sec) {
+					  ev.span =true;
+					  tdata.spans.push({id:ev.id, start:ev.startdateObj.sec, end:ev.enddateObj.sec})
+					} else {
+					  ev.span = false;
+					}
 					//// !! TODO VALIDATE DATE respecting startdate, too
 					var uxl=units.length;
 					for (var ux=0; ux < uxl; ux++) {
@@ -147,7 +153,6 @@ Put this stuff into backbone collection of TimelineModel() instances
 							// create the array
 							dhash[unit][ser] = [id];
 						}
-						// trace ("unit:" + unit + "...ser:" + ser);
 					///////////////////////////////
 					} 
 				
@@ -254,7 +259,7 @@ Put this stuff into backbone collection of TimelineModel() instances
 		
 		output("z:" + this._zoomLevel + " / " + this._zoomInfo.label, "zoomlevel");
 		
-		// end min/max check
+		  // end min/max check
      	} else { return false; }
 
 	}, 
@@ -294,14 +299,14 @@ Put this stuff into backbone collection of TimelineModel() instances
 	},
 	
 	/*
-		@param obj -----  
-			serial: #initial tick
-			type:init|l|r
-			unit:ye|mo|da|etc
-			width: #px
-			left: #px
-		@param focusDate ----
-			used for initial tick; others set off init
+	*	@param obj -----  
+	*		serial: #initial tick
+	*		type:init|l|r
+	*		unit:ye | mo | da | etc
+	*		width: #px
+	*		left: #px
+	*	@param focusDate ----
+	*		used for initial tick; others set off init
 	*/
 	addToTicksArray : function (obj, focusDate) {
 		
@@ -318,6 +323,7 @@ Put this stuff into backbone collection of TimelineModel() instances
 			obj.serial = this._ticksArray[this._ticksArray.length -1].serial + 1;
 			this._ticksArray.push(obj);
 		}
+		
 		
 		this.ticksArrayChange.broadcast();
 		

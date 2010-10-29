@@ -158,7 +158,7 @@ function TimegliderTimelineView (widget, mediator) {
 				me.resetTicksHandle();
 				me.easeOutTicks();
 				me.registerDragging(); // one final time, plus more if easing...
-				widget.doSomething();
+				// TESTING widget.doSomething();
 			}
 		}) // end draggable
 		.delegate(".timeglider-timeline-event", "click", function () { 
@@ -191,7 +191,6 @@ function TimegliderTimelineView (widget, mediator) {
 	! The only view method that responds directly to a model refresh()
 	*/
 	M.refreshSignal.tuneIn(function () {
-		// trace ("z: " + M.zoomLevel + "...fd: " + TGDate.formatFocusDate(M.focusDate));
 		me.castTicks();
 	});
 	
@@ -323,7 +322,6 @@ TimegliderTimelineView.prototype = {
 					
 				   	titx = (-1 * relPos);
 					
-					// trace ("title width:" + tw);
 				 	if ( (relPos < 0) ) {
 							ti.css({marginLeft:titx+5});
 						} 
@@ -464,9 +462,7 @@ TimegliderTimelineView.prototype = {
 			// !TODO 60 below needs to reflect bottom minus footer, minus tick height
 			// somehow get CSS rules right away
 			tick_top = parseInt(this.dimensions.tick.top),
-			me = this;
-			debug.log("tick top:" + tick_top);
-		
+			me = this,	
 			serial = M.addToTicksArray({type:info.type, unit:tickUnit}, focusDate);
 						
 		// adjust tick-width for months (mo)
@@ -645,7 +641,6 @@ TimegliderTimelineView.prototype = {
 			case "mo":
 				var mdn = TGDate.getMonthDays(fdate.mo, fdate.ye);
 			   
-				// trace ("offset width:" + tickwidth + "...mdn:" + mdn);
 				prop = ((fdate.da -1) / mdn) + (fdate.ho / (24 * mdn)) + (fdate.mi / (1440 * mdn));
 				p = w * prop;
 				break;
@@ -724,13 +719,12 @@ TimegliderTimelineView.prototype = {
 	@return   array of event ids 
 	*/
 	getTimelineEventsByTick: function (obj) {
-		var M = this.M;
-		var car = [];
-		var i, evid, ev;
-		var unit = obj.tick.unit;
-		var serial = obj.tick.serial;
-		var hash = obj.timeline.dateHash;
-
+	  
+		var unit = obj.tick.unit,
+		  serial = obj.tick.serial,
+		  hash = obj.timeline.dateHash,
+		  spans = obj.timeline.spans;
+		  	
 		if (hash[unit][serial] && hash[unit][serial].length > 0) {
 			return hash[unit][serial];
 		} else {
@@ -764,12 +758,20 @@ TimegliderTimelineView.prototype = {
 			stuff = '', 
 			posx = 0,
 			cx = me.dimensions.container.centerx,
+			cw = me.dimensions.container.width,
 			foSec = M.getFocusDate().sec,
 			spp = M.getZoomInfo().spp,
 			zl = M.getZoomInfo().level,
-			idArr,
+			tArr = [],
+			idArr = [],
 			levHt = 24,
-			buffer = 18;
+			buffer = 18,
+			// left and right scope
+			half = Math.floor(spp * (cw/2)),
+			lsec = foSec - half,
+			rsec = foSec + half,
+			spanin,
+			spanins = [];
 			
 		//////////////////////////////////////////
 		// different kind of loop here for array?
@@ -801,52 +803,66 @@ TimegliderTimelineView.prototype = {
 			$(".TGTimelineEnvelope#" + tl.id + " #titleBar #clps").click(function () { 
 					me.expandCollapseTimeline(tl.id );
 			} );
-		 
+
 			$title = $tl.children("#titleBar");
 			t_f = cx + ((tl.bounds.first - foSec) / spp);
 			t_l = cx + ((tl.bounds.last - foSec) / spp);
 			$title.css({"top":ht, "left":t_f, "width":(t_l-t_f)});
 
-			/// @ FULL DISPLAY
+			/// for full display, setup new borg for organizing events
 			if (expCol == "expanded") { borg = new TGOrg({level_height:levHt}); }
-	
-			//cycle through ticks for all events
+ 
+			//cycle through ticks for hashed events
 			for (var tx=0; tx<ticks.length; tx++) {
-				
-				idArr = this.getTimelineEventsByTick({tick:ticks[tx], timeline:tl});
-
-					for (i=0; i<idArr.length; i++) {
-
-							// both collapsed and expanded
-							ev = M.eventPool["ev_" + idArr[i]];
-							posx = cx + ((ev.startdateObj.sec - foSec) / spp);
-							impq = (ev.importance / zl);
-							
-						if (expCol == "expanded") {
-							ev.width = (ev.titleWidth * impq) + buffer;
-							if (ev.span == true) {
-							  ev.spanwidth = (ev.enddateObj.sec - ev.startdateObj.sec) / spp;
-							  if (ev.spanwidth > ev.width) { ev.width = ev.spanwidth; }
-							}	else {
-							  ev.spanwidth = 0;
-							}					
-							ev.fontsize = basicFontSize * impq;
-							// !TODO isolate these into position object
-							ev.left = posx; // will remain constant
-							// !TODO --- ACCURATE WIDTH BASELINE FROM chewTimeline()
-							ev.top = ht - levHt; // 330; ///// TODO ==> add to timeline div
-							ev.height = 18;
-							borg.addBlock(ev, "sweep");
-							// no stuff yet...
-					  } else if (expCol == "collapsed") {
-							stuff += "<div id='ev_" + ev.id + 
-							"' class='evCollapsed' style='top:" + 
-							(ht-2) + "px;left:" +
-							posx + "px'></div>";
-					  }
-	
-					}	
+				tArr = this.getTimelineEventsByTick({tick:ticks[tx], timeline:tl});
+		    $.merge(idArr, tArr);	
 			}
+			
+			// detect if there are boundless spans (bridging, no start/end points)
+      for (var sp1=0; sp1<tl.spans.length; sp1++) {
+			  spanin = tl.spans[sp1];;
+			  if (spanin.start < lsec && spanin.end > lsec) {
+			    //not already in array
+			    if ($.inArray(spanin.id, idArr) == -1) {
+			      idArr.unshift(spanin.id);
+			      debug.log("SPANIN!! @ " + spanin.id);
+		      }
+		    }
+		  }
+	
+			for (i=0; i<idArr.length; i++) {
+
+					// both collapsed and expanded
+					ev = M.eventPool["ev_" + idArr[i]];
+					posx = cx + ((ev.startdateObj.sec - foSec) / spp);
+					impq = (ev.importance / zl);
+					
+				if (expCol == "expanded") {
+					ev.width = (ev.titleWidth * impq) + buffer;
+					if (ev.span == true) {
+					  ev.spanwidth = (ev.enddateObj.sec - ev.startdateObj.sec) / spp;
+					  if (ev.spanwidth > ev.width) { ev.width = ev.spanwidth; }
+					}	else {
+					  ev.spanwidth = 0;
+					}					
+					ev.fontsize = basicFontSize * impq;
+					// !TODO isolate these into position object
+					ev.left = posx; // will remain constant
+					// !TODO --- ACCURATE WIDTH BASELINE FROM chewTimeline()
+					ev.top = ht - levHt; // 330; ///// TODO ==> add to timeline div
+					ev.height = 18;
+					borg.addBlock(ev, "sweep");
+					// no stuff yet...
+					
+			  } else if (expCol == "collapsed") {
+					stuff += "<div id='ev_" + ev.id + 
+					"' class='evCollapsed' style='top:" + 
+					(ht-2) + "px;left:" +
+					posx + "px'></div>";
+			  }
+
+			}
+			
 			// ev.blocks....
 			
 			// expanded only
@@ -930,7 +946,6 @@ TimegliderTimelineView.prototype = {
 						// borg it if it's expanded.
 						if (expCol == "expanded"){ 
 							tl.borg = borg.getBorg();
-							trace ("tl.borg.length:" + tl.borg.blocks.length);
 							stuff = borg.getHTML(tick.serial);
 						}
 			
@@ -948,7 +963,6 @@ TimegliderTimelineView.prototype = {
 		} else {
 			tl.display = "expanded";
 		}
-		trace ("tl.state:" + tl.display);
 		
 		this.M.refresh();
 	},
