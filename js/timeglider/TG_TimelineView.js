@@ -312,8 +312,8 @@ TimegliderTimelineView.prototype = {
 				function() {
 				  // !TODO  needs optimizing of DOM "touching"
 					env = $(this).offset().left - mo;
-					tb = $("#titleBar", this);
-					ti = $("#titleBar #title", this);
+					tb = $(".titleBar", this);
+					ti = $(".titleBar .timeline-title", this);
 					pos = tb.position().left;
 				 	relPos = pos + env;
 					tbWidth = tb.outerWidth();
@@ -742,6 +742,7 @@ TimegliderTimelineView.prototype = {
 	
 	
 	/*
+	ADDING EVENTS!
 	invoked upon a fresh sweep of entire container, having added a set of ticks
 		--- occurs on expand/collapse
 		--- ticks are created afresh
@@ -773,27 +774,27 @@ TimegliderTimelineView.prototype = {
 			lsec = foSec - half,
 			rsec = foSec + half,
 			spanin,
-			spanins = [];
+			spanins = [],
+			expCol, tlTop=0,
+			cht = me.dimensions.container.height;
 			
 		//////////////////////////////////////////
-		// different kind of loop here for array?
 		for (var a=0; a<active.length; a++) {
 
-			// FOR EACH TIMELINE...
+			// FOR EACH _ACTIVE_ TIMELINE...
 			tl = M.timelinePool[active[a]];
 			
-			var expCol = tl.display;
-			var tlTop = (tl.top || 0);
+			expCol = tl.display;
+		  tlTop = (tl.top || (cht-80));
 			
-			$(this._views.TICKS).append("<div class='TGTimelineEnvelope' id='" + tl.id
-				+ "'><div id='titleBar'><div id='title'>"
-			 	+ tl.title + " <span id='clps'>expand/collapse</span></div></div></div>");
+			$tl = $("<div class='TGTimelineEnvelope' id='" + tl.id
+				+ "'><div class='titleBar'><div class='timeline-title'>"
+			 	+ tl.title + " <span id='clps'>expand/collapse</span></div></div></div>")
+			 	.appendTo(this._views.TICKS);
 			
-	  		$tl = $(".TGTimelineEnvelope#" + tl.id);
-			$tl	
-				.draggable({
+			$tl.draggable({
 				axis:"y",
-				handle:"#titleBar", 
+				handle:".titleBar", 
 				stop: function () {
 					me.setTimelineProp(tl.id,"top", $(this).css("top"));	
 				}
@@ -802,11 +803,11 @@ TimegliderTimelineView.prototype = {
 				
 			ht = $tl.height();
 			
-			$(".TGTimelineEnvelope#" + tl.id + " #titleBar #clps").click(function () { 
+			$(".TGTimelineEnvelope#" + tl.id + " .titleBar #clps").click(function () { 
 					me.expandCollapseTimeline(tl.id );
 			} );
 
-			$title = $tl.children("#titleBar");
+			$title = $tl.children(".titleBar");
 			t_f = cx + ((tl.bounds.first - foSec) / spp);
 			t_l = cx + ((tl.bounds.last - foSec) / spp);
 			$title.css({"top":ht, "left":t_f, "width":(t_l-t_f)});
@@ -873,6 +874,17 @@ TimegliderTimelineView.prototype = {
 				tl.borg = borg.getBorg();
 			}
 			if (stuff != "undefined") { $tl.append(stuff); }
+			
+			$(".timeglider-event-thumb").each(
+			    function () {
+			      $(this).position({
+			        		my: "top",
+          				at: "bottom",
+          				of: $tl,
+          				offset: "0, 0"
+		        }).css("left", 0);
+		      }
+	      );
 			
 		}// end for each timeline
 		
@@ -986,11 +998,13 @@ TimegliderTimelineView.prototype = {
 		var me = this,
 		  $par = $("#" + eid),
 		  ev = M.eventPool[eid],
+		  ev_img = ev.image ? "<img src='" + ev.image + "'>" : "",
+		  
 		  html = "<div class='TimegliderEvModal ui-widget-content shadow' id='" + eid + "_modal'>" 
 			+ "<div class='closeBt'><img src='img/close.png'></div>" 
 			+ "<div class='startdate'>" + ev.startdate + "</div>"
 			+ "<h4 id='title'>" + ev.title + "</h4>"
-			+ "<p>" + ev.description + "</p>"
+			+ "<p>" + ev_img + ev.description + "</p>"
 			+ "<ul class='TimegliderModalLink'><li><a target='_blank' href='" + ev.link + "'>link</a></li></ul>"
 			+ "</div>",
 			$modal = $(html)

@@ -71,7 +71,7 @@ var TGOrg = function(args) {
 					this.blocks.sort(this.sortBlocksByImportance);
 					// cycle through them and move overlapping event
 					var positioned = [], blHeight, lastPos, padding = 6,
-					    span_selector_class, span_div, html = '', b;
+					    span_selector_class, span_div, img = "", html = '', b;
 					// is this redundant with getHTML?:
 					
 					for (var i=0; i<this.blocks.length; i++) {
@@ -92,7 +92,13 @@ var TGOrg = function(args) {
                   span_selector_class = ""; 
                   span_div = "";
                 }
-
+                
+                if (b.image) {
+                  img = "<div class='timeglider-event-thumb' style='top:-28px'><img src='" + b.image + "'></div>";
+                } else {
+                  img = "";
+                }
+                
                 html += "<div class='timeglider-timeline-event " + span_selector_class + "' id='ev_" + b.id + "' "
                 + "style='width:" + b.width  + "px;"
                 + "height:" + b.height + "px;"
@@ -101,7 +107,7 @@ var TGOrg = function(args) {
                 + "top:" + b.top + "px;"
                 + "font-size:" + b.fontsize  + "px;'>"
                 + "<img class='timeglider-event-icon' src='img/test_icon.png' style='height:"
-                + b.fontsize + "px;left:-" + (b.fontsize + 2) + "px'>" + span_div 
+                + b.fontsize + "px;left:-" + (b.fontsize + 2) + "px'>" + img + span_div 
                 + "<div class='timeglider-event-title'>" 
                 + b.title
                 + "</div></div>";

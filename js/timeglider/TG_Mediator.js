@@ -196,7 +196,6 @@ Put this stuff into backbone collection of TimelineModel() instances
 		var me = this;
 		var tid = this.initial_timeline_id;
 		if (tid) {
-			this.timelinePool[tid].top = 200;
 			setTimeout(function () { 
 					me.toggleTimeline(tid);
 					}, 500);
