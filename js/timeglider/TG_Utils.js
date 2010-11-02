@@ -50,6 +50,77 @@ $(document).ready(function () {
 		$("#trace_box").draggable({handle:"#trace_head"});					
 });
 
+
+// default options 
+/// in a widget, would be "options"
+/*
+	function validateOptions(stgs) {	
+		var ret = true,
+			optionsTypes = optionsMaster;
+			// final return message: good/true if empty
+			msg = "",
+			lb = "\n";
+		
+		$.each(stgs, function(key, value) { 
+			
+			if (optionsTypes[key]) {
+				//trace ("key:" + key + ", type:" + optionsTypes[key].type);
+				switch (optionsTypes[key].type) {
+					case "string": 
+						if (typeof value != "string") msg += (key + " needs to be a string." + lb);
+						if (optionsTypes[key].possible) {
+							if ($.inArray(value, optionsTypes[key].possible) == -1) {
+								msg += (key + " must be: " + optionsTypes[key].possible.join(" or "));
+							}
+						}
+					break;
+					
+					case "number":
+						if (typeof value != "number") msg += (value + " needs to be a number." + lb);
+						if (optionsTypes[key].min) {
+							if (value < optionsTypes[key].min) {
+								msg += (key + " must be greater than " + optionsTypes[key].min + lb);
+							}
+						}
+						
+						if (optionsTypes[key].max) {
+							if (value > optionsTypes[key].max) {
+								msg += (key + " must be less than " + optionsTypes[key].max + lb);
+							}
+						}
+					break;
+					
+					case "date":
+						// TODO validate a date string using TG_Date...
+					break;
+					
+					case "boolean":
+						if (typeof value != "boolean") msg += (value + " needs to be a number." + lb);
+					break;
+					
+					case "url":
+						// TODO test for pattern for url....
+					break;
+					
+					case "color":
+						/// TODO test for pattern for color, including "red", "orange", etc
+					break;
+					
+					default: trace ("is there a default for validating options?");
+					
+				}
+			}
+		});
+		
+		return msg;
+		
+	};
+	*/
+	
+
+
+
+
 /*
  * jQuery touch and gesture detection.
  * 

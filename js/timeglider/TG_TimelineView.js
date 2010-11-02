@@ -55,6 +55,7 @@ function TimegliderTimelineView (widget, mediator) {
 	this.timeoout_id = 1;
 	this.sliderActive = false;
 	this.timelineMenuOpen = false;
+	this.zztop = 1000;
 	
 		// INITIAL CONSTRUCTION
 		this.buildSlider();
@@ -499,7 +500,8 @@ TimegliderTimelineView.prototype = {
 		
 		tid = this._views.PLACE + "_" + tickUnit + "_" + serial + "-" + this.tickNum;
 
-		$tickDiv= $("<div class='timeglider-tick' id='" + tid + "'><div class='TGDateLabel' id='label'></div></div>")
+		$tickDiv= $("<div class='timeglider-tick' id='" + tid + "'>"
+		            + "<div class='timeglider-tick-label' id='label'></div></div>")
 		  .appendTo(this._views.TICKS);
 		
 		
@@ -966,24 +968,75 @@ TimegliderTimelineView.prototype = {
 		
 		this.M.refresh();
 	},
-	
+	/*
+	$( ".positionable" ).position({
+  				of: $( "#parent" ),
+  				my: $( "#my_horizontal" ).val() + " " + $( "#my_vertical" ).val(),
+  				at: $( "#at_horizontal" ).val() + " " + $( "#at_vertical" ).val(),
+  				offset: $( "#offset" ).val(),
+  				using: using,
+  				collision: $( "#collision_horizontal" ).val() + ' ' + $( "#collision_vertical" ).val()
+  			});
+  
+  */
+  
 	eventModal : function (eid) {
 		// get position
-		var pos = $("#" + eid).position();
-		output("top:" + pos.top, "note");
-		var ev = M.eventPool[eid];
-		
-		var html = "<div class='TimegliderEvModal shadow roundedSmall' id='" + eid + "_modal' "
-			+ "style='position:absolute;left:" + pos.left + "px;top:" + (pos.top + 40) + "px'>" 
-			+ "<div class='closeBt' id='closer'><img src='img/close.png'></div>" 
+		$("#" + eid + "_modal").remove();
+		var me = this,
+		  $par = $("#" + eid),
+		  ev = M.eventPool[eid],
+		  html = "<div class='TimegliderEvModal ui-widget-content shadow' id='" + eid + "_modal'>" 
+			+ "<div class='closeBt'><img src='img/close.png'></div>" 
 			+ "<div class='startdate'>" + ev.startdate + "</div>"
 			+ "<h4 id='title'>" + ev.title + "</h4>"
 			+ "<p>" + ev.description + "</p>"
-			+ "<div id='link'><a target='_blank' href='" + ev.link + "'>link</a></div>"
-			+ "</div>";
+			+ "<ul class='TimegliderModalLink'><li><a target='_blank' href='" + ev.link + "'>link</a></li></ul>"
+			+ "</div>",
+			$modal = $(html)
+			  .appendTo(this._views.TICKS)
+			  .position({
+      				my: "left bottom",
+      				at: "left top",
+      				of: $par,
+      				offset: "0, -12", // left, top
+      				collision: "flip fit"
+      			})
+      	.css("z-index", me.zztop++);
+  
+	},
+	
+	parseHTMLTable : function(table_id) {
+		var obj = {},
+		now = +new Date(),
+		keys = [];
+
+		$('#' + table_id).find('tr').each(function(i){
+			////////// each..
+			var children = $(this).children(),
+			row_obj;
+
+			if ( i === 0 ) {
+				keys = children.map(function(){
+					return $(this).attr( 'class' ).replace( /^.*?\btg-(\S+)\b.*?$/, '$1' );
+					}).get();
+
+				} else {
+					row_obj = {};
+
+					children.each(function(i){
+						row_obj[ keys[i] ] = $(this).text();
+					});
+
+					obj[ 'prefix' + now++ ] = row_obj;
+				}
+				/////////
+			});
+			return obj;
 			
-		$(this._views.TICKS).append(html);
-		
 	}
+
+
+  
 
 }; // end VIEW METHODS

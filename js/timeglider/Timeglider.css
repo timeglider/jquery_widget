@@ -63,44 +63,45 @@
 	display:inline;
 }
 
+/* Correction on aristo ui css */
+.ui-slider-vertical .ui-slider-handle { 
+    left:0;margin-left: -.6em; margin-bottom: -.6em; 
+    }
 
 .timeglider-slider-container {
-  	width:32px;
+  width:32px;
+  padding-left:16px;
 	position:absolute;
+	height:auto;
+	background-color:#fff;
+	z-index:100000;
 	top:0px;
 	right:0px;
-	height:188px;
-	background-color:#DDD;
-	border-bottom:1px solid #555;
-	border-left:1px solid #555;
 	padding-top:8px;
+	-moz-border-radius: 4px; -webkit-border-radius: 4px; border-radius: 4px;
+	border:1px solid #ccc;
   }
 
 .timeglider-slider {
+	/*
 	float:right;
 	width:32px;
 	clear:right;
 	border:none;
 	background-color:none;
-	/*overflow:hidden;*/
+	*/
   }
   
 .timeglider-centerline {
   	border-left:1px dashed #000;
-	position:absolute;
+	  position:absolute;
 }
   
   
 .timeglider-truck {
    position:relative;
 }
-   
-   .TGDateLabel {
-   		position:absolute;
-		top:4px;
-		left:4px;
-		color:#000;
-	}
+ 
   
 .timeglider-ticks {
 	top:0px;
@@ -110,17 +111,23 @@
   
  .timeglider-tick {
   	/* defaults on arrival in ticks */
-	
-	background-color:#555;
-	background-repeat:repeat-x;
 	position:absolute;
 	/*border-right:1px dashed black;
 	border-left:1px dashed black;*/
 	height:30px;
 	font-size:11px;
-	color:#333;
-	opacity:.8;
-	
+	background-color:#CCC;
+	background-image:url("../../img/dotted.png");
+	background-repeat:no-repeat;
+}
+
+.timeglider-tick-label {
+  text-shadow: 0px 1px 0px rgba(255,255,255,0.7);
+ 	color:#333;
+ 	position:absolute;
+  top:4px;
+  left:4px;
+  font-weight:bold;
  }
   
 .timeglider-handle {
@@ -329,13 +336,13 @@
 
 
 .TimegliderEvModal {
-	-moz-border-radius:7px;
+	-moz-border-radius:5px;
 	border-radius:7px;
 	background:#FFF;
 	border:1px solid #333;
 	width:250px;
 	padding:8px;
-	
+	height:auto;
 }
 .TimegliderEvModal p {
 	font-size:11px;
@@ -349,19 +356,21 @@
 	color:#222;
 	font-size:12px;
 }
-
-
-
 .TimegliderEvModal .startdate {
 	font-size:10px;
 	color:#666;
 }
-.TimegliderEvModal #link {
-	float:right;
+ul.TimegliderModalLink {
+	list-style:none;
+	margin:0;
+	padding:0;
 }
-.TimegliderEvModal #link a {
+ul.TimegliderModalLink li {
 	font-size:10px;
-	color:#374b99;
+	display:inline;
+}
+ul.TimegliderModalLink li a {
+  color:#374b99;
 }
 	
 
