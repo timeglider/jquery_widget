@@ -979,7 +979,7 @@ tg.TimegliderTimelineView.prototype = {
 	
 	
 	expandCollapseTimeline : function (id) {
-		var tl = M.timelinePool[id];
+		var tl = this.M.timelinePool[id];
 		if (tl.display == "expanded") {
 			tl.display = "collapsed";
 		} else {
