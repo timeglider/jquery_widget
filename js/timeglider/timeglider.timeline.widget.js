@@ -34,7 +34,8 @@
     $.widget( "timeglider.timeline", {
 
 	    _tg: this,
-
+      _element: this.element,
+      
       options : { 
         initial_focus:getToday(), 
         editor:'none', 
@@ -47,15 +48,12 @@
         mouse_wheel: "zoom", 
         initial_timeline_id:'' 
       },
-	
-	
+
       _create : function () {
         // if a table exists, convert table data... and store it as one timeline...
 
         this._id = $(this.element).attr("id"); 
-
         var MAIN_TEMPLATE = "<div class='timeglider-container'><div class='timeglider-centerline'></div><div class='timeglider-truck'><div class='timeglider-ticks'><div class='timeglider-handle'></div></div></div><div class='timeglider-slider-container'><div class='timeglider-slider'></div></div><div class='timeglider-timeline-menu'><div class='timeglider-timeline-menu-handle'>timelines >></div><h3>timelines</h3><ul></ul></div> <div class='timeglider-footer'>Timeglider / Mnemograph LLC</div></div><span id='TimegliderMeasureSpan'></span>";
-
         this.element.html(MAIN_TEMPLATE);
 		
 	    },
@@ -63,10 +61,10 @@
 	
 	    _init : function () {
 	
-        timelineMediator = new TimegliderMediator();
-        timelineMediator.setFocusDate(TGDate.makeDateObject(this.options.initial_focus));
+        var timelineMediator = new timeglider.TimegliderMediator();
+        timelineMediator.setFocusDate(timeglider.TGDate.makeDateObject(this.options.initial_focus));
 
-        var timelineView = new TimegliderTimelineView(this, timelineMediator);
+        var timelineView = new timeglider.TimegliderTimelineView(this, timelineMediator);
 
         // load timelines
         timelineMediator.loadTimelineData(this.options.data_source);

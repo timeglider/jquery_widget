@@ -1,14 +1,15 @@
 /*
-Temporary "placeholder" class for eventual chosen
-lightweight event handling framework --- i.e. backbone.js
+wicked simple pub-sub
 */
 
-var Signal = function (sender) {
+(function(tg){
+  
+tg.Signal = function (sender) {
 	this._sender = sender;        // SINGLE SENDER
 	this._listeners = [];		  // MULTIPLE LISTENERS
 };
 
-Signal.prototype = {
+tg.Signal.prototype = {
 	tuneIn : function (listener) {
 		this._listeners.push(listener);
 	},
@@ -18,4 +19,5 @@ Signal.prototype = {
 		}
 	}
 }; 
-/* END OF Signal CLASS */
+
+})(timeglider);

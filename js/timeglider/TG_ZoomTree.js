@@ -1,13 +1,24 @@
 /*
-there's no zoom level of 0, so we create an empty element there
 
-This could eventually be a more flexible system so that a 1-100 
-value-scale could apply not to "5 hours to 10 billion years", but 
-rather to 1 month to 10 years. For now, it's static according to 
-a "universal" system.
-
+    INITIAL DECLARATION OF "timeglider" CONSTRUCTOR HERE
+    
 */
-var zoomTree = [
+
+var timeglider = function () {};
+
+
+/*
+      zoomTree
+      ****************
+      there's no zoom level of 0, so we create an empty element @ 0
+
+      This could eventually be a more flexible system so that a 1-100 
+      value-scale could apply not to "5 hours to 10 billion years", but 
+      rather to 1 month to 10 years. For now, it's static according to 
+      a "universal" system.
+*/
+  
+timeglider.zoomTree = [
 {},
 {unit:"da", width:35000,level:1, label:"5 hours"},
 {unit:"da", width:17600,level:2, label:"7 hours"},
@@ -114,35 +125,31 @@ var zoomTree = [
 {unit:"bill", width:76,  level:100, label:"100 billion years"}
 ];
 
-/* HELPERS */
-function calculateSecPerPx () {
-			//var d1 = +new Date();
-			
-			for (var z=1; z<zoomTree.length; z++) {
-				var zl = zoomTree[z];
-				var sec = 0;
-				switch(zl.unit) {
-					case "da": sec =   86400; break;
-					case "mo": sec =   2419200; break; // assumes only 28 days per 
-					case "ye": sec =   31536000; break;
-					case "de": sec =   315360000; break;
-					case "ce": sec =   3153600000; break;
-					case "thou": sec =    3153600000; break;
-					case "tenthou": sec = 31536000000; break;
-					case "hundredthou": sec = 315360000000; break;
-					case "mill": sec = 3153600000000; break;
-					case "tenmill": sec = 290304000000000; break;
-					case "hundredmill": sec = 2903040000000000; break;
-					case "bill": sec =29030400000000000; break;
-				}
-				// pixels
-				zl.spp = sec / parseInt(zl.width);
-				// trace ("level " + z + " unit:" + zl.unit.substr(0,2) + " sec:" + Math.floor(zl.spp));
+
+timeglider.calculateSecPerPx = function (zt) {
+  	for (var z=1; z<zt.length; z++) {
+			var zl = zt[z];
+			var sec = 0;
+			switch(zl.unit) {
+				case "da": sec =   86400; break;
+				case "mo": sec =   2419200; break; // assumes only 28 days per 
+				case "ye": sec =   31536000; break;
+				case "de": sec =   315360000; break;
+				case "ce": sec =   3153600000; break;
+				case "thou": sec =    3153600000; break;
+				case "tenthou": sec = 31536000000; break;
+				case "hundredthou": sec = 315360000000; break;
+				case "mill": sec = 3153600000000; break;
+				case "tenmill": sec = 290304000000000; break;
+				case "hundredmill": sec = 2903040000000000; break;
+				case "bill": sec =29030400000000000; break;
 			}
-			
+			// pixels
+			zl.spp = sec / parseInt(zl.width);
+			// trace ("level " + z + " unit:" + zl.unit.substr(0,2) + " sec:" + Math.floor(zl.spp));
 		}
 
+// call it right away to establish values
+}(timeglider.zoomTree);
 
-calculateSecPerPx ();
-		
 		

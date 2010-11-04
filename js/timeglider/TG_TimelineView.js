@@ -13,11 +13,17 @@
 TimegliderTimelineView
 ****************************************
 */
-function TimegliderTimelineView (widget, mediator) {
-	
+(function(tg){
+
+  var TGDate = tg.TGDate;
+
+  tg.TimegliderTimelineView = function (widget, mediator) {
+
 	var options = widget.options,
 	    PL = "#" + widget._id,
-	    pl_ht = $(PL).height();
+	    pl_ht = $(PL).height(),
+	    me = this,
+    	M = this.M = mediator;
 	    	      
 	this._views = {
 		PLACE:PL,
@@ -34,10 +40,9 @@ function TimegliderTimelineView (widget, mediator) {
 		}
 	
 	$(this._views.CONTAINER).css("height", pl_ht);
-	
-	me = this,
-	M = this.M = mediator,
-    basicFontSize = options.basic_fontsize;
+	this.basicFontSize = options.basic_fontsize;
+
+
 
 	// !!TODO validate these range/relation etc
 	// move all to model?
@@ -48,6 +53,7 @@ function TimegliderTimelineView (widget, mediator) {
 	
 	this.dragSpeed = 0;
 	this.dimensions = this.getWidgetDimensions();
+	
 	this.tickNum = 0;
 	this.leftside = 0;
 	this.rightside = 0;
@@ -57,10 +63,9 @@ function TimegliderTimelineView (widget, mediator) {
 	this.timelineMenuOpen = false;
 	this.zztop = 1000;
 	
-		// INITIAL CONSTRUCTION
-		this.buildSlider();
-		
-		this.castTicks();
+	// INITIAL CONSTRUCTION
+	this.buildSlider();
+	this.castTicks();
 	
 	
 	// listen for focus date change
@@ -76,12 +81,14 @@ function TimegliderTimelineView (widget, mediator) {
 		me.registerDragging();
 	});
 	
+	
 	// not doing anything with this yet: necessary?
 	M.ticksArrayChange.tuneIn(function () {
 		/*
 		SCAN OVER TICKS FOR ANY REASON?
 		*/
 	});
+
 
 	M.zoomLevelChange.tuneIn(function () {
 		me.tickNum = 0;
@@ -100,7 +107,7 @@ function TimegliderTimelineView (widget, mediator) {
 		} 
 	});
 
-		
+	
 	// TURN TO FUNCTION centerline show/hide
 	if (options.show_centerline === true) {
 		$(this._views.CENTERLINE).css({"height":me.dimensions.container.height, "left": me.dimensions.container.centerx});
@@ -132,7 +139,6 @@ function TimegliderTimelineView (widget, mediator) {
 			});
 
 	
-		
 	$(this._views.TICKS)
 	  	.draggable({ axis: 'x',
 			//start: function(event, ui) {
@@ -183,7 +189,6 @@ function TimegliderTimelineView (widget, mediator) {
 	$(".TimegliderEvModal .closeBt").live("click", function () {
 		$(this).parent().remove();	
 	});
-	
 		
 
 	/*
@@ -234,6 +239,10 @@ function TimegliderTimelineView (widget, mediator) {
 	});
 	
 	
+	
+	
+	
+	
 	//// GESTURES  ////
 	/* !!TODO    Still a FAIL ---- 
 	   When actually doing something, Safari seems to 
@@ -269,14 +278,34 @@ function TimegliderTimelineView (widget, mediator) {
 			truck.addEventListener ('gestureend', gestureEnd, false);
 	}
 	*/
+	
+} 
 
-} // end VIEW declarations/actions
 
-
-/* VIEW METHODS */
-TimegliderTimelineView.prototype = {
-
-	registerTitles : function () {
+tg.TimegliderTimelineView.prototype = {
+	
+	getWidgetDimensions : function () {
+			debug.log("getWidg...");
+			
+			var c = $(this._views.CONTAINER),
+				w = c.width(),
+				wc = Math.floor(w / 2) + 1,
+				h = c.height(),
+				hc = Math.floor(h/2);
+					
+				var lft = c.position().left,
+				offset = c.offset();
+			
+			var container = {"width":w, "height":h, "centerx":wc, "centery":hc, "left": lft, "offset": offset};
+			var footer = {"height":$(this._views.CONTAINER + " .timeglider-footer").height()};
+			var tick = {"top":h - footer.height - 30};
+			
+			return {container:container, tick:tick, footer:footer}
+		  
+	},
+	
+	
+  registerTitles : function () {
 		
 		var toff, w, tw, sw, pos, titx, 
 		  $elem, env, tb, ti, relPos, tbWidth,
@@ -285,11 +314,7 @@ TimegliderTimelineView.prototype = {
 		/*
 		!!!TODO  inefficient, redundant
 		should target only spanning events, not all events...
-		FILTER!!!!
 		*/
-		// $(".timeglider-timeline-event").each(
-			// !TODO find out if it's a span
-			// use ba-cond or ba-iff
 		$(".timeglider-event-spanning").each(
 			function() {
 			  // !TODO  needs optimizing of DOM "touching"
@@ -309,7 +334,7 @@ TimegliderTimelineView.prototype = {
 		);
 
 		$(".TGTimelineEnvelope").each(
-				function() {
+				function () {
 				  // !TODO  needs optimizing of DOM "touching"
 					env = $(this).offset().left - mo;
 					tb = $(".titleBar", this);
@@ -318,24 +343,24 @@ TimegliderTimelineView.prototype = {
 				 	relPos = pos + env;
 					tbWidth = tb.outerWidth();
 					
-				// 	output ("relpos:" + relPos, "note");
+				  // 	output ("relpos:" + relPos, "note");
 					tw = tb.outerWidth();
 					
-				   	titx = (-1 * relPos);
+				  titx = (-1 * relPos);
 					
 				 	if ( (relPos < 0) ) {
-							ti.css({marginLeft:titx+5});
-						} 
-				 }
+						ti.css({marginLeft:titx+5});
+					} 
+				}
 		); 
 		
 	},
 	
 	
 	registerDragging : function () {
-	    /* 
+	  /* 
 			startSec --> the seconds-value of the
-	        initial focus date on landing @ zoom level
+	    initial focus date on landing @ zoom level
 		*/
 		
 		var M = this.M;
@@ -355,9 +380,9 @@ TimegliderTimelineView.prototype = {
 	
 	/* 
 		Zoom slider is inverted value-wise from the normal jQuery UI slider
-	   	so we need to feed in and take out inverse values with invSliderVal()            
+	  so we need to feed in and take out inverse values with invSliderVal()            
 	*/
-	buildSlider: function () {
+	buildSlider : function () {
 		var M = this.M;
 		
 		var init_zoom = invSliderVal(M.getZoomLevel());
@@ -413,11 +438,12 @@ TimegliderTimelineView.prototype = {
 	},
 
 
-	/* The initial drawing of a full set of ticks, starting in the 
-	   middle with a single, date-focused div with type:"init", after which
-	   a left-right alternating loop fills out the width of the current frame
+	/* 
+	  The initial drawing of a full set of ticks, starting in the 
+	  middle with a single, date-focused div with type:"init", after which
+	  a left-right alternating loop fills out the width of the current frame
 	*/
-	castTicks: function () {
+	castTicks : function () {
 		var M = this.M;
 		var zLevel = M.getZoomLevel(),
 			fDate = M.getFocusDate(),
@@ -445,7 +471,8 @@ TimegliderTimelineView.prototype = {
 		
 		M.setTicksReady(true);
 	},
-	
+  
+  
 	
 	/*
 	@param info   ----> type: init|l|r
@@ -604,25 +631,6 @@ TimegliderTimelineView.prototype = {
 	},
 	
 
-	getWidgetDimensions : function () {
-			
-			var c = $(this._views.CONTAINER),
-				w = c.width(),
-				wc = Math.floor(w / 2) + 1,
-				h = c.height(),
-				hc = Math.floor(h/2);
-					
-				var lft = c.position().left,
-				offset = c.offset();
-			
-			var container = {"width":w, "height":h, "centerx":wc, "centery":hc, "left": lft, "offset": offset};
-			var footer = {"height":$(this._views.CONTAINER + " .timeglider-footer").height()};
-			var tick = {"top":h - footer.height - 30};
-			
-			return {container:container, tick:tick, footer:footer}
-		
-	},
-
 																				//---( VIEW
 	/* tickUnit, fd */
 	tickOffsetFromDate : function (zoominfo, fdate, tickwidth) {
@@ -682,7 +690,7 @@ TimegliderTimelineView.prototype = {
 	},
 	
 	
-	resetTicksHandle : function () {
+  resetTicksHandle : function () {
 		$(this._views.HANDLE).offset({"left":$(this._views.CONTAINER).offset().left});
 	},
 	
@@ -720,7 +728,7 @@ TimegliderTimelineView.prototype = {
 	@param    obj with { tick  |  timeline }
 	@return   array of event ids 
 	*/
-	getTimelineEventsByTick: function (obj) {
+	getTimelineEventsByTick : function (obj) {
 	  
 		var unit = obj.tick.unit,
 		  serial = obj.tick.serial,
@@ -736,7 +744,7 @@ TimegliderTimelineView.prototype = {
 	
 	
 	setTimelineProp : function (id, prop, value) {
-		var tl = M.timelinePool[id];
+		var tl = this.M.timelinePool[id];
 		tl[prop] = value;	
 	},
 	
@@ -813,7 +821,7 @@ TimegliderTimelineView.prototype = {
 			$title.css({"top":ht, "left":t_f, "width":(t_l-t_f)});
 
 			/// for full display, setup new borg for organizing events
-			if (expCol == "expanded") { borg = new TGOrg({level_height:levHt}); }
+			if (expCol == "expanded") { borg = new timeglider.TGOrg({level_height:levHt}); }
  
 			//cycle through ticks for hashed events
 			for (var tx=0; tx<ticks.length; tx++) {
@@ -848,7 +856,7 @@ TimegliderTimelineView.prototype = {
 					}	else {
 					  ev.spanwidth = 0;
 					}					
-					ev.fontsize = basicFontSize * impq;
+					ev.fontsize = this.basicFontSize * impq;
 					// !TODO isolate these into position object
 					ev.left = posx; // will remain constant
 					// !TODO --- ACCURATE WIDTH BASELINE FROM chewTimeline()
@@ -936,7 +944,7 @@ TimegliderTimelineView.prototype = {
 							ev.left = posx; // will remain constant
 							// !TODO --- ACCURATE WIDTH BASELINE FROM chewTimeline()
 							impq = (ev.importance / zl);
-							ev.fontsize = basicFontSize * impq;
+							ev.fontsize = this.basicFontSize * impq;
 							ev.width = (ev.titleWidth * impq) + buffer;
 							if (ev.span == true) {
   							ev.spanwidth = (ev.enddateObj.sec - ev.startdateObj.sec) / spp;
@@ -967,7 +975,7 @@ TimegliderTimelineView.prototype = {
 						
 			} // end for in active timelines
 					
-	}, // ends appendTimelines()
+	}, // end appendTimelines()
 	
 	
 	expandCollapseTimeline : function (id) {
@@ -980,24 +988,14 @@ TimegliderTimelineView.prototype = {
 		
 		this.M.refresh();
 	},
-	/*
-	$( ".positionable" ).position({
-  				of: $( "#parent" ),
-  				my: $( "#my_horizontal" ).val() + " " + $( "#my_vertical" ).val(),
-  				at: $( "#at_horizontal" ).val() + " " + $( "#at_vertical" ).val(),
-  				offset: $( "#offset" ).val(),
-  				using: using,
-  				collision: $( "#collision_horizontal" ).val() + ' ' + $( "#collision_vertical" ).val()
-  			});
-  
-  */
+	
   
 	eventModal : function (eid) {
 		// get position
 		$("#" + eid + "_modal").remove();
 		var me = this,
 		  $par = $("#" + eid),
-		  ev = M.eventPool[eid],
+		  ev = this.M.eventPool[eid],
 		  ev_img = ev.image ? "<img src='" + ev.image + "'>" : "",
 		  
 		  html = "<div class='TimegliderEvModal ui-widget-content shadow' id='" + eid + "_modal'>" 
@@ -1050,7 +1048,7 @@ TimegliderTimelineView.prototype = {
 			
 	}
 
+} // end VIEW prototype
 
-  
 
-}; // end VIEW METHODS
+})(timeglider);
