@@ -9,12 +9,11 @@
 *
 */
 
-
-;(function($){
-
-
+(function($){
+  
+  debug.log("widget file...");
   /* TODO Use this to set options defaults, too */ 
-  var optionsMaster = { initial_focus:{type:"date"}, 
+    var optionsMaster = { initial_focus:{type:"date"}, 
 		editor:{type:"string"}, 
 		backgroundColor:{type:"color"}, 
 		backgroundImage:{type:"color"}, 
@@ -30,9 +29,10 @@
 
     function getToday() { var d = new Date(); return d.format('c'); }
 
-
+    debug.log("widget function.....");
+      
     $.widget( "timeglider.timeline", {
-
+      
 	    _tg: this,
       _element: this.element,
       
@@ -63,12 +63,10 @@
 	
         var timelineMediator = new timeglider.TimegliderMediator();
         timelineMediator.setFocusDate(timeglider.TGDate.makeDateObject(this.options.initial_focus));
-
         var timelineView = new timeglider.TimegliderTimelineView(this, timelineMediator);
 
         // load timelines
         timelineMediator.loadTimelineData(this.options.data_source);
-
         timelineView.toggleMenu();
 
 	    },
@@ -77,6 +75,7 @@
         // !TODO
       },
 	
+      
       doSomething : function () {
         debug.log("this is the original constructor");
       }

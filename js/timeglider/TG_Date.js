@@ -1,4 +1,12 @@
-// JavaScript Document
+/*
+
+    INITIAL DECLARATION OF "timeglider" CONSTRUCTOR HERE
+    
+*/
+
+var timeglider = function () {};
+
+
 
 timeglider.TGDate = {
 	

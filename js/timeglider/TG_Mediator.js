@@ -132,7 +132,7 @@ TODO ==> re-chew function for renewing stuff like startSeconds, etc
           ev.enddateObj = startEnd.e; // TGDate.makeDateObject(ev.enddate);
 
           // this gets the title width at 12px
-          ev.titleWidth = getStringWidth(ev.title) + 20;
+          ev.titleWidth = tg.getStringWidth(ev.title) + 20;
 
           // microtimeline for collapsed view and other metrics
           tdata.startSeconds.push(ev.startdateObj.sec);
@@ -167,7 +167,7 @@ TODO ==> re-chew function for renewing stuff like startSeconds, etc
 
           // adding event secs to catalog of entire timeline
           var allsec = $.merge(tdata.startSeconds,tdata.endSeconds);
-          var fl = getLowHigh(allsec);
+          var fl = timeglider.getLowHigh(allsec);
           /// bounds of timeline
           tdata.bounds = {"first": fl.low, "last":fl.high };
 

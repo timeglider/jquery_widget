@@ -10,50 +10,48 @@
 */
 /*
 ****************************************
-TimegliderTimelineView
+timeglider.TimegliderTimelineView
 ****************************************
 */
 (function(tg){
 
-  var TGDate = tg.TGDate;
+var TGDate = tg.TGDate, MED;
 
-  tg.TimegliderTimelineView = function (widget, mediator) {
+tg.TimegliderTimelineView = function (widget, mediator) {
 
 	var options = widget.options,
 	    PL = "#" + widget._id,
 	    pl_ht = $(PL).height(),
-	    me = this,
-    	M = this.M = mediator;
+	    me = this;
+  
+  MED = mediator;
 	    	      
 	this._views = {
-		PLACE:PL,
-		CONTAINER : PL + " .timeglider-container", 
-		MENU : PL + " .timeglider-timeline-menu", 
-		MENU_UL : PL + " .timeglider-timeline-menu ul", 
-		MENU_HANDLE : PL + " .timeglider-timeline-menu-handle", 
-		SLIDER_CONTAINER : PL + " .timeglider-slider-container", 
-		SLIDER : PL + " .timeglider-slider", 
-		TRUCK : PL + " .timeglider-truck", 
-		CENTERLINE : PL + " .timeglider-centerline", 
-		TICKS : PL + " .timeglider-ticks", 
-		HANDLE : PL + " .timeglider-handle"
-		}
+    		PLACE:PL,
+    		CONTAINER : PL + " .timeglider-container", 
+    		MENU : PL + " .timeglider-timeline-menu", 
+    		MENU_UL : PL + " .timeglider-timeline-menu ul", 
+    		MENU_HANDLE : PL + " .timeglider-timeline-menu-handle", 
+    		SLIDER_CONTAINER : PL + " .timeglider-slider-container", 
+    		SLIDER : PL + " .timeglider-slider", 
+    		TRUCK : PL + " .timeglider-truck", 
+    		CENTERLINE : PL + " .timeglider-centerline", 
+    		TICKS : PL + " .timeglider-ticks", 
+    		HANDLE : PL + " .timeglider-handle"
+	}
 	
 	$(this._views.CONTAINER).css("height", pl_ht);
 	this.basicFontSize = options.basic_fontsize;
 
-
-
-	// !!TODO validate these range/relation etc
+	// !!TODO validate range/relation of min/max
 	// move all to model?
-	M.max_zoom = options.max_zoom;
-	M.min_zoom = options.min_zoom;
-	M.initial_timeline_id = options.initial_timeline_id;
-	M.setZoomLevel(options.initial_zoom);
+	MED.max_zoom = options.max_zoom;
+	MED.min_zoom = options.min_zoom;
+	MED.initial_timeline_id = options.initial_timeline_id;
+	MED.setZoomLevel(options.initial_zoom);
 	
 	this.dragSpeed = 0;
 	this.dimensions = this.getWidgetDimensions();
-	
 	this.tickNum = 0;
 	this.leftside = 0;
 	this.rightside = 0;
@@ -61,82 +59,121 @@ TimegliderTimelineView
 	this.timeoout_id = 1;
 	this.sliderActive = false;
 	this.timelineMenuOpen = false;
-	this.zztop = 1000;
+	this.ztop = 1000;
 	
 	// INITIAL CONSTRUCTION
 	this.buildSlider();
 	this.castTicks();
-	
-	
-	// listen for focus date change
-	// mainly ?? if date is zipped to...
-	M.focusDateChange.tuneIn(function () {
-		// 
-	});
-	
+
+
 	/// listen for ticks movement, i.e. dragging
-	M.ticksOffsetChange.tuneIn(function () {
+	MED.ticksOffsetChange.tuneIn(function () {
 		me.tickHangies();
 		me.registerTitles();
 		me.registerDragging();
 	});
 	
 	
-	// not doing anything with this yet: necessary?
-	M.ticksArrayChange.tuneIn(function () {
-		/*
-		SCAN OVER TICKS FOR ANY REASON?
-		*/
-	});
-
-
-	M.zoomLevelChange.tuneIn(function () {
+	MED.zoomLevelChange.tuneIn(function () {
 		me.tickNum = 0;
 		me.leftside = 0;
 		me.castTicks();
-		// if the slider isn't already at the given value change it?
-		$(me._views.SLIDER).slider("value", invSliderVal(M.getZoomLevel()));
+		// if the slider isn't already at the given value change it
+		$(me._views.SLIDER).slider("value", tg.invSliderVal(MED.getZoomLevel()));
 	});
 	
 	/// This happens on a TOTAL REFRESH of 
 	/// ticks, as when zooming; panning will load
 	/// events of active timelines per tick	
-	M.ticksReadySignal.tuneIn(function (b) {
-		if (M.getTicksReady() === true) {
+	MED.ticksReadySignal.tuneIn(function (b) {
+		if (MED.getTicksReady() === true) {
 			me.freshTimelines();
 		} 
 	});
-
 	
-	// TURN TO FUNCTION centerline show/hide
-	if (options.show_centerline === true) {
-		$(this._views.CENTERLINE).css({"height":me.dimensions.container.height, "left": me.dimensions.container.centerx});
-	} else {
-		$(this._views.CENTERLINE).css({"display":"none"});
-	}	
-																					
+	
+	/*
+	Renews the timeline at current focus/zoom, but with
+	possibly different timeline/legend/etc parameters
+	! The only view method that responds directly to a model refresh()
+	*/
+	MED.refreshSignal.tuneIn(function () {
+		me.castTicks();
+	});
+	
+
+	// DORMANT: necessary?
+	MED.ticksArrayChange.tuneIn(function () {
+		/*
+		SCAN OVER TICKS FOR ANY REASON?
+		*/
+	});
+	
+	
+	// listen for focus date change
+	// I.E. if date is zipped to rather than dragged
+	MED.focusDateChange.tuneIn(function () {
+		// 
+	});
+	
+	
+	/* UPDATE TIMELINES MENU */
+	MED.timelineListChangeSignal.tuneIn( function (arg) {
+		
+		var id, ta = MED.timelinePool;
+	  $(me._views.MENU_UL + " li").remove();
+  	for (id in ta) {
+  			if (ta.hasOwnProperty(id)) {
+    			var t = ta[id];
+    			$(me._views.MENU_UL).append("<li class='timelineList' id='" + id + "'>" + t.title + "</li>");
+    			$("li#" + id).click( function() { 
+    			    MED.toggleTimeline($(this).attr("id"));
+    			    });
+  			} // end filter
+  	}
+	
+	});
+	
+
+	MED.activeTimelinesChange.tuneIn( function () {
+		
+		$(me._views.MENU_UL + " li").each(function () {
+				var id = $(this).attr("id");
+			    if ($.inArray(id, MED._activeTimelines) != -1) {
+					$(this).addClass("activeTimeline");
+				} else { 
+					$(this).removeClass("activeTimeline");	
+				}	
+        }); // end each	
+
+	}); // end tune in
+	
+
+																		
 	$(this._views.TRUCK)
 		.dblclick(function(e) {
-			 	Cw = me.dimensions.container.width;
-				var Cx = e.pageX - (me.dimensions.container.offset.left);
-				var offMid = Cx - Cw/2;
-				var secPerPx = M.getZoomInfo().spp;
-				// don't need mouse_y yet :
-				//	var Cy = e.pageY - $(PLACEMENT).offset().top;
-				var fdSec = M.getFocusDate().sec;
-				var dcSec = Math.floor(fdSec + (offMid * secPerPx));
-				var clk = TGDate.getDateFromSec(dcSec);
-				var foc = TGDate.getDateFromSec(fdSec);
+			 	var Cw = me.dimensions.container.width,
+			    Cx = e.pageX - (me.dimensions.container.offset.left),
+				  offMid = Cx - Cw/2,
+			    secPerPx = MED.getZoomInfo().spp,
+				  // don't need mouse_y yet :
+				  //	var Cy = e.pageY - $(PLACEMENT).offset().top;
+			    fdSec = MED.getFocusDate().sec,
+				  dcSec = Math.floor(fdSec + (offMid * secPerPx)),
+				  clk = TGDate.getDateFromSec(dcSec),
+				  foc = TGDate.getDateFromSec(fdSec);
 				
 				output("DBLCLICK:" + foc.mo + "-" + foc.ye + " dblclick:" + clk.mo + "-" + clk.ye, "note");	
-			})			
+		})			
 		.bind('mousewheel', function(event, delta) {
 						output("hello mousewheel?", "note");
 			            var dir = Math.ceil(-1 * (delta * 3));
-						var zl = M.getZoomLevel();
-						M.setZoomLevel(zl += dir);
+						var zl = MED.getZoomLevel();
+						MED.setZoomLevel(zl += dir);
 			            return false;
-			});
+			            
+		}); // end TRUCK EVENTS
+
 
 	
 	$(this._views.TICKS)
@@ -146,9 +183,9 @@ TimegliderTimelineView
 			//},
 			drag: function(event, ui) {
 				// just report movement to model...
-				M.setTicksOffset($(this).position().left);
+				MED.setTicksOffset($(this).position().left);
 				
-				// M.updateState();
+				// MED.updateState();
 				// 
 				// var updateState = function() {
 				//   this.garbageCollect(
@@ -176,12 +213,12 @@ TimegliderTimelineView
 		})	
 		.delegate(".timeglider-timeline-event", "hover", function () { 
 			var eid = $(this).attr("id"); 
-			var title = M.eventPool[eid].title;
+			var title = MED.eventPool[eid].title;
 			output("hover, title:" + title, "note"); 
 		})
 		.delegate(".evCollapsed", "hover", function () { 
 			var eid = $(this).attr("id"); 
-			var title = M.eventPool[eid].title;
+			var title = MED.eventPool[eid].title;
 			output("collapsed, title:" + title, "note"); 
 		});
 	
@@ -191,47 +228,7 @@ TimegliderTimelineView
 	});
 		
 
-	/*
-	Renews the timeline at current focus/zoom, but with
-	possibly different timeline/legend/etc parameters
-	! The only view method that responds directly to a model refresh()
-	*/
-	M.refreshSignal.tuneIn(function () {
-		me.castTicks();
-	});
-	
-	/* UPDATE TIMELINES MENU */
-	
-	M.timelineListChangeSignal.tuneIn( function (arg) {
-	
-	$(me._views.MENU_UL).html("");
-	var id;
-	var ta = M.timelinePool;
-		for(id in ta) {
-			if (ta.hasOwnProperty(id)) {
-			var t = ta[id];
-			$(me._views.MENU_UL)
-				.append("<li class='timelineList' id='" + id + "'>" + t.title + "</li>");
-			$("li#" + id)
-				.click( function() { M.toggleTimeline($(this).attr("id"))  } );
-			} // end filter
-		}
-	
-	});
-	
 
-	M.activeTimelinesChange.tuneIn( function () {
-		/// main timelines menu
-		$(me._views.MENU_UL + " li").each(function () {
-				var id = $(this).attr("id");
-			    if ($.inArray(id, M._activeTimelines) != -1) {
-					$(this).addClass("activeTimeline");
-				} else { 
-					$(this).removeClass("activeTimeline");	
-				}	
-        }); // end each	
-
-	}); // end tune in
 	
 	
 	$(this._views.MENU_HANDLE).click(function () {
@@ -239,27 +236,31 @@ TimegliderTimelineView
 	});
 	
 	
-	
-	
+	// TODO: make function displayCenterline()
+	if (options.show_centerline === true) {
+		$(this._views.CENTERLINE).css({"height":me.dimensions.container.height, "left": me.dimensions.container.centerx});
+	} else {
+		$(this._views.CENTERLINE).css({"display":"none"});
+	}
 	
 	
 	//// GESTURES  ////
-	/* !!TODO    Still a FAIL ---- 
+	/* !!TODO    Still a FAIL in iPad ---- 
 	   When actually doing something, Safari seems to 
 	   ignore attempts at preventing default... 
 	*/
 	
 	function gestureChange (e) {
 		e.preventDefault ();
-		if (M.gesturing === false) {
-			M.gesturing = true;
-			M.gestureStartZoom = M.getZoomLevel();
+		if (MED.gesturing === false) {
+			MED.gesturing = true;
+			MED.gestureStartZoom = MED.getZoomLevel();
 		}
 	    var target = e.target;
 		// constant spatial converter value
-	    var g = (e.scale / 5)* M.gestureStartZoom;
+	    var g = (e.scale / 5)* MED.gestureStartZoom;
 		output("gesture zoom:" + g, "note");
-		M.setZoomLevel(g);
+		MED.setZoomLevel(g);
 	}
 
 	function gestureStart (e) {
@@ -267,7 +268,7 @@ TimegliderTimelineView
 	}
 
 	function gestureEnd (e) {
-		M.gesturing = false;
+		MED.gesturing = false;
 	}
 /*
 	if ($.browser.webkit) {	
@@ -363,32 +364,30 @@ tg.TimegliderTimelineView.prototype = {
 	    initial focus date on landing @ zoom level
 		*/
 		
-		var M = this.M;
-		var startSec = M._startSec;
+		var startSec = MED._startSec;
 		var tickPos = $(this._views.TICKS).position().left;
 		output("ticks x:" + tickPos, "tickpos");
 		
-		var secPerPx = M.getZoomInfo().spp;			
+		var secPerPx = MED.getZoomInfo().spp;			
 		var newSec = startSec - (tickPos * secPerPx);
 		var newD = TGDate.getDateFromSec(newSec);
 		
 		output("FD: " + TGDate.formatFocusDate(newD), "focusdate");
 		
-		M.setFocusDate(newD);
+		MED.setFocusDate(newD);
 	},
 	
 	
 	/* 
 		Zoom slider is inverted value-wise from the normal jQuery UI slider
-	  so we need to feed in and take out inverse values with invSliderVal()            
+	  so we need to feed in and take out inverse values with tg.invSliderVal()            
 	*/
 	buildSlider : function () {
-		var M = this.M;
 		
-		var init_zoom = invSliderVal(M.getZoomLevel());
+		var init_zoom = tg.invSliderVal(MED.getZoomLevel());
 		var me = this;
-		var hZoom = M.max_zoom;
-		var lZoom = M.min_zoom;
+		var hZoom = MED.max_zoom;
+		var lZoom = MED.min_zoom;
 		
 		var sHeight = (1 + hZoom - lZoom) * 3;
 	
@@ -401,10 +400,10 @@ tg.TimegliderTimelineView.prototype = {
 				orientation: 'vertical',
 
 				/* "min" here is really the _highest_ zoom value @ upside down */
-  				min:invSliderVal(hZoom),
+  				min:tg.invSliderVal(hZoom),
 
 				/* "max" actually takes (inverse value of) low zoom level */
-  				max:invSliderVal(lZoom),
+  				max:tg.invSliderVal(lZoom),
 
   				value:init_zoom,
 
@@ -425,7 +424,7 @@ tg.TimegliderTimelineView.prototype = {
 
 				slide: function(e, ui) {
 					// sets model zoom level to INVERSE of slider value
-					M.setZoomLevel(invSliderVal(ui.value));
+					MED.setZoomLevel(tg.invSliderVal(ui.value));
 				}
 			});
 	},
@@ -444,10 +443,9 @@ tg.TimegliderTimelineView.prototype = {
 	  a left-right alternating loop fills out the width of the current frame
 	*/
 	castTicks : function () {
-		var M = this.M;
-		var zLevel = M.getZoomLevel(),
-			fDate = M.getFocusDate(),
-			tickWidth = M.getZoomInfo().width,
+		var zLevel = MED.getZoomLevel(),
+			fDate = MED.getFocusDate(),
+			tickWidth = MED.getZoomInfo().width,
 			twTotal = 0,
 			ctr = this.dimensions.container.centerx,
 			nTicks = Math.ceil(this.dimensions.container.width / tickWidth) + 4,
@@ -456,7 +454,7 @@ tg.TimegliderTimelineView.prototype = {
 		this.clearTicks();
 		
 		
-		M.setTicksReady(false);
+		MED.setTicksReady(false);
 
 		// INITIAL TICK added  in center according to focus date provided
 		this.addTick({"type":"init", "focus_date":fDate});
@@ -469,7 +467,7 @@ tg.TimegliderTimelineView.prototype = {
 			leftright = (leftright == "l") ? "r" : "l";
 		}
 		
-		M.setTicksReady(true);
+		MED.setTicksReady(true);
 	},
   
   
@@ -480,18 +478,17 @@ tg.TimegliderTimelineView.prototype = {
 	*/											
 	addTick : function (info) {
 		
-		var M = this.M,
-			mDays = 0, dist = 0, pos = 0, ctr = 0, tperu = 0, serial = 0,
+			mDays = 0, dist = 0, pos = 0, ctr = 0, tperu = 0, serial = 0, shiftLeft = 0,
 			tid = "", tickHtml = "", idRef = "", 
 			$tickDiv = {}, tInfo = {}, pack = {}, label = {}, mInfo = {}, 
-			tickUnit = M.getZoomInfo().unit,
-			tickWidth = M.getZoomInfo().width,
-			focusDate = M.getFocusDate(),
+			tickUnit = MED.getZoomInfo().unit,
+			tickWidth = MED.getZoomInfo().width,
+			focusDate = MED.getFocusDate(),
 			// !TODO 60 below needs to reflect bottom minus footer, minus tick height
 			// somehow get CSS rules right away
 			tick_top = parseInt(this.dimensions.tick.top),
 			me = this,	
-			serial = M.addToTicksArray({type:info.type, unit:tickUnit}, focusDate);
+			serial = MED.addToTicksArray({type:info.type, unit:tickUnit}, focusDate);
 						
 		// adjust tick-width for months (mo)
 		if (tickUnit == "mo") {
@@ -506,7 +503,7 @@ tg.TimegliderTimelineView.prototype = {
 		this.tickNum ++;
 		if (info.type == "init") {
 			
-		   	var shiftLeft = this.tickOffsetFromDate(M.getZoomInfo(), M.getFocusDate(), tickWidth);
+		  shiftLeft = this.tickOffsetFromDate(MED.getZoomInfo(), MED.getFocusDate(), tickWidth);
 			pos = Math.ceil(this.dimensions.container.centerx + shiftLeft);
 			this.leftside = pos;
 			this.rightside = (pos + tickWidth);
@@ -521,8 +518,8 @@ tg.TimegliderTimelineView.prototype = {
 		}
 		
 		// turn this into a function...
-		M.getTickBySerial(serial).width = tickWidth;
-		M.getTickBySerial(serial).left = pos;
+		MED.getTickBySerial(serial).width = tickWidth;
+		MED.getTickBySerial(serial).left = pos;
 		
 		
 		tid = this._views.PLACE + "_" + tickUnit + "_" + serial + "-" + this.tickNum;
@@ -710,16 +707,15 @@ tg.TimegliderTimelineView.prototype = {
 	
 	
 	toggleMenu : function () {
-		var M = this.M;
 		var mw = $(this._views.MENU).width();
-		if (M.timelineMenuOpen === false) {
+		if (MED.timelineMenuOpen === false) {
 			$(this._views.MENU).animate({left: '+=' + mw}, 50);
 			$(this._views.MENU_HANDLE).text("<<");
-			M.timelineMenuOpen =true;
+			MED.timelineMenuOpen =true;
 		} else {
 			$(this._views.MENU).animate({left: '-=' + mw}, 100);
 			$(this._views.MENU_HANDLE).text("timelines >>");
-			M.timelineMenuOpen =false;
+			MED.timelineMenuOpen =false;
 		}
 		
 	},
@@ -744,7 +740,7 @@ tg.TimegliderTimelineView.prototype = {
 	
 	
 	setTimelineProp : function (id, prop, value) {
-		var tl = this.M.timelinePool[id];
+		var tl = MED.timelinePool[id];
 		tl[prop] = value;	
 	},
 	
@@ -756,23 +752,21 @@ tg.TimegliderTimelineView.prototype = {
 		--- ticks are created afresh
 	*/
 	freshTimelines : function () {
-
-		var M = this.M;
 		
-		var t, i, tl, tu, ts, tick, tE, ht,
-			active = M._activeTimelines,
-			ticks = M._ticksArray,
+		var t, i, tl, tu, ts, tick, tE, ht, t_f, t_l,
+			active = MED._activeTimelines,
+			ticks = MED._ticksArray,
 			borg = '',
-			$title, t_f, t_l,
+			$title, $ev, 
 			me = this,
-			evid, ev, $ev, impq,
+			evid, ev, impq,
 			stuff = '', 
 			posx = 0,
 			cx = me.dimensions.container.centerx,
 			cw = me.dimensions.container.width,
-			foSec = M.getFocusDate().sec,
-			spp = M.getZoomInfo().spp,
-			zl = M.getZoomInfo().level,
+			foSec = MED.getFocusDate().sec,
+			spp = MED.getZoomInfo().spp,
+			zl = MED.getZoomInfo().level,
 			tArr = [],
 			idArr = [],
 			levHt = 24,
@@ -790,7 +784,7 @@ tg.TimegliderTimelineView.prototype = {
 		for (var a=0; a<active.length; a++) {
 
 			// FOR EACH _ACTIVE_ TIMELINE...
-			tl = M.timelinePool[active[a]];
+			tl = MED.timelinePool[active[a]];
 			
 			expCol = tl.display;
 		  tlTop = (tl.top || (cht-80));
@@ -836,7 +830,6 @@ tg.TimegliderTimelineView.prototype = {
 			    //not already in array
 			    if ($.inArray(spanin.id, idArr) == -1) {
 			      idArr.unshift(spanin.id);
-			      debug.log("SPANIN!! @ " + spanin.id);
 		      }
 		    }
 		  }
@@ -844,7 +837,7 @@ tg.TimegliderTimelineView.prototype = {
 			for (i=0; i<idArr.length; i++) {
 
 					// both collapsed and expanded
-					ev = M.eventPool["ev_" + idArr[i]];
+					ev = MED.eventPool["ev_" + idArr[i]];
 					posx = cx + ((ev.startdateObj.sec - foSec) / spp);
 					impq = (ev.importance / zl);
 					
@@ -907,22 +900,20 @@ tg.TimegliderTimelineView.prototype = {
 	*/
 	appendTimelines : function (tick) {
 
-			var M = this.M;
-			var active = M._activeTimelines; 
-			var cx = this.dimensions.container.centerx;
-			var tl, ev, posx, expCol, ht, borg, stuff, impq, ids,
-				foSec = M._startSec, 
-				spp = M.getZoomInfo().spp,
-				zl = M.getZoomInfo().level,
-				buffer = 18;
-				
-			/// !!TODO --- dynamic heights in TGOrg.js
-			var levHt = 24;
+			var active = MED._activeTimelines, 
+			  cx = this.dimensions.container.centerx,
+		    tl, ev, posx, expCol, ht, borg, stuff, impq, ids,
+				foSec = MED._startSec, 
+				spp = MED.getZoomInfo().spp,
+				zl = MED.getZoomInfo().level,
+				buffer = 18,
+			  /// !!TODO --- dynamic heights in TGOrg.js
+			  levHt = 24;
 
 				for (var a=0; a<active.length; a++) {
 
 					// FOR EACH TIMELINE...
-					tl = M.timelinePool[active[a]];
+					tl = MED.timelinePool[active[a]];
 					expCol = tl.display;
 					borg = tl.borg; // existing layout object
 					$tl = $(".TGTimelineEnvelope#" + tl.id);
@@ -935,7 +926,7 @@ tg.TimegliderTimelineView.prototype = {
 					for (i=0; i<ids; i++) {
 
 						// !! WET WITH freshTimelines
-						ev = M.eventPool["ev_" + idArr[i]];
+						ev = MED.eventPool["ev_" + idArr[i]];
 						// !!TODO ==> TIMEZONE SETTING...
 						posx = cx + ((ev.startdateObj.sec - foSec) / spp);
 						
@@ -979,14 +970,14 @@ tg.TimegliderTimelineView.prototype = {
 	
 	
 	expandCollapseTimeline : function (id) {
-		var tl = this.M.timelinePool[id];
+		var tl = MED.timelinePool[id];
 		if (tl.display == "expanded") {
 			tl.display = "collapsed";
 		} else {
 			tl.display = "expanded";
 		}
 		
-		this.M.refresh();
+		MED.refresh();
 	},
 	
   
@@ -995,7 +986,7 @@ tg.TimegliderTimelineView.prototype = {
 		$("#" + eid + "_modal").remove();
 		var me = this,
 		  $par = $("#" + eid),
-		  ev = this.M.eventPool[eid],
+		  ev = MED.eventPool[eid],
 		  ev_img = ev.image ? "<img src='" + ev.image + "'>" : "",
 		  
 		  html = "<div class='TimegliderEvModal ui-widget-content shadow' id='" + eid + "_modal'>" 
@@ -1014,7 +1005,7 @@ tg.TimegliderTimelineView.prototype = {
       				offset: "0, -12", // left, top
       				collision: "flip fit"
       			})
-      	.css("z-index", me.zztop++);
+      	.css("z-index", me.ztop++);
   
 	},
 	
@@ -1049,6 +1040,9 @@ tg.TimegliderTimelineView.prototype = {
 	}
 
 } // end VIEW prototype
+
+
+
 
 
 })(timeglider);
