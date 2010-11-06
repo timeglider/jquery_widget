@@ -67,14 +67,15 @@ tg.TimegliderTimelineView = function (widget, mediator) {
 
 
 	/// listen for ticks movement, i.e. dragging
-	MED.ticksOffsetChange.tuneIn(function () {
+	// MED.ticksOffsetChange.tuneIn(function () {
+	$.subscribe("mediator.ticksOffsetChange", function () {
 		me.tickHangies();
 		me.registerTitles();
 		me.registerDragging();
 	});
 	
 	
-	MED.zoomLevelChange.tuneIn(function () {
+	$.subscribe("mediator.zoomLevelChange", function () {
 		me.tickNum = 0;
 		me.leftside = 0;
 		me.castTicks();
@@ -85,7 +86,7 @@ tg.TimegliderTimelineView = function (widget, mediator) {
 	/// This happens on a TOTAL REFRESH of 
 	/// ticks, as when zooming; panning will load
 	/// events of active timelines per tick	
-	MED.ticksReadySignal.tuneIn(function (b) {
+	$.subscribe("mediator.ticksReadySignal", function (b) {
 		if (MED.getTicksReady() === true) {
 			me.freshTimelines();
 		} 
@@ -97,28 +98,31 @@ tg.TimegliderTimelineView = function (widget, mediator) {
 	possibly different timeline/legend/etc parameters
 	! The only view method that responds directly to a model refresh()
 	*/
-	MED.refreshSignal.tuneIn(function () {
+	$.subscribe("mediator.refreshSignal", function () {
 		me.castTicks();
 	});
 	
 
 	// DORMANT: necessary?
-	MED.ticksArrayChange.tuneIn(function () {
+	$.subscribe( 'mediator.ticksArrayChange', function () {
 		/*
 		SCAN OVER TICKS FOR ANY REASON?
 		*/
+		debug.log("TICKS CHANGE!!!");
 	});
 	
 	
 	// listen for focus date change
 	// I.E. if date is zipped to rather than dragged
-	MED.focusDateChange.tuneIn(function () {
+	$.subscribe("mediator.focusDateChange", function () {
 		// 
 	});
 	
 	
 	/* UPDATE TIMELINES MENU */
-	MED.timelineListChangeSignal.tuneIn( function (arg) {
+	//
+	
+	$.subscribe("mediator.timelineListChangeSignal", function (arg) {
 		
 		var id, ta = MED.timelinePool;
 	  $(me._views.MENU_UL + " li").remove();
@@ -135,7 +139,7 @@ tg.TimegliderTimelineView = function (widget, mediator) {
 	});
 	
 
-	MED.activeTimelinesChange.tuneIn( function () {
+	$.subscribe("mediator.activeTimelinesChange", function () {
 		
 		$(me._views.MENU_UL + " li").each(function () {
 				var id = $(this).attr("id");
@@ -147,7 +151,7 @@ tg.TimegliderTimelineView = function (widget, mediator) {
         }); // end each	
 
 	}); // end tune in
-	
+
 
 																		
 	$(this._views.TRUCK)

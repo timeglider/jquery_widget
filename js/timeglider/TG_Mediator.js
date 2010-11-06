@@ -29,15 +29,7 @@ reflects state back to view
 
     // broadcast wires
     this.anonEventId = 0;
-    this.zoomLevelChange = new Signal(this);
-    this.ticksOffsetChange = new Signal(this);
-    this.focusDateChange = new Signal(this);
-    this.ticksArrayChange = new Signal(this);
-    this.ticksReadySignal = new Signal(this);
-    this.refreshSignal = new Signal(this);
-    this.activeTimelinesChange = new Signal(this);
-    this.timelineListChangeSignal = new Signal(this);	
-    // why the underscores...?
+
     this._focusDate = {};
     this._zoomInfo = {};
     this._ticksReady = false;
@@ -187,7 +179,7 @@ TODO ==> re-chew function for renewing stuff like startSeconds, etc
     /* Makes an indexed array of timelines */
     swallowTimeline : function (obj) {
       this.timelinePool[obj.id] = obj;	
-      this.timelineListChangeSignal.broadcast();
+      $.publish("mediator.timelineListChangeSignal");
     },
 
     ///  end of methods that need to go into (backbone) data model
@@ -207,13 +199,15 @@ TODO ==> re-chew function for renewing stuff like startSeconds, etc
       },
 
       refresh : function () {
-        this.refreshSignal.broadcast();
+        $.publish("mediator.refreshSignal");
       },
 
       // !!!TODO ---- get these back to normal setTicksReady, etc.
       setTicksReady : function (bool) {
         this._ticksReady = bool;
-        if (bool === true) { this.ticksReadySignal.broadcast({"bool":bool}); }
+        if (bool === true) { 
+          $.publish("mediator.ticksReadySignal");
+          }
       },
 
       getTicksReady : function () {
@@ -257,7 +251,9 @@ TODO ==> re-chew function for renewing stuff like startSeconds, etc
           if (z != this._zoomLevel) {
             this._zoomLevel = z;
             this._zoomInfo = timeglider.zoomTree[z];
-            this.zoomLevelChange.broadcast({"zoomLevel": z});
+            
+            $.publish("mediator.zoomLevelChange");
+            
           }
 
           output("z:" + this._zoomLevel + " / " + this._zoomInfo.label, "zoomlevel");
@@ -287,7 +283,7 @@ TODO ==> re-chew function for renewing stuff like startSeconds, etc
           // main listener hub for date focus and tick-appending
           this._ticksOffset = newOffset;
           /* In other words, ticks are being dragged! */
-          this.ticksOffsetChange.broadcast({"leftOffset": newOffset});
+          $.publish( "mediator.ticksOffsetChange" );
         },
 
 
@@ -328,8 +324,9 @@ TODO ==> re-chew function for renewing stuff like startSeconds, etc
           }
 
 
-          this.ticksArrayChange.broadcast();
-
+          // this.ticksArrayChange.broadcast();
+          $.publish( "mediator.ticksArrayChange" );
+          
           return obj.serial;
         },
 
@@ -354,7 +351,7 @@ TODO ==> re-chew function for renewing stuff like startSeconds, etc
             this.refresh();
           }
 
-          this.activeTimelinesChange.broadcast({});
+          $.publish( "mediator.activeTimelinesChange" );
 
 
         }
