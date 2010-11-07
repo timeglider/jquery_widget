@@ -6,8 +6,9 @@
 */
 
 (function(tg){
-  
-  var levHt = tg.levelHeight;
+
+  tg.levelHeight = 22; // across view and org, etc
+  var levHt = tg.levelHeight; // local
   
   tg.TGOrg = function() {
 
@@ -15,45 +16,28 @@
     this.ids = [];
     this.vis = [];
     this.tree = [];
-    
-    this.freshTree = function () {
-      this.tree = [];
-      for (var a=0; a < 100; a++) {
-        // create 50 empty nested arrays for "quad tree"
-        this.tree[a] = [];
-      }
-    };
+    var me = this;
+ 
 
     /// TODO::: REMOVE BLOCK (i.e. to/from same arrangement);
-    ///////////////////////
-
-    // public method
+   
+   
+    /*
+    ********* INTERFACE **********
+    */
+  
+    
     /*
     * @param evob ==>  event object including position values
     * @param tickScope ==>  "sweep" or single tick serial (Number)
     */
     this.addBlock = function (evob, tickScope) {
-
-      var brg = this;
-
-      evob.right = evob.left + evob.width;
-      evob.bottom = evob.top + evob.height;
-      evob.tickScope = tickScope;
-      brg.blocks.push(evob);
-
-      /*
-      if ($.inArray(evob.id, this.ids) == -1) {
-      brg.blocks.push(evob);
-      brg.ids.push(evob.id);
-      if (evob.id == 1416) {
-      debug.log ("MINING STRIKE");
-      }
-      }
-      */
-
-    }; 
-
-
+       evob.right = evob.left + evob.width;
+       evob.bottom = evob.top + evob.height;
+       evob.tickScope = tickScope;
+       me.blocks.push(evob);
+    };
+    
     this.getBorg = function () {
       return this;
     };
@@ -63,19 +47,20 @@
     };
 
     /*
-    @param ==> serial would be to get just the new HTML for that tick
+    @param ==> serial would be to get new HTML for that tick ---
+               on dragging the timeline vs. on zoom-refresh
     */
     this.getHTML = function (tickScope) {
 
       if (tickScope == "sweep") { 
-        this.freshTree();
+        freshTree();
         this.vis = [];
       }
 
-      this.blocks.sort(this.sortBlocksByImportance);
+      this.blocks.sort(sortBlocksByImportance);
       // cycle through them and move overlapping event
       var positioned = [], blHeight, lastPos, padding = 6,
-      span_selector_class, span_div, img = "", html = '', b;
+      span_selector_class, span_div, img = "", html = '', b = {};
       // is this redundant with getHTML?:
 
       for (var i=0; i<this.blocks.length; i++) {
@@ -86,7 +71,7 @@
           if ($.inArray(b.id, this.vis) == -1) {
             this.vis.push(b.id);
 
-            this.checkAgainstLevel(b, 0); 
+            checkAgainstLevel(b, 0); 
 
             b.fontsize < 10 ? b.opacity = b.fontsize / 10 : b.opacity=1;
             if (b.span == true) {
@@ -121,67 +106,80 @@
             } // end for()
 
             return html;
-          };
+  }; /// end getHTML
 
 
-    this.sortBlocksByImportance = function (a, b) {
+
+  /*
+    PROTECTED METHODS
+  */
+   var freshTree = function () {
+     me.tree = [];
+     for (var a=0; a < 100; a++) {
+       // create 50 empty nested arrays for "quad tree"
+       me.tree[a] = [];
+     }
+   };
+   
+ 
+   var sortBlocksByImportance = function (a, b) {
             var x = b.importance, y = a.importance;
             /// !TODO  
             /// if either is missing or invalid,. return -1
             return ((x < y) ? -1 : ((x > y) ? 1 : 0));
           };
 
+             
+   var isOverlapping = function (b1, b2) {
 
-    this.isOverlapping = function (b1, b2) {
+        if ((b2.left > b1.right) || (b2.right < b1.left)) {
+          // Nice: it's clear to left or right.
+          return false;
 
-            if ((b2.left > b1.right) || (b2.right < b1.left)) {
-              // Nice: it's clear to left or right.
-              return false;
+        } else {
+
+          if (  
+            ((b2.left >= b1.left) && (b2.left <= b1.right)) || 
+            ((b2.right >= b1.left) && (b2.right <= b1.right)) || 
+            ((b2.right >= b1.right) && (b2.left <= b1.left)) || 
+            ((b2.right <= b1.right) && (b2.left >= b1.left))  
+          ) {
+            // Some kind of left-right overlap is happening...
+            // passes first test of possible overlap: left-right overlap
+            if (  ((b2.bottom <= b1.bottom) && (b2.bottom >= b1.top)) || ((b2.top <= b1.bottom) && (b2.top >= b1.top)) || ((b2.top == b1.bottom) && (b2.top == b1.top))  ) {
+              // passes 2nd test -- it's overlapping
+              return true;
 
             } else {
-
-              if (  
-                ((b2.left >= b1.left) && (b2.left <= b1.right)) || 
-                ((b2.right >= b1.left) && (b2.right <= b1.right)) || 
-                ((b2.right >= b1.right) && (b2.left <= b1.left)) || 
-                ((b2.right <= b1.right) && (b2.left >= b1.left))  
-              ) {
-                // Some kind of left-right overlap is happening...
-                // passes first test of possible overlap: left-right overlap
-                if (  ((b2.bottom <= b1.bottom) && (b2.bottom >= b1.top)) || ((b2.top <= b1.bottom) && (b2.top >= b1.top)) || ((b2.top == b1.bottom) && (b2.top == b1.top))  ) {
-                  // passes 2nd test -- it's overlapping
-                  return true;
-
-                } else {
-                  return false;
-                }
-                // end first big if: fails initial test
-              }  
               return false;
             }
+            // end first big if: fails initial test
+          }  
+          return false;
+        }
 
-            return false;
+        return false;
 
     };
 
-    this.checkAgainstLevel = function (block, l_index) {
+   var checkAgainstLevel = function (block, l_index) {
 
       var ol = false,
-        tree = this.tree,
+        tree = me.tree,
         index = tree[l_index],
         next_level = l_index + 1,
         collision = false;
 
       for (var e=0; e < index.length; e++) {
 
-        ol = this.isOverlapping(index[e],block);
+        ol = isOverlapping(index[e],block);
 
         if (ol == true) {
           // BUMP UP
           block.top -= levHt; // timeglider.levelHeight;
           block.bottom -= levHt; // timeglider.levelHeight;
           // THEN CHECK @ NEXT LEVEL
-          this.checkAgainstLevel(block,next_level);
+          checkAgainstLevel(block,next_level);
           collision = true;
           // STOP LOOP -- there's a collision
           break;
@@ -207,8 +205,12 @@
          
    
         }
-      };
-
-      }; // END
+      }; // end checkAgainstLevel()
+      
+      
+      ///// END TGOrg
+  }; 
+      
+      
 	
 })(timeglider);	

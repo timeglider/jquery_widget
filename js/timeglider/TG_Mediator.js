@@ -13,10 +13,12 @@
 TIMELINE MEDIATOR
 handles timeline behavior, 
 reflects state back to view
+
 ********************************/
 
 (function(tg){
   
+
   var TGDate = tg.TGDate;
   var Signal = tg.Signal;
 
@@ -359,6 +361,112 @@ TODO ==> re-chew function for renewing stuff like startSeconds, etc
 
 
         }; ///// end model methods
+        
+        
+        tg.getLowHigh = function (arr) {
 
+        	var i, n, 
+        		high = parseFloat(arr[0]), 
+        		low = high;
+
+        	for (i=0; i<arr.length; i++) {
+        		n = parseFloat(arr[i]);
+        		if (n<low) low = n;
+        		if (n>high) high = n;
+        	}
+
+        	return {"high":high, "low":low}
+
+        };
+        
+   
+        /* a div with id of "hiddenDiv" has to be pre-loaded */
+        tg.getStringWidth  = function (str) {
+        		// var size = obj.fontSize; 
+        		var $ms = $("#TimegliderMeasureSpan");
+        		$ms.html(str + "");
+        		var w = $ms.width() + 4;
+        		$ms.html('');
+        		return w;
+        };
+        
+        
+        // DORMANT
+        tg.validateOptions = function (widget_settings) {	
+            
+            this.optionsMaster = { initial_focus:{type:"date"}, 
+          	editor:{type:"string"}, 
+          	backgroundColor:{type:"color"}, 
+          	backgroundImage:{type:"color"}, 
+          	min_zoom:{type:"number", min:1, max:100}, 
+          	max_zoom:{type:"number", min:1, max:100}, 
+          	initial_zoom:{type:"number", min:1, max:100}, 
+          	show_centerline:{type:"boolean"}, 
+          	data_source:{type:"url"}, 
+          	basic_fontsize:{type:"number", min:9, max:100}, 
+          	mouse_wheel:{type:"string", 
+          	possible:["zoom","pan"]}, 
+          	initial_timeline_id:{type:"string"} }
+
+        		var me = this;
+        			// msg: validates when empty 
+        			msg = "",
+        			// line break: /n for alert, <br> for html modal
+        			lb = "\n";
+
+        		$.each(widget_settings, function(key, value) { 
+
+        			if (me.optionsMaster[key]) {
+        				//trace ("key:" + key + ", type:" + optionsTypes[key].type);
+        				switch (me.optionsMaster[key].type) {
+        					case "string": 
+        						if (typeof value != "string") { msg += (key + " needs to be a string." + lb); }
+        						if (me.optionsMaster[key].possible) {
+        							if ($.inArray(value, me.optionsMaster[key].possible) == -1) {
+        								msg += (key + " must be: " + me.optionsMaster[key].possible.join(" or "));
+        							}
+        						}
+        					break;
+
+        					case "number":
+        						if (typeof value != "number") { msg += (value + " needs to be a number." + lb); }
+        						if (me.optionsMaster[key].min) {
+        							if (value < me.optionsMaster[key].min) {
+        								msg += (key + " must be greater than or equal to " + me.optionsMaster[key].min + lb);
+        							}
+        						}
+
+        						if (me.optionsMaster[key].max) {
+        							if (value > me.optionsMaster[key].max) {
+        								msg += (key + " must be less than or equal to " + me.optionsMaster[key].max + lb);
+        							}
+        						}
+        					break;
+
+        					case "date":
+        						// TODO validate a date string using TG_Date...
+        					break;
+
+        					case "boolean":
+        						if (typeof value != "boolean") msg += (value + " needs to be a number." + lb);
+        					break;
+
+        					case "url":
+        						// TODO test for pattern for url....
+        					break;
+
+        					case "color":
+        						/// TODO test for pattern for color, including "red", "orange", etc
+        					break;
+
+        					default: trace ("is there a default for validating options?");
+
+        				}
+        			}
+        		}); // end each
+
+        		return msg;
+
+        };
 
 })(timeglider);
