@@ -46,8 +46,9 @@ reflects state back to view
 
 
     } // end model head
+    
 
-    tg.TimegliderMediator.prototype = {
+tg.TimegliderMediator.prototype = {
 
 /*
 TODO

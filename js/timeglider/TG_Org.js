@@ -6,15 +6,16 @@
 */
 
 (function(tg){
-
-  tg.TGOrg = function(args) {
+  
+  var levHt = tg.levelHeight;
+  
+  tg.TGOrg = function() {
 
     this.blocks = [];
     this.ids = [];
     this.vis = [];
     this.tree = [];
-    this.levelHeight = args.level_height;
-
+    
     this.freshTree = function () {
       this.tree = [];
       for (var a=0; a < 100; a++) {
@@ -131,22 +132,21 @@
           };
 
 
-    this.is_overlapping = function (b1, b2) {
+    this.isOverlapping = function (b1, b2) {
 
             if ((b2.left > b1.right) || (b2.right < b1.left)) {
-              // it's clear to left or right
+              // Nice: it's clear to left or right.
               return false;
 
             } else {
 
-              // some kind of left-right overlap is happening...
               if (  
                 ((b2.left >= b1.left) && (b2.left <= b1.right)) || 
                 ((b2.right >= b1.left) && (b2.right <= b1.right)) || 
                 ((b2.right >= b1.right) && (b2.left <= b1.left)) || 
                 ((b2.right <= b1.right) && (b2.left >= b1.left))  
               ) {
-
+                // Some kind of left-right overlap is happening...
                 // passes first test of possible overlap: left-right overlap
                 if (  ((b2.bottom <= b1.bottom) && (b2.bottom >= b1.top)) || ((b2.top <= b1.bottom) && (b2.top >= b1.top)) || ((b2.top == b1.bottom) && (b2.top == b1.top))  ) {
                   // passes 2nd test -- it's overlapping
@@ -166,31 +166,46 @@
 
     this.checkAgainstLevel = function (block, l_index) {
 
-      var tree = this.tree;
-      var next_level = l_index + 1;
-      var collision = false;
+      var ol = false,
+        tree = this.tree,
+        index = tree[l_index],
+        next_level = l_index + 1,
+        collision = false;
 
-      for (var e=0; e < tree[l_index].length; e++) {
+      for (var e=0; e < index.length; e++) {
 
-        // p_iterations++;
-        var ol = this.is_overlapping(tree[l_index][e],block);
+        ol = this.isOverlapping(index[e],block);
 
         if (ol == true) {
-          /// BUMP UP!!
-          block.top -= this.levelHeight;
-          block.bottom -= this.levelHeight;
-          //  THEN CHECK @ NEXT LEVEL
+          // BUMP UP
+          block.top -= levHt; // timeglider.levelHeight;
+          block.bottom -= levHt; // timeglider.levelHeight;
+          // THEN CHECK @ NEXT LEVEL
           this.checkAgainstLevel(block,next_level);
           collision = true;
-
-          // stop loop --there's a collision!
+          // STOP LOOP -- there's a collision
           break;
         } 
         } // end for
 
         if (collision == false) {
           // ADD TO TREE OF PLACED EVENTS
-          tree[l_index].push(block);
+          block.top -= block.fontsize;
+          //block.bottom -= block.fontsize;
+          if (block.id == "jshist-02b") {
+            // debug.log("TST:size" + block.fontsize + "...block.top:" +  block.top + "...l_index:" + l_index);
+          }
+          
+          // PLACE BLOCK!
+          index.push(block);
+          if ((block.fontsize * 1.5) > (levHt * 2)) {
+            tree[next_level].push(block);
+            if ((block.fontsize * 1.5) > (levHt * 3)) {
+                tree[next_level + 1].push(block);
+            }
+          }
+         
+   
         }
       };
 

@@ -4,9 +4,9 @@
     
 */
 
-var timeglider = function () {};
+var timeglider = {}
 
-
+timeglider.levelHeight = 20;
 
 timeglider.TGDate = {
 	

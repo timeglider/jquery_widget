@@ -1693,14 +1693,26 @@
 "id":"jshist-02",
 "title": "JavaScript",
 "description": "LiveScript is Renamed JavaScript in a joint announcement with Netscape and Sun Microsystems",
-"startdate": "1995-12-04 12:00:00",
-"enddate": "1995-12-04 12:00:00",
+"startdate": "1996-08-04 12:00:00",
+"enddate": "1996-08-04 12:00:00",
 "link":"http://en.wikipedia.org/wiki/JavaScript",
-"importance":"50"
+"importance":"55"
 },
+
+{
+"id":"jshist-02b",
+"title": "TESTxxxxx",
+"description": "test vent coiinciding wiht jqvaciept",
+"startdate": "1996-08-01 12:00:00",
+"enddate": "1996-08-01 12:00:00",
+"link":"http://en.wikipedia.org/wiki/JavaScript",
+"importance":"20"
+},
+
+
 {
 "id":"jshist-03",
-"title": "Microsoft JScript",
+"title": "Microsoft JScript ababab baaba asbabaa",
 "description": "JScript added new date methods to fix the non-Y2K-friendly methods in JavaScript, which were based on java.util.Date. JScript was included in Internet Explorer 3.0.",
 "startdate": "1996-08-01 12:00:00",
 "enddate": "1996-08-01 12:00:00",

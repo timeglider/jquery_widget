@@ -94,21 +94,22 @@ tg.TimegliderTimelineView = function (widget, mediator) {
 	
 	
 	/*
-	Renews the timeline at current focus/zoom, but with
-	possibly different timeline/legend/etc parameters
-	! The only view method that responds directly to a model refresh()
+    	Renews the timeline at current focus/zoom, but with
+    	possibly different timeline/legend/etc parameters
+    	! The only view method that responds directly to a model refresh()
 	*/
 	$.subscribe("mediator.refreshSignal", function () {
 		me.castTicks();
 	});
 	
 
+
+	// adding to or removing from ticksArray
 	// DORMANT: necessary?
 	$.subscribe( 'mediator.ticksArrayChange', function () {
 		/*
-		SCAN OVER TICKS FOR ANY REASON?
+    	SCAN OVER TICKS FOR ANY REASON?
 		*/
-		debug.log("TICKS CHANGE!!!");
 	});
 	
 	
@@ -119,7 +120,7 @@ tg.TimegliderTimelineView = function (widget, mediator) {
 	});
 	
 	
-	/* UPDATE TIMELINES MENU */
+	// UPDATE TIMELINES MENU 
 	//
 	
 	$.subscribe("mediator.timelineListChangeSignal", function (arg) {
@@ -773,7 +774,6 @@ tg.TimegliderTimelineView.prototype = {
 			zl = MED.getZoomInfo().level,
 			tArr = [],
 			idArr = [],
-			levHt = 24,
 			buffer = 18,
 			// left and right scope
 			half = Math.floor(spp * (cw/2)),
@@ -819,7 +819,7 @@ tg.TimegliderTimelineView.prototype = {
 			$title.css({"top":ht, "left":t_f, "width":(t_l-t_f)});
 
 			/// for full display, setup new borg for organizing events
-			if (expCol == "expanded") { borg = new timeglider.TGOrg({level_height:levHt}); }
+			if (expCol == "expanded") { borg = new timeglider.TGOrg(); }
  
 			//cycle through ticks for hashed events
 			for (var tx=0; tx<ticks.length; tx++) {
@@ -857,7 +857,8 @@ tg.TimegliderTimelineView.prototype = {
 					// !TODO isolate these into position object
 					ev.left = posx; // will remain constant
 					// !TODO --- ACCURATE WIDTH BASELINE FROM chewTimeline()
-					ev.top = ht - levHt; // 330; ///// TODO ==> add to timeline div
+					
+					ev.top = ht - timeglider.levelHeight; // 330; ///// TODO ==> add to timeline div
 					ev.height = 18;
 					borg.addBlock(ev, "sweep");
 					// no stuff yet...
@@ -910,9 +911,9 @@ tg.TimegliderTimelineView.prototype = {
 				foSec = MED._startSec, 
 				spp = MED.getZoomInfo().spp,
 				zl = MED.getZoomInfo().level,
-				buffer = 18,
+				// left right "margin" (not css, just added space)
+				buffer = 18;
 			  /// !!TODO --- dynamic heights in TGOrg.js
-			  levHt = 24;
 
 				for (var a=0; a<active.length; a++) {
 
@@ -947,8 +948,7 @@ tg.TimegliderTimelineView.prototype = {
   						}	else {
   							 ev.spanwidth = 0;
   						}
-  							
-							ev.top = ht - levHt; 
+							ev.top = ht - timeglider.levelHeight; 
 							ev.height = 18;
 							borg.addBlock(ev, tick.serial);
 								
