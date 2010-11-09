@@ -37,7 +37,9 @@ tg.TimegliderTimelineView = function (widget, mediator) {
     		TRUCK : PL + " .timeglider-truck", 
     		CENTERLINE : PL + " .timeglider-centerline", 
     		TICKS : PL + " .timeglider-ticks", 
-    		HANDLE : PL + " .timeglider-handle"
+    		HANDLE : PL + " .timeglider-handle",
+    		FILTER_BT : PL + " .timeglider-filter-bt",
+    		FILTER_BOX : PL + " .timeglider-filter-box"
 	}
 	
 	$(this._views.CONTAINER).css("height", pl_ht);
@@ -60,6 +62,7 @@ tg.TimegliderTimelineView = function (widget, mediator) {
 	this.sliderActive = false;
 	this.timelineMenuOpen = false;
 	this.ztop = 1000;
+	this.filterBoxActivated = false;
 	
 	// INITIAL CONSTRUCTION
 	this.buildSlider();
@@ -154,7 +157,55 @@ tg.TimegliderTimelineView = function (widget, mediator) {
 	}); // end tune in
 
 
-																		
+  /* FILTER BUSINESS */
+	
+	$(this._views.FILTER_BT).click(function() {  
+	  var $bt = $(this),
+	      fbox = me._views.FILTER_BOX;
+	  
+	  if (me.filterBoxActivated == false) {
+	    // CREATE FILTER BOX ON FIRST CLICK!
+	    $(fbox).append(filterBoxTemplate);
+	    me.filterBoxActivated =true;
+	    
+	    var $filter_apply = $(fbox + " .timeglider-filter-apply"),
+          $filter_close = $(fbox + " .timeglider-filter-close"),
+          $filter_clear = $(fbox + " .timeglider-filter-clear"),
+          incl = "", excl = "";
+	    
+	    // set up listeners
+	    $filter_apply.click(function () {
+	      incl = $(fbox + " .timeglider-filter-include").val();
+	      excl = $(fbox + " .timeglider-filter-exclude").val();
+	      MED.setFilterObject({include:incl, exclude:excl});
+	      $(fbox).toggleClass("box-visible");
+      });
+ 
+      $filter_close.click(function () {
+        $(fbox).toggleClass("box-visible");
+      });
+      
+      $filter_clear.click(function () {
+        MED.setFilterObject({include:'', exclude:''});
+        $(fbox + " .timeglider-filter-include").val('');
+	      $(fbox + " .timeglider-filter-exclude").val('');
+        $(fbox).toggleClass("box-visible");
+      });
+      
+    }
+    
+    // open the box
+	  $(me._views.FILTER_BOX).toggleClass("box-visible").css("z-index", me.ztop++);
+
+  });
+  
+  
+  $.subscribe("mediator.filterObjectChange", function () {
+    // refresh is done inside MED -- no need to refresh here
+		debug.log("filter:" + MED.filterObject.include + "/" + MED.filterObject.exclude);
+	});
+	
+															
 	$(this._views.TRUCK)
 		.dblclick(function(e) {
 			 	var Cw = me.dimensions.container.width,
@@ -753,6 +804,37 @@ tg.TimegliderTimelineView.prototype = {
 	},
 	
 	
+	passesFilters : function (ev) {
+	   var ret = true,
+	    ei = "", ea = [], e,
+	    ii = "", ia = [], i;
+	   /// THRESHOLDS FIRST
+	   
+	   var incl = MED.filterObject.include;
+ 	   if (incl) {
+ 	      ia = incl.split(",");
+ 	      ret = false;
+ 	      for (i=0; i<ia.length; i++) {
+ 	        ii = new RegExp(ia[i].trim(), "i");
+ 	        debug.log("reg:" + ii);
+ 	        if (ev.title.match(ii)) { ret = true; }
+         }
+      }
+
+	   var excl = MED.filterObject.exclude;
+	   if (excl) {
+	      ea = excl.split(",");
+	      for (e=0; e<ea.length; e++) {
+	        ei = new RegExp(ea[e].trim(), "i");
+	        if (ev.title.match(ei)) { ret = false; }
+        }
+     }
+	   
+	   return ret;
+  },
+  
+  
+	
 	/*
 	ADDING EVENTS!
 	invoked upon a fresh sweep of entire container, having added a set of ticks
@@ -845,33 +927,39 @@ tg.TimegliderTimelineView.prototype = {
 
 					// both collapsed and expanded
 					ev = MED.eventPool["ev_" + idArr[i]];
-					posx = cx + ((ev.startdateObj.sec - foSec) / spp);
-					impq = (ev.importance / zl);
 					
-				if (expCol == "expanded") {
-					ev.width = (ev.titleWidth * impq) + buffer;
-					if (ev.span == true) {
-					  ev.spanwidth = (ev.enddateObj.sec - ev.startdateObj.sec) / spp;
-					  if (ev.spanwidth > ev.width) { ev.width = ev.spanwidth; }
-					}	else {
-					  ev.spanwidth = 0;
-					}					
-					ev.fontsize = this.basicFontSize * impq;
-					// !TODO isolate these into position object
-					ev.left = posx; // will remain constant
-					// !TODO --- ACCURATE WIDTH BASELINE FROM chewTimeline()
+			    /// filter patterns & thresholds 
+  				if (this.passesFilters(ev) == true) {
+  						  
+					  posx = cx + ((ev.startdateObj.sec - foSec) / spp);
+					  impq = (ev.importance / zl);
 					
-					ev.top = ht - timeglider.levelHeight; // 330; ///// TODO ==> add to timeline div
-					ev.height = 18;
-					borg.addBlock(ev, "sweep");
-					// no stuff yet...
+    				if (expCol == "expanded") {
+    					ev.width = (ev.titleWidth * impq) + buffer;
+    					if (ev.span == true) {
+    					  ev.spanwidth = (ev.enddateObj.sec - ev.startdateObj.sec) / spp;
+    					  if (ev.spanwidth > ev.width) { ev.width = ev.spanwidth; }
+    					}	else {
+    					  ev.spanwidth = 0;
+    					}					
+    					ev.fontsize = this.basicFontSize * impq;
+    					// !TODO isolate these into position object
+    					ev.left = posx; // will remain constant
+    					// !TODO --- ACCURATE WIDTH BASELINE FROM chewTimeline()
 					
-			  } else if (expCol == "collapsed") {
-					stuff += "<div id='ev_" + ev.id + 
-					"' class='evCollapsed' style='top:" + 
-					(ht-2) + "px;left:" +
-					posx + "px'></div>";
-			  }
+    					ev.top = ht - timeglider.levelHeight; // 330; ///// TODO ==> add to timeline div
+    					ev.height = 18;
+    					borg.addBlock(ev, "sweep");
+    					// no stuff yet...
+					
+    			  } else if (expCol == "collapsed") {
+    					stuff += "<div id='ev_" + ev.id + 
+    					"' class='evCollapsed' style='top:" + 
+    					(ht-2) + "px;left:" +
+    					posx + "px'></div>";
+    			  }
+    			  
+  			  } // end if it passes filters
 
 			}
 			
@@ -903,6 +991,7 @@ tg.TimegliderTimelineView.prototype = {
 	}, // ends freshTimelines()
 	
 	
+  
 	/* 
 		this is per tick... pretty wet with freshTimelines()...
 	*/
@@ -938,6 +1027,9 @@ tg.TimegliderTimelineView.prototype = {
 						// !!TODO ==> TIMEZONE SETTING...
 						posx = cx + ((ev.startdateObj.sec - foSec) / spp);
 						
+						/// filter patterns & thresholds 
+						if (this.passesFilters(ev)==true) {
+						 
 						if (expCol == "expanded") {
 						  
 							ev.left = posx; // will remain constant
@@ -961,6 +1053,10 @@ tg.TimegliderTimelineView.prototype = {
 							+ (ht-2) + "px;left:" 
 							+ posx + "px'></div>";
 						}
+						
+					}	//////// END FILTERS
+						
+						
 					} // end for through idArr
 					
 						// borg it if it's expanded.
@@ -1195,5 +1291,17 @@ tg.TimegliderTimelineView.prototype = {
     // call it right away to establish values
     }(tg.zoomTree);
 
+    
+    var filterBoxTemplate = "<div class='miniForm formLine'>show: "+
+                            "<input type='text' class='timeglider-filter-include'></div>"+
+                            "<div class='miniForm formLine'>hide: "+
+                            "<input type='text' class='timeglider-filter-exclude'></div>"+
+                            "<ul class='miniForm formBottom'>"+
+                            "<li class='timeglider-filter-clear'>clear</li>"+
+                            "<li class='timeglider-filter-close'>close</li>"+
+                            "<li class='timeglider-filter-apply'>apply</li>"+
+                            "</ul>";
+
 
 })(timeglider);
+

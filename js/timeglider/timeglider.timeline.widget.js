@@ -22,6 +22,18 @@
 
 (function($){
   
+  
+
+  String.prototype.trim = function() {
+  	return this.replace(/^\s+|\s+$/g,"");
+  }
+  String.prototype.ltrim = function() {
+  	return this.replace(/^\s+/,"");
+  }
+  String.prototype.rtrim = function() {
+  	return this.replace(/\s+$/,"");
+  }
+  
   /* TODO Use this to set options defaults, too */ 
 
     function getToday() { var d = new Date(); return d.format('c'); }
@@ -47,7 +59,24 @@
       _create : function () {
         // if a table exists, convert table data... and store it as one timeline...
         this._id = $(this.element).attr("id"); 
-        var MAIN_TEMPLATE = "<div class='timeglider-container'><div class='timeglider-centerline'></div><div class='timeglider-truck'><div class='timeglider-ticks'><div class='timeglider-handle'></div></div></div><div class='timeglider-slider-container'><div class='timeglider-slider'></div></div><div class='timeglider-timeline-menu'><div class='timeglider-timeline-menu-handle'>timelines >></div><h3>timelines</h3><ul></ul></div> <div class='timeglider-footer'>Timeglider / Mnemograph LLC</div></div><span id='TimegliderMeasureSpan'></span>";
+        var MAIN_TEMPLATE = "<div class='timeglider-container'>"+
+                              "<div class='timeglider-centerline'></div>"+
+                              "<div class='timeglider-truck'>"+
+                                "<div class='timeglider-ticks'>"+
+                                  "<div class='timeglider-handle'></div>"+
+                                "</div>"+
+                              "</div>"+
+                              "<div class='timeglider-slider-container'>"+
+                                "<div class='timeglider-slider'></div>"+
+                              "</div>"+
+                              "<div class='timeglider-timeline-menu'>"+
+                                "<div class='timeglider-timeline-menu-handle'>timelines >></div>"+
+                                "<h3>timelines</h3><ul></ul>"+
+                              "</div>"+
+                              "<div class='timeglider-footer'>Timeglider jQuery Widget"+
+                                "<div class='timeglider-filter-bt'>filter</div>"+
+                              "</div><div class='timeglider-filter-box'></div>"+
+                            "</div><span id='TimegliderMeasureSpan'></span>";
         this.element.html(MAIN_TEMPLATE);
 		
 	    },

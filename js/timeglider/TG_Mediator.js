@@ -20,7 +20,6 @@ reflects state back to view
   
 
   var TGDate = tg.TGDate;
-  var Signal = tg.Signal;
 
   // MOVE THIS TO Models
   tg.TimegliderTimeline = function (data) {
@@ -42,6 +41,7 @@ reflects state back to view
     this.min_zoom = 1;
     this.gesturing = false;
     this.gestureStartZoom = 0;
+    this.filterObject = {};
 
     this.eventPool = [],
     this.timelinePool = {};
@@ -270,6 +270,16 @@ TODO ==> re-chew function for renewing stuff like startSeconds, etc
         getZoomInfo : function () {
           return this._zoomInfo;
         },
+        
+        /*
+        
+        */
+        setFilterObject : function (obj) {
+           this.filterObject = {include:obj.include, exclude:obj.exclude}
+           $.publish("mediator.filterObjectChange");   
+           this.refresh();      
+         },
+         
 
         setGestureStart : function () {
           alert("z:" + this.getZoomLevel());

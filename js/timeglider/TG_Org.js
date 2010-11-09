@@ -23,7 +23,7 @@
    
    
     /*
-    ********* INTERFACE **********
+    ********* PUBLIC METHODS **********
     */
   
     
@@ -50,7 +50,7 @@
     @param ==> serial would be to get new HTML for that tick ---
                on dragging the timeline vs. on zoom-refresh
     */
-    this.getHTML = function (tickScope) {
+    this.getHTML = function (tickScope, filter) {
 
       if (tickScope == "sweep") { 
         freshTree();
@@ -169,42 +169,45 @@
         index = tree[l_index],
         next_level = l_index + 1,
         collision = false;
+      if (index != undefined) {
+        
+        for (var e=0; e < index.length; e++) {
 
-      for (var e=0; e < index.length; e++) {
+          ol = isOverlapping(index[e],block);
 
-        ol = isOverlapping(index[e],block);
+          if (ol == true) {
+            // BUMP UP
+            block.top -= levHt; // timeglider.levelHeight;
+            block.bottom -= levHt; // timeglider.levelHeight;
+            // THEN CHECK @ NEXT LEVEL
+            checkAgainstLevel(block,next_level);
+            collision = true;
+            // STOP LOOP -- there's a collision
+            break;
+          } 
+          } // end for
 
-        if (ol == true) {
-          // BUMP UP
-          block.top -= levHt; // timeglider.levelHeight;
-          block.bottom -= levHt; // timeglider.levelHeight;
-          // THEN CHECK @ NEXT LEVEL
-          checkAgainstLevel(block,next_level);
-          collision = true;
-          // STOP LOOP -- there's a collision
-          break;
-        } 
-        } // end for
-
-        if (collision == false) {
-          // ADD TO TREE OF PLACED EVENTS
-          block.top -= block.fontsize;
-          //block.bottom -= block.fontsize;
-          if (block.id == "jshist-02b") {
-            // debug.log("TST:size" + block.fontsize + "...block.top:" +  block.top + "...l_index:" + l_index);
-          }
-          
-          // PLACE BLOCK!
-          index.push(block);
-          if ((block.fontsize * 1.5) > (levHt * 2)) {
-            tree[next_level].push(block);
-            if ((block.fontsize * 1.5) > (levHt * 3)) {
-                tree[next_level + 1].push(block);
+          if (collision == false) {
+            // ADD TO TREE OF PLACED EVENTS
+            block.top -= block.fontsize;
+            //block.bottom -= block.fontsize;
+            if (block.id == "jshist-02b") {
+              // debug.log("TST:size" + block.fontsize + "...block.top:" +  block.top + "...l_index:" + l_index);
             }
-          }
+          
+            // PLACE BLOCK!
+            index.push(block);
+            if ((block.fontsize * 1.5) > (levHt * 2)) {
+              tree[next_level].push(block);
+              if ((block.fontsize * 1.5) > (levHt * 3)) {
+                  tree[next_level + 1].push(block);
+              }
+            }
          
    
-        }
+          }
+        
+      }
       }; // end checkAgainstLevel()
       
       
