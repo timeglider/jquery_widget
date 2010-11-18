@@ -330,8 +330,15 @@
 	float:right;
 	cursor:pointer;
 	margin-right:16px;
-	color:orange;
 }
+
+.timeglider-filter-bt img{
+  margin-top:3px;
+	height:18px;
+	width:auto;
+}
+
+
 .timeglider-filter-box {
   display:none;
   width:180px;
@@ -416,6 +423,20 @@ ul.formBottom li{
 	width:250px;
 	padding:8px;
 }
+
+.TimegliderEvVideoModal {
+	-moz-border-radius:5px;
+	border-radius:7px;
+	background:#FFF;
+	border:1px solid #333;
+	width:450px;
+	padding:8px;
+	position:absolute;
+	top:50px;
+	left:50px;
+}
+
+
 .TimegliderEvModal p {
 	font-size:11px;
 	color:#555;

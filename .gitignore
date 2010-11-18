@@ -1,7 +1,13 @@
 # ignore these files!
 
-__past
-_future
+__past*
+_future*
 _notes*
-_tests
+_tests*
+_shop*
 .DS_Store
+json_tests/med.json
+img/tests*
+svg.html
+svg.svg
+js/log_test.html

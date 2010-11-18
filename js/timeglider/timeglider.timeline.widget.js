@@ -16,13 +16,7 @@
                         jquery.ui.ipad
 *
 */
-
-
-
-
 (function($){
-  
-  
 
   String.prototype.trim = function() {
   	return this.replace(/^\s+|\s+$/g,"");
@@ -53,7 +47,8 @@
         data_source:"", 
         basic_fontsize:12, 
         mouse_wheel: "zoom", 
-        initial_timeline_id:'' 
+        initial_timeline_id:'',
+        icon_folder:'js/timeglider/icons/'
       },
 
       _create : function () {
@@ -74,9 +69,10 @@
                                 "<h3>timelines</h3><ul></ul>"+
                               "</div>"+
                               "<div class='timeglider-footer'>Timeglider jQuery Widget"+
-                                "<div class='timeglider-filter-bt'>filter</div>"+
+                                "<div class='timeglider-filter-bt'><img title='filter' src='js/timeglider/buttons/filter.png'></div>"+
                               "</div><div class='timeglider-filter-box'></div>"+
                             "</div><span id='TimegliderMeasureSpan'></span>";
+                            
         this.element.html(MAIN_TEMPLATE);
 		
 	    },
@@ -88,7 +84,7 @@
 	      
 	      if (optionsCheck == "") {
 	      
-          var timelineMediator = new timeglider.TimegliderMediator();
+          var timelineMediator = new timeglider.TimegliderMediator(this.options);
           timelineMediator.setFocusDate(timeglider.TGDate.makeDateObject(this.options.initial_focus));
           var timelineView = new timeglider.TimegliderTimelineView(this, timelineMediator);
 

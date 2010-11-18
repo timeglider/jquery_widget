@@ -20,17 +20,19 @@ reflects state back to view
   
 
   var TGDate = tg.TGDate;
+  var options = {};
 
   // MOVE THIS TO Models
   tg.TimegliderTimeline = function (data) {
     return data;
   }
-
-  tg.TimegliderMediator = function () {
-
+    
+  tg.TimegliderMediator = function (wopts) {
+    
     // broadcast wires
+    this.options = options;
+    options = wopts;
     this.anonEventId = 0;
-
     this._focusDate = {};
     this._zoomInfo = {};
     this._ticksReady = false;
@@ -127,6 +129,11 @@ TODO ==> re-chew function for renewing stuff like startSeconds, etc
           ev.enddateObj = startEnd.e; // TGDate.makeDateObject(ev.enddate);
 
           // this gets the title width at 12px
+          
+          // default icon
+          ev.icon = options.icon_folder + (ev.icon || "triangle_orange.png");
+          debug.log("icon:" + ev.icon);
+          
           ev.titleWidth = tg.getStringWidth(ev.title) + 20;
 
           // microtimeline for collapsed view and other metrics

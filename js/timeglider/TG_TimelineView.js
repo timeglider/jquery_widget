@@ -15,6 +15,7 @@ timeglider.TimegliderTimelineView
 */
 (function(tg){
 
+
 var TGDate = tg.TGDate, MED;
 
 tg.TimegliderTimelineView = function (widget, mediator) {
@@ -282,6 +283,10 @@ tg.TimegliderTimelineView = function (widget, mediator) {
 	$(".TimegliderEvModal .closeBt").live("click", function () {
 		$(this).parent().remove();	
 	});
+	
+	$(".TimegliderEvVideoModal .closeBt").live("click", function () {
+		$(this).parent().remove();	
+	});
 		
 
 
@@ -359,6 +364,10 @@ tg.TimegliderTimelineView.prototype = {
 			
 			return {container:container, tick:tick, footer:footer}
 		  
+	},
+	
+  scaleToImportance : function(imp, zoo) {
+		    return imp / zoo;
 	},
 	
 
@@ -932,7 +941,7 @@ tg.TimegliderTimelineView.prototype = {
   				if (this.passesFilters(ev) == true) {
   						  
 					  posx = cx + ((ev.startdateObj.sec - foSec) / spp);
-					  impq = (ev.importance / zl);
+					  impq = this.scaleToImportance(ev.importance, zl);
 					
     				if (expCol == "expanded") {
     					ev.width = (ev.titleWidth * impq) + buffer;
@@ -1034,7 +1043,7 @@ tg.TimegliderTimelineView.prototype = {
 						  
 							ev.left = posx; // will remain constant
 							// !TODO --- ACCURATE WIDTH BASELINE FROM chewTimeline()
-							impq = (ev.importance / zl);
+							impq = this.scaleToImportance(ev.importance, zl);
 							ev.fontsize = this.basicFontSize * impq;
 							ev.width = (ev.titleWidth * impq) + buffer;
 							if (ev.span == true) {
@@ -1092,23 +1101,32 @@ tg.TimegliderTimelineView.prototype = {
 		  ev = MED.eventPool[eid],
 		  ev_img = ev.image ? "<img src='" + ev.image + "'>" : "",
 		  
-		  html = "<div class='TimegliderEvModal ui-widget-content shadow' id='" + eid + "_modal'>" 
+		  modalhtml = "<div class='TimegliderEvModal ui-widget-content shadow' id='" + eid + "_modal'>" 
 			+ "<div class='closeBt'><img src='img/close.png'></div>" 
 			+ "<div class='startdate'>" + ev.startdate + "</div>"
 			+ "<h4 id='title'>" + ev.title + "</h4>"
 			+ "<p>" + ev_img + ev.description + "</p>"
 			+ "<ul class='TimegliderModalLink'><li><a target='_blank' href='" + ev.link + "'>link</a></li></ul>"
-			+ "</div>",
-			$modal = $(html)
+			+ "</div>";
+			
+			if (ev.video) { 
+        modalhtml = "<div class='TimegliderEvVideoModal ui-widget-content shadow' id='" 
+        + eid + "_modal'><div class='closeBt'><img src='img/close.png'></div>" 
+        + "<iframe width = '100%' height='300' src='" + ev.video + "'></iframe></div>"; 
+			}
+		
+		  var $modal = $(modalhtml)
 			  .appendTo(this._views.TICKS)
-			  .position({
+			  .css("z-index", me.ztop++)
+	      .position({
       				my: "left bottom",
       				at: "left top",
       				of: $par,
       				offset: "0, -12", // left, top
       				collision: "flip fit"
-      			})
-      	.css("z-index", me.ztop++);
+      	});
+    
+      	
   
 	},
 	
