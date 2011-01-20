@@ -1,5 +1,5 @@
 # ignore these files!
-
+.gitignore
 __past*
 _future*
 _notes*
