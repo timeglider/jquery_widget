@@ -13,8 +13,6 @@
 timeglider.TimegliderTimelineView
 ****************************************
 */
-
-
 (function(tg){
 
 var TGDate = tg.TGDate, MED;

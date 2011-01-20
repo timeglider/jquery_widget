@@ -172,7 +172,7 @@
           return false;
         }
 
-        return false;
+        // return false;
 
     };
 
@@ -204,10 +204,6 @@
           if (collision == false) {
             // ADD TO TREE OF PLACED EVENTS
             block.top -= block.fontsize;
-            //block.bottom -= block.fontsize;
-            if (block.id == "jshist-02b") {
-              // debug.log("TST:size" + block.fontsize + "...block.top:" +  block.top + "...l_index:" + l_index);
-            }
           
             // PLACE BLOCK!
             index.push(block);

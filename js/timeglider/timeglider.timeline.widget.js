@@ -17,12 +17,6 @@
 *
 */
 
-
-//require.js module wrapper to ensure jquery-ui is loaded first
-// WORKS: require(['jquery-ui-1.8.7.custom.min'], function ($) {
-
-define('timeglider.timeline', ['jquery-ui-1.8.7.custom.min'], function () {
-  
 (function($){
 
   /**
@@ -116,6 +110,3 @@ define('timeglider.timeline', ['jquery-ui-1.8.7.custom.min'], function () {
 
 	
 })(jQuery);
-
-// end require.js module wrapper
-});

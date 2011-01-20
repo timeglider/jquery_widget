@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+	<head>
+
+		<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+		<title>Timeglider jQuery Plugin</title>
+	
+		
+		<link rel="stylesheet" href="css/base.css" type="text/css" media="screen" title="no title" charset="utf-8">
+		
+		
+		<link rel="stylesheet" href="css/aristo/jquery-ui-1.8.5.custom.css" type="text/css" media="screen" title="no title" charset="utf-8">
+	
+	
+		<link rel="stylesheet" href="js/timeglider/Timeglider.css" type="text/css" media="screen" title="no title" charset="utf-8">
+	
+		
+	    
+        <style type='text/css'>
+		#placement {
+			width:100%;
+			height:520px;
+		}
+		</style>
+	
+</head>
+<body>
+
+
+
+<div id='placement'></div>
+
+<div class='controls'>
+<table>
+<tr><td id='zoomlevel' width='33%'>...</td><td id='tickwidth' width='33%'>tw</td><td id='focusdate'>...</td></tr>
+<tr><td id='tickpos'></td><td colspan='2' id='note'>...</td></tr>
+</table>
+</div>
+
+
+<script src="js/jquery-1.4.4.min.js"></script> 
+<script src="js/query-ui-1.8.7.custom.min"></script> 
+<script data-main="require_timeglider" src="js/require.js"></script>
+
+<script>
+
+	// listener for zoom level off the model
+
+	$(document).ready(function () { 
+
+		debug.log("DOCUMENT LOADED!");
+			
+		var tg1 = $("#placement").timeline({
+				"min_zoom":10, 
+				"max_zoom":70, 
+				"show_centerline":true,
+				"initial_timeline_id": "jshist",
+				"data_source":"json_tests/large.json"
+				});
+
+
+	}); // end document-ready
+	
+</script>
+
+
+
+
+</body>
+</html>
+
+
