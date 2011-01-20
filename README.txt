@@ -11,13 +11,14 @@ michael@timeglider.com
 Our goal here is to create a lightweight, extensible time-viewer-explorer which can zoom/pan and otherwise explore future/past events easily. Timeglider.com provides an authoring environment for creating hosted timelines; this plug in is meant for enterprise media, medical software, private legal workspaces, etc. all of which may have APIs of their own.
 
 LICENSE
-As of yet, there is no license established for this widget. We at Timeglider HQ need to do some due diligence about how to frame a license that's permissive with all manner of small-scale, educational, and non-commercial use, and defined for commercial use. There will be exclusive commercial licences for certain enterprise use-cases. Our plan is to give 20% of all commercial license fees to jQuery. 
+As of yet, there is no license established for this widget. We at Timeglider HQ need to do some due diligence about how to frame a license that's permissive with all manner of small-scale, educational, non-profit, and non-commercial use, and yet defined for commercial use. Our plan is to give 20% of all commercial license fees to jQuery. 
 
 TIMEGLIDER DATA FORMAT
 See a sample json file @ json_tests/idaho.json.
 
 IMPORTANCE
 Events each have an importance value (if missing, importance will be set to 20). This is the key to structuring a timeline that does not "blow out". For example, applying a relatively low importance value (say, 10) to an event like "lunch with Don" means that it will fade from view by the time you're at a zoom-level of 30 --- a wider scope where you're looking across 10 years. 
+
 
 SPECIFIC UI/FUNCTIONALITY GOALS
 
