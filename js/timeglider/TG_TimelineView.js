@@ -13,8 +13,9 @@
 timeglider.TimegliderTimelineView
 ****************************************
 */
-(function(tg){
 
+
+(function(tg){
 
 var TGDate = tg.TGDate, MED;
 
@@ -203,7 +204,7 @@ tg.TimegliderTimelineView = function (widget, mediator) {
   
   $.subscribe("mediator.filterObjectChange", function () {
     // refresh is done inside MED -- no need to refresh here
-		debug.log("filter:" + MED.filterObject.include + "/" + MED.filterObject.exclude);
+		// debug.log("filter:" + MED.filterObject.include + "/" + MED.filterObject.exclude);
 	});
 	
 															
@@ -223,11 +224,11 @@ tg.TimegliderTimelineView = function (widget, mediator) {
 				output("DBLCLICK:" + foc.mo + "-" + foc.ye + " dblclick:" + clk.mo + "-" + clk.ye, "note");	
 		})			
 		.bind('mousewheel', function(event, delta) {
-						output("hello mousewheel?", "note");
-			            var dir = Math.ceil(-1 * (delta * 3));
+						
+			      var dir = Math.ceil(-1 * (delta * 3));
 						var zl = MED.getZoomLevel();
 						MED.setZoomLevel(zl += dir);
-			            return false;
+			      return false;
 			            
 		}); // end TRUCK EVENTS
 
@@ -310,7 +311,6 @@ tg.TimegliderTimelineView = function (widget, mediator) {
 	   When actually doing something, Safari seems to 
 	   ignore attempts at preventing default... 
 	*/
-	
 	function gestureChange (e) {
 		e.preventDefault ();
 		if (MED.gesturing === false) {
@@ -347,7 +347,6 @@ tg.TimegliderTimelineView = function (widget, mediator) {
 tg.TimegliderTimelineView.prototype = {
 	
 	getWidgetDimensions : function () {
-			debug.log("getWidg...");
 			
 			var c = $(this._views.CONTAINER),
 				w = c.width(),
@@ -382,10 +381,6 @@ tg.TimegliderTimelineView.prototype = {
 		  $elem, env, tb, ti, relPos, tbWidth,
 		  mo = $(this._views.CONTAINER).offset().left;
 		
-		/*
-		!!!TODO  inefficient, redundant
-		should target only spanning events, not all events...
-		*/
 		$(".timeglider-event-spanning").each(
 			function() {
 			  // !TODO  needs optimizing of DOM "touching"
@@ -470,7 +465,7 @@ tg.TimegliderTimelineView.prototype = {
 				/* "min" here is really the _highest_ zoom value @ upside down */
   				min:me.invSliderVal(hZoom),
 
-				/* "max" actually takes (inverse value of) low zoom level */
+				/* "max" actually takes (i  nverse value of) low zoom level */
   				max:me.invSliderVal(lZoom),
 
   				value:init_zoom,
@@ -487,8 +482,8 @@ tg.TimegliderTimelineView.prototype = {
 
 				change: function(e,ui){
       				// i.e. on-release handler
-					// possibly load throttled back events
-  				}, 
+					    // possibly load throttled back events
+  			}, 
 
 				slide: function(e, ui) {
 					// sets model zoom level to INVERSE of slider value
@@ -541,19 +536,17 @@ tg.TimegliderTimelineView.prototype = {
   
 	
 	/*
-	@param info   ----> type: init|l|r
-	                    focusDate: date object for init type
+	* @param info {object} --object--> type: init|l|r focusDate: date object for init type
 	*/											
 	addTick : function (info) {
-		
-			mDays = 0, dist = 0, pos = 0, ctr = 0, tperu = 0, serial = 0, shiftLeft = 0,
+		  
+			var mDays = 0, dist = 0, pos = 0, ctr = 0, 
+			tperu = 0, serial = 0, shiftLeft = 0,
 			tid = "", tickHtml = "", idRef = "", 
 			$tickDiv = {}, tInfo = {}, pack = {}, label = {}, mInfo = {}, 
 			tickUnit = MED.getZoomInfo().unit,
 			tickWidth = MED.getZoomInfo().width,
 			focusDate = MED.getFocusDate(),
-			// !TODO 60 below needs to reflect bottom minus footer, minus tick height
-			// somehow get CSS rules right away
 			tick_top = parseInt(this.dimensions.tick.top),
 			me = this,	
 			serial = MED.addToTicksArray({type:info.type, unit:tickUnit}, focusDate);
@@ -588,17 +581,13 @@ tg.TimegliderTimelineView.prototype = {
 		// turn this into a function...
 		MED.getTickBySerial(serial).width = tickWidth;
 		MED.getTickBySerial(serial).left = pos;
-		
-		
+
 		tid = this._views.PLACE + "_" + tickUnit + "_" + serial + "-" + this.tickNum;
 
 		$tickDiv= $("<div class='timeglider-tick' id='" + tid + "'>"
 		            + "<div class='timeglider-tick-label' id='label'></div></div>")
 		  .appendTo(this._views.TICKS);
 		
-		
-		// $(this._views.TICKS).append(tickHtml);
-
 		$tickDiv.css({width:tickWidth, left:pos, top:tick_top});
 						
 		// GET TICK DIVS FOR unit AND width
@@ -659,8 +648,41 @@ tg.TimegliderTimelineView.prototype = {
 	
 	getDateLabelForTick : function  (obj) {
 		var i;
+	
 		switch(obj.unit) {
-			
+
+      case "bill":
+      	if (obj.serial == 1) return "1";
+        return (obj.serial -1) + " bya";
+        
+      case "hundredmill":
+      	if (obj.serial == 1) return "1";
+        return ((obj.serial -1) * 100) + " mya";
+        
+      case "tenmill":
+      	if (obj.serial == 1) return "1";
+        return ((obj.serial -1) * 10) + " mya";
+        		    
+      case "mill":
+    		if (obj.serial == 1) return "1";
+      	return (obj.serial -1) + " mya";
+      		    
+      case "hundredthou":
+  		  if (obj.serial == 1) return "1";
+    		return (obj.serial -1) + "00,000";    
+    		    
+		  case "tenthou":
+		    if (obj.serial == 1) return "1";
+  		  return (obj.serial -1) + "0000";
+ 
+		  case "thou": 
+		    if (obj.serial == 1) return "1";
+		    return (obj.serial -1) + "000";
+
+		  case "ce": 
+		    if (obj.serial == 1) return "1";
+		    return (obj.serial -1) + "00";
+		    
 			case "de": 
 				return ((obj.serial -1) * 10) + "s";
 			case "ye": 
@@ -670,7 +692,7 @@ tg.TimegliderTimelineView.prototype = {
 				return TGDate.monthNamesFull[i.mo] + ", " + i.ye; 
 			case "da": 
 				i = TGDate.getDateFromRD(obj.serial);
-				return i.ye + "-" + i.mo + "-" + i.da; 
+				return TGDate.monthNamesAbbr[i.mo] + " " + i.da + ", " + i.ye;
 		
 			default: return obj.unit + ":" + obj.serial + ":" + obj.width;
 		}
@@ -738,14 +760,24 @@ tg.TimegliderTimelineView.prototype = {
 				break;
 			
 			case "thou": 
-				prop = ((fdate.ye % 1000) / 1000) + (fdate.ye / 100) + (fdate.mo / 1200);
+				prop = ((fdate.ye % 1000) / 1000); //   + (fdate.ye / 1000) + (fdate.mo / 12000);
 				p = w * prop;
 				break;
 				
 
-			case "tenthou": p = 0; break;
+			case "tenthou":  
+			
+				prop = ((fdate.ye % 10000) / 10000); //   + (fdate.ye / 1000) + (fdate.mo / 12000);
+				p = w * prop;
+				
+				break;
 
-			case "hundredthou": p = 0; break;
+			case "hundredthou": 
+			
+				prop = ((fdate.ye % 100000) / 100000); //   + (fdate.ye / 1000) + (fdate.mo / 12000);
+				p = w * prop;
+				
+				break;
 
 			default: p=0;
 
@@ -813,11 +845,15 @@ tg.TimegliderTimelineView.prototype = {
 	},
 	
 	
-	passesFilters : function (ev) {
+	passesFilters : function (ev, zoomLevel) {
 	   var ret = true,
 	    ei = "", ea = [], e,
 	    ii = "", ia = [], i;
-	   /// THRESHOLDS FIRST
+	   
+	   // filter by thresholds first
+	   if  ((zoomLevel < ev.low_threshold) || (zoomLevel > ev.high_threshold)) {
+	     return false;
+     }
 	   
 	   var incl = MED.filterObject.include;
  	   if (incl) {
@@ -825,7 +861,6 @@ tg.TimegliderTimelineView.prototype = {
  	      ret = false;
  	      for (i=0; i<ia.length; i++) {
  	        ii = new RegExp(ia[i].trim(), "i");
- 	        debug.log("reg:" + ii);
  	        if (ev.title.match(ii)) { ret = true; }
          }
       }
@@ -938,7 +973,7 @@ tg.TimegliderTimelineView.prototype = {
 					ev = MED.eventPool["ev_" + idArr[i]];
 					
 			    /// filter patterns & thresholds 
-  				if (this.passesFilters(ev) == true) {
+  				if (this.passesFilters(ev, zl) == true) {
   						  
 					  posx = cx + ((ev.startdateObj.sec - foSec) / spp);
 					  impq = this.scaleToImportance(ev.importance, zl);
@@ -981,7 +1016,7 @@ tg.TimegliderTimelineView.prototype = {
 			}
 			if (stuff != "undefined") { $tl.append(stuff); }
 			
-			$(".timeglider-event-thumb").each(
+			$(".timeglider-event-image-bar").each(
 			    function () {
 			      $(this).position({
 			        		my: "top",
@@ -1037,7 +1072,7 @@ tg.TimegliderTimelineView.prototype = {
 						posx = cx + ((ev.startdateObj.sec - foSec) / spp);
 						
 						/// filter patterns & thresholds 
-						if (this.passesFilters(ev)==true) {
+						if (this.passesFilters(ev, zl)==true) {
 						 
 						if (expCol == "expanded") {
 						  
@@ -1100,6 +1135,9 @@ tg.TimegliderTimelineView.prototype = {
 		  $par = $("#" + eid),
 		  ev = MED.eventPool[eid],
 		  ev_img = ev.image ? "<img src='" + ev.image + "'>" : "",
+		  
+		  //// formatting below needs to have
+		  ///  date limit, culture, and timezone built in!!!!
 		  
 		  modalhtml = "<div class='TimegliderEvModal ui-widget-content shadow' id='" + eid + "_modal'>" 
 			+ "<div class='closeBt'><img src='img/close.png'></div>" 
@@ -1293,13 +1331,13 @@ tg.TimegliderTimelineView.prototype = {
     				case "ye": sec =   31536000; break;
     				case "de": sec =   315360000; break;
     				case "ce": sec =   3153600000; break;
-    				case "thou": sec =    3153600000; break;
-    				case "tenthou": sec = 31536000000; break;
-    				case "hundredthou": sec = 315360000000; break;
-    				case "mill": sec = 3153600000000; break;
-    				case "tenmill": sec = 290304000000000; break;
-    				case "hundredmill": sec = 2903040000000000; break;
-    				case "bill": sec =29030400000000000; break;
+    				case "thou": sec =    31536000000; break;
+    				case "tenthou": sec = 315360000000; break;
+    				case "hundredthou": sec = 3153600000000; break;
+    				case "mill": sec =    31536000000000; break;
+    				case "tenmill": sec = 315360000000000; break;
+    				case "hundredmill": sec = 3153600000000000; break;
+    				case "bill": sec =31536000000000000; break;
     			}
     			// pixels
     			zl.spp = sec / parseInt(zl.width);

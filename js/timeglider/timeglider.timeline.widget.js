@@ -16,29 +16,28 @@
                         jquery.ui.ipad
 *
 */
+
+
+//require.js module wrapper to ensure jquery-ui is loaded first
+// WORKS: require(['jquery-ui-1.8.7.custom.min'], function ($) {
+
+define('timeglider.timeline', ['jquery-ui-1.8.7.custom.min'], function () {
+  
 (function($){
 
-  String.prototype.trim = function() {
-  	return this.replace(/^\s+|\s+$/g,"");
-  }
-  String.prototype.ltrim = function() {
-  	return this.replace(/^\s+/,"");
-  }
-  String.prototype.rtrim = function() {
-  	return this.replace(/\s+$/,"");
-  }
-  
-  /* TODO Use this to set options defaults, too */ 
-
-    function getToday() { var d = new Date(); return d.format('c'); }
-      
+  /**
+   * The main jQuery widget factory for Timeglider
+   *
+   *
+   */
     $.widget( "timeglider.timeline", {
       
 	    _tg: this,
       _element: this.element,
       
+      
       options : { 
-        initial_focus:getToday(), 
+        initial_focus:timeglider.TGDate.getToday(), 
         editor:'none', 
         min_zoom : 1, 
         max_zoom : 100, 
@@ -52,8 +51,10 @@
       },
 
       _create : function () {
-        // if a table exists, convert table data... and store it as one timeline...
+        
+        
         this._id = $(this.element).attr("id"); 
+       
         var MAIN_TEMPLATE = "<div class='timeglider-container'>"+
                               "<div class='timeglider-centerline'></div>"+
                               "<div class='timeglider-truck'>"+
@@ -72,14 +73,20 @@
                                 "<div class='timeglider-filter-bt'><img title='filter' src='js/timeglider/buttons/filter.png'></div>"+
                               "</div><div class='timeglider-filter-box'></div>"+
                             "</div><span id='TimegliderMeasureSpan'></span>";
-                            
+                                   
         this.element.html(MAIN_TEMPLATE);
 		
 	    },
 	
-	
+	    /**
+       * takes the created template and inserts functionality
+       *  from Mediator and View constructors
+       *
+       *
+       */
 	    _init : function () {
-	
+	      
+	      
 	      var optionsCheck = timeglider.validateOptions(this.options);
 	      
 	      if (optionsCheck == "") {
@@ -95,56 +102,20 @@
         } else {
           alert("There's a problem with your widget settings:" + optionsCheck);
         }
-
+      
 	    },
 
       destroy : function () {
-        // !TODO
-      },
-	
-      
-      doSomething : function () {
-        debug.log("this is the original constructor");
+        // anything else?
+        $.Widget.prototype.destroy.apply(this, arguments); // default destroy
       }
 
 			
 }); // end widget process
 
 
-
-// models for extending the first widget
-/*
-
-var _newDoSomething = $.tg.timeglider.prototype._doSomething;
-$.tg.timeglider.prototype._doSomething = function() {
-    _newDoSomething.call(this);
-	//alert('____and do something else!');
-};
-
-
-
-  $.widget("timeglider.timeline2", $.timeglider.timeline, {
-	  
-	  options: {
-	    
-	  },
-	  
-	  doSomething : function () {
-		  console.log("this is the timeline2 constructor");
-	  }
-	  
-  });
-*/
-
-
-
 	
 })(jQuery);
 
-
-
-/* GLOBAL */
-function output(arg, section) {
-  $("#" + section).text(arg);
-};
-
+// end require.js module wrapper
+});

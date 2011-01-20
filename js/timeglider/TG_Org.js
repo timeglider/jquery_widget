@@ -7,7 +7,7 @@
 
 (function(tg){
 
-  tg.levelHeight = 22; // across view and org, etc
+  tg.levelHeight = 26; // across view and org, etc
   var levHt = tg.levelHeight; // local
   
   tg.TGOrg = function() {
@@ -71,7 +71,17 @@
           if ($.inArray(b.id, this.vis) == -1) {
             this.vis.push(b.id);
 
-            checkAgainstLevel(b, 0); 
+            checkAgainstLevel(b, 0);
+            
+            if (b.image) {
+              var vadj = "";
+              if (b.image_class == "layout") {
+                  vadj = " style='top:-" + (b.image_size.height + 4) + "px' ";
+              }
+              img = "<div class='timeglider-event-image-" + b.image_class + "'" + vadj + "><img src='" + b.image + "'></div>";
+            } else {
+              img = "";
+            } 
 
             b.fontsize < 10 ? b.opacity = b.fontsize / 10 : b.opacity=1;
             if (b.span == true) {
@@ -83,7 +93,11 @@
             }
 
             if (b.image) {
-              img = "<div class='timeglider-event-thumb' style='top:-28px'><img src='" + b.image + "'></div>";
+              var vadj = "";
+              if (b.image_class == "layout") {
+                  vadj = " style='top:-" + (b.image_size.height + 4) + "px' ";
+              }
+              img = "<div class='timeglider-event-image-" + b.image_class + "'" + vadj + "><img src='" + b.image + "'></div>";
             } else {
               img = "";
             }
@@ -197,12 +211,16 @@
           
             // PLACE BLOCK!
             index.push(block);
+            
+            
             if ((block.fontsize * 1.5) > (levHt * 2)) {
               tree[next_level].push(block);
               if ((block.fontsize * 1.5) > (levHt * 3)) {
                   tree[next_level + 1].push(block);
               }
             }
+            
+            
          
    
           }

@@ -38,7 +38,7 @@
 </div>
 	
 	<!-- 3rd party libs -->
-	<script src="js/jquery-1.4.3.min.js" type="text/javascript" charset="utf-8"></script>
+	<script src="js/jquery-1.4.4.min.js" type="text/javascript" charset="utf-8"></script>
 
 	<script src="js/jquery-ui-1.8.5.custom.min.js" type="text/javascript" charset="utf-8"></script>
 
@@ -46,7 +46,10 @@
 	<script src="js/jquery.mousewheel.min.js" type="text/javascript" charset="utf-8"></script>
 	<script src="js/jquery.ui.ipad.js" type="text/javascript" charset="utf-8"></script>
 	<script src="js/raphael-min.js" type="text/javascript" charset="utf-8"></script>
-		
+	<script src="js/glob/jquery.glob.min.js" type="text/javascript" charset="utf-8"></script>
+	<script src="js/glob/glob_cultures/jquery.glob.all.min.js" type="text/javascript" charset="utf-8"></script>
+
+	
 	<!-- QUNIT! -->
 	<link rel="stylesheet" href="js/testing/qunit.css" type="text/css" media="screen" title="no title" charset="utf-8">
 	<script src="js/testing/qunit.js" type="text/javascript" charset="utf-8"></script>
@@ -67,10 +70,11 @@
 	$(document).ready(function () { 
 
 		var tg1 = $("#placement").timeline({
-				"max_zoom":60, 
+				"min_zoom":10, 
+				"max_zoom":70, 
 				"show_centerline":true,
-				"initial_timeline_id": "med",
-				"data_source":"json_tests/med.json"
+				"initial_timeline_id": "jshist",
+				"data_source":"json_tests/large.json"
 				});
 		
     }); // end document-ready

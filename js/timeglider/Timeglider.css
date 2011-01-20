@@ -298,20 +298,30 @@
 	cursor:pointer;
 }
 
-.timeglider-event-thumb {
-  /* this is a div */
+.timeglider-event-image-bar {
+  /* placed in a div in the timeline bar */
   width:22px;
   height:22px;
   overflow:hidden;
   position:absolute;
   border:1px solid #333;
+  top:-28px;
 }
-
-
-.timeglider-event-thumb img {
+.timeglider-event-image-bar img {
   height:24px;
   width:auto;
 }
+
+
+.timeglider-event-image-layout {
+  /* div for default fullsize image with event */
+  position:absolute;
+  
+}
+
+.timeglider-event-image-layout img {
+}
+
 
 #clps {
 	color:#AAA;
@@ -422,6 +432,7 @@ ul.formBottom li{
 	border:1px solid #333;
 	width:250px;
 	padding:8px;
+	
 }
 
 .TimegliderEvVideoModal {
@@ -441,7 +452,10 @@ ul.formBottom li{
 	font-size:11px;
 	color:#555;
 	margin-right:14px;
+	max-height:200px;
+	overflow-y:scroll;
 }
+
 .TimegliderEvModal p img {
   width:100px;
   height:auto;

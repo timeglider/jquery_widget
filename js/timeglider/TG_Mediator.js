@@ -96,7 +96,9 @@ TODO ==> re-chew function for renewing stuff like startSeconds, etc
     chewTimeline : function (tdata, init) {
 
       // TODO ==> add additional units
-      var dhash                       = {"da":[], "mo":[], "ye":[], "de":[], "ce":[], "thou":[]};
+      var dhash                       = {"da":[], "mo":[], "ye":[], "de":[], "ce":[], "thou":[], 
+                                          "tenthou":[], "hundredthou":[], "mill":[], "tenmill":[], "hundredmill":[],
+                                          "bill":[]};
       var units                       = TGDate.units; 
       tdata.startSeconds              = [];
       tdata.endSeconds                = [];
@@ -128,13 +130,19 @@ TODO ==> re-chew function for renewing stuff like startSeconds, etc
           ev.startdateObj = startEnd.s; // TGDate.makeDateObject(ev.startdate);
           ev.enddateObj = startEnd.e; // TGDate.makeDateObject(ev.enddate);
 
-          // this gets the title width at 12px
           
           // default icon
-          ev.icon = options.icon_folder + (ev.icon || "triangle_orange.png");
-          debug.log("icon:" + ev.icon);
-          
+          ev.icon = options.icon_folder + (ev.icon || "triangle_orange.png");          
           ev.titleWidth = tg.getStringWidth(ev.title) + 20;
+          
+          if (ev.image) {
+            if (!ev.image_class) { 
+              ev.image_class = "layout"; 
+              // get image size?
+              ev.image_size = tg.getImageSize(ev.image);
+              debug.log("image height:" + ev.image_size.height);
+              }
+          }
 
           // microtimeline for collapsed view and other metrics
           tdata.startSeconds.push(ev.startdateObj.sec);
@@ -400,12 +408,23 @@ TODO ==> re-chew function for renewing stuff like startSeconds, etc
         /* a div with id of "hiddenDiv" has to be pre-loaded */
         tg.getStringWidth  = function (str) {
         		// var size = obj.fontSize; 
-        		var $ms = $("#TimegliderMeasureSpan");
+        		var $ms = $("#TimegliderMeasureSpan").html('');
         		$ms.html(str + "");
         		var w = $ms.width() + 4;
         		$ms.html('');
         		return w;
         };
+        
+        tg.getImageSize = function (img) {
+            // var size = obj.fontSize; 
+        		var $ms = $("#TimegliderMeasureSpan").html('');
+        		$ms.append("<img id='test_img' src='" + img + "'>");
+        		var w = $("#test_img").width();
+        		var h = $("#test_img").height();
+        		$ms.html('');
+        		
+        		return {width:w, height:h};
+        }
         
         
         // DORMANT
