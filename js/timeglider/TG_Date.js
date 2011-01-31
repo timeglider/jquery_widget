@@ -447,7 +447,7 @@ timeglider.TGDate = {
 	
 	getToday : function () { 
       var d = new Date(); 
-      var df = $.format(d, "S"); 
+      var df = jQuery.format(d, "S");
       df = df.replace("T", " ");
       debug.log("df:" + df);
       return df;
@@ -470,7 +470,7 @@ String.prototype.rtrim = function() {
 
 /* GLOBAL */
 function output(arg, section) {
-  $("#" + section).text(arg);
+  jQuery("#" + section).text(arg);
 };
 
 

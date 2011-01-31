@@ -68,7 +68,7 @@
 
         if (b.tickScope == tickScope) {
 
-          if ($.inArray(b.id, this.vis) == -1) {
+          if (jQuery.inArray(b.id, this.vis) == -1) {
             this.vis.push(b.id);
 
             checkAgainstLevel(b, 0);

@@ -63,7 +63,7 @@ loadTimelineData : function (src) {
   var M = this; // model ref
   var ct = 0;
 
-  $.getJSON(src, function(data){
+  jQuery.getJSON(src, function(data){
     var dl = data.length, ti = {}, t = {};
 
     for (var i=0; i<dl;i++) {
@@ -176,7 +176,7 @@ TODO ==> re-chew function for renewing stuff like startSeconds, etc
           }// end cycling through timeline's events
 
           // adding event secs to catalog of entire timeline
-          var allsec = $.merge(tdata.startSeconds,tdata.endSeconds);
+          var allsec = jQuery.merge(tdata.startSeconds,tdata.endSeconds);
           var fl = timeglider.getLowHigh(allsec);
           /// bounds of timeline
           tdata.bounds = {"first": fl.low, "last":fl.high };
@@ -197,7 +197,7 @@ TODO ==> re-chew function for renewing stuff like startSeconds, etc
     /* Makes an indexed array of timelines */
     swallowTimeline : function (obj) {
       this.timelinePool[obj.id] = obj;	
-      $.publish("mediator.timelineListChangeSignal");
+      jQuery.publish("mediator.timelineListChangeSignal");
     },
 
     ///  end of methods that need to go into (backbone) data model
@@ -224,7 +224,7 @@ TODO ==> re-chew function for renewing stuff like startSeconds, etc
       setTicksReady : function (bool) {
         this._ticksReady = bool;
         if (bool === true) { 
-          $.publish("mediator.ticksReadySignal");
+          jQuery.publish("mediator.ticksReadySignal");
           }
       },
 
@@ -270,7 +270,7 @@ TODO ==> re-chew function for renewing stuff like startSeconds, etc
             this._zoomLevel = z;
             this._zoomInfo = timeglider.zoomTree[z];
             
-            $.publish("mediator.zoomLevelChange");
+            jQuery.publish("mediator.zoomLevelChange");
             
           }
 
@@ -291,7 +291,7 @@ TODO ==> re-chew function for renewing stuff like startSeconds, etc
         */
         setFilterObject : function (obj) {
            this.filterObject = {include:obj.include, exclude:obj.exclude}
-           $.publish("mediator.filterObjectChange");   
+           jQuery.publish("mediator.filterObjectChange");
            this.refresh();      
          },
          
@@ -311,7 +311,7 @@ TODO ==> re-chew function for renewing stuff like startSeconds, etc
           // main listener hub for date focus and tick-appending
           this._ticksOffset = newOffset;
           /* In other words, ticks are being dragged! */
-          $.publish( "mediator.ticksOffsetChange" );
+          jQuery.publish( "mediator.ticksOffsetChange" );
         },
 
 
@@ -353,7 +353,7 @@ TODO ==> re-chew function for renewing stuff like startSeconds, etc
 
 
           // this.ticksArrayChange.broadcast();
-          $.publish( "mediator.ticksArrayChange" );
+          jQuery.publish( "mediator.ticksArrayChange" );
           
           return obj.serial;
         },
@@ -362,7 +362,7 @@ TODO ==> re-chew function for renewing stuff like startSeconds, etc
         toggleTimeline : function (id) {
 
           var lt = this.timelinePool[id];
-          var ia = $.inArray(id, this._activeTimelines);
+          var ia = jQuery.inArray(id, this._activeTimelines);
 
           if (ia == -1) {
             // not active ---- bring it on and focus to it
@@ -379,7 +379,7 @@ TODO ==> re-chew function for renewing stuff like startSeconds, etc
             this.refresh();
           }
 
-          $.publish( "mediator.activeTimelinesChange" );
+          jQuery.publish( "mediator.activeTimelinesChange" );
 
 
         }
@@ -408,7 +408,7 @@ TODO ==> re-chew function for renewing stuff like startSeconds, etc
         /* a div with id of "hiddenDiv" has to be pre-loaded */
         tg.getStringWidth  = function (str) {
         		// var size = obj.fontSize; 
-        		var $ms = $("#TimegliderMeasureSpan").html('');
+        		var $ms = jQuery("#TimegliderMeasureSpan").html('');
         		$ms.html(str + "");
         		var w = $ms.width() + 4;
         		$ms.html('');
@@ -417,10 +417,10 @@ TODO ==> re-chew function for renewing stuff like startSeconds, etc
         
         tg.getImageSize = function (img) {
             // var size = obj.fontSize; 
-        		var $ms = $("#TimegliderMeasureSpan").html('');
+        		var $ms = jQuery("#TimegliderMeasureSpan").html('');
         		$ms.append("<img id='test_img' src='" + img + "'>");
-        		var w = $("#test_img").width();
-        		var h = $("#test_img").height();
+        		var w = jQuery("#test_img").width();
+        		var h = jQuery("#test_img").height();
         		$ms.html('');
         		
         		return {width:w, height:h};
@@ -450,7 +450,7 @@ TODO ==> re-chew function for renewing stuff like startSeconds, etc
         			// line break: /n for alert, <br> for html modal
         			lb = "\n";
 
-        		$.each(widget_settings, function(key, value) { 
+        		jQuery.each(widget_settings, function(key, value) {
 
         			if (me.optionsMaster[key]) {
         				//trace ("key:" + key + ", type:" + optionsTypes[key].type);
@@ -458,7 +458,7 @@ TODO ==> re-chew function for renewing stuff like startSeconds, etc
         					case "string": 
         						if (typeof value != "string") { msg += (key + " needs to be a string." + lb); }
         						if (me.optionsMaster[key].possible) {
-        							if ($.inArray(value, me.optionsMaster[key].possible) == -1) {
+        							if (jQuery.inArray(value, me.optionsMaster[key].possible) == -1) {
         								msg += (key + " must be: " + me.optionsMaster[key].possible.join(" or "));
         							}
         						}
