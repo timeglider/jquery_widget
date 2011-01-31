@@ -217,7 +217,7 @@ TODO ==> re-chew function for renewing stuff like startSeconds, etc
       },
 
       refresh : function () {
-        $.publish("mediator.refreshSignal");
+        jQuery.publish("mediator.refreshSignal");
       },
 
       // !!!TODO ---- get these back to normal setTicksReady, etc.
