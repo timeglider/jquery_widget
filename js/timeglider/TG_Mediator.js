@@ -59,32 +59,42 @@ TODO
 Put this stuff into backbone collection of TimelineModel() instances
 */
 loadTimelineData : function (src) {
+  var M = this; // model ref
+  // Allow to pass in either the url for the data or the data itself.
+  if (typeof src === "object") {
+    M.parseData(src);
+  }
+  else {
+    jQuery.getJSON(src, function(data){
+      M.parseData(data);
+    }); // end getJSON
+  }
+},
 
+/*
+ * No matter what the source, parse the data received.
+ */
+parseData : function (data) {
   var M = this; // model ref
   var ct = 0;
+  var dl = data.length, ti = {}, t = {};
 
-  jQuery.getJSON(src, function(data){
-    var dl = data.length, ti = {}, t = {};
+  for (var i=0; i<dl;i++) {
 
-    for (var i=0; i<dl;i++) {
+    t = new timeglider.TimegliderTimeline(data[i]); // the timeline
 
-      t = new timeglider.TimegliderTimeline(data[i]); // the timeline		
+    ti = M.chewTimeline(t, true); // indexed, etc
+    if (t.id.length > 0) {ct++;}// at least one timeline was loaded
+    M.swallowTimeline(ti);
+  }
 
-      ti = M.chewTimeline(t, true); // indexed, etc
-      if (t.id.length > 0) { ct++; }// at least one timeline was loaded
-      M.swallowTimeline(ti);	
-    }
+  if (ct === 0) {
+    alert("ERROR loading data: Check JSON with jsonLint");
+  } else {
+    M.setInitialTimelines();
+  }
+},
 
-    if (ct === 0) { 
-      alert("ERROR loading data @ " + src + ": Check JSON with jsonLint"); 
-    } else {
-      M.setInitialTimelines();
-    }
-
-    }); // end getJSON
-
-
-  },
 
   /*
   * objectifies string dates
