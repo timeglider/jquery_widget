@@ -5,6 +5,7 @@
 */
 
 var timeglider = {}
+  
 
 
 timeglider.TGDate = {
@@ -465,6 +466,12 @@ String.prototype.ltrim = function() {
 }
 String.prototype.rtrim = function() {
 	return this.replace(/\s+$/,"");
+}
+
+
+
+function output (stuff, goes) {
+   $("#" + goes).text(stuff);
 }
 
 
