@@ -7,8 +7,6 @@
 var timeglider = {}
 
 
-
-
 timeglider.TGDate = {
 	
 	monthNamesFull : ["","January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
@@ -448,7 +446,7 @@ timeglider.TGDate = {
 	
 	getToday : function () { 
       var d = new Date(); 
-      var df = $.format(d, "S"); 
+      var df = jQuery.format(d, "S"); 
       df = df.replace("T", " ");
       debug.log("df:" + df);
       return df;
@@ -468,10 +466,5 @@ String.prototype.ltrim = function() {
 String.prototype.rtrim = function() {
 	return this.replace(/\s+$/,"");
 }
-
-/* GLOBAL */
-function output(arg, section) {
-  $("#" + section).text(arg);
-};
 
 

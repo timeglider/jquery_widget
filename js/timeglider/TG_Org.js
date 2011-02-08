@@ -9,7 +9,7 @@
 
   tg.levelHeight = 8; // across view and org
   var lev_ht = tg.levelHeight; // local
-  
+  var $ = jQuery;
    /*
     * @constructor
   */
@@ -95,7 +95,7 @@
 
         if (b.tickScope == tickScope) {
 
-          if ($.inArray(b.id, this.vis) == -1) {
+          if (jQuery.inArray(b.id, this.vis) == -1) {
             this.vis.push(b.id);
             
             // if it has an image, it's either in "layout" mode (out on timeline full size)

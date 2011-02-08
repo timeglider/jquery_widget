@@ -59,10 +59,13 @@
 
   <script>
 
-	// listener for zoom level off the model
+		function output (stuff, goes) {
+			$("#" + goes).text(stuff);
+		}
 
 	$(document).ready(function () { 
-
+		
+	
 		var tg1 = $("#placement").timeline({
 				"min_zoom":10, 
 				"max_zoom":70, 

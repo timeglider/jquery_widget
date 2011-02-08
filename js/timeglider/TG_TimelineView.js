@@ -15,9 +15,10 @@ timeglider.TimegliderTimelineView
 */
 (function(tg){
 
-var TGDate = tg.TGDate, MED;
+  var TGDate = tg.TGDate, MED;
+  var $ = jQuery;
 
-tg.TimegliderTimelineView = function (widget, mediator) {
+  tg.TimegliderTimelineView = function (widget, mediator) {
 
 	var options = widget.options,
 	    PL = "#" + widget._id,

@@ -20,6 +20,7 @@ reflects state back to view
   
   var TGDate = tg.TGDate;
   var options = {};
+  var $ = jQuery;
 
   // MOVE THIS TO Models
   tg.TimegliderTimeline = function (data) {
@@ -54,46 +55,67 @@ reflects state back to view
 
 tg.TimegliderMediator.prototype = {
 
-/*
-TODO
-Put this stuff into backbone collection of TimelineModel() instances
-*/
-loadTimelineData : function (src) {
+  /*
+  TODO
+  Put this stuff into backbone collection of TimelineModel() instances
+  */
+  
+  /*
+  * loadTimelineData
+  * @param src {object} object OR json data to be parsed for loading
+  * TODO: create option for XML input
+  */
+  loadTimelineData : function (src) {
+    var M = this; // model ref
+    // Allow to pass in either the url for the data or the data itself.
+    if (typeof src === "object") {
+      M.parseData(src);
+    }
+    else {
+      jQuery.getJSON(src, function(data){
+        M.parseData(data);
+      }); // end getJSON
+    }
+  },
 
-  var M = this; // model ref
-  var ct = 0;
-
-  $.getJSON(src, function(data){
+  /*
+  * parseData
+  * @param data {object} Multiple (1+) timelines object derived from data in loadTimelineData
+  */
+  parseData : function (data) {
+    var M = this; // model ref
+    var ct = 0;
     var dl = data.length, ti = {}, t = {};
 
     for (var i=0; i<dl;i++) {
 
-      t = new timeglider.TimegliderTimeline(data[i]); // the timeline		
+      t = new timeglider.TimegliderTimeline(data[i]); // the timeline
 
-      ti = M.chewTimeline(t, true); // indexed, etc
-      if (t.id.length > 0) { ct++; }// at least one timeline was loaded
-      M.swallowTimeline(ti);	
+      ti = M.chewTimeline(t); // indexed, etc
+      if (t.id.length > 0) {ct++;}// at least one timeline was loaded
+      M.swallowTimeline(ti);
     }
 
-    if (ct === 0) { 
-      alert("ERROR loading data @ " + src + ": Check JSON with jsonLint"); 
+    if (ct === 0) {
+      alert("ERROR loading data: Check JSON with jsonLint");
     } else {
       M.setInitialTimelines();
     }
-
-    }); // end getJSON
-
-
   },
 
+
+
   /*
+  * chewTimeline
+  * @param tdata {object} single timeline object to be processed and indexed
+  * @param init {boolean} What the hell is this for?
   * objectifies string dates
   * creates hashbase of events indexed by unit serial
 
-TODO ==> re-chew function for renewing stuff like startSeconds, etc
-==> move to Timeline really needs to be it's own class with methods...
-*/
-    chewTimeline : function (tdata, init) {
+    TODO ==> re-chew function for rehashing stuff like startSeconds, etc
+         ==> move to Timeline: needs to be it's own constructor ...
+  */
+    chewTimeline : function (tdata) {
 
       // TODO ==> add additional units
       var dhash                       = {"da":[], "mo":[], "ye":[], "de":[], "ce":[], "thou":[], 
@@ -183,10 +205,10 @@ TODO ==> re-chew function for renewing stuff like startSeconds, etc
 
       } /// end if there are events!
 
-      // bypass hashing if ! events
-      if (init === true) {
-        tdata.display = "expanded";
-      }
+      /// i.e. expanded or compressed...
+      /// ought to be attribute at the timeline level
+      /// TODO: create a $.merge for defaults for a timeline
+      tdata.display = "expanded";
 
       tdata.dateHash = dhash;
 
