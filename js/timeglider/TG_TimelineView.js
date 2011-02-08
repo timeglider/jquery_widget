@@ -1363,12 +1363,7 @@ tg.TimegliderTimelineView.prototype = {
                             "<li class='timeglider-filter-close'>close</li>"+
                             "<li class='timeglider-filter-apply'>apply</li>"+
                             "</ul>";
-    
-                        
-    function output (stuff, goes) {
-         $("#" + goes).text(stuff);
-    }
-
+   
 
 })(timeglider);
 
