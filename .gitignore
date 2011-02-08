@@ -1,10 +1,6 @@
 # ignore these files!
 .gitignore
-__past*
-_future*
-_notes*
-_tests*
-_shop*
+_*
 .DS_Store
 json_tests/med.json
 img/tests*
@@ -15,3 +11,4 @@ compiler.jar
 js/glob
 jsonp/
 xml/
+index.php

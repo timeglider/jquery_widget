@@ -1,10 +1,11 @@
 /*
-
-    INITIAL DECLARATION OF "timeglider" CONSTRUCTOR HERE
-    
+*  TGDate constructor
+*
+*  INITIAL DECLARATION OF "timeglider" NAMESPACE HERE
 */
 
 var timeglider = {}
+
 
 
 

@@ -988,9 +988,16 @@ tg.TimegliderTimelineView.prototype = {
     					// !TODO isolate these into position object
     					ev.left = posx; // will remain constant
     					// !TODO --- ACCURATE WIDTH BASELINE FROM chewTimeline()
-					
-    					ev.top = ht - timeglider.levelHeight; // 330; ///// TODO ==> add to timeline div
-    					ev.height = 18;
+					    
+					    var img_ht = 0;
+					    if (ev.image && ev.image_class=="layout") {
+					      img_ht = ev.image_size.height + 2;
+					      ev.width = ev.image_size.width + 2;
+				      }
+    					
+    					ev.height = Math.ceil(ev.fontsize) + img_ht;
+    					ev.top = ht - ev.height;
+    					
     					borg.addBlock(ev, "sweep");
     					// no stuff yet...
 					

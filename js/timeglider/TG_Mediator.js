@@ -15,10 +15,9 @@ handles timeline behavior,
 reflects state back to view
 
 ********************************/
-
 (function(tg){
   
-
+  
   var TGDate = tg.TGDate;
   var options = {};
 
@@ -26,6 +25,7 @@ reflects state back to view
   tg.TimegliderTimeline = function (data) {
     return data;
   }
+    
     
   tg.TimegliderMediator = function (wopts) {
     
@@ -385,7 +385,7 @@ TODO ==> re-chew function for renewing stuff like startSeconds, etc
         }
 
 
-        }; ///// end model methods
+}; ///// end model methods
         
         
         tg.getLowHigh = function (arr) {
@@ -504,5 +504,7 @@ TODO ==> re-chew function for renewing stuff like startSeconds, etc
         		return msg;
 
         };
+        
+        
 
 })(timeglider);
