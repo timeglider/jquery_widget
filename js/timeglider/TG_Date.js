@@ -3,11 +3,8 @@
 *
 *  INITIAL DECLARATION OF "timeglider" NAMESPACE HERE
 */
-
 var timeglider = {}
   
-
-
 timeglider.TGDate = {
 	
 	monthNamesFull : ["","January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
@@ -173,6 +170,7 @@ timeglider.TGDate = {
 		return dob;
 	},
 	
+	
 	/* @param ob -->  .ye  and  .mo */
 	getMonthNum : function (ob) {
 	    if (ob.ye > 0) {
@@ -181,6 +179,7 @@ timeglider.TGDate = {
 			return this.getBCMonthNum(ob);
 		}
 	},
+	
 	
 	getMonthAdj : function (serial, tw) {
 		var d = this.getDateFromMonthNum(serial);
@@ -212,7 +211,16 @@ timeglider.TGDate = {
 		
 	},
 	
-	// CORRECT
+	/*
+	* getBCMonthNum
+	* In BC time, serial numbers for months are going backward
+	* starting with December of 1 bce. So, a month that is actually
+	* "month 12 of year -1" is actually just -1, and November of 
+	* year 1 bce is -2. Capiche!?
+	*
+	* @param {object} ob ---> .ye (year)  .mo (month)
+	* @return {number} serial month number (negative in this case)
+	*/
 	getBCMonthNum: function(ob) {
 		var ye = ob.ye;
 		var mo = ob.mo;
@@ -221,6 +229,12 @@ timeglider.TGDate = {
 		return -1 * n;
 	},
 	
+	/*
+	* getDateFromMonthNum
+	* Gets a month (1-12) and year from a serial month number
+	* @param mn {number} serial month number
+	* @return {object} ye, mo (numbers)
+	*/
 	getDateFromMonthNum : function(mn) {
 	
 		var rem = 0;
@@ -249,6 +263,15 @@ timeglider.TGDate = {
 	},
 	
 
+  /*
+  * getMonthWidth
+  * Starting with a base-width for a 28-day month, calculate
+  * the width for any month with the possibility that it might
+  * be a leap-year February.
+  *
+  * @param mo {number} month i.e. 1 = January, 12 = December
+  * @param ye {number} year
+  */
 	getMonthWidth : function(mo,ye,tickWidth) {
 
 		var dayWidth = t / 28;
@@ -269,7 +292,15 @@ timeglider.TGDate = {
 		return {width:width, numDays:days};
 	},
 	
-	
+	/*
+  * getRataDie
+  * Core "normalizing" function for dates, the serial number day for
+  * any date, starting with year 1 (well, zero...), wraps a getBCRataDie()
+  * for getting negative year serial days
+  *
+  * @param dat {object} date object with {ye, mo, da}
+  * @return {number} the serial day
+  */
 	getRataDie : function (dat) {
 		
 		var ye = dat.ye;
