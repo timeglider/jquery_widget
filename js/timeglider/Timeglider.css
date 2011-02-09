@@ -165,8 +165,13 @@
 		margin:0;
 		padding:0;
 		cursor:pointer;
+		color:#5FA8FF;
 	}
 	
+.timeglider-timeline-menu ul li.activeTimeline {
+  	color:yellow;
+}
+  
 .timeglider-timeline-menu h3 {
 			font-size:10px;
 			margin:0px;
@@ -189,10 +194,6 @@
 		color:white;
 	}
 
-
-.activeTimeline {
-	color:yellow;
-}
 
 
 

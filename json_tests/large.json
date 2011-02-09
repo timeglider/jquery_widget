@@ -1757,8 +1757,7 @@
 "startdate": "1996-11-01 12:00:00",
 "enddate": "1996-11-01 12:00:00",
 "link":"http://www.ecmascript.org/",
-"importance":"35",
-"image":"img/tests/apts.jpg"
+"importance":"35"
 },
 {
 "id":"jshist-05",
@@ -1796,8 +1795,7 @@
 "startdate": "2005-12-01 12:00:00",
 "enddate": "2005-12-01 12:00:00",
 "link":"http://json.org",
-"importance":"35",
-"image":"img/tests/apts.jpg"
+"importance":"35"
 },
 {
 "id":"jshist-09",

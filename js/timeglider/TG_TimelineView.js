@@ -154,6 +154,7 @@ timeglider.TimegliderTimelineView
 					$(this).removeClass("activeTimeline");	
 				}	
         }); // end each	
+        
 
 	}); // end tune in
 

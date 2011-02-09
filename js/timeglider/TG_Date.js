@@ -1,9 +1,26 @@
 /*
-*  TGDate constructor
 *
 *  INITIAL DECLARATION OF "timeglider" NAMESPACE HERE
 */
 var timeglider = {}
+
+
+
+/*
+*  TGDate
+*
+* You might be wondering why we're not extending the JS Date()
+* object: that might be a good idea eventually. There are some
+* major issues with Date(): the "year zero" (or millisecond)
+* in JS and other date APIs is 1970, so timestamps are negative
+* prior to that. The timestamp of 100,000+ bce gets a little 
+* large, breaking at some point where Date can't deal with deep
+* bce dates.
+*
+* This TGDate object also has functionality which  goes hand-in-hand
+* with the date hashing system: each event on the timeline is hashed
+* according to day, year, decade, century, millenia, etc
+*/
   
 timeglider.TGDate = {
 	
@@ -15,6 +32,7 @@ timeglider.TGDate = {
 	dayNamesAbbr : ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
 	dayNamesLet : ["S", "M", "T", "W", "T", "F", "S"],
 	units : ["da", "mo", "ye", "de", "ce", "thou"],
+
 
 	isLeapYear: function(y) {
     if ((y % 100  == 0) && ( y % 400  != 0)) {
@@ -51,18 +69,20 @@ timeglider.TGDate = {
 			}
 	},
 	
-	validateEventDates : function (start, end) {
-	/*
-	The goal here is to make a wide range of date formats valid, including with 
-	timezones, and transform into a UTC zoned date object with ye,mo,da, etc
-	*/
+	
 	
 	/*
-		1. get date format type (YYYY-MM-DD, YYYY only, etc)  --- _tests/getDateFormat...
-		2. tranform non ISO-8601 dates to ISO, adding default values where necessary
-		   (making sure to work with timezone offset, if necessary)
-		3. make date object
+	* validateEventDates
+	* STILL TESTING
+	*	The goal here is to make a wide range of date formats valid, including with 
+	*	timezones, and transform into a UTC zoned date object with ye,mo,da, etc
+	*
+	*	1. get date format type (YYYY-MM-DD, YYYY only, etc)  --- _tests/getDateFormat...
+	*	2. tranform non ISO-8601 dates to ISO, adding default values where necessary
+	*	   (making sure to work with timezone offset, if necessary)
+	*	3. make date object
 	*/
+	validateEventDates : function (start, end) {
 
 		var s, e,
 			
@@ -110,6 +130,7 @@ timeglider.TGDate = {
 			return this.monthsDayNums[mo];
 		}
 	},
+	
 	
 	isValidDate : function (ye, mo, da) {
 		var ld = this.getMonthDays(mo, ye);
@@ -498,7 +519,6 @@ String.prototype.ltrim = function() {
 String.prototype.rtrim = function() {
 	return this.replace(/\s+$/,"");
 }
-
 
 
 function output (stuff, goes) {
