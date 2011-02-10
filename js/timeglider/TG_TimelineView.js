@@ -15,8 +15,39 @@ timeglider.TimegliderTimelineView
 */
 (function(tg){
 
-  var TGDate = tg.TGDate, MED;
-  var $ = jQuery;
+ // MED below is a reference to the mediator reference
+ // that will be passed into the main Constructor below
+  var TGDate = tg.TGDate, MED, $ = jQuery;
+  
+  /*  TEMPLATES FOR THINGS LIKE MODAL WINDOWS
+  *   events themselves are non-templated and rendered in TG_Org.js
+  *   as there are too many on-the-fly style attributes etc, and 
+  *   the current theory is that templating would create lag
+  *
+  *
+  */
+  tg.templates = {
+      event_modal: $.template( null, "<div class='timeglider-ev-modal ui-widget-content shadow' id='ev_${id}_modal'>" 
+    	  + "<div class='close-button'><img src='img/close.png'></div>" 
+    	  + "<div class='startdate'>${startdate}</div>"
+    	  + "<h4 id='title'>${title}</h4>"
+    	  + "<p>${description}</p>"
+    	  + "<ul class='timeglider-ev-modal-links'><li><a target='_blank' href='${link}'>link</a></li></ul>"
+    	  + "</div>"),
+    	
+    	event_modal_video : $.template( null,
+    	  "<div class='timeglider-ev-video-modal ui-widget-content shadow' id='${id}_modal'>"
+    	  + "<div class='close-button'><img src='img/close.png'></div>"
+        + "<iframe width = '100%' height='300' src='${video}'></iframe></div>"),
+        
+      timeline_modal : $.template( null, "<div class='timeglider-timeline-modal ui-widget-content shadow' id='tl_${id}_modal'>" 
+      	  + "<div class='close-button'><img src='img/close.png'></div>"
+      	  + "<h4 id='title'>${title}</h4>"
+      	  + "<p>${description}</p>"
+      	  + "</div>"),
+    }
+  
+
 
   /*
   *  timeglider.TimegliderTimelineView
@@ -244,17 +275,6 @@ timeglider.TimegliderTimelineView
 				// just report movement to model...
 				MED.setTicksOffset($(this).position().left);
 				
-				// MED.updateState();
-				// 
-				// var updateState = function() {
-				//   this.garbageCollect(
-				// 	$('.far-offscreen').remove();
-				//   )	
-				// 
-				//   this.updateText(
-				// 	$('.edge-case').whatever();
-				// 	);
-				// }
 			},
 		
 			stop: function(event, ui) {
@@ -282,14 +302,24 @@ timeglider.TimegliderTimelineView
 		});
 	
 	// TODO ---> build this into jquery-ui component behavior
+	$(".close-button").live("click", function () {
+		$(this).parent().remove();	
+	});
+	
+	/*
 	$(".timeglider-ev-modal .close-button").live("click", function () {
+		$(this).parent().remove();	
+	});
+	
+	// TODO ---> build this into jquery-ui component behavior
+	$(".timeglider-timeline-modal .close-button").live("click", function () {
 		$(this).parent().remove();	
 	});
 	
 	$(".timeglider-ev-video-modal .close-button").live("click", function () {
 		$(this).parent().remove();	
 	});
-		
+	*/
 
 
 	
@@ -468,6 +498,7 @@ tg.TimegliderTimelineView.prototype = {
       			ta_ct ++;
       	}
   },
+  
 	
 	/* 
 		Zoom slider is inverted value-wise from the normal jQuery UI slider
@@ -865,7 +896,7 @@ tg.TimegliderTimelineView.prototype = {
 		}
 	},
 	
-	
+	/* WOAH! MOVE THIS TO MEDIATOR/TIMELINE MODEL!!!! */
 	setTimelineProp : function (id, prop, value) {
 		var tl = MED.timelinePool[id];
 		tl[prop] = value;	
@@ -970,6 +1001,10 @@ tg.TimegliderTimelineView.prototype = {
 			$(".tg-timeline-envelope#" + tl.id + " .titleBar .expand-collapse").click(function () { 
 					me.expandCollapseTimeline(tl.id );
 			} );
+			
+			$(".tg-timeline-envelope#" + tl.id + " .titleBar .timeline-info").click(function () { 
+  				me.timelineModal(tl.id);
+  		} );
 
 			$title = $tl.children(".titleBar");
 			t_f = cx + ((tl.bounds.first - foSec) / spp);
@@ -1163,43 +1198,65 @@ tg.TimegliderTimelineView.prototype = {
 		MED.refresh();
 	},
   
+
+  timelineModal : function (id) {
+    
+    $("#tl_" + id + "_modal").remove();
+  
+    var tl = MED.timelinePool[id], 
+    me = this;
+    templ_obj = {
+  			  title:tl.title,
+  			  description:tl.description,
+  			  id:id
+  		}
+  		
+		 $.tmpl(timeglider.templates.timeline_modal,templ_obj)
+  			.appendTo(this._views.CONTAINER)
+  			.css("z-index", me.ztop++)
+	      .position({
+      				my: "left top",
+      				at: "left top",
+      				of: (me._views.CONTAINER),
+      				offset: "32, 32", // left, top
+      				collision: "fit fit"
+      	});
+  
+  },
+  
 	eventModal : function (eid) {
 		// get position
-		$("#" + eid + "_modal").remove();
+		$("#ev_" + eid + "_modal").remove();
 		var me = this,
 		  $par = $("#" + eid),
+		  modalTemplate = timeglider.templates.event_modal;
 		  ev = MED.eventPool[eid],
 		  ev_img = ev.image ? "<img src='" + ev.image + "'>" : "",
+		  templ_obj = {
+  			  title:ev.title,
+  			  description:ev_img + ev.description,
+  			  id:eid,
+  			  startdate: ev.startdate,
+  			  link: ev.link,
+  			  video: ev.video
+  		}
 		  
-		  //// formatting below needs to have
-		  ///  date limit, culture, and timezone built in!!!!
-		  modalhtml = "<div class='timeglider-ev-modal ui-widget-content shadow' id='" + eid + "_modal'>" 
-			+ "<div class='close-button'><img src='img/close.png'></div>" 
-			+ "<div class='startdate'>" + ev.startdate + "</div>"
-			+ "<h4 id='title'>" + ev.title + "</h4>"
-			+ "<p>" + ev_img + ev.description + "</p>"
-			+ "<ul class='timeglider-ev-modal-links'><li><a target='_blank' href='" + ev.link + "'>link</a></li></ul>"
-			+ "</div>";
-			
 			if (ev.video) { 
-        modalhtml = "<div class='timeglider-ev-video-modal ui-widget-content shadow' id='" 
-        + eid + "_modal'><div class='close-button'><img src='img/close.png'></div>" 
-        + "<iframe width = '100%' height='300' src='" + ev.video + "'></iframe></div>"; 
+       modalTemplate = timeglider.templates.event_modal_video;
+       templ_obj.video = ev.video;
 			}
-		
-		  var $modal = $(modalhtml)
-			  .appendTo(this._views.TICKS)
+	
+		  $.tmpl(modalTemplate,templ_obj)
+  			.appendTo(this._views.TICKS)
 			  .css("z-index", me.ztop++)
 	      .position({
-      				my: "left bottom",
+      				my: "right center",
       				at: "left top",
       				of: $par,
       				offset: "0, -12", // left, top
-      				collision: "flip fit"
+      				collision: "fit fit"
       	});
-    
-      	
-  
+
 	},
 	
 	parseHTMLTable : function(table_id) {

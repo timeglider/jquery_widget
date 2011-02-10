@@ -1,12 +1,4 @@
 /*
-*
-*  INITIAL DECLARATION OF "timeglider" NAMESPACE HERE
-*/
-var timeglider = {}
-
-
-
-/*
 *  TGDate
 *
 * You might be wondering why we're not extending the JS Date()
@@ -21,6 +13,9 @@ var timeglider = {}
 * with the date hashing system: each event on the timeline is hashed
 * according to day, year, decade, century, millenia, etc
 */
+
+var timeglider = {info:"Version 0.0.1"};
+
   
 timeglider.TGDate = {
 	

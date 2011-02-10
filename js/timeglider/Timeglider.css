@@ -374,7 +374,8 @@ ul.formBottom li{
 }
 
 
-.timeglider-ev-modal {
+.timeglider-ev-modal, .timeglider-timeline-modal {
+  -webkit-border-radius:5px;
 	-moz-border-radius:5px;
 	border-radius:7px;
 	background:#FFF;
@@ -385,6 +386,7 @@ ul.formBottom li{
 }
 
 .timeglider-ev-video-modal {
+  -webkit-border-radius:5px;
 	-moz-border-radius:5px;
 	border-radius:7px;
 	background:#FFF;
@@ -397,7 +399,7 @@ ul.formBottom li{
 }
 
 
-.timeglider-ev-modal p {
+.timeglider-ev-modal p, .timeglider-timeline-modal p {
 	font-size:11px;
 	color:#555;
 	margin-right:14px;
@@ -405,20 +407,22 @@ ul.formBottom li{
 	overflow-y:auto;
 }
 
-.timeglider-ev-modal p img {
+.timeglider-ev-modal p img, .timeglider-timeline-modal p img{
   width:100px;
   height:auto;
   float:left;
   margin-right:8px;
   margin-bottom:8px;
 }
-.timeglider-ev-modal h4 {
+
+.timeglider-ev-modal h4, .timeglider-timeline-modal h4  {
 	margin:0;padding:0;
 	margin-top:6px;
 	margin-bottom:4px;
 	color:#222;
 	font-size:12px;
 }
+
 .timeglider-ev-modal .startdate {
 	font-size:10px;
 	color:#666;
