@@ -1,19 +1,19 @@
 @charset "UTF-8";
 /* CSS Document */
 
-
-
 .timeglider-container {
 	
 	/* these will not change */
 	position:relative;
-  	overflow:hidden;
+  overflow:hidden;
 	border:2px solid black;
-	background-color:#ffffff;
-	
 	font-family:Arial, sans-serif;
 	
   }
+  
+.timeglider-container, .timeglider-slider-container {
+  background-color:#F4F4F4;
+}
   
 .timeglider-footer {
 	position:absolute;
@@ -38,12 +38,12 @@
 
 
 
-.TGTimelineEnvelope {
+.tg-timeline-envelope {
 	width:100%;
 	vertical-align:bottom;
 }
 
-.TGTimelineEnvelope .titleBar {
+.tg-timeline-envelope .titleBar {
 	background-color:#444;
 	color:#FFF;
 	height:16px;
@@ -54,16 +54,15 @@
 	border-radius:4px;
 }
 
-.TGTimelineEnvelope .titleBar .timeline-title {
-	color:#222;
-	font-size:11px;
+.tg-timeline-envelope .titleBar .timeline-title {
+	color:#FFF;
+	font-size:14px;
 	width:auto;
 	position:absolute;
 	display:inline;
-	margin-top:20px;
-	background-color:#F0F0F0;
-	padding:4px;
-	-moz-border-radius-bottomleft: 4px; -webkit-border-bottom-left-radius: 4px; border-bottom-left-radius: 4px; -moz-border-radius-bottomright: 4px; -webkit-border-bottom-right-radius: 4px; border-bottom-right-radius: 4px;
+	margin-top:0px;
+	font-weight:bold;
+	text-shadow:1px 1px #000;
 }
 
 /* Correction of aristo ui css */
@@ -76,7 +75,6 @@
   padding-left:16px;
 	position:absolute;
 	height:auto;
-	background-color:#fff;
 	z-index:10;
 	top:0px;
 	right:0px;
@@ -111,7 +109,7 @@
 	background-image:url("../../img/tickbg.png");
  }
   
- .timeglider-tick {
+.timeglider-tick {
   	/* defaults on arrival in ticks */
 	position:absolute;
 	height:30px;
@@ -196,7 +194,6 @@
 
 
 
-
 .shadow {
 	-moz-box-shadow: 3px 3px 4px #333;
 	-webkit-box-shadow: 3px 3px 4px #333;
@@ -207,28 +204,7 @@
 	filter: progid:DXImageTransform.Microsoft.Shadow(Strength=4, Direction=135, Color='#333333');
 }
 
-
-/* make panel class, too */
-#Timeglider_rzBox {
-	position:absolute;
-	left:0px;
-	top:-500px;
-	width:258px;
-	height:78px;
-	border:1px solid #CCC;
-	background-color:#CCC;
-	-moz-border-radius:7px;
-	border-radius:7px;
-	color:#444;
-	font-size:9px;
-	
-	opacity:.85;
-	filter:alpha(opacity=85);
-	filter:"alpha(opacity=85)";
-	
-}
-
-.closeBt {
+.close-button {
 	float:right;
 	cursor:pointer;
 	color:#e61e1e;
@@ -236,58 +212,13 @@
 	margin-top:-22px;
 }
 
-#Timeglider_rzSlider {
-	margin-top:24px;
-	margin-left:10px;
-	width:200px;
-	height:2px;
-	border:1px dotted black;
- }
 
-#Timeglider_rzVal {
-	clear:both;
-	float:right;
-	margin-top:6px;
-	margin-right:10px;
-	font-size:18px;
-	color:#333;
-	width:30px;
-	text-align:center;
-
-}
-
-#Timeglider_rzPntr {
-	color:#CCC;
-	margin-top:-28px;
-	font-size:32px;
-	margin-left:12px;
-}
-
-#TimegliderMeasureSpan {
+#timeglider-measure-span {
 	font-size:11px;
 	width:auto;
 	font-family:Arial;
 }
 
-.okBt {
-	color:white;
-	background-color:green;
-	font-size:14px; font-weight:bold;
-	cursor:pointer;
-	padding:2px;
-	width:26px;
-	text-align:center;
-}
-.okBt#Timeglider_rzOk {
-	clear:both;
-	margin-left:auto;
-	margin-right:auto;
-	margin-top:16px; 
-}
-.roundedSmall {
-	-moz-border-radius:3px;
-	border-radius:3px;
-}
 
 
 /* TEMP */
@@ -323,12 +254,28 @@
 .timeglider-event-image-layout img {
 }
 
-
-#clps {
-	color:#AAA;
-	cursor:pointer;
+.tg-timeline-env-buttons {
+  color:#FFF;
+  cursor:pointer;
 	font-size:10px;
-	padding-left:18px;
+	margin-top:4px;
+	background-color:#AAA;
+	font-weight:normal;
+	padding-left:6px;
+	padding-bottom:2px;
+	
+	-webkit-border-bottom-right-radius: 4px;
+  -webkit-border-bottom-left-radius: 4px;
+  -moz-border-radius-bottomright: 4px;
+  -moz-border-radius-bottomleft: 4px;
+  border-bottom-right-radius: 4px;
+  border-bottom-left-radius: 4px;
+  
+  width:112px;
+  
+}
+.tg-timeline-env-buttons .expand-collapse, .tg-timeline-env-buttons .timeline-info {
+  margin-right:12px;
 }
 
 .timeglider-event-icon {
@@ -366,9 +313,9 @@
   -moz-border-radius-topleft: 4px; -webkit-border-top-left-radius: 4px; 
   border-top-left-radius: 4px; -moz-border-radius-topright: 4px; 
   -webkit-border-top-right-radius: 4px; border-top-right-radius: 4px;
-	
-  
 }
+
+
 .formLine {
   margin-bottom:4px;
   color:#555;
@@ -393,6 +340,7 @@ ul.formBottom li{
 .formline#bottom {
   margin-bottom:12px;
 }
+
 .timeglider-filter-submit {
   color:green;
   font-weight:bold;
@@ -407,9 +355,9 @@ ul.formBottom li{
   position:absolute;
   background-color:#ccc;
 	height:15px;
-	position:absolute;
 	z-index:1;
 }
+
 .timeglider-event-title {
 	width:auto;
 	color:#444;
@@ -417,7 +365,7 @@ ul.formBottom li{
 	z-index:5;
 }
 
-.evCollapsed {
+.timeglider-event-collapsed {
 	position:absolute;
 	border-left:1px solid red;
 	top:0px;
@@ -426,7 +374,7 @@ ul.formBottom li{
 }
 
 
-.TimegliderEvModal {
+.timeglider-ev-modal {
 	-moz-border-radius:5px;
 	border-radius:7px;
 	background:#FFF;
@@ -436,7 +384,7 @@ ul.formBottom li{
 	
 }
 
-.TimegliderEvVideoModal {
+.timeglider-ev-video-modal {
 	-moz-border-radius:5px;
 	border-radius:7px;
 	background:#FFF;
@@ -449,47 +397,47 @@ ul.formBottom li{
 }
 
 
-.TimegliderEvModal p {
+.timeglider-ev-modal p {
 	font-size:11px;
 	color:#555;
 	margin-right:14px;
 	max-height:200px;
-	overflow-y:scroll;
+	overflow-y:auto;
 }
 
-.TimegliderEvModal p img {
+.timeglider-ev-modal p img {
   width:100px;
   height:auto;
   float:left;
   margin-right:8px;
   margin-bottom:8px;
 }
-.TimegliderEvModal h4 {
+.timeglider-ev-modal h4 {
 	margin:0;padding:0;
 	margin-top:6px;
 	margin-bottom:4px;
 	color:#222;
 	font-size:12px;
 }
-.TimegliderEvModal .startdate {
+.timeglider-ev-modal .startdate {
 	font-size:10px;
 	color:#666;
 }
-ul.TimegliderModalLink {
+ul.timeglider-ev-modal-links {
 	list-style:none;
 	margin:0;
 	margin-top:8px;
 	padding:0;
 	clear:both;
 }
-ul.TimegliderModalLink li {
+ul.timeglider-ev-modal-links li {
 	font-size:10px;
 	display:inline;
 	padding:4px;
 	border-left:1px dotted #CCC;
 	border-right:1px dotted #CCC;
 }
-ul.TimegliderModalLink li a {
+ul.timeglider-ev-modal-links li a {
   color:#374b99;
 }
 	

@@ -2,6 +2,7 @@
 {
 "id":"jshist",
 "title":"A little history of JavaScript",
+"description":"Mainly, showing the emergence of different JS libraries.",
 "focus_date":"2001-01-01 12:00:00",
 "initial_zoom":"43",
 "events":[
@@ -12,17 +13,21 @@
 "startdate": "1995-04-01 12:00:00",
 "enddate": "1995-04-01 12:00:00",
 "link":"http://en.wikipedia.org/wiki/JavaScript",
-"importance":"40"
+"importance":"40",
+"icon":"flag_green.png"
 },
 {
 "id":"jshist-02",
 "title": "JavaScript",
 "description": "LiveScript is Renamed JavaScript in a joint announcement with Netscape and Sun Microsystems",
-"startdate": "1995-12-04 12:00:00",
-"enddate": "1995-12-04 12:00:00",
+"startdate": "1996-08-04 12:00:00",
+"enddate": "1996-08-04 12:00:00",
 "link":"http://en.wikipedia.org/wiki/JavaScript",
-"importance":"50"
+"importance":"55",
+"icon":"star_green.png"
 },
+
+
 {
 "id":"jshist-03",
 "title": "Microsoft JScript",
@@ -30,8 +35,10 @@
 "startdate": "1996-08-01 12:00:00",
 "enddate": "1996-08-01 12:00:00",
 "link":"http://en.wikipedia.org/wiki/JScript",
-"importance":"35"
+"importance":"35",
+"image":"img/tests/ie3.jpg"
 },
+
 {
 "id":"jshist-04",
 "title": "ECMAScript industry standard",
@@ -66,7 +73,9 @@
 "startdate": "2005-06-01 12:00:00",
 "enddate": "2005-06-01 12:00:00",
 "link":"http://script.aculo.us/",
-"importance":"35"
+"importance":"35",
+"image":"img/tests/tree.jpg",
+"image_class":"bar"
 },
 {
 "id":"jshist-08",
@@ -84,7 +93,9 @@
 "startdate": "2005-12-01 12:00:00",
 "enddate": "2005-12-01 12:00:00",
 "link":"http://jquery.com/",
-"importance":"35"
+"importance":"35",
+"image":"img/tests/tree.jpg",
+"image_class":"bar"
 },
 {
 "id":"jshist-16",
@@ -105,6 +116,19 @@
 "link":"http://developer.yahoo.com/yui/",
 "importance":"35"
 },
+
+{
+"id":"10things",
+"title": "Ten Things I Learned About the jQuery Source",
+"description": "Ten Things I Learned About the jQuery Source",
+"startdate": "2010-06-13 11:39:00",
+"link":"http://paulirish.com/2010/10-things-i-learned-from-the-jquery-source/",
+"video":"http://player.vimeo.com/video/12529436",
+"importance":"20",
+"icon":"video.png"
+},
+
+
 
 {
 "id":"jshist-18",

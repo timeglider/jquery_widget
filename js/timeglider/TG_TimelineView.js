@@ -18,6 +18,11 @@ timeglider.TimegliderTimelineView
   var TGDate = tg.TGDate, MED;
   var $ = jQuery;
 
+  /*
+  *  timeglider.TimegliderTimelineView
+  *  
+  *
+  */
   tg.TimegliderTimelineView = function (widget, mediator) {
 
 	var options = widget.options,
@@ -129,17 +134,13 @@ timeglider.TimegliderTimelineView
 	
 	$.subscribe("mediator.timelineListChangeSignal", function (arg) {
 		
-		var id, ta = MED.timelinePool;
-	  $(me._views.MENU_UL + " li").remove();
-  	for (id in ta) {
-  			if (ta.hasOwnProperty(id)) {
-    			var t = ta[id];
-    			$(me._views.MENU_UL).append("<li class='timelineList' id='" + id + "'>" + t.title + "</li>");
-    			$("li#" + id).click( function() { 
-    			    MED.toggleTimeline($(this).attr("id"));
-    			    });
-  			} // end filter
-  	}
+		debug.log("timelineListChangeSignal...");
+		
+    me.adjustTimelineTitleStyles();
+    me.buildTimelineMenu();
+    
+    
+
 	
 	});
 	
@@ -274,18 +275,18 @@ timeglider.TimegliderTimelineView
 			var title = MED.eventPool[eid].title;
 			output("hover, title:" + title, "note"); 
 		})
-		.delegate(".evCollapsed", "hover", function () { 
+		.delegate(".timeglider-event-collapsed", "hover", function () { 
 			var eid = $(this).attr("id"); 
 			var title = MED.eventPool[eid].title;
 			output("collapsed, title:" + title, "note"); 
 		});
 	
 	// TODO ---> build this into jquery-ui component behavior
-	$(".TimegliderEvModal .closeBt").live("click", function () {
+	$(".timeglider-ev-modal .close-button").live("click", function () {
 		$(this).parent().remove();	
 	});
 	
-	$(".TimegliderEvVideoModal .closeBt").live("click", function () {
+	$(".timeglider-ev-video-modal .close-button").live("click", function () {
 		$(this).parent().remove();	
 	});
 		
@@ -310,6 +311,8 @@ timeglider.TimegliderTimelineView
 	/* !!TODO    Still a FAIL in iPad ---- 
 	   When actually doing something, Safari seems to 
 	   ignore attempts at preventing default... 
+	   
+	   SCOPED IN CLOSURE, THESE ARE UNTESTABLE
 	*/
 	function gestureChange (e) {
 		e.preventDefault ();
@@ -399,7 +402,7 @@ tg.TimegliderTimelineView.prototype = {
 			 }
 		);
 
-		$(".TGTimelineEnvelope").each(
+		$(".tg-timeline-envelope").each(
 				function () {
 				  // !TODO  needs optimizing of DOM "touching"
 					env = $(this).offset().left - mo;
@@ -419,7 +422,7 @@ tg.TimegliderTimelineView.prototype = {
 					} 
 				}
 		); 
-		
+	// whew! end register titles
 	},
 	
 	
@@ -441,6 +444,30 @@ tg.TimegliderTimelineView.prototype = {
 		MED.setFocusDate(newD);
 	},
 	
+	
+	adjustTimelineTitleStyles : function () {
+	  debug.log("modifyTimelineTitles!");
+	  
+  },
+  
+  buildTimelineMenu : function () {
+    debug.log("buildTimelineMenu!");
+    
+    var id, ta = MED.timelinePool, ta_ct = 0, me=this;
+		
+		    // cycle through menu
+        $(me._views.MENU_UL + " li").remove();
+      	for (id in ta) {
+      			if (ta.hasOwnProperty(id)) {
+        			var t                                  = ta[id];
+        			$(me._views.MENU_UL).append("<li class = 'timelineList' id='" + id + "'>" + t.title + "</li>");
+        			$("li#" + id).click( function() { 
+        			    MED.toggleTimeline($(this).attr("id"));
+        			    });
+      			} // end filter
+      			ta_ct ++;
+      	}
+  },
 	
 	/* 
 		Zoom slider is inverted value-wise from the normal jQuery UI slider
@@ -920,11 +947,13 @@ tg.TimegliderTimelineView.prototype = {
 			tl = MED.timelinePool[active[a]];
 			
 			expCol = tl.display;
-		  tlTop = (tl.top || (cht-80));
+		  tlTop = (tl.top || (cht-120));
 			
-			$tl = $("<div class='TGTimelineEnvelope' id='" + tl.id
+			//  TEMPLATE!
+			$tl = $("<div class='tg-timeline-envelope' id='" + tl.id
 				+ "'><div class='titleBar'><div class='timeline-title'>"
-			 	+ tl.title + " <span id='clps'>expand/collapse</span></div></div></div>")
+			 	+ tl.title + "<div class='tg-timeline-env-buttons'>"
+			 	+ "<span class='timeline-info'>info</span><span class='expand-collapse'>expand/collapse</span></div></div></div></div>")
 			 	.appendTo(this._views.TICKS);
 			
 			$tl.draggable({
@@ -938,7 +967,7 @@ tg.TimegliderTimelineView.prototype = {
 				
 			ht = $tl.height();
 			
-			$(".TGTimelineEnvelope#" + tl.id + " .titleBar #clps").click(function () { 
+			$(".tg-timeline-envelope#" + tl.id + " .titleBar .expand-collapse").click(function () { 
 					me.expandCollapseTimeline(tl.id );
 			} );
 
@@ -1005,7 +1034,7 @@ tg.TimegliderTimelineView.prototype = {
 					
     			  } else if (expCol == "collapsed") {
     					stuff += "<div id='ev_" + ev.id + 
-    					"' class='evCollapsed' style='top:" + 
+    					"' class='timeglider-event-collapsed' style='top:" + 
     					(ht-2) + "px;left:" +
     					posx + "px'></div>";
     			  }
@@ -1064,7 +1093,7 @@ tg.TimegliderTimelineView.prototype = {
 					tl = MED.timelinePool[active[a]];
 					expCol = tl.display;
 					borg = tl.borg; // existing layout object
-					$tl = $(".TGTimelineEnvelope#" + tl.id);
+					$tl = $(".tg-timeline-envelope#" + tl.id);
 					ht = $tl.height();
 					idArr = this.getTimelineEventsByTick({tick:tick, timeline:tl});
 					ids = idArr.length;
@@ -1100,7 +1129,7 @@ tg.TimegliderTimelineView.prototype = {
 								
 						} else if (expCol == "collapsed") {
 							stuff += "<div id='ev_" + ev.id 
-							+ "' class='evCollapsed' style='top:" 
+							+ "' class='timeglider-event-collapsed' style='top:" 
 							+ (ht-2) + "px;left:" 
 							+ posx + "px'></div>";
 						}
@@ -1133,7 +1162,6 @@ tg.TimegliderTimelineView.prototype = {
 		
 		MED.refresh();
 	},
-	
   
 	eventModal : function (eid) {
 		// get position
@@ -1145,18 +1173,17 @@ tg.TimegliderTimelineView.prototype = {
 		  
 		  //// formatting below needs to have
 		  ///  date limit, culture, and timezone built in!!!!
-		  
-		  modalhtml = "<div class='TimegliderEvModal ui-widget-content shadow' id='" + eid + "_modal'>" 
-			+ "<div class='closeBt'><img src='img/close.png'></div>" 
+		  modalhtml = "<div class='timeglider-ev-modal ui-widget-content shadow' id='" + eid + "_modal'>" 
+			+ "<div class='close-button'><img src='img/close.png'></div>" 
 			+ "<div class='startdate'>" + ev.startdate + "</div>"
 			+ "<h4 id='title'>" + ev.title + "</h4>"
 			+ "<p>" + ev_img + ev.description + "</p>"
-			+ "<ul class='TimegliderModalLink'><li><a target='_blank' href='" + ev.link + "'>link</a></li></ul>"
+			+ "<ul class='timeglider-ev-modal-links'><li><a target='_blank' href='" + ev.link + "'>link</a></li></ul>"
 			+ "</div>";
 			
 			if (ev.video) { 
-        modalhtml = "<div class='TimegliderEvVideoModal ui-widget-content shadow' id='" 
-        + eid + "_modal'><div class='closeBt'><img src='img/close.png'></div>" 
+        modalhtml = "<div class='timeglider-ev-video-modal ui-widget-content shadow' id='" 
+        + eid + "_modal'><div class='close-button'><img src='img/close.png'></div>" 
         + "<iframe width = '100%' height='300' src='" + ev.video + "'></iframe></div>"; 
 			}
 		

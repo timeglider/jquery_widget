@@ -7,7 +7,12 @@
 
 		<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
 
-		<title>Timeglider jQuery Plugin</title>
+		<title>Timeglider QUnit Testing</title>
+	
+		<link rel="stylesheet" href="js/testing/qunit.css" type="text/css" media="screen">
+		<script type="text/javascript" src="js/testing/qunit.js"></script>
+			
+			
 		
 			
 		<link rel="stylesheet" href="css/base.css" type="text/css" media="screen" title="no title" charset="utf-8">
@@ -28,7 +33,17 @@
 
 
 
+<!-- QUNIT -->
+<h1 id="qunit-header">QUnit Test Suite</h1>
+	<h2 id="qunit-banner"></h2>
+	<div id="qunit-testrunner-toolbar"></div>
+	<h2 id="qunit-userAgent"></h2>
+	<ol id="qunit-tests"></ol>
+<!-- END QUNIT -->
+
+
 <div id='placement'></div>
+
 
 <div class='controls'>
 <table>
@@ -57,10 +72,9 @@
 	<script src="js/timeglider/TG_Mediator.js" type="text/javascript" charset="utf-8"></script> 
 	<script src="js/timeglider/timeglider.timeline.widget.js" type="text/javascript" charset="utf-8"></script>
 
-  <script>
 
-
-
+<script type="text/javascript" src="js/testing/timeglider-tests.js"></script>
+<script>
 	$(document).ready(function () { 
 		
 	
@@ -68,8 +82,8 @@
 				"min_zoom":10, 
 				"max_zoom":70, 
 				"show_centerline":true,
-				"initial_timeline_id": "idahoTimeline",
-				"data_source":"json_tests/idaho.json"
+				"initial_timeline_id": "jshist",
+				"data_source":"json_tests/large.json"
 				});
 		
     }); // end document-ready

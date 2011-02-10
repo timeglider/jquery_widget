@@ -276,9 +276,12 @@ tg.TimegliderMediator.prototype = {
       },
 
 
-      /*	This is the setter for
-      other zoomInfo attributes : width, label, tickWidth
-      @param z ==> integer from 1-100, other zoom info comes from zoomTree array
+      /* 
+      *  setZoomLevel
+      *  This in turn sets other zoomInfo attributes : width, label, tickWidth
+      *  Other zoom info comes from the zoomTree array
+      *  @param z ==> integer from 1-100
+      *  
       */
       setZoomLevel : function (z) {
 
@@ -430,7 +433,7 @@ tg.TimegliderMediator.prototype = {
         /* a div with id of "hiddenDiv" has to be pre-loaded */
         tg.getStringWidth  = function (str) {
         		// var size = obj.fontSize; 
-        		var $ms = $("#TimegliderMeasureSpan").html('');
+        		var $ms = $("#timeglider-measure-span").html('');
         		$ms.html(str + "");
         		var w = $ms.width() + 4;
         		$ms.html('');
@@ -439,7 +442,7 @@ tg.TimegliderMediator.prototype = {
         
         tg.getImageSize = function (img) {
             // var size = obj.fontSize; 
-        		var $ms = $("#TimegliderMeasureSpan").html('');
+        		var $ms = $("#timeglider-measure-span").html('');
         		$ms.append("<img id='test_img' src='" + img + "'>");
         		var w = $("#test_img").width();
         		var h = $("#test_img").height();

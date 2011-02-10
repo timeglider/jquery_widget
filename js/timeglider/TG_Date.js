@@ -35,21 +35,36 @@ timeglider.TGDate = {
 
 
 	isLeapYear: function(y) {
-    if ((y % 100  == 0) && ( y % 400  != 0)) {
+    if (y % 400  == 0) {
+      return true;
+    } else if (y % 100  == 0){
       return false;
-    }  else if (y % 4 == 0) {
+    } else if (y % 4 == 0) {
       return true;
     } else {
       return false;
     }
 	},
 	
-
-	boil : function (nstr) {
-		return parseInt(nstr, 10);
+	
+  /*
+  * boil
+  * basic wrapper for parseInt to clean leading zeros,
+  * as in dates
+  */
+	boil : function (n) {
+		return parseInt(n, 10);
 	},
 	
-		
+	/*
+	* getTimeUnitSerial
+	* gets the serial number of specified time unit, using a ye-mo-da date object
+	*
+	* @param fd {object} i.e. the focus date: {ye:1968, mo:8, da:20}
+	* @param unit {string} scale-unit (da, mo, ye, etc)
+	*
+	* @return {number} a non-zero serial for the specified time unit
+	*/
 	getTimeUnitSerial : function (fd, unit) {
 			switch (unit) {
 				case "ye": return fd.ye; break;
@@ -60,12 +75,10 @@ timeglider.TGDate = {
 				case "thou": return Math.ceil(fd.ye / 1000); break;
 				case "tenthou": return Math.ceil(fd.ye / 10000); break;
 				case "hundredthou": return Math.ceil(fd.ye / 100000); break;
-			
 				case "mill": return Math.ceil(fd.ye / 1000000); break;
 				case "tenmill": return Math.ceil(fd.ye / 10000000); break;
 				case "hundredmill": return Math.ceil(fd.ye / 100000000); break;
 				case "bill": return Math.ceil(fd.ye / 1000000000); break;
-				
 			}
 	},
 	
@@ -131,17 +144,27 @@ timeglider.TGDate = {
 		}
 	},
 	
-	
+	/*
+	* isValidDate
+	* Rejects dates like "2001-13-32" and such
+	* TODO: make sure no non leap years have Feb 29
+	*
+	*/
 	isValidDate : function (ye, mo, da) {
+	  
 		var ld = this.getMonthDays(mo, ye);
-		if ((da > ld) || (da <= 0)) { return false; }  
+		// day isn't appropriate for month
+		if ((da > ld) || (da <= 0)) { return false; } 
+		// invalid month numbers
 		if ((mo > 12) || (mo < 0)) { return false; }
+		// there's no year "0"
 		if (ye == 0) { return false; }
-		var pat = new RegExp(/([0-9]+)/);
-		if (ye.match(Math.abs(pat)) == false) { return false; }
+	  // Is it a hex number? We need to make sure it's only got 0-9
+		if ((typeof ye != "number") || (String(ye).match(/([0-9]+)/) == false)) { return false; }
 	
 		return true;
 	},
+	
 	
 	formatFocusDate : function (fd) {
 		return fd.ye + "-" + fd.mo + "-" + fd.da + " " + fd.ho + ":" + fd.mi + ":00";

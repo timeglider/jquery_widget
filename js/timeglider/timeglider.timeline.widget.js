@@ -45,8 +45,7 @@
       },
 
       _create : function () {
-        
-        
+     
         this._id = $(this.element).attr("id"); 
        
         var MAIN_TEMPLATE = "<div class='timeglider-container'>"+
@@ -66,7 +65,7 @@
                               "<div class='timeglider-footer'>Timeglider jQuery Widget"+
                                 "<div class='timeglider-filter-bt'><img title='filter' src='js/timeglider/buttons/filter.png'></div>"+
                               "</div><div class='timeglider-filter-box'></div>"+
-                            "</div><span id='TimegliderMeasureSpan'></span>";
+                            "</div><span id='timeglider-measure-span'></span>";
                                    
         this.element.html(MAIN_TEMPLATE);
 		
