@@ -27,7 +27,7 @@ timeglider.TimegliderTimelineView
   *
   */
   tg.templates = {
-      event_modal: $.template( null, "<div class='timeglider-ev-modal ui-widget-content shadow' id='ev_${id}_modal'>" 
+      event_modal: $.template( null, "<div class='tg-modal timeglider-ev-modal ui-widget-content shadow' id='ev_${id}_modal'>" 
     	  + "<div class='close-button'><img src='img/close.png'></div>" 
     	  + "<div class='startdate'>${startdate}</div>"
     	  + "<h4 id='title'>${title}</h4>"
@@ -36,11 +36,11 @@ timeglider.TimegliderTimelineView
     	  + "</div>"),
     	
     	event_modal_video : $.template( null,
-    	  "<div class='timeglider-ev-video-modal ui-widget-content shadow' id='${id}_modal'>"
+    	  "<div class='tg-modal timeglider-ev-video-modal ui-widget-content shadow' id='${id}_modal'>"
     	  + "<div class='close-button'><img src='img/close.png'></div>"
         + "<iframe width = '100%' height='300' src='${video}'></iframe></div>"),
         
-      timeline_modal : $.template( null, "<div class='timeglider-timeline-modal ui-widget-content shadow' id='tl_${id}_modal'>" 
+      timeline_modal : $.template( null, "<div class='tg-modal timeglider-timeline-modal ui-widget-content shadow' id='tl_${id}_modal'>" 
       	  + "<div class='close-button'><img src='img/close.png'></div>"
       	  + "<h4 id='title'>${title}</h4>"
       	  + "<p>{{html description}}</p>"
@@ -256,7 +256,7 @@ timeglider.TimegliderTimelineView
 				  clk = TGDate.getDateFromSec(dcSec),
 				  foc = TGDate.getDateFromSec(fdSec);
 				
-				output("DBLCLICK:" + foc.mo + "-" + foc.ye + " dblclick:" + clk.mo + "-" + clk.ye, "note");	
+				debug.trace("DBLCLICK:" + foc.mo + "-" + foc.ye + " dblclick:" + clk.mo + "-" + clk.ye, "note");	
 		})			
 		.bind('mousewheel', function(event, delta) {
 						
@@ -290,18 +290,17 @@ timeglider.TimegliderTimelineView
 		.delegate(".timeglider-timeline-event", "click", function () { 
 			// EVENT ON-CLICK !!!!!!
 			var eid = $(this).attr("id"); 
-			// output("click, id:" + eid, "note");
 			me.eventModal(eid);
 		})	
 		.delegate(".timeglider-timeline-event", "hover", function () { 
 			var eid = $(this).attr("id"); 
 			var title = MED.eventPool[eid].title;
-			output("hover, title:" + title, "note"); 
+			debug.trace("hover, title:" + title, "note"); 
 		})
 		.delegate(".timeglider-event-collapsed", "hover", function () { 
 			var eid = $(this).attr("id"); 
 			var title = MED.eventPool[eid].title;
-			output("collapsed, title:" + title, "note"); 
+			debug.trace("collapsed, title:" + title, "note"); 
 		});
 	
 	// TODO ---> build this into jquery-ui component behavior
@@ -356,7 +355,7 @@ timeglider.TimegliderTimelineView
 	    var target = e.target;
 		// constant spatial converter value
 	    var g = (e.scale / 5)* MED.gestureStartZoom;
-		output("gesture zoom:" + g, "note");
+		debug.trace("gesture zoom:" + g, "note");
 		MED.setZoomLevel(g);
 	}
 
@@ -445,7 +444,6 @@ tg.TimegliderTimelineView.prototype = {
 				 	relPos = pos + env;
 					tbWidth = tb.outerWidth();
 					
-				  // 	output ("relpos:" + relPos, "note");
 					tw = tb.outerWidth();
 					
 				  titx = (-1 * relPos);
@@ -471,8 +469,8 @@ tg.TimegliderTimelineView.prototype = {
 		  newSec = startSec - (tickPos * secPerPx),
 		  newD = TGDate.getDateFromSec(newSec);
 		
-		output("ticks x:" + tickPos, "tickpos");
-		output("FD: " + TGDate.formatFocusDate(newD), "focusdate");
+		debug.trace("ticks x:" + tickPos, "tickpos");
+		debug.trace("FD: " + TGDate.formatFocusDate(newD), "focusdate");
 		
 		MED.setFocusDate(newD);
 	},
@@ -762,12 +760,11 @@ tg.TimegliderTimelineView.prototype = {
 
 
 	tickHangies : function () {
-		var tPos = $(this._views.TICKS).position().left;
-		var lHangie = this.leftside + tPos;
-		var rHangie = this.rightside + tPos - this.dimensions.container.width;
-		// output("HANGIES left:" + lHangie + " / right:" + (rHangie));
-		var tick, added = false;
-		var me = this;
+		var tPos = $(this._views.TICKS).position().left,
+		    lHangie = this.leftside + tPos,
+		    rHangie = this.rightside + tPos - this.dimensions.container.width,
+		    tick, added = false,
+		    me = this;
 		
 		if (lHangie > -100) {
 			tick = this.addTick({"type":"l"});
@@ -779,14 +776,12 @@ tg.TimegliderTimelineView.prototype = {
 	},
 	
 
-																				//---( VIEW
 	/* tickUnit, fd */
 	tickOffsetFromDate : function (zoominfo, fdate, tickwidth) {
-		// this.model.zoomInfo (unit, width), fd
-		var w = tickwidth;
-		var u = zoominfo.unit;
+		
 		// switch unit, calculate width gain or loss.... or just loss!
-		var p, prop;
+		var w = tickwidth,
+		    u = zoominfo.unit, p, prop;
 
 		switch (u) {
 			case "da": 
@@ -856,11 +851,10 @@ tg.TimegliderTimelineView.prototype = {
 	easeOutTicks : function() {
 		var me = this;
 			if (Math.abs(this.dragSpeed) > 5) {
-				// output("release @:" + this.dragSpeed + " px EaseOut!");
 				// This works, but isn't great:offset fails to register
 				// for new tim as it ends animation...
 				// $('#TimegliderTicks').animate({left: '+=' + (5 * me.dragSpeed)}, 400, function() {
-					output("ticks stopped!");
+					debug.trace("ticks stopped!", "note");
 					// });
 			}
 		
@@ -921,7 +915,7 @@ tg.TimegliderTimelineView.prototype = {
  	      ia = incl.split(",");
  	      ret = false;
  	      for (i=0; i<ia.length; i++) {
- 	        ii = new RegExp(ia[i].trim(), "i");
+ 	        ii = new RegExp($.trim(ia[i]), "i");
  	        if (ev.title.match(ii)) { ret = true; }
          }
       }
@@ -930,7 +924,7 @@ tg.TimegliderTimelineView.prototype = {
 	   if (excl) {
 	      ea = excl.split(",");
 	      for (e=0; e<ea.length; e++) {
-	        ei = new RegExp(ea[e].trim(), "i");
+	        ei = new RegExp($.trim(ea[e]), "i");
 	        if (ev.title.match(ei)) { ret = false; }
         }
      }
@@ -1223,7 +1217,8 @@ tg.TimegliderTimelineView.prototype = {
       				of: (me._views.CONTAINER),
       				offset: "32, 32", // left, top
       				collision: "fit fit"
-      	});
+      	})
+      	.draggable({stack: ".timeglider-modal"});
   
   },
   
@@ -1259,7 +1254,7 @@ tg.TimegliderTimelineView.prototype = {
       				offset: "0, -12", // left, top
       				collision: "fit fit"
       	})
-      	.draggable({stack: ".timeglider-ev-modal"});
+      	.draggable({stack: ".timeglider-modal"});
 
 	},
 	

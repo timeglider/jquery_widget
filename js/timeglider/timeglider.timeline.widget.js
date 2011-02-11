@@ -18,7 +18,6 @@
 */
 
 (function($){
-
   /**
    * The main jQuery widget factory for Timeglider
    *
@@ -48,6 +47,11 @@
      
         this._id = $(this.element).attr("id"); 
        
+       /*
+         Anatomy:
+       *
+       *
+       */
         var MAIN_TEMPLATE = "<div class='timeglider-container'>"+
                               "<div class='timeglider-centerline'></div>"+
                               "<div class='timeglider-truck'>"+
@@ -79,7 +83,7 @@
        */
 	    _init : function () {
 	      
-	      
+	      // should come out as empty string
 	      var optionsCheck = timeglider.validateOptions(this.options);
 	      
 	      if (optionsCheck == "") {

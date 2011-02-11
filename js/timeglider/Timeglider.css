@@ -63,7 +63,7 @@
 	margin-top:0px;
 	font-weight:bold;
 	text-shadow:1px 1px #000;
-	z-index:20;
+	z-index:10;
 }
 
 /* Correction of aristo ui css */
@@ -149,7 +149,7 @@
 		width:200px;
 		height:500px;
 		background-color:#333;
-		z-index:5;
+		z-index:20;
 	}
 	
 .timeglider-timeline-menu ul {

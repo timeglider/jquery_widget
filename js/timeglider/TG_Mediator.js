@@ -289,7 +289,6 @@ tg.TimegliderMediator.prototype = {
 
           // focusdate has to come first for combined zoom+focusdate switch
           this._startSec = this._focusDate.sec;
-          // output ("startsec:" + this._startSec, "note");
 
           if (z != this._zoomLevel) {
             this._zoomLevel = z;
@@ -299,7 +298,7 @@ tg.TimegliderMediator.prototype = {
             
           }
 
-          output("z:" + this._zoomLevel + " / " + this._zoomInfo.label, "zoomlevel");
+          debug.trace("z:" + this._zoomLevel + " / " + this._zoomInfo.label, "zoomlevel");
 
           // end min/max check
           } else { return false; }

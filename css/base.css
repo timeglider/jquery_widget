@@ -1,4 +1,5 @@
-body { font-family:Arial;background-color:#FFF;margin:0px;padding:0px; }
+body { 
+  font-family:Arial;background-color:#FFF;margin:0px;padding:0px; }
 
 
 a {
@@ -34,7 +35,11 @@ h2 {
 	margin:24px auto 0 auto;
 }
 
-.controls { clear:both;margin-top:12px; }
+.controls { 
+  clear:both;
+  margin:0 32px 0 32px;
+}
+
 .controls table {
 	width:100%;
 	border-collapse:collapse;
