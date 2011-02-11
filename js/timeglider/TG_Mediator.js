@@ -17,22 +17,23 @@ reflects state back to view
 ********************************/
 (function(tg){
   
-  
+  var MED = {};
   var TGDate = tg.TGDate;
   var options = {};
   var $ = jQuery;
 
-  // MOVE THIS TO Models
-  tg.TimegliderTimeline = function (data) {
-    return data;
-  }
+ 
+  tg.TimelineCollection = Backbone.Collection.extend({
+    model: timeglider.Timeline
     
-    
+  });
+  
+
   tg.TimegliderMediator = function (wopts) {
     
     // broadcast wires
-    this.options = options;
-    options = wopts;
+    this.options = options = wopts;
+    
     this.anonEventId = 0;
     this._focusDate = {};
     this._zoomInfo = {};
@@ -48,6 +49,8 @@ reflects state back to view
 
     this.eventPool = [],
     this.timelinePool = {};
+    
+    MED = this;
 
 
     } // end model head
@@ -85,14 +88,16 @@ tg.TimegliderMediator.prototype = {
   parseData : function (data) {
     var M = this; // model ref
     var ct = 0;
-    var dl = data.length, ti = {}, t = {};
+    var dl = data.length, ti = {}, ondeck = {};
 
     for (var i=0; i<dl;i++) {
-
-      t = new timeglider.TimegliderTimeline(data[i]); // the timeline
-
-      ti = M.chewTimeline(t); // indexed, etc
-      if (t.id.length > 0) {ct++;}// at least one timeline was loaded
+      ondeck = data[i];
+      ondeck.mediator = M;
+      ti = new timeglider.Timeline(ondeck).toJSON(); // the timeline
+    
+    if (ti.id.length > 0) {ct++;}// at least one timeline was loaded
+      // put the Model into a "collection"
+      // TODO: create Backbone collection
       M.swallowTimeline(ti);
     }
 
@@ -103,117 +108,6 @@ tg.TimegliderMediator.prototype = {
     }
   },
 
-
-
-  /*
-  * chewTimeline
-  * @param tdata {object} single timeline object to be processed and indexed
-  * @param init {boolean} What the hell is this for?
-  * objectifies string dates
-  * creates hashbase of events indexed by unit serial
-
-    TODO ==> re-chew function for rehashing stuff like startSeconds, etc
-         ==> move to Timeline: needs to be it's own constructor ...
-  */
-    chewTimeline : function (tdata) {
-
-      // TODO ==> add additional units
-      var dhash                       = {"da":[], "mo":[], "ye":[], "de":[], "ce":[], "thou":[], 
-                                          "tenthou":[], "hundredthou":[], "mill":[], "tenmill":[], "hundredmill":[],
-                                          "bill":[]};
-      var units                       = TGDate.units; 
-      tdata.startSeconds              = [];
-      tdata.endSeconds                = [];
-      tdata.spans                     = [];
-
-      // TODO: VALIDATE COLOR, centralize default color(options?)
-      if (!tdata.color) { tdata.color = "#333333"; }
-
-      if (tdata.events) {
-
-        var date, ev, id, unit, ser, tWidth;
-        var l = tdata.events.length;
-
-        for(var ei=0; ei< l; ei++) {
-
-          ev=tdata.events[ei];
-          // id = ev.id;
-          if (ev.id) { 
-            // TODO :: make sure it's unique... append with timeline id?
-            id = ev.id 
-          } else { 
-            ev.id = id = "anon" + this.anonEventId++; 
-          }
-
-          //  objects will include seconds, rata die
-          //  done coupled so end can validate off start
-          var startEnd = TGDate.validateEventDates(ev.startdate,ev.enddate);
-
-          ev.startdateObj = startEnd.s; // TGDate.makeDateObject(ev.startdate);
-          ev.enddateObj = startEnd.e; // TGDate.makeDateObject(ev.enddate);
-
-          
-          // default icon
-          ev.icon = options.icon_folder + (ev.icon || "triangle_orange.png");          
-          ev.titleWidth = tg.getStringWidth(ev.title) + 20;
-          
-          if (ev.image) {
-            if (!ev.image_class) { 
-              ev.image_class = "layout"; 
-              // get image size?
-              ev.image_size = tg.getImageSize(ev.image);
-              debug.log("image height:" + ev.image_size.height);
-              }
-          }
-
-          // microtimeline for collapsed view and other metrics
-          tdata.startSeconds.push(ev.startdateObj.sec);
-          tdata.endSeconds.push(ev.enddateObj.sec);
-
-          // time span?
-          if (ev.enddateObj.sec > ev.startdateObj.sec) {
-            ev.span =true;
-            tdata.spans.push({id:ev.id, start:ev.startdateObj.sec, end:ev.enddateObj.sec})
-          } else {
-            ev.span = false;
-          }
-          //// !! TODO VALIDATE DATE respecting startdate, too
-          var uxl=units.length;
-          for (var ux=0; ux < uxl; ux++) {
-            unit = units[ux];
-            ///// DATE HASHING in action 
-            ser = TGDate.getTimeUnitSerial(ev.startdateObj, unit);
-            if (dhash[unit][ser] !== undefined) {
-              dhash[unit][ser].push(id);
-            } else {
-              // create the array
-              dhash[unit][ser] = [id];
-            }
-            ///////////////////////////////
-          } 
-
-          // add*modify indexed pool
-          this.eventPool["ev_" + id] = ev;
-
-          }// end cycling through timeline's events
-
-          // adding event secs to catalog of entire timeline
-          var allsec = $.merge(tdata.startSeconds,tdata.endSeconds);
-          var fl = timeglider.getLowHigh(allsec);
-          /// bounds of timeline
-          tdata.bounds = {"first": fl.low, "last":fl.high };
-
-      } /// end if there are events!
-
-      /// i.e. expanded or compressed...
-      /// ought to be attribute at the timeline level
-      /// TODO: create a $.merge for defaults for a timeline
-      tdata.display = "expanded";
-
-      tdata.dateHash = dhash;
-
-      return tdata;
-    },
 
 
     /* Makes an indexed array of timelines */
@@ -455,29 +349,28 @@ tg.TimegliderMediator.prototype = {
         tg.validateOptions = function (widget_settings) {	
             
             this.optionsMaster = { initial_focus:{type:"date"}, 
-          	editor:{type:"string"}, 
-          	backgroundColor:{type:"color"}, 
-          	backgroundImage:{type:"color"}, 
-          	min_zoom:{type:"number", min:1, max:100}, 
-          	max_zoom:{type:"number", min:1, max:100}, 
-          	initial_zoom:{type:"number", min:1, max:100}, 
-          	show_centerline:{type:"boolean"}, 
-          	data_source:{type:"url"}, 
-          	basic_fontsize:{type:"number", min:9, max:100}, 
-          	mouse_wheel:{type:"string", 
-          	possible:["zoom","pan"]}, 
-          	initial_timeline_id:{type:"string"} }
-
-        		var me = this;
-        			// msg: validates when empty 
-        			msg = "",
-        			// line break: /n for alert, <br> for html modal
-        			lb = "\n";
+            	editor:{type:"string"}, 
+            	backgroundColor:{type:"color"}, 
+            	backgroundImage:{type:"color"}, 
+            	min_zoom:{type:"number", min:1, max:100}, 
+            	max_zoom:{type:"number", min:1, max:100}, 
+            	initial_zoom:{type:"number", min:1, max:100}, 
+            	show_centerline:{type:"boolean"}, 
+            	data_source:{type:"url"}, 
+            	basic_fontsize:{type:"number", min:9, max:100}, 
+            	mouse_wheel:{type:"string", 
+            	possible:["zoom","pan"]}, 
+            	initial_timeline_id:{type:"string"}
+          	}
+          	
+        		// msg: will be return value: validates when empty 
+        		// change lb to <br> if the error is returned in HTML (vs alert())
+        		var me = this, msg = "", lb = "\n";
 
         		$.each(widget_settings, function(key, value) { 
 
         			if (me.optionsMaster[key]) {
-        				//trace ("key:" + key + ", type:" + optionsTypes[key].type);
+
         				switch (me.optionsMaster[key].type) {
         					case "string": 
         						if (typeof value != "string") { msg += (key + " needs to be a string." + lb); }
@@ -519,7 +412,7 @@ tg.TimegliderMediator.prototype = {
         						/// TODO test for pattern for color, including "red", "orange", etc
         					break;
 
-        					default: trace ("is there a default for validating options?");
+        					default: debug.trace ("DEFAULT OPTION TYPE??");
 
         				}
         			}
