@@ -63,6 +63,7 @@
 	margin-top:0px;
 	font-weight:bold;
 	text-shadow:1px 1px #000;
+	z-index:20;
 }
 
 /* Correction of aristo ui css */
@@ -238,6 +239,7 @@
   position:absolute;
   border:1px solid #333;
   top:-28px;
+  z-index:1;
 }
 .timeglider-event-image-bar img {
   height:24px;
@@ -258,7 +260,7 @@
   color:#FFF;
   cursor:pointer;
 	font-size:10px;
-	margin-top:4px;
+	margin-top:3px;
 	background-color:#AAA;
 	font-weight:normal;
 	padding-left:6px;

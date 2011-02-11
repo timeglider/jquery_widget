@@ -31,7 +31,7 @@ timeglider.TimegliderTimelineView
     	  + "<div class='close-button'><img src='img/close.png'></div>" 
     	  + "<div class='startdate'>${startdate}</div>"
     	  + "<h4 id='title'>${title}</h4>"
-    	  + "<p>${description}</p>"
+    	  + "<p>{{html description}}</p>"
     	  + "<ul class='timeglider-ev-modal-links'><li><a target='_blank' href='${link}'>link</a></li></ul>"
     	  + "</div>"),
     	
@@ -43,7 +43,7 @@ timeglider.TimegliderTimelineView
       timeline_modal : $.template( null, "<div class='timeglider-timeline-modal ui-widget-content shadow' id='tl_${id}_modal'>" 
       	  + "<div class='close-button'><img src='img/close.png'></div>"
       	  + "<h4 id='title'>${title}</h4>"
-      	  + "<p>${description}</p>"
+      	  + "<p>{{html description}}</p>"
       	  + "</div>"),
     }
   
@@ -57,12 +57,15 @@ timeglider.TimegliderTimelineView
   tg.TimegliderTimelineView = function (widget, mediator) {
 
 	var options = widget.options,
+	    // core identifier to "uniquify"
 	    PL = "#" + widget._id,
 	    pl_ht = $(PL).height(),
 	    me = this;
   
   MED = mediator;
-	    	      
+	
+	/* references specific to the instance (rather than timeglider) so
+	   one can have more than one instance of the widget on a page */ 	      
 	this._views = {
     		PLACE:PL,
     		CONTAINER : PL + " .timeglider-container", 
@@ -1255,7 +1258,8 @@ tg.TimegliderTimelineView.prototype = {
       				of: $par,
       				offset: "0, -12", // left, top
       				collision: "fit fit"
-      	});
+      	})
+      	.draggable({stack: ".timeglider-ev-modal"});
 
 	},
 	
