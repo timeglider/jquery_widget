@@ -33,7 +33,7 @@ reflects state back to view
     
     // broadcast wires
     this.options = options = wopts;
-    
+    this.timelineMenuOpen = false;
     this.anonEventId = 0;
     this._focusDate = {};
     this._zoomInfo = {};

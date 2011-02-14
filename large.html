@@ -37,9 +37,8 @@
 	<script src="js/jquery.tmpl.min.js" type="text/javascript" charset="utf-8"></script>
 	<script src="js/underscore-min.js" type="text/javascript" charset="utf-8"></script>
 	<script src="js/backbone-min.js" type="text/javascript" charset="utf-8"></script>
-	
-	<!-- UI -->
 	<script src="js/jquery-ui-1.8.9.custom.min.js" type="text/javascript" charset="utf-8"></script>
+
 
 	<script src="js/ba-debug.min.js" type="text/javascript" charset="utf-8"></script>
 	<script src="js/jquery.mousewheel.min.js" type="text/javascript" charset="utf-8"></script>
@@ -58,8 +57,6 @@
 
   <script>
 
-
-
 	$(document).ready(function () { 
 		
 	
@@ -68,7 +65,8 @@
 				"max_zoom":70, 
 				"show_centerline":true,
 				"initial_timeline_id": "idahoTimeline",
-				"data_source":"json_tests/idaho.json"
+				"data_source":"json_tests/large.json",
+				"show_footer":true
 				});
 		
     }); // end document-ready

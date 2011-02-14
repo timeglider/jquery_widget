@@ -7,7 +7,7 @@
 	position:relative;
   overflow:hidden;
 	border:2px solid black;
-	font-family:Arial, sans-serif;
+	font-family:Helvetica, Arial, sans-serif;
 	
   }
   
@@ -21,7 +21,8 @@
 	left:0px;
 	height:24px;
 	width:100%;
-	background-color:#333;
+	background-color:#222;
+	background-image:url(buttons/footer_bg.png);
 	color:#ccc;
 	font-size:10px;
 	padding:3px;
@@ -144,43 +145,60 @@
 		
 	}
 	
+
+.timeglider-menu-shown {
+      display:block;
+  }
+
+.timeglider-menu-hidden {
+    display:none;
+}
 .timeglider-timeline-menu {
 		position:absolute;
-		top:0px;
-		left:0px;
+		top:24px;
+		left:12px;
 		width:200px;
-		height:500px;
-		background-color:#333;
-		z-index:20;
+		padding:2px;
+		background-color:#111;
+		border-radius:6px;
+		-moz-border-radius:6px;
+		-webkit-border-radius:6px;
+		z-index:25;
 	}
-	
+.menu-point {
+  margin-bottom:-20px;
+}	
+.timeglider-timeline-menu h3 {
+			font-size:14px;
+			margin:6px 0px 3px 4px;
+			font-weight:bold;
+			color:#F0F0F0;
+	}
+  	
 .timeglider-timeline-menu ul {
-		margin:2px;
-		padding:0px;	
-		color:#CCC;
-		
+    list-style:none;
+		margin:3px;
+		margin-bottom:-14px;
+		color:#444;
+		background-color:#FFF;
+		padding:6px 8px 8px 8px;
+			border-radius:3px;
+  		-moz-border-radius:3px;
+  		-webkit-border-radius:3px;
 		}
 .timeglider-timeline-menu ul li {
-		font-size:10px;
-		list-style:none;
-		margin:0;
-		padding:0;
+		font-size:12px;
+		margin:3px 0 3px 0;
+		padding:3px 0 3px 0;
+		border-bottom:1px dotted #CCC;
 		cursor:pointer;
-		color:#5FA8FF;
+		color:#666;
 	}
 	
 .timeglider-timeline-menu ul li.activeTimeline {
-  	color:yellow;
+  	color:#000;
 }
-  
-.timeglider-timeline-menu h3 {
-			font-size:10px;
-			margin:0px;
-			margin-left:3px;
-			margin-top:3px;
-			font-weight:normal;
-			color:#888;
-	}
+ 
 	
 .timeglider-timeline-menu-handle {
 		height:15px;
@@ -207,19 +225,18 @@
 	filter: progid:DXImageTransform.Microsoft.Shadow(Strength=4, Direction=135, Color='#333333');
 }
 
-.close-button {
+.close-button-remove, .close-button-toggleMenu {
 	float:right;
 	cursor:pointer;
-	color:#e61e1e;
-	margin-right:-22px;
-	margin-top:-22px;
+	margin-right:-16px;
+	margin-top:-16px;
 }
 
 
 #timeglider-measure-span {
 	font-size:11px;
 	width:auto;
-	font-family:Arial;
+	font-family:Helvetica, Arial;
 }
 
 
@@ -262,11 +279,10 @@
   color:#FFF;
   cursor:pointer;
 	font-size:10px;
-	margin-top:3px;
-	background-color:#AAA;
+	margin-top:4px;
+	background-color:#555;
 	font-weight:normal;
-	padding-left:6px;
-	padding-bottom:2px;
+	padding:2px 0 2px 6px;
 	
 	-webkit-border-bottom-right-radius: 4px;
   -webkit-border-bottom-left-radius: 4px;
@@ -276,6 +292,7 @@
   border-bottom-left-radius: 4px;
   
   width:112px;
+  text-shadow:none;
   
 }
 .tg-timeline-env-buttons .expand-collapse, .tg-timeline-env-buttons .timeline-info {
@@ -291,14 +308,19 @@
 .timeglider-filter-bt {
 	float:right;
 	cursor:pointer;
-	margin-right:16px;
+	margin-right:6px;
+}
+.timeglider-list-bt {
+  cursor:pointer;
+	margin-left:6px;
+}
+.timeglider-tools-bt {
+	cursor:pointer;
+	margin-right:12px;
+	float:right;
 }
 
-.timeglider-filter-bt img{
-  margin-top:3px;
-	height:18px;
-	width:auto;
-}
+
 
 
 .timeglider-filter-box {
@@ -385,7 +407,7 @@ ul.formBottom li{
 	background:#FFF;
 	border:1px solid #333;
 	width:250px;
-	padding:8px;
+	padding:2px;
 	
 }
 
@@ -406,7 +428,7 @@ ul.formBottom li{
 .timeglider-ev-modal p, .timeglider-timeline-modal p {
 	font-size:11px;
 	color:#555;
-	margin-right:14px;
+	margin:8px;
 	max-height:200px;
 	overflow-y:auto;
 }
@@ -420,9 +442,8 @@ ul.formBottom li{
 }
 
 .timeglider-ev-modal h4, .timeglider-timeline-modal h4  {
-	margin:0;padding:0;
-	margin-top:6px;
-	margin-bottom:4px;
+	margin:4px 8px 2px 8px;
+	padding:0;
 	color:#222;
 	font-size:12px;
 }
@@ -430,11 +451,12 @@ ul.formBottom li{
 .timeglider-ev-modal .startdate {
 	font-size:10px;
 	color:#666;
+	margin:8px 8px 0px 8px;
 }
 ul.timeglider-ev-modal-links {
 	list-style:none;
 	margin:0;
-	margin-top:8px;
+	margin:6px 8px 2px 8px;
 	padding:0;
 	clear:both;
 }
