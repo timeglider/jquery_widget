@@ -137,9 +137,7 @@
   
   validate: function (attrs) {
     debug.log("validate data:" + attrs.title); 
-    if (!attrs.title) {
-         // Hmmm. Should there be a general error log??
-    }
+    
   }
 
 });

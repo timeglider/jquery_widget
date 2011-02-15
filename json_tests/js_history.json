@@ -3,8 +3,8 @@
 "id":"jshist",
 "title":"A little history of JavaScript",
 "description":"Mainly, showing the emergence of different JS libraries.",
-"focus_date":"2001-01-01 12:00:00",
-"initial_zoom":"43",
+"focus_date":"1996-07-01 12:00:00",
+"initial_zoom":"38",
 "events":[
 {
 "id":"jshist-01",
@@ -27,6 +27,17 @@
 "icon":"star_green.png"
 },
 
+{
+"id":"jshist-dry",
+"title": "The Bad Rap Years",
+"description": "Of Javascript's initial insinuation into browsers, WWW founder Robert Cailliau said, 'the programming-vacuum filled itself with the most horrible kluge in the history of computing: Javascript.' But now JS is 'hawt' and its clay-like flexibility makes it enjoyable, inspiring more artistry and cleverness than other languages.",
+"startdate": "1998-01-01 12:00:00",
+"enddate": "2004-01-01 12:00:00",
+"link":"http://en.wikipedia.org/wiki/JavaScript",
+"importance":"52",
+"icon":"circle_black.png"
+},
+
 
 {
 "id":"jshist-03",
@@ -35,8 +46,7 @@
 "startdate": "1996-08-01 12:00:00",
 "enddate": "1996-08-01 12:00:00",
 "link":"http://en.wikipedia.org/wiki/JScript",
-"importance":"35",
-"image":"img/tests/ie3.jpg"
+"importance":"35"
 },
 
 {

@@ -41,7 +41,7 @@
         mouse_wheel: "zoom", 
         initial_timeline_id:'',
         icon_folder:'js/timeglider/icons/',
-        show_footer:'true'
+        show_footer:true
       },
 
       _create : function () {
@@ -76,17 +76,11 @@
                               "<div class='timeglider-slider-container'>"+
                                 "<div class='timeglider-slider'></div>"+
                               "</div>"+
-                              "<div class='timeglider-timeline-menu timeglider-menu-hidden shadow'>"+
-                                "<div class='close-button-toggleMenu'><img src='img/close.png'></div>"+
-                                "<h3>timelines</h3><ul></ul>"+
-								"<img class='menu-point' src='img/menu-point.png'>"+
-                              "</div>" +
                               "<div class='timeglider-footer'>"+
                               "<img class='timeglider-list-bt' title='timelines' src='js/timeglider/buttons/list.png'>"+                            
                               "<img class='timeglider-filter-bt' title='filter' src='js/timeglider/buttons/filter.png'>"+
                               "<img class='timeglider-tools-bt' title='settings' src='js/timeglider/buttons/tools.png'>"+
-                    
-                              "</div><div class='timeglider-filter-box'></div>"+
+                              "</div>"+
                             "</div><span id='timeglider-measure-span'></span>";
                                    
         this.element.html(MAIN_TEMPLATE);
