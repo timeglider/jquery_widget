@@ -25,13 +25,12 @@ reflects state back to view
  
   tg.TimelineCollection = Backbone.Collection.extend({
     model: timeglider.Timeline
-    
   });
   
 
   tg.TimegliderMediator = function (wopts) {
-    
-    // broadcast wires
+  
+  
     this.options = options = wopts;
     this.timelineMenuOpen = false;
     this.anonEventId = 0;
@@ -41,8 +40,10 @@ reflects state back to view
     this._ticksArray = [];
     this._startSec = 0;
     this._activeTimelines = [];
-    this.max_zoom = 100;
-    this.min_zoom = 1;
+    
+    this.max_zoom = options.max_zoom;
+    this.min_zoom = options.min_zoom;
+    this.fixed_zoom = (this.max_zoom == this.min_zoom) ? true : false;
     this.gesturing = false;
     this.gestureStartZoom = 0;
     this.filterObject = {};
@@ -50,10 +51,12 @@ reflects state back to view
     this.eventPool = [],
     this.timelinePool = {};
     
+    this.setZoomLevel(options.initial_zoom);
+    this.initial_timeline_id = options.initial_timeline_id;
+  
     MED = this;
 
-
-    } // end model head
+    } // end mediator head
     
 
 tg.TimegliderMediator.prototype = {
@@ -123,12 +126,13 @@ tg.TimegliderMediator.prototype = {
     i.e. could be more than one 
     */
     setInitialTimelines : function () {
+      debug.log("setInitialTimelines...");
       var me = this;
       var tid = this.initial_timeline_id;
       if (tid) {
         setTimeout(function () { 
           me.toggleTimeline(tid);
-          }, 500);
+          }, 1000);
         }
       },
 
@@ -139,6 +143,7 @@ tg.TimegliderMediator.prototype = {
       // !!!TODO ---- get these back to normal setTicksReady, etc.
       setTicksReady : function (bool) {
         this._ticksReady = bool;
+        
         if (bool === true) { 
           $.publish("mediator.ticksReadySignal");
           }
@@ -178,22 +183,20 @@ tg.TimegliderMediator.prototype = {
       *  
       */
       setZoomLevel : function (z) {
-
+        if (isNaN(z)) { debug.log("zoom level NaN"); return false; }
+          
         if (z <= this.max_zoom && z >= this.min_zoom) {
-
+          
           // focusdate has to come first for combined zoom+focusdate switch
           this._startSec = this._focusDate.sec;
 
           if (z != this._zoomLevel) {
             this._zoomLevel = z;
             this._zoomInfo = timeglider.zoomTree[z];
-            
+            debug.log("publishing zoomLevelChange !!");
             $.publish("mediator.zoomLevelChange");
             
           }
-
-          debug.trace("z:" + this._zoomLevel + " / " + this._zoomInfo.label, "zoomlevel");
-
           // end min/max check
           } else { return false; }
 
@@ -285,18 +288,19 @@ tg.TimegliderMediator.prototype = {
           if (ia == -1) {
             // not active ---- bring it on and focus to it
             this._activeTimelines.push(id);
-
             // setting FD does NOT refresh automatically
             this.setFocusDate(TGDate.makeDateObject(lt.focus_date));
             // resetting zoomLevel DOES refresh
+            
             this.setZoomLevel(lt.initial_zoom);
-
+            
           } else {
             // it's active, remove it
             this._activeTimelines.splice(ia,1);
-            this.refresh();
+            // this.refresh();
           }
 
+          this.refresh();
           $.publish( "mediator.activeTimelinesChange" );
 
 
@@ -345,7 +349,6 @@ tg.TimegliderMediator.prototype = {
         }
         
         
-        // DORMANT
         tg.validateOptions = function (widget_settings) {	
             
             this.optionsMaster = { initial_focus:{type:"date"}, 
@@ -356,6 +359,7 @@ tg.TimegliderMediator.prototype = {
             	max_zoom:{type:"number", min:1, max:100}, 
             	initial_zoom:{type:"number", min:1, max:100}, 
             	show_centerline:{type:"boolean"}, 
+            	display_zoom:{type:"boolean"}, 
             	data_source:{type:"url"}, 
             	basic_fontsize:{type:"number", min:9, max:100}, 
             	mouse_wheel:{type:"string", 
@@ -411,8 +415,6 @@ tg.TimegliderMediator.prototype = {
         					case "color":
         						/// TODO test for pattern for color, including "red", "orange", etc
         					break;
-
-        					default: debug.trace ("DEFAULT OPTION TYPE??");
 
         				}
         			}
