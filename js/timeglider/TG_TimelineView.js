@@ -18,7 +18,6 @@ timeglider.TimegliderTimelineView
  // MED below is a reference to the mediator reference
  // that will be passed into the main Constructor below
   var TGDate = tg.TGDate, MED, options, $ = jQuery;
-  
 
   /*
   *  timeglider.TimegliderTimelineView
@@ -27,18 +26,19 @@ timeglider.TimegliderTimelineView
   */
   tg.TimegliderTimelineView = function (widget, mediator) {
 
-	options = widget.options,
 	    // core identifier to "uniquify"
-	    PL = "#" + widget._id,
+	    var PL = "#" + widget._id,
 	    WIDGET_ID = widget._id,
 	    pl_ht = $(PL).height(),
 	    me = this;
-  
-  MED = mediator;
+	    
+	    // vars created in wider closure above
+      MED = mediator;
+      options = MED.options;
 	
 	/* references specific to the instance (rather than timeglider) so
 	   one can have more than one instance of the widget on a page */ 	      
-	this._views = {
+	   this._views = {
     		PLACE:PL,
     		CONTAINER : PL + " .timeglider-container", 
     		TIMELINE_MENU : PL + " .timeglider-timeline-menu", 
@@ -46,6 +46,7 @@ timeglider.TimegliderTimelineView
     		TIMELINE_LIST_BT : PL + " .timeglider-list-bt", 
     		SLIDER_CONTAINER : PL + " .timeglider-slider-container", 
     		SLIDER : PL + " .timeglider-slider", 
+    		ZOOM_DISPLAY : PL + " .timeglider-zoomlevel-display",
     		TRUCK : PL + " .timeglider-truck", 
     		CENTERLINE : PL + " .timeglider-centerline", 
     		TICKS : PL + " .timeglider-ticks", 
@@ -54,7 +55,7 @@ timeglider.TimegliderTimelineView
     		FILTER_BT : PL + " .timeglider-filter-bt",
     		FILTER_BOX : PL + " .timeglider-filter-box",
     		TOOLS_BT : PL + " .timeglider-tools-bt"
-	}
+	    }
 	
 	
   /*  TEMPLATES FOR THINGS LIKE MODAL WINDOWS
@@ -112,26 +113,15 @@ timeglider.TimegliderTimelineView
           "</div>")
 
     }
-  
-  
-  
+
   
 	$(this._views.CONTAINER).css("height", pl_ht);
 	this.basicFontSize = options.basic_fontsize;
 	
 	if (options.show_footer == false) {
 	  $(this._views.FOOTER).css("display", "none");
-	  debug.log("HIDE FOOTER!");
   }
-  
-  
-	// !!TODO validate range/relation of min/max
-	// move all to model?
-	MED.max_zoom = options.max_zoom;
-	MED.min_zoom = options.min_zoom;
-	MED.initial_timeline_id = options.initial_timeline_id;
-	MED.setZoomLevel(options.initial_zoom);
-	
+
 	this.dragSpeed = 0;
 	this.dimensions = this.getWidgetDimensions();
 	this.tickNum = 0;
@@ -146,8 +136,9 @@ timeglider.TimegliderTimelineView
 	
 	// INITIAL CONSTRUCTION
 	this.buildSlider();
+	this.setupFilter();
+	
 	this.castTicks();
-
 
 	/// listen for ticks movement, i.e. dragging
 	// MED.ticksOffsetChange.tuneIn(function () {
@@ -159,11 +150,16 @@ timeglider.TimegliderTimelineView
 	
 	
 	$.subscribe("mediator.zoomLevelChange", function () {
+		
 		me.tickNum = 0;
 		me.leftside = 0;
-		me.castTicks();
+		
+		var zl = MED.getZoomLevel();
 		// if the slider isn't already at the given value change it
-		$(me._views.SLIDER).slider("value", me.invSliderVal(MED.getZoomLevel()));
+		$(me._views.SLIDER).slider("value", me.invSliderVal(zl));
+    me.displayZoomLevel(zl);
+    me.castTicks();
+		
 	});
 	
 	/// This happens on a TOTAL REFRESH of 
@@ -197,7 +193,7 @@ timeglider.TimegliderTimelineView
 	
 	
 	// listen for focus date change
-	// I.E. if date is zipped to rather than dragged
+	// mainly if date is zipped-to rather than dragged
 	$.subscribe("mediator.focusDateChange", function () {
 		// 
 	});
@@ -205,7 +201,6 @@ timeglider.TimegliderTimelineView
 	
 	// UPDATE TIMELINES MENU
 	$.subscribe("mediator.timelineListChangeSignal", function (arg) {
-		me.adjustTimelineTitleStyles();
     me.buildTimelineMenu();
 	});
 	
@@ -221,70 +216,16 @@ timeglider.TimegliderTimelineView
 				}	
         }); // end each	
         
-
-	}); // end tune in
-
-
-  /* FOOTER TIMELINE_MENU MODALS */
-  
-  
-  $.tmpl(this._templates.filter_modal,{}).appendTo(this._views.CONTAINER);
-	$(this._views.FILTER_BT).click(function() {  
-	  
-	  var $bt = $(this),
-	      fbox = me._views.FILTER_BOX;
-	  
-	  // If it's never been opened, apply actions to the buttons, etc
-	  if (me.filterBoxActivated == false) {
-
-	    me.filterBoxActivated =true;
-	    
-	    var $filter_apply = $(fbox + " .timeglider-filter-apply"),
-          $filter_close = $(".timeglider-filter-box .close-button"),
-          $filter_clear = $(fbox + " .timeglider-filter-clear"),
-          incl = "", excl = "";
-	    
-	    // set up listeners
-	    $filter_apply.click(function () {
-	      incl = $(fbox + " .timeglider-filter-include").val();
-	      excl = $(fbox + " .timeglider-filter-exclude").val();
-	      MED.setFilterObject({include:incl, exclude:excl});
-	      $(fbox).toggleClass("timeglider-menu-shown");
-      });
- 
-      $filter_close.click(function () {
-        $(fbox).toggleClass("timeglider-menu-hidden");
-      });
-      
-      $filter_clear.click(function () {
-        MED.setFilterObject({include:'', exclude:''});
-        $(fbox + " .timeglider-filter-include").val('');
-	      $(fbox + " .timeglider-filter-exclude").val('');
-        $(fbox).toggleClass("timeglider-menu-shown");
-      });
-      
-    } // end initial set up
-    
-    // open the box
-	  $(fbox)
-	    .toggleClass("timeglider-menu-hidden")
-	    .css("z-index", me.ztop++)
-	      .position({
-        		my: "right bottom",
-      			at: "right top",
-      			of: $bt,
-      			offset: "-8, -12"
-          });
-      
-  }); // end FILTER_BT click
-
-
-  $.subscribe("mediator.filterObjectChange", function () {
-    // refresh is done inside MED -- no need to refresh here
-		// debug.log("filter:" + MED.filterObject.include + "/" + MED.filterObject.exclude);
 	});
 	
-															
+	
+  $.subscribe("mediator.filterObjectChange", function () {
+    // refresh is done inside MED -- no need to refresh here
+	});
+	
+	
+	
+					
 	$(this._views.TRUCK)
 		.dblclick(function(e) {
 			 	var Cw = me.dimensions.container.width,
@@ -350,6 +291,7 @@ timeglider.TimegliderTimelineView
 		$(this).parent().remove();	
 	});
 
+ 
 
  $.tmpl(me._templates.timeline_list_modal,{}).appendTo(this._views.CONTAINER);
  $(me._views.TIMELINE_LIST_BT).click(function () {
@@ -363,27 +305,28 @@ timeglider.TimegliderTimelineView
 	});
 	
 	
-	
 	$(this._views.TIMELINE_MENU + " .close-button").live("click", function () {
 		 $(me._views.TIMELINE_MENU).toggleClass("timeglider-menu-hidden")
 	});
   
   /* SETTINGS BUSINESS */
   $(this._views.TOOLS_BT).click(function() {
-    alert("TOOLS!");
+    alert("I'm just a stand-in for the tools... ");
   }); 
-  
-  
-  
-  
-  
+ 
+	
 	
 	// TODO: make function displayCenterline()
-	if (options.show_centerline === true) {
+	// TODO: simply append a centerline template rather than .css'ing it!
+	if (MED.options.show_centerline === true) {
 		$(this._views.CENTERLINE).css({"height":me.dimensions.container.height, "left": me.dimensions.container.centerx});
 	} else {
 		$(this._views.CENTERLINE).css({"display":"none"});
 	}
+	
+
+
+	
 	
 	
 	//// GESTURES  ////
@@ -465,14 +408,18 @@ tg.TimegliderTimelineView.prototype = {
 		    return imp / zoo;
 	},
 	
+	displayZoomLevel : function(zl) {
+	  var me=this;
+	  if (options.display_zoom == true) {
+ 		    $(me._views.ZOOM_DISPLAY).text(zl);
+	    }
+ 	},
+	
 
   invSliderVal : function(v) {
   		return Math.abs(v - 101);
   },
   
-
-  
-
 
   registerTitles : function () {
 		
@@ -539,14 +486,8 @@ tg.TimegliderTimelineView.prototype = {
 		MED.setFocusDate(newD);
 	},
 	
-	
-	adjustTimelineTitleStyles : function () {
-	  debug.log("modifyTimelineTitles!");
-	  
-  },
   
   buildTimelineMenu : function () {
-    debug.log("buildTimelineMenu!");
     
     var id, ta = MED.timelinePool, ta_ct = 0, me=this;
 		
@@ -570,9 +511,21 @@ tg.TimegliderTimelineView.prototype = {
 	  so we need to feed in and take out inverse values with invSliderVal()            
 	*/
 	buildSlider : function () {
-		
-		var me = this,
-		  init_zoom = me.invSliderVal(MED.getZoomLevel()),
+	  var iz = MED.getZoomLevel();
+	  
+		if (options.min_zoom == options.max_zoom) {
+		  // With a single zoom level, hide the zoom controller
+  	  $(this._views.SLIDER_CONTAINER).css("display", "none");
+  	  
+    } else {
+      
+      if (options.display_zoom == true) {
+    		var $zl = $("<div>").appendTo(this._views.SLIDER_CONTAINER).addClass("timeglider-zoomlevel-display");
+    		$zl.text(iz);
+    	}
+      
+		  var me = this,
+		  init_zoom = me.invSliderVal(iz),
       hZoom = MED.max_zoom,
       lZoom = MED.min_zoom,
       sHeight = (1 + hZoom - lZoom) * 3;
@@ -582,7 +535,7 @@ tg.TimegliderTimelineView.prototype = {
 			  .slider({ 
   				steps: 100,
   				handle: $('.knob'),
-  				animate:500,
+  				animate:300,
 				orientation: 'vertical',
 
 				/* "min" here is really the _highest_ zoom value @ upside down */
@@ -613,16 +566,74 @@ tg.TimegliderTimelineView.prototype = {
 					MED.setZoomLevel(me.invSliderVal(ui.value));
 				}
 			});
+			
+		} // end--if min_zoom == max_zoom
 	},
+	
+	
+	
+	
+  /* FILTER BOX SETUP */
+  setupFilter : function () {
+      var me=this;
+      $.tmpl(me._templates.filter_modal,{}).appendTo(me._views.CONTAINER);
+      
+  	  $(me._views.FILTER_BT).click(function() {  
 
+  	      var $bt = $(this), fbox = me._views.FILTER_BOX;
 
+  	      // If it's never been opened, apply actions to the buttons, etc
+  	      if (me.filterBoxActivated == false) {
+
+  	        me.filterBoxActivated =true;
+
+  	        var $filter_apply = $(fbox + " .timeglider-filter-apply"),
+              $filter_close = $(".timeglider-filter-box .close-button"),
+              $filter_clear = $(fbox + " .timeglider-filter-clear"),
+              incl = "", excl = "";
+
+  	          // set up listeners
+  	          $filter_apply.click(function () {
+  	            incl = $(fbox + " .timeglider-filter-include").val();
+  	            excl = $(fbox + " .timeglider-filter-exclude").val();
+  	            MED.setFilterObject({include:incl, exclude:excl});
+  	            $(fbox).toggleClass("timeglider-menu-shown");
+              });
+
+              $filter_close.click(function () {
+                $(fbox).toggleClass("timeglider-menu-hidden");
+              });
+
+              $filter_clear.click(function () {
+                MED.setFilterObject({include:'', exclude:''});
+                $(fbox + " .timeglider-filter-include").val('');
+  	            $(fbox + " .timeglider-filter-exclude").val('');
+                $(fbox).toggleClass("timeglider-menu-shown");
+              });
+              
+              } // end if filterBoxActivated
+
+              // open the box
+  	          $(fbox)
+  	            .toggleClass("timeglider-menu-hidden")
+  	            .css("z-index", me.ztop++)
+  	            .position({
+          		    my: "right bottom",
+        			    at: "right top",
+        			    of: $bt,
+        			    offset: "-8, -12"
+              });
+
+        }); // end FILTER_BT click
+
+ }, // end setupFilter
+  
+  
 	clearTicks : function () {
 		this.tickNum = 0;
 		$(this._views.TICKS)
 		  .css("left", 0)
 			.html("<div class='timeglider-handle'></div>");
-		
-		
 	},
 
 
@@ -639,10 +650,9 @@ tg.TimegliderTimelineView.prototype = {
 			ctr = this.dimensions.container.centerx,
 			nTicks = Math.ceil(this.dimensions.container.width / tickWidth) + 4,
 			leftright = 'l';
-	
+			
 		this.clearTicks();
-		
-		
+	
 		MED.setTicksReady(false);
 
 		// INITIAL TICK added  in center according to focus date provided
@@ -721,6 +731,8 @@ tg.TimegliderTimelineView.prototype = {
 		tperu = (mDays > 0) ? mDays : tInfo.tperu;
 									
 		dist = tickWidth / tperu;
+
+    
 		if (dist > 5) {
 		
 			/* Raphael canvas for tick lines
@@ -741,7 +753,9 @@ tg.TimegliderTimelineView.prototype = {
 			} // end dist > 5  if there's enough space between tickmarks
 		
 		pack = {"unit":tickUnit, "width":tickWidth, "serial":serial};
+
 		label = this.getDateLabelForTick(pack);
+		
 		
 		
 		// DO OTHER STUFF TO THE TICK, MAKE THE LABEL AN ACTIONABLE ELEMENT
@@ -1463,7 +1477,8 @@ tg.TimegliderTimelineView.prototype = {
     {unit:"bill", width:76,  level:100, label:"100 billion years"}
     ];
 
-
+    // immediately invokes to create extra information in zoom tree
+    //
     tg.calculateSecPerPx = function (zt) {
       	for (var z=1; z<zt.length; z++) {
     			var zl = zt[z];
@@ -1490,17 +1505,6 @@ tg.TimegliderTimelineView.prototype = {
     // call it right away to establish values
     }(tg.zoomTree);
 
-    /*
-    var filterBoxTemplate = "<div class='timeglider-formline'>show: "+
-                            "<input type='text' class='timeglider-filter-include'></div>"+
-                            "<div class='timeglider-formline'>hide: "+
-                            "<input type='text' class='timeglider-filter-exclude'></div>"+
-                            "<ul>"+
-                            "<li class='timeglider-filter-clear'>clear</li>"+
-                            "<li class='timeglider-filter-close'>close</li>"+
-                            "<li class='timeglider-filter-apply'>apply</li>"+
-                            "</ul>"
-    */
    
 
 })(timeglider);

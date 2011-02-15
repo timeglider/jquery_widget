@@ -522,7 +522,6 @@ timeglider.TGDate = {
       var d = new Date(); 
       var df = jQuery.format(d, "S"); 
       df = df.replace("T", " ");
-      debug.log("df:" + df);
       return df;
   }
 	

@@ -28,20 +28,21 @@
 	    _tg: this,
       _element: this.element,
       
-      
+      // defaults!
       options : { 
         initial_focus:timeglider.TGDate.getToday(), 
         editor:'none', 
         min_zoom : 1, 
         max_zoom : 100, 
-        initial_zoom :20, 
+        initial_zoom :40, 
         show_centerline: true, 
         data_source:"", 
         basic_fontsize:12, 
         mouse_wheel: "zoom", 
         initial_timeline_id:'',
         icon_folder:'js/timeglider/icons/',
-        show_footer:true
+        show_footer:true,
+        display_zoom:true
       },
 
       _create : function () {

@@ -13,9 +13,14 @@
 	border-radius:7px;
   }
   
-.timeglider-container, .timeglider-slider-container {
+.timeglider-container {
   background-color:#F4F4F4;
 }
+
+/* Slightly darker than the larger stage */
+.timeglider-slider-container {
+    background-color:#DDD;
+  }
   
 .timeglider-footer {
 	position:absolute;
@@ -60,6 +65,7 @@
 	position:absolute;
 	-moz-border-radius:4px;
 	border-radius:4px;
+	-webkit-border-radius:4px;
 }
 
 .tg-timeline-envelope .titleBar .timeline-title {
@@ -80,25 +86,40 @@
     }
 
 .timeglider-slider-container {
-  width:32px;
+  width:24px;
   padding-left:16px;
 	position:absolute;
 	height:auto;
 	z-index:10;
-	top:3px;
-	right:5px;
+	top:2px;
+	right:2px;
 	padding-top:8px;
+  -webkit-border-top-right-radius: 6px;
+  -webkit-border-bottom-left-radius: 6px;
+  -moz-border-radius-topright: 6px;
+  -moz-border-radius-bottomleft: 6px;
+  border-top-right-radius: 6px;
+  border-bottom-left-radius: 6px;
   }
 
-.timeglider-slider {
-	/*
-	float:right;
-	width:32px;
-	clear:right;
-	border:none;
-	background-color:none;
-	*/
-  }
+.timeglider-slider { 	/* style set in jQuery UI css file */   }
+  
+.timeglider-zoomlevel-display {
+  font-size:.8em;
+  color:#83A0C5;
+  width:20px;
+  text-align:center;
+  background-color:#FFF;
+  -moz-border-radius:4px;
+  border-radius:4px;
+  -webkit-border-radius:4px;
+  padding:3px;
+  margin-top:3px;
+  margin-left:-10px;
+  margin-bottom:4px;
+}
+
+
   
 .timeglider-centerline {
   	border-left:1px dashed #000;

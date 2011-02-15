@@ -130,13 +130,12 @@
   
   
   initialize: function(attrs) { 
-    debug.log("initialize timeline model data: " + attrs.title); 
     var processed = this._chewTimeline(attrs);
     this.set(processed)
   },
   
   validate: function (attrs) {
-    debug.log("validate data:" + attrs.title); 
+    // debug.log("validate data:" + attrs.title); 
     
   }
 
