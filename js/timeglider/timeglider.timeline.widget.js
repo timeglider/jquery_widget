@@ -18,7 +18,6 @@
 */
 
 (function($){
-
   /**
    * The main jQuery widget factory for Timeglider
    *
@@ -41,16 +40,35 @@
         basic_fontsize:12, 
         mouse_wheel: "zoom", 
         initial_timeline_id:'',
-        icon_folder:'js/timeglider/icons/'
+        icon_folder:'js/timeglider/icons/',
+        show_footer:true
       },
 
       _create : function () {
      
         this._id = $(this.element).attr("id"); 
        
+       /*
+         Anatomy:
+       *
+       *  -container: main frame of entire timeline
+       *  -centerline
+       *  -truck: entire movable (left-right) container
+       *  -ticks: includes "ruler" as well as events
+       *  -handle: the grabbable part of the truck which 
+       *           self-adjusts to center
+       *  -slider-container: wrapper for zoom slider
+       *  -slider: jQuery UI vertical slider
+       *  -timeline-menu
+       *
+       *  -measure-span: utility div for measuring text lengths
+       *
+       *  -footer: (not shown) gets added dynamically unless
+       *           options indicate otherwise
+       */
         var MAIN_TEMPLATE = "<div class='timeglider-container'>"+
                               "<div class='timeglider-centerline'></div>"+
-                              "<div class='timeglider-truck'>"+
+                              "<div class='timeglider-truck' id='tg-truck'>"+
                                 "<div class='timeglider-ticks'>"+
                                   "<div class='timeglider-handle'></div>"+
                                 "</div>"+
@@ -58,13 +76,12 @@
                               "<div class='timeglider-slider-container'>"+
                                 "<div class='timeglider-slider'></div>"+
                               "</div>"+
-                              "<div class='timeglider-timeline-menu'>"+
-                                "<div class='timeglider-timeline-menu-handle'>timelines >></div>"+
-                                "<h3>timelines</h3><ul></ul>"+
+                              "<div class='timeglider-footer'>"+
+                              "<div class='timeglider-logo'></div>"+                      
+                              "<img class='timeglider-filter-bt' title='filter' src='js/timeglider/buttons/filter.png'>"+
+                              "<img class='timeglider-tools-bt' title='settings' src='js/timeglider/buttons/tools.png'>"+
+                              "<img class='timeglider-list-bt' title='timelines' src='js/timeglider/buttons/list.png'>"+  
                               "</div>"+
-                              "<div class='timeglider-footer'>Timeglider jQuery Widget"+
-                                "<div class='timeglider-filter-bt'><img title='filter' src='js/timeglider/buttons/filter.png'></div>"+
-                              "</div><div class='timeglider-filter-box'></div>"+
                             "</div><span id='timeglider-measure-span'></span>";
                                    
         this.element.html(MAIN_TEMPLATE);
@@ -79,7 +96,7 @@
        */
 	    _init : function () {
 	      
-	      
+	      // should come out as empty string
 	      var optionsCheck = timeglider.validateOptions(this.options);
 	      
 	      if (optionsCheck == "") {
@@ -90,7 +107,6 @@
 
           // load timelines
           timelineMediator.loadTimelineData(this.options.data_source);
-          timelineView.toggleMenu();
         
         } else {
           alert("There's a problem with your widget settings:" + optionsCheck);

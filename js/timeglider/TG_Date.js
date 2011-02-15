@@ -1,3 +1,9 @@
+
+
+// initial declaration of timeglider
+var timeglider = {version:"0.0.1"};
+
+
 /*
 *  TGDate
 *
@@ -14,9 +20,6 @@
 * according to day, year, decade, century, millenia, etc
 */
 
-var timeglider = {info:"Version 0.0.1"};
-
-  
 timeglider.TGDate = {
 	
 	monthNamesFull : ["","January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
@@ -527,20 +530,5 @@ timeglider.TGDate = {
 } // end prototype obj
 
 
-
-String.prototype.trim = function() {
-	return this.replace(/^\s+|\s+$/g,"");
-}
-String.prototype.ltrim = function() {
-	return this.replace(/^\s+/,"");
-}
-String.prototype.rtrim = function() {
-	return this.replace(/\s+$/,"");
-}
-
-
-function output (stuff, goes) {
-   $("#" + goes).text(stuff);
-}
 
 

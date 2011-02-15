@@ -98,6 +98,8 @@
 	<!-- 3rd party libs -->
 	<script src="js/jquery-1.4.4.min.js" type="text/javascript" charset="utf-8"></script>
 	<script src="js/jquery.tmpl.min.js" type="text/javascript" charset="utf-8"></script>
+	<script src="js/underscore-min.js" type="text/javascript" charset="utf-8"></script>
+	<script src="js/backbone-min.js" type="text/javascript" charset="utf-8"></script>
 
 	<script src="js/jquery-ui-1.8.9.custom.min.js" type="text/javascript" charset="utf-8"></script>
 
@@ -112,6 +114,7 @@
 	<!-- TIMEGLIDER -->
 	<script src="js/timeglider/TG_Date.js" type="text/javascript" charset="utf-8"></script>
     <script src="js/timeglider/TG_Org.js" type="text/javascript" charset="utf-8"></script>
+	<script src="js/timeglider/TG_Timeline.js" type="text/javascript" charset="utf-8"></script> 
 	<script src="js/timeglider/TG_TimelineView.js" type="text/javascript" charset="utf-8"></script> 
 	<script src="js/timeglider/TG_Mediator.js" type="text/javascript" charset="utf-8"></script> 
 	<script src="js/timeglider/timeglider.timeline.widget.js" type="text/javascript" charset="utf-8"></script>
@@ -132,18 +135,18 @@
 <div class='message'>
 	<h1>The Timeglider jQuery Plugin</h1>
 	<p>
-	This is a prototype of a <a href='http://jquery.com' target='_blank'>jQuery</a> plugin for Timeglider. It's still got lots of scaffolding, is fairly buggy &mdash; but you get the idea of what's possible. <a target="_blank" href="http://timeglider.com/app/viewer.php?uid=idaho">You can see our current (Flash-based) system here.</a> Still to come in this jQuery version: event spans, legends, timezones, images, and more.
-	This currently seems to work on all Mac browsers, IE8, and Windows Firefox. More extensive browser testing to come. as well as updating to new jQuery/jQuery UI</p>
-	<p>Some goals:
+	This is an early version of a <a href='http://jquery.com' target='_blank'>jQuery</a> plugin for Timeglider. It's still got lots of scaffolding, but you get the idea of what's possible. <a target="_blank" href="http://timeglider.com/app/viewer.php?uid=idaho">You can see our current (Flash-based) system here.</a> Still to come in this jQuery version: legends, timezones, a REST api and more.
+	This currently seems to work on most up-to-speed browsers (IE 7+). More extensive browser testing to come.</p>
+  <p>Some goals:
 	<ul>
 		<li>images and image albums presented as events</li>
 		<li>color settings for event spans</li>
-		<li>multiple options for modal windows</li>
-		<li>multiple file links, i.e. with audio, video etc.</li>
-		<li>interpreting existing HTML as a simple alternative to JSON</li>
-		<li>importers for event-oriented APIs</li>
-        <li>full gesture actions on ipads and other larger mobile devices</li>
-	</ul>
+		<li>flexible options (a function reference) for event clicking</li>
+	  <li>multiple file links, i.e. with audio, video etc.</li>
+		<li>interpreting existing (table) HTML as a simple alternative to JSON</li>
+		<li>importers for event-oriented APIs (flickr, basecamp, twitter, facebook, etc)</li>
+        <li>pinch, swipe, and other gestures on tablet devices.</li>
+  </ul>
 		
     <h2>The code</h2>
     <p>For developers/designers, the jQuery code will be very simple:
@@ -168,10 +171,13 @@
     
 	<p>The general plan is to offer this plugin as a free and open-source resource, but for sites publishing at high volume, and/or where it is used as part of a commercial enterprise, a commercial license will apply. The ultimate goal is to have a thriving ecosystem module, context, and other code development.</p>
     
-	<p>On Github:<a href="http://github.com/timeglider">here</a>! Please let me know if you're interested in contributing, or if you have any thoughts. <br>
-<br>
- Michael Richardson<br>Boise, ID<br>
-michael@timeglider.com</p>
+	<p><a href="http://github.com/timeglider">On Github!</a></p>
+	<p><a href="docs.php">Documentation under deveopment (lots under construction, but some useful stuff) here.</a></p>
+	<p>Please let me know if you're interested in contributing, or if you have any thoughts. <br>
+      <br>
+	  Michael Richardson<br>
+	  Boise, ID<br>
+	  michael@timeglider.com</p>
 </div>
 
 
@@ -184,10 +190,12 @@ michael@timeglider.com</p>
 	$(function () { 
 
 		var tg1 = $("#placement").timeline({
-				"max_zoom":60, 
+				"min_zoom":10, 
+				"max_zoom":45, 
 				"show_centerline":true,
 				"initial_timeline_id": "jshist",
-				"data_source":"json_tests/js_history.json"
+				"data_source":"json_tests/js_history.json",
+				"show_footer":true
 				});
 		
 		
@@ -197,5 +205,3 @@ michael@timeglider.com</p>
 
 </body>
 </html>
-
-

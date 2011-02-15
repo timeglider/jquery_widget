@@ -17,37 +17,8 @@ timeglider.TimegliderTimelineView
 
  // MED below is a reference to the mediator reference
  // that will be passed into the main Constructor below
-  var TGDate = tg.TGDate, MED, $ = jQuery;
+  var TGDate = tg.TGDate, MED, options, $ = jQuery;
   
-  /*  TEMPLATES FOR THINGS LIKE MODAL WINDOWS
-  *   events themselves are non-templated and rendered in TG_Org.js
-  *   as there are too many on-the-fly style attributes etc, and 
-  *   the current theory is that templating would create lag
-  *
-  *
-  */
-  tg.templates = {
-      event_modal: $.template( null, "<div class='timeglider-ev-modal ui-widget-content shadow' id='ev_${id}_modal'>" 
-    	  + "<div class='close-button'><img src='img/close.png'></div>" 
-    	  + "<div class='startdate'>${startdate}</div>"
-    	  + "<h4 id='title'>${title}</h4>"
-    	  + "<p>{{html description}}</p>"
-    	  + "<ul class='timeglider-ev-modal-links'><li><a target='_blank' href='${link}'>link</a></li></ul>"
-    	  + "</div>"),
-    	
-    	event_modal_video : $.template( null,
-    	  "<div class='timeglider-ev-video-modal ui-widget-content shadow' id='${id}_modal'>"
-    	  + "<div class='close-button'><img src='img/close.png'></div>"
-        + "<iframe width = '100%' height='300' src='${video}'></iframe></div>"),
-        
-      timeline_modal : $.template( null, "<div class='timeglider-timeline-modal ui-widget-content shadow' id='tl_${id}_modal'>" 
-      	  + "<div class='close-button'><img src='img/close.png'></div>"
-      	  + "<h4 id='title'>${title}</h4>"
-      	  + "<p>{{html description}}</p>"
-      	  + "</div>"),
-    }
-  
-
 
   /*
   *  timeglider.TimegliderTimelineView
@@ -56,9 +27,10 @@ timeglider.TimegliderTimelineView
   */
   tg.TimegliderTimelineView = function (widget, mediator) {
 
-	var options = widget.options,
+	options = widget.options,
 	    // core identifier to "uniquify"
 	    PL = "#" + widget._id,
+	    WIDGET_ID = widget._id,
 	    pl_ht = $(PL).height(),
 	    me = this;
   
@@ -69,22 +41,90 @@ timeglider.TimegliderTimelineView
 	this._views = {
     		PLACE:PL,
     		CONTAINER : PL + " .timeglider-container", 
-    		MENU : PL + " .timeglider-timeline-menu", 
-    		MENU_UL : PL + " .timeglider-timeline-menu ul", 
-    		MENU_HANDLE : PL + " .timeglider-timeline-menu-handle", 
+    		TIMELINE_MENU : PL + " .timeglider-timeline-menu", 
+    		TIMELINE_MENU_UL : PL + " .timeglider-timeline-menu ul", 
+    		TIMELINE_LIST_BT : PL + " .timeglider-list-bt", 
     		SLIDER_CONTAINER : PL + " .timeglider-slider-container", 
     		SLIDER : PL + " .timeglider-slider", 
     		TRUCK : PL + " .timeglider-truck", 
     		CENTERLINE : PL + " .timeglider-centerline", 
     		TICKS : PL + " .timeglider-ticks", 
     		HANDLE : PL + " .timeglider-handle",
+    		FOOTER : PL + " .timeglider-footer",
     		FILTER_BT : PL + " .timeglider-filter-bt",
-    		FILTER_BOX : PL + " .timeglider-filter-box"
+    		FILTER_BOX : PL + " .timeglider-filter-box",
+    		TOOLS_BT : PL + " .timeglider-tools-bt"
 	}
 	
+	
+  /*  TEMPLATES FOR THINGS LIKE MODAL WINDOWS
+  *   events themselves are non-templated and rendered in TG_Org.js
+  *   as there are too many on-the-fly style attributes etc, and 
+  *   the current theory is that templating would create lag
+  *
+  *
+  */
+  
+	this._templates = {
+	    // generated, appended on the fly, then removed
+      event_modal: $.template( null, "<div class='tg-modal timeglider-ev-modal ui-widget-content' id='ev_${id}_modal'>" 
+    	  + "<div class='close-button-remove'><img src='img/close.png'></div>" 
+    	  + "<div class='startdate'>${startdate}</div>"
+    	  + "<h4 id='title'>${title}</h4>"
+    	  + "<p>{{html description}}</p>"
+    	  + "<ul class='timeglider-ev-modal-links'><li><a target='_blank' href='${link}'>link</a></li></ul>"
+    	  + "</div>"),
+    	  
+    	// generated, appended on the fly, then removed
+    	event_modal_video : $.template( null,
+    	  "<div class='tg-modal timeglider-ev-video-modal ui-widget-content' id='${id}_modal'>"
+    	  + "<div class='close-button-remove'><img src='img/close.png'></div>"
+        + "<iframe width = '100%' height='300' src='${video}'></iframe></div>"),
+        
+      // generated, appended on the fly, then removed
+      timeline_modal : $.template( null, "<div class='tg-modal timeglider-timeline-modal ui-widget-content' id='tl_${id}_modal'>" 
+      	  + "<div class='close-button-remove'><img src='img/close.png'></div>"
+      	  + "<h4 id='title'>${title}</h4>"
+      	  + "<p>{{html description}}</p>"
+      	  + "</div>"),
+     
+     // generated, appended on the fly, then removed
+     filter_modal : $.template( null,
+          "<div class='tg-modal timeglider-menu-modal timeglider-filter-box timeglider-menu-hidden'>"+
+          "<div class='close-button'><img src='img/close.png'></div>"+
+          "<h3>filter</h3>"+
+          "<div class='timeglider-menu-modal-content'>"+
+          "<div class='timeglider-formline'>show: "+
+          "<input type='text' class='timeglider-filter-include'></div>"+
+          "<div class='timeglider-formline'>hide: "+
+          "<input type='text' class='timeglider-filter-exclude'></div>"+
+          "<ul><li class='timeglider-filter-clear'>clear</li>"+
+          "<li class='timeglider-filter-apply'>apply</li></ul></div>"+
+           "<div class='timeglider-menu-modal-point-right'>"+
+           "</div>"),
+          
+      timeline_list_modal : $.template( null,
+          "<div class='timeglider-menu-modal timeglider-timeline-menu timeglider-menu-hidden'>"+
+          "<div class='close-button'><img src='img/close.png'></div>"+
+          "<h3>timelines</h3>"+
+          "<div class='timeglider-menu-modal-content'><ul></ul></div>"+
+          "<div class='timeglider-menu-modal-point-right'>"+
+          "</div>")
+
+    }
+  
+  
+  
+  
 	$(this._views.CONTAINER).css("height", pl_ht);
 	this.basicFontSize = options.basic_fontsize;
-
+	
+	if (options.show_footer == false) {
+	  $(this._views.FOOTER).css("display", "none");
+	  debug.log("HIDE FOOTER!");
+  }
+  
+  
 	// !!TODO validate range/relation of min/max
 	// move all to model?
 	MED.max_zoom = options.max_zoom;
@@ -163,25 +203,16 @@ timeglider.TimegliderTimelineView
 	});
 	
 	
-	// UPDATE TIMELINES MENU 
-	//
-	
+	// UPDATE TIMELINES MENU
 	$.subscribe("mediator.timelineListChangeSignal", function (arg) {
-		
-		debug.log("timelineListChangeSignal...");
-		
-    me.adjustTimelineTitleStyles();
+		me.adjustTimelineTitleStyles();
     me.buildTimelineMenu();
-    
-    
-
-	
 	});
 	
 
 	$.subscribe("mediator.activeTimelinesChange", function () {
 		
-		$(me._views.MENU_UL + " li").each(function () {
+		$(me._views.TIMELINE_MENU_UL + " li").each(function () {
 				var id = $(this).attr("id");
 			    if ($.inArray(id, MED._activeTimelines) != -1) {
 					$(this).addClass("activeTimeline");
@@ -194,19 +225,22 @@ timeglider.TimegliderTimelineView
 	}); // end tune in
 
 
-  /* FILTER BUSINESS */
-	
+  /* FOOTER TIMELINE_MENU MODALS */
+  
+  
+  $.tmpl(this._templates.filter_modal,{}).appendTo(this._views.CONTAINER);
 	$(this._views.FILTER_BT).click(function() {  
+	  
 	  var $bt = $(this),
 	      fbox = me._views.FILTER_BOX;
 	  
+	  // If it's never been opened, apply actions to the buttons, etc
 	  if (me.filterBoxActivated == false) {
-	    // CREATE FILTER BOX ON FIRST CLICK!
-	    $(fbox).append(filterBoxTemplate);
+
 	    me.filterBoxActivated =true;
 	    
 	    var $filter_apply = $(fbox + " .timeglider-filter-apply"),
-          $filter_close = $(fbox + " .timeglider-filter-close"),
+          $filter_close = $(".timeglider-filter-box .close-button"),
           $filter_clear = $(fbox + " .timeglider-filter-clear"),
           incl = "", excl = "";
 	    
@@ -215,28 +249,36 @@ timeglider.TimegliderTimelineView
 	      incl = $(fbox + " .timeglider-filter-include").val();
 	      excl = $(fbox + " .timeglider-filter-exclude").val();
 	      MED.setFilterObject({include:incl, exclude:excl});
-	      $(fbox).toggleClass("box-visible");
+	      $(fbox).toggleClass("timeglider-menu-shown");
       });
  
       $filter_close.click(function () {
-        $(fbox).toggleClass("box-visible");
+        $(fbox).toggleClass("timeglider-menu-hidden");
       });
       
       $filter_clear.click(function () {
         MED.setFilterObject({include:'', exclude:''});
         $(fbox + " .timeglider-filter-include").val('');
 	      $(fbox + " .timeglider-filter-exclude").val('');
-        $(fbox).toggleClass("box-visible");
+        $(fbox).toggleClass("timeglider-menu-shown");
       });
       
-    }
+    } // end initial set up
     
     // open the box
-	  $(me._views.FILTER_BOX).toggleClass("box-visible").css("z-index", me.ztop++);
+	  $(fbox)
+	    .toggleClass("timeglider-menu-hidden")
+	    .css("z-index", me.ztop++)
+	      .position({
+        		my: "right bottom",
+      			at: "right top",
+      			of: $bt,
+      			offset: "-8, -12"
+          });
+      
+  }); // end FILTER_BT click
 
-  });
-  
-  
+
   $.subscribe("mediator.filterObjectChange", function () {
     // refresh is done inside MED -- no need to refresh here
 		// debug.log("filter:" + MED.filterObject.include + "/" + MED.filterObject.exclude);
@@ -256,7 +298,7 @@ timeglider.TimegliderTimelineView
 				  clk = TGDate.getDateFromSec(dcSec),
 				  foc = TGDate.getDateFromSec(fdSec);
 				
-				output("DBLCLICK:" + foc.mo + "-" + foc.ye + " dblclick:" + clk.mo + "-" + clk.ye, "note");	
+				debug.trace("DBLCLICK:" + foc.mo + "-" + foc.ye + " dblclick:" + clk.mo + "-" + clk.ye, "note");	
 		})			
 		.bind('mousewheel', function(event, delta) {
 						
@@ -277,7 +319,6 @@ timeglider.TimegliderTimelineView
 			drag: function(event, ui) {
 				// just report movement to model...
 				MED.setTicksOffset($(this).position().left);
-				
 			},
 		
 			stop: function(event, ui) {
@@ -290,47 +331,52 @@ timeglider.TimegliderTimelineView
 		.delegate(".timeglider-timeline-event", "click", function () { 
 			// EVENT ON-CLICK !!!!!!
 			var eid = $(this).attr("id"); 
-			// output("click, id:" + eid, "note");
 			me.eventModal(eid);
 		})	
 		.delegate(".timeglider-timeline-event", "hover", function () { 
 			var eid = $(this).attr("id"); 
 			var title = MED.eventPool[eid].title;
-			output("hover, title:" + title, "note"); 
+			debug.trace("hover, title:" + title, "note"); 
 		})
 		.delegate(".timeglider-event-collapsed", "hover", function () { 
 			var eid = $(this).attr("id"); 
 			var title = MED.eventPool[eid].title;
-			output("collapsed, title:" + title, "note"); 
+			debug.trace("collapsed, title:" + title, "note"); 
 		});
 	
-	// TODO ---> build this into jquery-ui component behavior
-	$(".close-button").live("click", function () {
-		$(this).parent().remove();	
-	});
-	
-	/*
-	$(".timeglider-ev-modal .close-button").live("click", function () {
-		$(this).parent().remove();	
-	});
 	
 	// TODO ---> build this into jquery-ui component behavior
-	$(".timeglider-timeline-modal .close-button").live("click", function () {
+	$(".close-button-remove").live("click", function () {
 		$(this).parent().remove();	
 	});
-	
-	$(".timeglider-ev-video-modal .close-button").live("click", function () {
-		$(this).parent().remove();	
-	});
-	*/
 
 
-	
-	
-	$(this._views.MENU_HANDLE).click(function () {
-		me.toggleMenu();
+ $.tmpl(me._templates.timeline_list_modal,{}).appendTo(this._views.CONTAINER);
+ $(me._views.TIMELINE_LIST_BT).click(function () {
+		  $(me._views.TIMELINE_MENU).toggleClass("timeglider-menu-hidden")
+		    .position({
+        		my: "right bottom",
+      			at: "right top",
+      			of: $(me._views.TIMELINE_LIST_BT),
+      			offset: "-8, -12"
+          });
 	});
 	
+	
+	
+	$(this._views.TIMELINE_MENU + " .close-button").live("click", function () {
+		 $(me._views.TIMELINE_MENU).toggleClass("timeglider-menu-hidden")
+	});
+  
+  /* SETTINGS BUSINESS */
+  $(this._views.TOOLS_BT).click(function() {
+    alert("TOOLS!");
+  }); 
+  
+  
+  
+  
+  
 	
 	// TODO: make function displayCenterline()
 	if (options.show_centerline === true) {
@@ -356,26 +402,38 @@ timeglider.TimegliderTimelineView
 	    var target = e.target;
 		// constant spatial converter value
 	    var g = (e.scale / 5)* MED.gestureStartZoom;
-		output("gesture zoom:" + g, "note");
-		MED.setZoomLevel(g);
+		  debug.trace("gesture zoom:" + g, "note");
+		  MED.setZoomLevel(g);
 	}
 
-	function gestureStart (e) {
-	    e.preventDefault();
-	}
+
 
 	function gestureEnd (e) {
 		MED.gesturing = false;
 	}
-/*
-	if ($.browser.webkit) {	
-		/// How to get a particular instance, like $(this._views.TRUCK)
-		var truck = document.getElementById("TimegliderTruck");		
-			truck.addEventListener ('gesturestart', gestureStart, false);
-			truck.addEventListener ('gesturechange', gestureChange, false);
-			truck.addEventListener ('gestureend', gestureEnd, false);
+
+
+	if ($.support.touch) {   
+	  // alert("widget:" + WIDGET_ID);
+	  $("#" + WIDGET_ID).addTouch();
+	  
+	  var tgcompnt = document.getElementById(WIDGET_ID);
+	  
+	  tgcompnt.addEventListener("gesturestart", function (e) {
+	    	  e.preventDefault();
+	        debug.trace("gesture zoom:" + MED.getZoomLevel(), "note");
+	    }, false);
+	  
+	  
+	  tgcompnt.addEventListener("gesturechange", function (e) {
+    	    	  e.preventDefault();
+    	        debug.trace("gesture change!!!!", "note");
+    	 }, false);
+    	    
+    	    
+    	    
 	}
-	*/
+
 	
 } 
 
@@ -392,10 +450,12 @@ tg.TimegliderTimelineView.prototype = {
 					
 				var lft = c.position().left,
 				offset = c.offset();
-			
+		  
+		  var f_height = (options.show_footer == true) ? $(this._views.FOOTER).height() : 0;
+	
 			var container = {"width":w, "height":h, "centerx":wc, "centery":hc, "left": lft, "offset": offset};
-			var footer = {"height":$(this._views.CONTAINER + " .timeglider-footer").height()};
-			var tick = {"top":h - footer.height - 30};
+			var footer = {"height":f_height};
+			var tick = {"top":h - f_height - 30};
 			
 			return {container:container, tick:tick, footer:footer}
 		  
@@ -409,6 +469,9 @@ tg.TimegliderTimelineView.prototype = {
   invSliderVal : function(v) {
   		return Math.abs(v - 101);
   },
+  
+
+  
 
 
   registerTitles : function () {
@@ -445,7 +508,6 @@ tg.TimegliderTimelineView.prototype = {
 				 	relPos = pos + env;
 					tbWidth = tb.outerWidth();
 					
-				  // 	output ("relpos:" + relPos, "note");
 					tw = tb.outerWidth();
 					
 				  titx = (-1 * relPos);
@@ -471,8 +533,8 @@ tg.TimegliderTimelineView.prototype = {
 		  newSec = startSec - (tickPos * secPerPx),
 		  newD = TGDate.getDateFromSec(newSec);
 		
-		output("ticks x:" + tickPos, "tickpos");
-		output("FD: " + TGDate.formatFocusDate(newD), "focusdate");
+		debug.trace("ticks x:" + tickPos, "tickpos");
+		debug.trace("FD: " + TGDate.formatFocusDate(newD), "focusdate");
 		
 		MED.setFocusDate(newD);
 	},
@@ -489,11 +551,11 @@ tg.TimegliderTimelineView.prototype = {
     var id, ta = MED.timelinePool, ta_ct = 0, me=this;
 		
 		    // cycle through menu
-        $(me._views.MENU_UL + " li").remove();
+        $(me._views.TIMELINE_MENU_UL + " li").remove();
       	for (id in ta) {
       			if (ta.hasOwnProperty(id)) {
-        			var t                                  = ta[id];
-        			$(me._views.MENU_UL).append("<li class = 'timelineList' id='" + id + "'>" + t.title + "</li>");
+        			var t = ta[id];
+        			$(me._views.TIMELINE_MENU_UL).append("<li class = 'timelineList' id='" + id + "'>" + t.title + "</li>");
         			$("li#" + id).click( function() { 
         			    MED.toggleTimeline($(this).attr("id"));
         			    });
@@ -556,8 +618,11 @@ tg.TimegliderTimelineView.prototype = {
 
 	clearTicks : function () {
 		this.tickNum = 0;
-		$(this._views.TICKS).css("left", 0)
-				.html("<div class='timeglider-handle'></div>");
+		$(this._views.TICKS)
+		  .css("left", 0)
+			.html("<div class='timeglider-handle'></div>");
+		
+		
 	},
 
 
@@ -762,12 +827,11 @@ tg.TimegliderTimelineView.prototype = {
 
 
 	tickHangies : function () {
-		var tPos = $(this._views.TICKS).position().left;
-		var lHangie = this.leftside + tPos;
-		var rHangie = this.rightside + tPos - this.dimensions.container.width;
-		// output("HANGIES left:" + lHangie + " / right:" + (rHangie));
-		var tick, added = false;
-		var me = this;
+		var tPos = $(this._views.TICKS).position().left,
+		    lHangie = this.leftside + tPos,
+		    rHangie = this.rightside + tPos - this.dimensions.container.width,
+		    tick, added = false,
+		    me = this;
 		
 		if (lHangie > -100) {
 			tick = this.addTick({"type":"l"});
@@ -779,14 +843,12 @@ tg.TimegliderTimelineView.prototype = {
 	},
 	
 
-																				//---( VIEW
 	/* tickUnit, fd */
 	tickOffsetFromDate : function (zoominfo, fdate, tickwidth) {
-		// this.model.zoomInfo (unit, width), fd
-		var w = tickwidth;
-		var u = zoominfo.unit;
+		
 		// switch unit, calculate width gain or loss.... or just loss!
-		var p, prop;
+		var w = tickwidth,
+		    u = zoominfo.unit, p, prop;
 
 		switch (u) {
 			case "da": 
@@ -856,31 +918,16 @@ tg.TimegliderTimelineView.prototype = {
 	easeOutTicks : function() {
 		var me = this;
 			if (Math.abs(this.dragSpeed) > 5) {
-				// output("release @:" + this.dragSpeed + " px EaseOut!");
 				// This works, but isn't great:offset fails to register
 				// for new tim as it ends animation...
 				// $('#TimegliderTicks').animate({left: '+=' + (5 * me.dragSpeed)}, 400, function() {
-					output("ticks stopped!");
+					debug.trace("ticks stopped!", "note");
 					// });
 			}
 		
 	},
 	
-	
-	toggleMenu : function () {
-		var mw = $(this._views.MENU).width();
-		if (MED.timelineMenuOpen === false) {
-			$(this._views.MENU).animate({left: '+=' + mw}, 50);
-			$(this._views.MENU_HANDLE).text("<<");
-			MED.timelineMenuOpen =true;
-		} else {
-			$(this._views.MENU).animate({left: '-=' + mw}, 100);
-			$(this._views.MENU_HANDLE).text("timelines >>");
-			MED.timelineMenuOpen =false;
-		}
-		
-	},
-	
+
 	/*
 	@param    obj with { tick  |  timeline }
 	@return   array of event ids 
@@ -921,7 +968,7 @@ tg.TimegliderTimelineView.prototype = {
  	      ia = incl.split(",");
  	      ret = false;
  	      for (i=0; i<ia.length; i++) {
- 	        ii = new RegExp(ia[i].trim(), "i");
+ 	        ii = new RegExp($.trim(ia[i]), "i");
  	        if (ev.title.match(ii)) { ret = true; }
          }
       }
@@ -930,7 +977,7 @@ tg.TimegliderTimelineView.prototype = {
 	   if (excl) {
 	      ea = excl.split(",");
 	      for (e=0; e<ea.length; e++) {
-	        ei = new RegExp(ea[e].trim(), "i");
+	        ei = new RegExp($.trim(ea[e]), "i");
 	        if (ev.title.match(ei)) { ret = false; }
         }
      }
@@ -1214,7 +1261,7 @@ tg.TimegliderTimelineView.prototype = {
   			  id:id
   		}
   		
-		 $.tmpl(timeglider.templates.timeline_modal,templ_obj)
+		 $.tmpl(me._templates.timeline_modal,templ_obj)
   			.appendTo(this._views.CONTAINER)
   			.css("z-index", me.ztop++)
 	      .position({
@@ -1223,7 +1270,8 @@ tg.TimegliderTimelineView.prototype = {
       				of: (me._views.CONTAINER),
       				offset: "32, 32", // left, top
       				collision: "fit fit"
-      	});
+      	})
+      	.draggable({stack: ".timeglider-modal"});
   
   },
   
@@ -1232,7 +1280,7 @@ tg.TimegliderTimelineView.prototype = {
 		$("#ev_" + eid + "_modal").remove();
 		var me = this,
 		  $par = $("#" + eid),
-		  modalTemplate = timeglider.templates.event_modal;
+		  modalTemplate = me._templates.event_modal;
 		  ev = MED.eventPool[eid],
 		  ev_img = ev.image ? "<img src='" + ev.image + "'>" : "",
 		  templ_obj = {
@@ -1245,7 +1293,7 @@ tg.TimegliderTimelineView.prototype = {
   		}
 		  
 			if (ev.video) { 
-       modalTemplate = timeglider.templates.event_modal_video;
+       modalTemplate = me._templates.event_modal_video;
        templ_obj.video = ev.video;
 			}
 	
@@ -1259,7 +1307,7 @@ tg.TimegliderTimelineView.prototype = {
       				offset: "0, -12", // left, top
       				collision: "fit fit"
       	})
-      	.draggable({stack: ".timeglider-ev-modal"});
+      	.draggable({stack: ".timeglider-modal"});
 
 	},
 	
@@ -1442,16 +1490,17 @@ tg.TimegliderTimelineView.prototype = {
     // call it right away to establish values
     }(tg.zoomTree);
 
-    
-    var filterBoxTemplate = "<div class='miniForm formLine'>show: "+
+    /*
+    var filterBoxTemplate = "<div class='timeglider-formline'>show: "+
                             "<input type='text' class='timeglider-filter-include'></div>"+
-                            "<div class='miniForm formLine'>hide: "+
+                            "<div class='timeglider-formline'>hide: "+
                             "<input type='text' class='timeglider-filter-exclude'></div>"+
-                            "<ul class='miniForm formBottom'>"+
+                            "<ul>"+
                             "<li class='timeglider-filter-clear'>clear</li>"+
                             "<li class='timeglider-filter-close'>close</li>"+
                             "<li class='timeglider-filter-apply'>apply</li>"+
-                            "</ul>";
+                            "</ul>"
+    */
    
 
 })(timeglider);
