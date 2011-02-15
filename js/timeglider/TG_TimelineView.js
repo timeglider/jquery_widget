@@ -99,14 +99,16 @@ timeglider.TimegliderTimelineView
           "<div class='timeglider-formline'>hide: "+
           "<input type='text' class='timeglider-filter-exclude'></div>"+
           "<ul><li class='timeglider-filter-clear'>clear</li>"+
-          "<li class='timeglider-filter-apply'>apply</li></ul></div></div>"),
+          "<li class='timeglider-filter-apply'>apply</li></ul></div>"+
+           "<div class='timeglider-menu-modal-point-right'>"+
+           "</div>"),
           
       timeline_list_modal : $.template( null,
           "<div class='timeglider-menu-modal timeglider-timeline-menu timeglider-menu-hidden'>"+
           "<div class='close-button'><img src='img/close.png'></div>"+
           "<h3>timelines</h3>"+
           "<div class='timeglider-menu-modal-content'><ul></ul></div>"+
-          "<img class='timeglider-menu-modal-point' src='img/menu-point.png'>"+
+          "<div class='timeglider-menu-modal-point-right'>"+
           "</div>")
 
     }
@@ -271,7 +273,7 @@ timeglider.TimegliderTimelineView
         		my: "right bottom",
       			at: "right top",
       			of: $bt,
-      			offset: "0,0"
+      			offset: "-8, -12"
           });
       
   }); // end FILTER_BT click
@@ -353,10 +355,10 @@ timeglider.TimegliderTimelineView
  $(me._views.TIMELINE_LIST_BT).click(function () {
 		  $(me._views.TIMELINE_MENU).toggleClass("timeglider-menu-hidden")
 		    .position({
-        		my: "left bottom",
-      			at: "left top",
+        		my: "right bottom",
+      			at: "right top",
       			of: $(me._views.TIMELINE_LIST_BT),
-      			offset: "0, -12"
+      			offset: "-8, -12"
           });
 	});
 	
