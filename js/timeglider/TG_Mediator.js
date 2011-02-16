@@ -326,12 +326,8 @@ tg.TimegliderMediator.prototype = {
    
         /* a div with id of "hiddenDiv" has to be pre-loaded */
         tg.getStringWidth  = function (str) {
-        		// var size = obj.fontSize; 
-        		var $ms = $("#timeglider-measure-span").html('');
-        		$ms.html(str + "");
-        		var w = $ms.width() + 4;
-        		$ms.html('');
-        		return w;
+        		var $ms = $("#timeglider-measure-span").html(str);
+        		return $ms.width() + 20;
         };
         
         tg.getImageSize = function (img) {
@@ -347,7 +343,7 @@ tg.TimegliderMediator.prototype = {
         
         
         tg.validateOptions = function (widget_settings) {	
-            
+          
             this.optionsMaster = { initial_focus:{type:"date"}, 
             	editor:{type:"string"}, 
             	backgroundColor:{type:"color"}, 
@@ -359,9 +355,11 @@ tg.TimegliderMediator.prototype = {
             	display_zoom_level:{type:"boolean"}, 
             	data_source:{type:"url"}, 
             	basic_fontsize:{type:"number", min:9, max:100}, 
-            	mouse_wheel:{type:"string", 
-            	possible:["zoom","pan"]}, 
-            	initial_timeline_id:{type:"string"}
+            	mouse_wheel:{type:"string", possible:["zoom","pan"]}, 
+            	initial_timeline_id:{type:"string"},
+            	icon_folder:{type:"string"},
+            	show_footer:{type:"boolean"},
+            	display_zoom_level:{type:"boolean"}
           	}
           	
         		// msg: will be return value: validates when empty 

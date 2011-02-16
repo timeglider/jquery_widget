@@ -1113,7 +1113,8 @@ tg.TimegliderTimelineView.prototype = {
   				if (this.passesFilters(ev, zl) == true) {
   						  
 					  posx = cx + ((ev.startdateObj.sec - foSec) / spp);
-					  impq = this.scaleToImportance(ev.importance, zl);
+					  
+					  impq = (tl.size_importance == true) ? this.scaleToImportance(ev.importance, zl) : 1;
 					
     				if (expCol == "expanded") {
     					ev.width = (ev.titleWidth * impq) + buffer;
@@ -1123,6 +1124,7 @@ tg.TimegliderTimelineView.prototype = {
     					}	else {
     					  ev.spanwidth = 0;
     					}					
+    				    					
     					ev.fontsize = this.basicFontSize * impq;
     					// !TODO isolate these into position object
     					ev.left = posx; // will remain constant
@@ -1181,7 +1183,7 @@ tg.TimegliderTimelineView.prototype = {
 	
   
 	/* 
-		this is per tick... pretty wet with freshTimelines()...
+		this is per tick... pretty WET with freshTimelines()...
 	*/
 	appendTimelines : function (tick) {
 
@@ -1222,8 +1224,10 @@ tg.TimegliderTimelineView.prototype = {
 						  
 							ev.left = posx; // will remain constant
 							// !TODO --- ACCURATE WIDTH BASELINE FROM chewTimeline()
-							impq = this.scaleToImportance(ev.importance, zl);
+							impq = (tl.size_importance == true) ? this.scaleToImportance(ev.importance, zl) : 1;
+							
 							ev.fontsize = this.basicFontSize * impq;
+							
 							ev.width = (ev.titleWidth * impq) + buffer;
 							if (ev.span == true) {
   							ev.spanwidth = (ev.enddateObj.sec - ev.startdateObj.sec) / spp;

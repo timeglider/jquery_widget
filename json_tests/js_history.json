@@ -75,8 +75,7 @@
 "enddate": "2005-02-01 12:00:00",
 "link":"http://www.prototypejs.org/",
 "importance":"35",
-"icon":"square_blue.png",
-"y_position":100
+"icon":"square_blue.png"
 },
 {
 "id":"jshist-07",
