@@ -24,7 +24,7 @@
   
   */
   _chewTimeline : function (tdata) {
-          
+
     // TODO ==> add additional units
     var app_mediator = tdata.mediator;
     var dhash                       = {"da":[], "mo":[], "ye":[], "de":[], "ce":[], "thou":[], 
@@ -42,7 +42,8 @@
 
       var date, ev, id, unit, ser, tWidth;
       var l = tdata.events.length;
-
+     
+      
       for(var ei=0; ei< l; ei++) {
 
         ev=tdata.events[ei];
@@ -72,7 +73,9 @@
             ev.image_size = tg.getImageSize(ev.image);
             }
         }
-
+        
+        
+        if (ev.y_position) debug.log("TG_Timeline YPOS:" + ev.y_position);
         // microtimeline for collapsed view and other metrics
         tdata.startSeconds.push(ev.startdateObj.sec);
         tdata.endSeconds.push(ev.enddateObj.sec);

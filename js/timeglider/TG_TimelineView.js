@@ -18,6 +18,14 @@ timeglider.TimegliderTimelineView
  // MED below is a reference to the mediator reference
  // that will be passed into the main Constructor below
   var TGDate = tg.TGDate, MED, options, $ = jQuery;
+  
+  
+
+  // adding a screen display for anything needed
+  debug.trace = function (stuff, goes) {
+      $("#" + goes).text(stuff);
+  }
+
 
   /*
   *  timeglider.TimegliderTimelineView
@@ -138,7 +146,7 @@ timeglider.TimegliderTimelineView
 	this.buildSlider();
 	this.setupFilter();
 	
-	this.castTicks();
+	// this.castTicks();
 
 	/// listen for ticks movement, i.e. dragging
 	// MED.ticksOffsetChange.tuneIn(function () {
@@ -158,7 +166,7 @@ timeglider.TimegliderTimelineView
 		// if the slider isn't already at the given value change it
 		$(me._views.SLIDER).slider("value", me.invSliderVal(zl));
     me.displayZoomLevel(zl);
-    me.castTicks();
+    me.castTicks("zoomLevelChange");
 		
 	});
 	
@@ -178,7 +186,7 @@ timeglider.TimegliderTimelineView
     	! The only view method that responds directly to a model refresh()
 	*/
 	$.subscribe("mediator.refreshSignal", function () {
-		me.castTicks();
+		me.castTicks("refreshSignal");
 	});
 	
 
@@ -410,7 +418,7 @@ tg.TimegliderTimelineView.prototype = {
 	
 	displayZoomLevel : function(zl) {
 	  var me=this;
-	  if (options.display_zoom == true) {
+	  if (options.display_zoom_level == true) {
  		    $(me._views.ZOOM_DISPLAY).text(zl);
 	    }
  	},
@@ -519,7 +527,7 @@ tg.TimegliderTimelineView.prototype = {
   	  
     } else {
       
-      if (options.display_zoom == true) {
+      if (options.display_zoom_level == true) {
     		var $zl = $("<div>").appendTo(this._views.SLIDER_CONTAINER).addClass("timeglider-zoomlevel-display");
     		$zl.text(iz);
     	}
@@ -642,7 +650,8 @@ tg.TimegliderTimelineView.prototype = {
 	  middle with a single, date-focused div with type:"init", after which
 	  a left-right alternating loop fills out the width of the current frame
 	*/
-	castTicks : function () {
+	castTicks : function (orig) {
+	  debug.log("**castTicks" + orig);
 		var zLevel = MED.getZoomLevel(),
 			fDate = MED.getFocusDate(),
 			tickWidth = MED.getZoomInfo().width,
@@ -1008,7 +1017,7 @@ tg.TimegliderTimelineView.prototype = {
 		--- ticks are created afresh
 	*/
 	freshTimelines : function () {
-		
+
 		var t, i, tl, tu, ts, tick, tE, ht, t_f, t_l,
 			active = MED._activeTimelines,
 			ticks = MED._ticksArray,

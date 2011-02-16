@@ -281,28 +281,25 @@ tg.TimegliderMediator.prototype = {
 
 
         toggleTimeline : function (id) {
-
           var lt = this.timelinePool[id];
           var ia = $.inArray(id, this._activeTimelines);
 
           if (ia == -1) {
-            // not active ---- bring it on and focus to it
+            // The timeline is 
+            // not active ---- bring it on
             this._activeTimelines.push(id);
-            // setting FD does NOT refresh automatically
+            // setting FD does NOT refresh
             this.setFocusDate(TGDate.makeDateObject(lt.focus_date));
             // resetting zoomLevel DOES refresh
-            
             this.setZoomLevel(lt.initial_zoom);
             
           } else {
             // it's active, remove it
             this._activeTimelines.splice(ia,1);
-            // this.refresh();
+            this.refresh();
           }
-
-          this.refresh();
+          // this will change the menu list/appearance
           $.publish( "mediator.activeTimelinesChange" );
-
 
         }
 
@@ -359,7 +356,7 @@ tg.TimegliderMediator.prototype = {
             	max_zoom:{type:"number", min:1, max:100}, 
             	initial_zoom:{type:"number", min:1, max:100}, 
             	show_centerline:{type:"boolean"}, 
-            	display_zoom:{type:"boolean"}, 
+            	display_zoom_level:{type:"boolean"}, 
             	data_source:{type:"url"}, 
             	basic_fontsize:{type:"number", min:9, max:100}, 
             	mouse_wheel:{type:"string", 

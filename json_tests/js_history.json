@@ -4,7 +4,7 @@
 "title":"A little history of JavaScript",
 "description":"Mainly, showing the emergence of different JS libraries.",
 "focus_date":"1996-07-01 12:00:00",
-"initial_zoom":"38",
+"initial_zoom":"43",
 "events":[
 {
 "id":"jshist-01",
@@ -74,7 +74,9 @@
 "startdate": "2005-02-01 12:00:00",
 "enddate": "2005-02-01 12:00:00",
 "link":"http://www.prototypejs.org/",
-"importance":"35"
+"importance":"35",
+"icon":"square_blue.png",
+"y_position":100
 },
 {
 "id":"jshist-07",

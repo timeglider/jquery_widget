@@ -61,7 +61,7 @@
     /*
     * TGOrg.getBlocks
     * 
-    * @return {array} An array of placement block objects, each corresponding
+    * @return {array} An array of placement blocks (objects), each corresponding
     *                 to an event on the timeline.
     * 
     */
@@ -75,7 +75,6 @@
     * @return {string} HTML with events passed back to view for actual layout of timeline
     */
     this.getHTML = function (tickScope) {
-
       if (tickScope == "sweep") { 
         freshTree();
         this.vis = [];
@@ -121,6 +120,11 @@
             } else {
               span_selector_class = ""; 
               span_div = "";
+            }
+            
+            if (b.y_position > 0) {
+              debug.log("y positon > 0:" + b.y_position);
+              b.top = -1 * b.y_position;
             }
 
             html += "<div class='timeglider-timeline-event " + span_selector_class + "' id='ev_" + b.id + "' "
