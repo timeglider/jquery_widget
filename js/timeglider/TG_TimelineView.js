@@ -1164,9 +1164,7 @@ tg.TimegliderTimelineView.prototype = {
           foSec = MED._startSec, 
 			    spp = MED.getZoomInfo().spp,
 			    zl = MED.getZoomInfo().level,
-			    // add some width just to make sure things don't collide
-			    buffer = 20,
-			    img_ht,
+			    buffer = 20, img_ht = 0,
 			    borg = tl.borg,
 			    block_arg = "sweep"; // default for initial load
 			    
