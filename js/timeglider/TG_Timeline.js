@@ -65,7 +65,6 @@
         // default icon
         ev.icon = app_mediator.options.icon_folder + (ev.icon || "triangle_orange.png");          
         ev.titleWidth = tg.getStringWidth(ev.title);
-        if (ev.titleWidth > 120) debug.log("t:" + ev.title + "...w:" + ev.titleWidth);
         
         if (ev.image) {
           if (!ev.image_class) { 

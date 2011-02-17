@@ -651,7 +651,6 @@ tg.TimegliderTimelineView.prototype = {
 	  a left-right alternating loop fills out the width of the current frame
 	*/
 	castTicks : function (orig) {
-	  debug.log("**castTicks" + orig);
 		var zLevel = MED.getZoomLevel(),
 			fDate = MED.getFocusDate(),
 			tickWidth = MED.getZoomInfo().width,
@@ -1011,7 +1010,7 @@ tg.TimegliderTimelineView.prototype = {
   
 	
 	/*
-	ADDING EVENTS!
+	ADDING EVENTS ON INITIAL SWEEP!
 	invoked upon a fresh sweep of entire container, having added a set of ticks
 		--- occurs on expand/collapse
 		--- ticks are created afresh
@@ -1024,9 +1023,8 @@ tg.TimegliderTimelineView.prototype = {
 			borg = '',
 			$title, $ev, 
 			me = this,
-			evid, ev, impq,
+			evid, ev,
 			stuff = '', 
-			posx = 0,
 			cx = me.dimensions.container.centerx,
 			cw = me.dimensions.container.width,
 			foSec = MED.getFocusDate().sec,
@@ -1034,7 +1032,6 @@ tg.TimegliderTimelineView.prototype = {
 			zl = MED.getZoomInfo().level,
 			tArr = [],
 			idArr = [],
-			buffer = 18,
 			// left and right scope
 			half = Math.floor(spp * (cw/2)),
 			lsec = foSec - half,
@@ -1053,7 +1050,7 @@ tg.TimegliderTimelineView.prototype = {
 			expCol = tl.display;
 		  tlTop = (tl.top || (cht-120));
 			
-			//  TEMPLATE!
+			// TIMELINE CONTAINER
 			$tl = $("<div class='tg-timeline-envelope' id='" + tl.id
 				+ "'><div class='titleBar'><div class='timeline-title'>"
 			 	+ tl.title + "<div class='tg-timeline-env-buttons'>"
@@ -1084,8 +1081,8 @@ tg.TimegliderTimelineView.prototype = {
 			t_l = cx + ((tl.bounds.last - foSec) / spp);
 			$title.css({"top":ht, "left":t_f, "width":(t_l-t_f)});
 
-			/// for full display, setup new borg for organizing events
-			if (expCol == "expanded") { borg = new timeglider.TGOrg(); }
+			/// for initial sweep display, setup fresh borg for organizing events
+			if (expCol == "expanded") { borg = tl.borg = new timeglider.TGOrg(); }
  
 			//cycle through ticks for hashed events
 			for (var tx=0; tx<ticks.length; tx++) {
@@ -1103,75 +1100,18 @@ tg.TimegliderTimelineView.prototype = {
 		      }
 		    }
 		  }
-	
-			for (i=0; i<idArr.length; i++) {
-
-					// both collapsed and expanded
-					ev = MED.eventPool["ev_" + idArr[i]];
-					
-			    /// filter patterns & thresholds 
-  				if (this.passesFilters(ev, zl) == true) {
-  						  
-					  posx = cx + ((ev.startdateObj.sec - foSec) / spp);
-					  
-					  impq = (tl.size_importance == true) ? this.scaleToImportance(ev.importance, zl) : 1;
-					
-    				if (expCol == "expanded") {
-    					ev.width = (ev.titleWidth * impq) + buffer;
-    					if (ev.span == true) {
-    					  ev.spanwidth = (ev.enddateObj.sec - ev.startdateObj.sec) / spp;
-    					  if (ev.spanwidth > ev.width) { ev.width = ev.spanwidth; }
-    					}	else {
-    					  ev.spanwidth = 0;
-    					}					
-    				    					
-    					ev.fontsize = this.basicFontSize * impq;
-    					// !TODO isolate these into position object
-    					ev.left = posx; // will remain constant
-    					// !TODO --- ACCURATE WIDTH BASELINE FROM chewTimeline()
-					    
-					    var img_ht = 0;
-					    if (ev.image && ev.image_class=="layout") {
-					      img_ht = ev.image_size.height + 2;
-					      ev.width = ev.image_size.width + 2;
-				      }
-    					
-    					ev.height = Math.ceil(ev.fontsize) + img_ht;
-    					ev.top = ht - ev.height;
-    					
-    					borg.addBlock(ev, "sweep");
-    					// no stuff yet...
-					
-    			  } else if (expCol == "collapsed") {
-    					stuff += "<div id='ev_" + ev.id + 
-    					"' class='timeglider-event-collapsed' style='top:" + 
-    					(ht-2) + "px;left:" +
-    					posx + "px'></div>";
-    			  }
-    			  
-  			  } // end if it passes filters
-
-			}
+	    
+			// no need to reference individual tick
+			stuff = this.compileTickEventsAsHtml(tl, idArr, 0, "sweep");
 			
-			// ev.blocks....
-			
-			// expanded only
 			if (expCol == "expanded") {
 				stuff = borg.getHTML("sweep");
 				tl.borg = borg.getBorg();
 			}
+			
 			if (stuff != "undefined") { $tl.append(stuff); }
 			
-			$(".timeglider-event-image-bar").each(
-			    function () {
-			      $(this).position({
-			        		my: "top",
-          				at: "bottom",
-          				of: $tl,
-          				offset: "0, 0"
-		        }).css("left", 0);
-		      }
-	      );
+			this.registerEventImages($tl);
 			
 		}// end for each timeline
 		
@@ -1179,91 +1119,132 @@ tg.TimegliderTimelineView.prototype = {
 		me.registerTitles();
 		
 	}, // ends freshTimelines()
-	
-	
+
   
 	/* 
 		this is per tick... pretty WET with freshTimelines()...
 	*/
 	appendTimelines : function (tick) {
-
+      
 			var active = MED._activeTimelines, 
-			  cx = this.dimensions.container.centerx,
-		    tl, ev, posx, expCol, ht, borg, stuff, impq, ids,
-				foSec = MED._startSec, 
-				spp = MED.getZoomInfo().spp,
-				zl = MED.getZoomInfo().level,
-				// left right "margin" (not css, just added space)
-				buffer = 18;
-			  /// !!TODO --- dynamic heights in TGOrg.js
+			    $tl, tl, stuff = "";
+		    
+			// FOR EACH TIMELINE...
+			for (var a=0; a<active.length; a++) {
 
-				for (var a=0; a<active.length; a++) {
+				tl = MED.timelinePool[active[a]];
 
-					// FOR EACH TIMELINE...
-					tl = MED.timelinePool[active[a]];
-					expCol = tl.display;
-					borg = tl.borg; // existing layout object
-					$tl = $(".tg-timeline-envelope#" + tl.id);
-					ht = $tl.height();
-					idArr = this.getTimelineEventsByTick({tick:tick, timeline:tl});
-					ids = idArr.length;
-					expCol = tl.display;
-					stuff = ''; // needs to be cleared
+				// get the events from timeline model hash
+				idArr = this.getTimelineEventsByTick({tick:tick, timeline:tl});
+				stuff = this.compileTickEventsAsHtml(tl, idArr, tick.serial, "append");
+				 
+				// borg it if it's expanded.
+				if (tl.display == "expanded"){ 
+						stuff = tl.borg.getHTML(tick.serial);
+				}
+
+				$tl = $(".tg-timeline-envelope#" + tl.id).append(stuff);
+				
+				this.registerEventImages($tl);
 					
-					for (i=0; i<ids; i++) {
-
-						// !! WET WITH freshTimelines
-						ev = MED.eventPool["ev_" + idArr[i]];
-						// !!TODO ==> TIMEZONE SETTING...
-						posx = cx + ((ev.startdateObj.sec - foSec) / spp);
-						
-						/// filter patterns & thresholds 
-						if (this.passesFilters(ev, zl)==true) {
-						 
-						if (expCol == "expanded") {
-						  
-							ev.left = posx; // will remain constant
-							// !TODO --- ACCURATE WIDTH BASELINE FROM chewTimeline()
-							impq = (tl.size_importance == true) ? this.scaleToImportance(ev.importance, zl) : 1;
-							
-							ev.fontsize = this.basicFontSize * impq;
-							
-							ev.width = (ev.titleWidth * impq) + buffer;
-							if (ev.span == true) {
-  							ev.spanwidth = (ev.enddateObj.sec - ev.startdateObj.sec) / spp;
-  							if (ev.spanwidth > ev.width) { ev.width = ev.spanwidth; }
-  						}	else {
-  							 ev.spanwidth = 0;
-  						}
-							ev.top = ht - timeglider.levelHeight; 
-							ev.height = 18;
-							borg.addBlock(ev, tick.serial);
-								
-						} else if (expCol == "collapsed") {
-							stuff += "<div id='ev_" + ev.id 
-							+ "' class='timeglider-event-collapsed' style='top:" 
-							+ (ht-2) + "px;left:" 
-							+ posx + "px'></div>";
-						}
-						
-					}	//////// END FILTERS
-						
-						
-					} // end for through idArr
-					
-						// borg it if it's expanded.
-						if (expCol == "expanded"){ 
-							tl.borg = borg.getBorg();
-							stuff = borg.getHTML(tick.serial);
-						}
-			
-						$tl.append(stuff);
-						
-			} // end for in active timelines
+		  } // end for in active timelines
 					
 	}, // end appendTimelines()
 	
 	
+  // events array, MED, tl, borg, 
+  // "sweep" vs tick.serial  (or fresh/append)
+  compileTickEventsAsHtml : function (tl, idArr, tick_serial, btype) {
+   
+      var img_ht, posx = 0,
+          cx = this.dimensions.container.centerx,
+          expCol = tl.display,
+          ht = $tl.height();
+          stuff = "",
+          foSec = MED._startSec, 
+			    spp = MED.getZoomInfo().spp,
+			    zl = MED.getZoomInfo().level,
+			    // add some width just to make sure things don't collide
+			    buffer = 20,
+			    img_ht,
+			    borg = tl.borg,
+			    block_arg = "sweep"; // default for initial load
+			    
+			if (btype == "append") {
+          block_arg = tick_serial;
+      }
+
+      for (var i=0; i<idArr.length; i++) {
+
+      	ev = MED.eventPool["ev_" + idArr[i]];
+
+      	if (this.passesFilters(ev, zl) == true) {
+
+      		posx = cx + ((ev.startdateObj.sec - foSec) / spp);
+
+      		if (expCol == "expanded") {
+
+      		  impq = (tl.size_importance == true) ? this.scaleToImportance(ev.importance, zl) : 1;
+
+      			ev.width = (ev.titleWidth * impq) + buffer;
+      			ev.fontsize = this.basicFontSize * impq;
+      			ev.left = posx; // will remain constant
+            ev.spanwidth = 0;
+            
+      			if (ev.span == true) {
+      			  ev.spanwidth = (ev.enddateObj.sec - ev.startdateObj.sec) / spp;
+      			  if (ev.spanwidth > ev.width) { ev.width = ev.spanwidth; }
+      			}
+      			
+      		  img_ht = 0;
+      		  if (ev.image && ev.image_class=="layout") {
+      		    img_ht = ev.image_size.height + 2;
+      		    ev.width = ev.image_size.width + 2;
+      	    }
+
+      			ev.height = Math.ceil(ev.fontsize) + img_ht;
+      			ev.top = ht - ev.height;
+            
+            // block_arg is either "sweep" for existing ticks
+            // or the serial number of the tick being added by dragging
+      			borg.addBlock(ev, block_arg);
+           
+      	  } else if (expCol == "collapsed") {
+      			stuff += "<div id='ev_" + ev.id + 
+      			"' class='timeglider-event-collapsed' style='top:" + 
+      			(ht-2) + "px;left:" +	posx + "px'></div>";
+      	  }
+        } // end if it passes filters
+
+      }
+      
+      if (expCol == "collapsed") {
+        return stuff;
+      } else {
+        // if expanded, "stuff" is actually 
+        // being built into the borg already
+        return "";
+      }
+
+  },
+  
+  
+	registerEventImages : function ($timeline) {
+	  
+	  $(".timeglider-event-image-bar").each(
+		    function () {
+		      $(this).position({
+		        		my: "top",
+        				at: "bottom",
+        				of: $timeline,
+        				offset: "0, 0"
+	        }).css("left", 0);
+	      }
+      );
+	  
+  },
+  
+  
 	expandCollapseTimeline : function (id) {
 		var tl = MED.timelinePool[id];
 		if (tl.display == "expanded") {

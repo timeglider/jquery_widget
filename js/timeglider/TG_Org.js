@@ -41,6 +41,7 @@
     * 
     */
     this.addBlock = function (evob, tickScope) {
+       if (tickScope != "sweep") { debug.log("evob title:" + evob.title); }
        evob.right = evob.left + evob.width;
        evob.bottom = evob.top + evob.height;
        evob.tickScope = tickScope;

@@ -126,7 +126,6 @@ tg.TimegliderMediator.prototype = {
     i.e. could be more than one 
     */
     setInitialTimelines : function () {
-      debug.log("setInitialTimelines...");
       var me = this;
       var tid = this.initial_timeline_id;
       if (tid) {
@@ -193,7 +192,6 @@ tg.TimegliderMediator.prototype = {
           if (z != this._zoomLevel) {
             this._zoomLevel = z;
             this._zoomInfo = timeglider.zoomTree[z];
-            debug.log("publishing zoomLevelChange !!");
             $.publish("mediator.zoomLevelChange");
             
           }
@@ -218,7 +216,6 @@ tg.TimegliderMediator.prototype = {
          
 
         setGestureStart : function () {
-          alert("z:" + this.getZoomLevel());
           this.gestureStartZoom = this.getZoomLevel();
         },
 
