@@ -40,7 +40,6 @@ reflects state back to view
     this._ticksArray = [];
     this._startSec = 0;
     this._activeTimelines = [];
-    
     this.max_zoom = options.max_zoom;
     this.min_zoom = options.min_zoom;
     this.fixed_zoom = (this.max_zoom == this.min_zoom) ? true : false;
