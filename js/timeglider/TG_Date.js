@@ -397,7 +397,9 @@ timeglider.TGDate = {
 		var rawDaDays = (mdays - da) + 1;
 		return -1 * (rawYeDays + rawMoDays + rawDaDays);
 	},
-	
+
+
+
 	/*
 	 GET YYYY.MM.DD FROM (serial) rata die 
 	@param snum is the rata die or day serial number

@@ -3,7 +3,7 @@
 #./compile.sh
 
 # This does not include jquery or jquery UI!!
-
+# just seeing if git working
 
 # jquery
 # jquery UI
