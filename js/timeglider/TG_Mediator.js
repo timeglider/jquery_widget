@@ -5,7 +5,6 @@
 *
 * © 2010 Timeglider / Mnemograph LLC
 * Author: Michael Richardson
-* Licences are still to be determined : )
 *
 */
 
@@ -17,12 +16,14 @@ reflects state back to view
 ********************************/
 (function(tg){
   
+  
+  
   var MED = {};
   var TGDate = tg.TGDate;
   var options = {};
   var $ = jQuery;
 
- 
+  /* In progress... */
   tg.TimelineCollection = Backbone.Collection.extend({
     model: timeglider.Timeline
   });
@@ -30,28 +31,32 @@ reflects state back to view
 
   tg.TimegliderMediator = function (wopts) {
   
-  
     this.options = options = wopts;
-    this.timelineMenuOpen = false;
-    this.anonEventId = 0;
+    
+    // quasi-private vars
     this._focusDate = {};
     this._zoomInfo = {};
-    this._ticksReady = false;
-    this._ticksArray = [];
-    this._startSec = 0;
-    this._activeTimelines = [];
+    this._zoomLevel = 1;
+    
+    this.ticksReady = false;
+    this.ticksArray = [];
+    this.startSec = 0;
+    this.activeTimelines = [];
     this.max_zoom = options.max_zoom;
     this.min_zoom = options.min_zoom;
     this.fixed_zoom = (this.max_zoom == this.min_zoom) ? true : false;
     this.gesturing = false;
     this.gestureStartZoom = 0;
     this.filterObject = {};
-
     this.eventPool = [],
     this.timelinePool = {};
     
-    this.setZoomLevel(options.initial_zoom);
+    // this.setZoomLevel(options.initial_zoom);
     this.initial_timeline_id = options.initial_timeline_id;
+    
+    if (options.max_zoom === options.min_zoom) {
+      this.fixed_zoom = options.min_zoom;
+    }
   
     MED = this;
 
@@ -59,7 +64,26 @@ reflects state back to view
     
 
 tg.TimegliderMediator.prototype = {
+  
+    /* PUBLIC METHODS MEDIATED BY $.widget STOREFRONT */
+    gotoDate : function (fdStr) {
+      var fd = TGDate.makeDateObject(fdStr);
+      this.setFocusDate(fd);
+      // setting date doesn't by itself refresh: do it "manually"
+      this.refresh();  
+      return true;   
+    },
 
+    gotoDateZoom : function (fdStr, zoom) {
+        var fd = TGDate.makeDateObject(fdStr);
+        this.setFocusDate(fd);
+        // setting zoom _does_ refresh automatically
+        this.setZoomLevel(zoom);  
+        return true; 
+    },
+  
+  
+  
   /*
   TODO
   Put this stuff into backbone collection of TimelineModel() instances
@@ -74,20 +98,52 @@ tg.TimegliderMediator.prototype = {
     var M = this; // model ref
     // Allow to pass in either the url for the data or the data itself.
     if (typeof src === "object") {
+      // local/pre-loaded JSON
       M.parseData(src);
-    }
-    else {
-      jQuery.getJSON(src, function(data){
-        M.parseData(data);
-      }); // end getJSON
-    }
-  },
+    } else {
+ 
+    /*
+    This isn't working in jQuery 1.5 for some reason... 
+    seems fixed in 1.5.1+
+    */
 
+        $.getJSON(src, function (data) {
+              M.parseData(data);
+           }
+        );
+
+
+         //  When we're well beyond 1.5, this can be implemented
+         //  as there are still JSON bugs in 1.5.0
+         /*
+          var $aJax = $.ajax({ dataType:"json", url:src });
+
+          $aJax.then(
+            // success
+            function (data) {
+              debug.log("2nd success call");
+              M.parseData(data);
+            },
+            // failure
+            function (e) {
+              debug.log("ERROR LOADING JSON");
+            }
+    
+          );
+        */
+
+    }// end if/else for local vs url
+  },
+ 
   /*
   * parseData
   * @param data {object} Multiple (1+) timelines object derived from data in loadTimelineData
   */
   parseData : function (data) {
+    
+    debug.log("parseData");
+    
+    
     var M = this; // model ref
     var ct = 0;
     var dl = data.length, ti = {}, ondeck = {};
@@ -106,7 +162,7 @@ tg.TimegliderMediator.prototype = {
     if (ct === 0) {
       alert("ERROR loading data: Check JSON with jsonLint");
     } else {
-      M.setInitialTimelines();
+      $.publish("mediator.timelineDataLoaded");
     }
   },
 
@@ -140,34 +196,30 @@ tg.TimegliderMediator.prototype = {
 
       // !!!TODO ---- get these back to normal setTicksReady, etc.
       setTicksReady : function (bool) {
-        this._ticksReady = bool;
+        this.ticksReady = bool;
         
         if (bool === true) { 
           $.publish("mediator.ticksReadySignal");
           }
       },
 
-      getTicksReady : function () {
-        return this._ticksReady;
-      },
-
       getFocusDate : function () {
         return this._focusDate;
       },
-
+      
       setFocusDate : function (fd) {
         // !TODO :: VALIDATE FOCUS DATE
-        if (fd != this._focusDate && "valid" == "valid") {
+        if (fd != this._focusDate && "valid" === "valid") {
           // "fillout" function which redefines fd ?
           fd.mo_num = TGDate.getMonthNum(fd); 
           fd.rd = TGDate.getRataDie(fd);      
           fd.sec = TGDate.getSec(fd);
 
           this._focusDate = fd; 
-
         }
       },
-
+    
+    
       getZoomLevel : function () {
         return Number(this._zoomLevel);
       },
@@ -181,18 +233,16 @@ tg.TimegliderMediator.prototype = {
       *  
       */
       setZoomLevel : function (z) {
-        if (isNaN(z)) { debug.log("zoom level NaN"); return false; }
-          
+   
         if (z <= this.max_zoom && z >= this.min_zoom) {
-          
+       
           // focusdate has to come first for combined zoom+focusdate switch
-          this._startSec = this._focusDate.sec;
+          this.startSec = this._focusDate.sec;
 
           if (z != this._zoomLevel) {
             this._zoomLevel = z;
             this._zoomInfo = timeglider.zoomTree[z];
             $.publish("mediator.zoomLevelChange");
-            
           }
           // end min/max check
           } else { return false; }
@@ -233,7 +283,7 @@ tg.TimegliderMediator.prototype = {
 
 
         getTickBySerial : function (serial) {
-          var ta = this._ticksArray,
+          var ta = this.ticksArray,
           tal = ta.length;
           for (var t=0; t<tal; t++) {
             var tick = ta[t];
@@ -257,15 +307,15 @@ tg.TimegliderMediator.prototype = {
           if (obj.type == "init") {
             // CENTER
             obj.serial = TGDate.getTimeUnitSerial(focusDate, obj.unit);
-            this._ticksArray = [obj];
+            this.ticksArray = [obj];
           } else if (obj.type == "l") {
             // LEFT
-            obj.serial = this._ticksArray[0].serial - 1;
-            this._ticksArray.unshift(obj);
+            obj.serial = this.ticksArray[0].serial - 1;
+            this.ticksArray.unshift(obj);
           } else {
             // RIGHT SIDE
-            obj.serial = this._ticksArray[this._ticksArray.length -1].serial + 1;
-            this._ticksArray.push(obj);
+            obj.serial = this.ticksArray[this.ticksArray.length -1].serial + 1;
+            this.ticksArray.push(obj);
           }
 
 
@@ -277,13 +327,14 @@ tg.TimegliderMediator.prototype = {
 
 
         toggleTimeline : function (id) {
+          
           var lt = this.timelinePool[id];
-          var ia = $.inArray(id, this._activeTimelines);
+          var ia = $.inArray(id, this.activeTimelines);
 
           if (ia == -1) {
             // The timeline is 
             // not active ---- bring it on
-            this._activeTimelines.push(id);
+            this.activeTimelines.push(id);
             // setting FD does NOT refresh
             this.setFocusDate(TGDate.makeDateObject(lt.focus_date));
             // resetting zoomLevel DOES refresh
@@ -291,16 +342,17 @@ tg.TimegliderMediator.prototype = {
             
           } else {
             // it's active, remove it
-            this._activeTimelines.splice(ia,1);
-            this.refresh();
+            this.activeTimelines.splice(ia,1);
           }
+          
+          this.refresh();
           // this will change the menu list/appearance
           $.publish( "mediator.activeTimelinesChange" );
 
         }
 
-
-}; ///// end model methods
+///// end model prototype object
+}; 
         
         
         tg.getLowHigh = function (arr) {
@@ -319,13 +371,15 @@ tg.TimegliderMediator.prototype = {
 
         };
         
-   
+        
+        // move to VIEW
         /* a div with id of "hiddenDiv" has to be pre-loaded */
         tg.getStringWidth  = function (str) {
         		var $ms = $("#timeglider-measure-span").html(str);
         		return $ms.width() + 20;
         };
         
+        // move to VIEW
         tg.getImageSize = function (img) {
             // var size = obj.fontSize; 
         		var $ms = $("#timeglider-measure-span").html('');

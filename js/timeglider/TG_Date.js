@@ -520,6 +520,7 @@ timeglider.TGDate = {
 		return moDays;
 	},
 	
+	/* Returns a YYYY-MM-DD HH:MM:SS string */
 	getToday : function () { 
       var d = new Date(); 
       var df = jQuery.format(d, "S"); 

@@ -3,7 +3,6 @@
 
 .timeglider-container {
 	
-	/* these will not change */
 	position:relative;
   overflow:hidden;
 	border:2px solid black;
@@ -11,16 +10,27 @@
 	-moz-border-radius:7px;
 	-webkit-border-radius:7px;
 	border-radius:7px;
+	background-color:#F4F4F4;
   }
   
-.timeglider-container {
-  background-color:#F4F4F4;
-}
 
-/* Slightly darker than the larger stage */
+/* Slightly darker than the larger stage, in .timeglider-container */
 .timeglider-slider-container {
     background-color:#DDD;
   }
+.timeglider-loading {
+  background-color:black;
+  color:white;
+  font-size:12px;
+  font-weight:bold;
+  width:100px;
+  padding:12px;
+  -moz-border-radius:7px;
+	-webkit-border-radius:7px;
+	border-radius:7px;
+	margin:12px auto 12px auto;
+	text-align:center;
+}
   
 .timeglider-footer {
 	position:absolute;
@@ -119,6 +129,10 @@
   margin-bottom:4px;
 }
 
+
+.timeglider-pan-buttons a {
+  cursor:pointer;
+}
 
   
 .timeglider-centerline {
@@ -349,6 +363,32 @@
     bottom:-20px;
     right:6px;
 }
+
+
+.timeglider-pan-buttons {
+  margin-top:4px;
+  margin-bottom:6px;
+  height:18px;
+  width:32px;
+  margin-left:-12px;
+}
+
+.timeglider-pan-left, .timeglider-pan-right {
+    float:left;
+    width:14px;
+    height:18px;
+    background-repeat:no-repeat;
+    cursor:pointer;
+}
+.timeglider-pan-left {
+  background-image:url("buttons/pan_left.png");
+  margin-right:1px;
+}
+.timeglider-pan-right {
+  background-image:url("buttons/pan_right.png");
+}
+/* add hover effects? */
+
 
 
 .timeglider-logo {

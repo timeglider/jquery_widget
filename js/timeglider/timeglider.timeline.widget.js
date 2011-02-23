@@ -23,6 +23,16 @@
    *
    *
    */
+   
+   /* here's how to extend the jquery.glob object */
+   /*
+   var dlet = {let : ["S", "M", "T", "W", "T", "F", "S"]};
+   $.extend($.cultures.en.calendars.standard.days, dlet);
+   debug.log(jQuery.format(new Date(1955,10,5,11,12,13), "X"));
+   */
+   
+    var timelineView, timelineMediator;
+   
     $.widget( "timeglider.timeline", {
       
 	    _tg: this,
@@ -34,7 +44,6 @@
         editor:'none', 
         min_zoom : 1, 
         max_zoom : 100, 
-        initial_zoom :40, 
         show_centerline: true, 
         data_source:"", 
         basic_fontsize:12, 
@@ -46,9 +55,8 @@
       },
 
       _create : function () {
-     
-        this._id = $(this.element).attr("id"); 
-       
+        
+        this._id = $(this.element).attr("id");
        /*
          Anatomy:
        *
@@ -68,6 +76,7 @@
        *           options indicate otherwise
        */
         var MAIN_TEMPLATE = "<div class='timeglider-container'>"+
+                              "<div class='timeglider-loading'>loading</div>"+
                               "<div class='timeglider-centerline'></div>"+
                               "<div class='timeglider-truck' id='tg-truck'>"+
                                 "<div class='timeglider-ticks'>"+
@@ -75,7 +84,10 @@
                                 "</div>"+
                               "</div>"+
                               "<div class='timeglider-slider-container'>"+
-                                "<div class='timeglider-slider'></div>"+
+                                  "<div class='timeglider-slider'></div>"+
+                                  "<div class='timeglider-pan-buttons'>"+
+                                  "<div class='timeglider-pan-left'></div><div class='timeglider-pan-right'></div>"+
+                                  "</div>"+
                               "</div>"+
                               "<div class='timeglider-footer'>"+
                               "<div class='timeglider-logo'></div>"+                      
@@ -96,32 +108,47 @@
        *
        */
 	    _init : function () {
-	      
+	      	      
 	      // should come out as empty string
 	      var optionsCheck = timeglider.validateOptions(this.options);
-	      
+	    
 	      if (optionsCheck == "") {
 	      
-          var timelineMediator = new timeglider.TimegliderMediator(this.options);
-          timelineMediator.setFocusDate(timeglider.TGDate.makeDateObject(this.options.initial_focus));
-          var timelineView = new timeglider.TimegliderTimelineView(this, timelineMediator);
+          timelineMediator = new timeglider.TimegliderMediator(this.options);
+          timelineView = new timeglider.TimegliderTimelineView(this, timelineMediator);
 
-          // load timelines
+          // after timelineView is created this stuff can be done
+          timelineMediator.setFocusDate(timeglider.TGDate.makeDateObject(this.options.initial_focus));
           timelineMediator.loadTimelineData(this.options.data_source);
         
         } else {
-          alert("There's a problem with your widget settings:" + optionsCheck);
+          alert("Rats. There's a problem with your widget settings:" + optionsCheck);
         }
       
 	    },
-
+	    
+	    
+      /* PUBLIC METHODS */
+  
+      gotoDate : function (d) {
+        debug.log("d:" + d);
+        timelineMediator.gotoDate(d);
+      },
+      
+      gotoDateZoom : function (d, z) {
+        debug.log("d:" + z);
+        timelineMediator.gotoDateZoom(d,z);
+      },
+    
+  
       destroy : function () {
         // anything else?
         $.Widget.prototype.destroy.apply(this, arguments); // default destroy
-      }
-
+        $(this.element).html("");
+      },
 			
 }); // end widget process
+
 
 
 	

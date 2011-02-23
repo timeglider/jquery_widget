@@ -6,6 +6,7 @@
     "focus_date": "1965-02-29 2:00:00",
     "initial_zoom": "50",
 	"color": "#82530d",
+	"size_importance":true,
     "events":
     [
     {

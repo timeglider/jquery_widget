@@ -126,7 +126,6 @@
     // keeping events in the eventPool [collection]
     // hashing references to evnet IDs inside the date hash
     delete tdata.events;
-
     return tdata;
 
   },

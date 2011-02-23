@@ -7,11 +7,17 @@
 
 (function(tg){
 
-  tg.levelHeight = 8; // across view and org
-  var lev_ht = tg.levelHeight; // local
+  // standard "brick" height for placement grid
+  var lev_ht = tg.levelHeight = 8;
+  
+  // number of available levels for events
+  var tree_levels = 300;
+  
   var $ = jQuery;
-   /*
-    * @constructor
+  
+  
+  /*
+  *  @constructor
   */
   tg.TGOrg = function() {
 
@@ -41,7 +47,6 @@
     * 
     */
     this.addBlock = function (evob, tickScope) {
-       if (tickScope != "sweep") { debug.log("evob title:" + evob.title); }
        evob.right = evob.left + evob.width;
        evob.bottom = evob.top + evob.height;
        evob.tickScope = tickScope;
@@ -150,14 +155,15 @@
   }; /// end getHTML
 
 
-
+  /// Private stuff ///
+  
   /*
   * freshTree
-  * Wipes out the old tree and sets up 100 empty levels
+  * Wipes out the old placement tree and sets up 300 empty levels
   */
    var freshTree = function () {
      me.tree = [];
-     for (var a=0; a < 300; a++) {
+     for (var a=0; a < tree_levels; a++) {
        // create 50 empty nested arrays for "quad tree"
        me.tree[a] = [];
      }
@@ -169,11 +175,10 @@
    * @param b {Number} 2nd sort number
    */
    var sortBlocksByImportance = function (a, b) {
-            var x = b.importance, y = a.importance;
-            /// !TODO  
-            /// if either is missing or invalid,. return -1
-            return ((x < y) ? -1 : ((x > y) ? 1 : 0));
-          };
+      var x = b.importance, y = a.importance;
+      /// !TODO :: if missing or invalid, return -1
+      return ((x < y) ? -1 : ((x > y) ? 1 : 0));
+  };
 
   /*
    * 
@@ -184,35 +189,35 @@
    * @param {object} b2 Timeline-event object being added to blocks
    */       
    var isOverlapping = function (b1, b2) {
- 
-        if ((b2.left > b1.right) || (b2.right < b1.left)) {
-          // Nice: it's clear to left or right.
-          return false;
-
-        } else {
-
-          if (  
-            ((b2.left >= b1.left) && (b2.left <= b1.right)) || 
-            ((b2.right >= b1.left) && (b2.right <= b1.right)) || 
-            ((b2.right >= b1.right) && (b2.left <= b1.left)) || 
-            ((b2.right <= b1.right) && (b2.left >= b1.left))  
-          ) {
       
-            // Some kind of left-right overlap is happening...
-            // passes first test of possible overlap: left-right overlap
-            if (  ((b2.bottom <= b1.bottom) && (b2.bottom >= b1.top)) || ((b2.top <= b1.bottom) && (b2.top >= b1.top)) || ((b2.top == b1.bottom) && (b2.top == b1.top))  ) {
-              // passes 2nd test -- it's overlapping
-              return true;
+      if ((b2.left > b1.right) || (b2.right < b1.left)) {
+        // Whew: it's clear to left or right.
+        return false;
 
-            } else {
-              return false;
-            }
-            // end first big if: fails initial test
-          }  
-          return false;
-        }
+      } else {
 
-        // return false;
+        if (  
+          ((b2.left >= b1.left) && (b2.left <= b1.right)) || 
+          ((b2.right >= b1.left) && (b2.right <= b1.right)) || 
+          ((b2.right >= b1.right) && (b2.left <= b1.left)) || 
+          ((b2.right <= b1.right) && (b2.left >= b1.left))  
+            ) {
+    
+          // So, some kind of left-right overlap is happening, but
+          // there also has to be top-bottom overlap for collision
+          if (  ((b2.bottom <= b1.bottom) && (b2.bottom >= b1.top)) || ((b2.top <= b1.bottom) && (b2.top >= b1.top)) || ((b2.top == b1.bottom) && (b2.top == b1.top))  ) {
+            // passes 2nd test -- it's overlapping!
+            return true;
+
+          } else {
+            return false;
+          }
+          // end first big if: fails initial test
+        }  
+        return false;
+      }
+
+      // return false;
 
     };
 
@@ -225,7 +230,7 @@
         level_blocks = tree[level_num],
         next_level = level_num + 1,
         collision = false,
-        brick_height = 2;
+        bricks_high = 2;
         bump_ht = lev_ht;
                 
       if (level_blocks != undefined) {
@@ -238,8 +243,8 @@
   
           if (ol == true) {
             // BUMP UP
-            block.top -= bump_ht; // timeglider.levelHeight;
-            block.bottom -= bump_ht; // timeglider.levelHeight;
+            block.top -= bump_ht; 
+            block.bottom -= bump_ht; 
             // THEN CHECK @ NEXT LEVEL
             
             // *** RECURSIVE ***
@@ -259,10 +264,10 @@
             level_blocks.push(block);
          
             // find out how many (lev_ht px) levels (bricks) the event is high
-            brick_height = Math.ceil(block.height / lev_ht);
+            bricks_high = Math.ceil(block.height / lev_ht);
             var k=0, levToAddTo;
             
-            for (k=1; k<=brick_height; k++) {
+            for (k=1; k<=bricks_high; k++) {
               levToAddTo = level_num + k;
               tree[levToAddTo].push(block);
             }
