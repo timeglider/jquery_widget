@@ -245,7 +245,7 @@ timeglider.TimegliderTimelineView
 	$(".timeglider-pan-buttons div").mousedown(function () {
 	  var lr = $(this).attr("class"),
 	      dir = (lr == "timeglider-pan-right") ? -30 : 30; 
-	      me.intervalMachine("pan", {type:"set", fn: me.pan, args:[dir], int:30});
+	      me.intervalMachine("pan", {type:"set", fn: me.pan, args:[dir], intvl:30});
   }).mouseup(function () {
 	    me.intervalMachine("pan", {type:"clear", fn: me.pan, callback: "resetTicksHandle"});
   }).mouseout(function () {
@@ -459,7 +459,7 @@ tg.TimegliderTimelineView.prototype = {
       // run it 
 	    intervals[name] = setInterval(function () {
 	          info.fn.apply(me, info.args);
-	        }, info.int);
+	        }, info.intvl);
     }
   },
 

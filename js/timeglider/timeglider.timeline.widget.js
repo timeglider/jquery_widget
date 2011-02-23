@@ -145,7 +145,7 @@
         // anything else?
         $.Widget.prototype.destroy.apply(this, arguments); // default destroy
         $(this.element).html("");
-      },
+      }
 			
 }); // end widget process
 
