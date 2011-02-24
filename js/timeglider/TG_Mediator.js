@@ -140,10 +140,7 @@ tg.TimegliderMediator.prototype = {
   * @param data {object} Multiple (1+) timelines object derived from data in loadTimelineData
   */
   parseData : function (data) {
-    
-    debug.log("parseData");
-    
-    
+   
     var M = this; // model ref
     var ct = 0;
     var dl = data.length, ti = {}, ondeck = {};

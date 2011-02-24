@@ -7,8 +7,9 @@
 
 (function(tg){
   
-  var TGDate = tg.TGDate;
-  var $ = jQuery;
+  var TGDate = tg.TGDate,
+      $ = jQuery,
+      widget_options = {};
 
   // map model onto larger timeglider namespace
   /////////////////////////////////////////////
@@ -27,6 +28,8 @@
 
     // TODO ==> add additional units
     var app_mediator = tdata.mediator;
+    widget_options = app_mediator.options;
+    
     var dhash                       = {"da":[], "mo":[], "ye":[], "de":[], "ce":[], "thou":[], 
                                         "tenthou":[], "hundredthou":[], "mill":[], "tenmill":[], "hundredmill":[],
                                         "bill":[]};
@@ -63,7 +66,13 @@
         ev.enddateObj = startEnd.e; // TGDate.makeDateObject(ev.enddate);
         
         // default icon
-        ev.icon = app_mediator.options.icon_folder + (ev.icon || "triangle_orange.png");          
+        if (!ev.icon || ev.icon === "none") {
+          ev.icon = "";
+        }  else {
+          ev.icon = widget_options.icon_folder + "/" + ev.icon;
+        }
+       
+                    
         ev.titleWidth = tg.getStringWidth(ev.title);
         
         if (ev.image) {
@@ -73,9 +82,7 @@
             ev.image_size = tg.getImageSize(ev.image);
             }
         }
-        
-        
-        if (ev.y_position) debug.log("TG_Timeline YPOS:" + ev.y_position);
+      
         // microtimeline for collapsed view and other metrics
         tdata.startSeconds.push(ev.startdateObj.sec);
         tdata.endSeconds.push(ev.enddateObj.sec);
