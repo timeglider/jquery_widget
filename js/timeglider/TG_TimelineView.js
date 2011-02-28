@@ -294,19 +294,43 @@ timeglider.TimegliderTimelineView
 				me.resetTicksHandle();
 				me.easeOutTicks();
 				me.registerDragging(); // one final time, plus more if easing...
-				// TESTING widget.doSomething();
 			}
+			
 		}) // end draggable
 		.delegate(".timeglider-timeline-event", "click", function () { 
 			// EVENT ON-CLICK !!!!!!
 			var eid = $(this).attr("id"); 
-			me.eventModal(eid);
+			var ev = MED.eventPool[eid];
+			if (ev.description || ev.link) {
+			  me.eventModal(eid);
+		  } else if (ev.click_callback) {
+		    
+		    var broken = ev.click_callback.split(".");
+		    var ns = broken[0];
+		    var fn = broken[1];
+		    if (broken.length == 2) {
+		      window[ns][fn](ev);
+	      } else {
+	        window[ns](ev);
+        }
+		    debug.log("click callback: " + ns + "." + fn);
+		    
+	    }
+		  
 		})	
-		.delegate(".timeglider-timeline-event", "hover", function () { 
+		.delegate(".timeglider-timeline-event", "mouseover", function () { 
 			var eid = $(this).attr("id"); 
-			var title = MED.eventPool[eid].title;
-			debug.trace("hover, title:" + title, "note"); 
+			var ev = MED.eventPool[eid];
+			/// debug.trace("hover, title:" + title, "note"); 
+			me.eventHover($(this), ev)
 		})
+		.delegate(".timeglider-timeline-event", "mouseout", function () { 
+			var eid = $(this).attr("id"); 
+			var ev = MED.eventPool[eid];
+			/// debug.trace("hover, title:" + title, "note"); 
+			me.eventUnHover($(this), ev)
+		})
+		
 		.delegate(".timeglider-event-collapsed", "hover", function () { 
 			var eid = $(this).attr("id"); 
 			var title = MED.eventPool[eid].title;
@@ -439,10 +463,13 @@ tg.TimegliderTimelineView.prototype = {
     }
  	},
  	
- 	getPublicMethods : function() {
- 	  return "FOO";
-  },
-	
+ 	
+ 	doSomething : function() {
+ 		    alert("FOO DO, viewer");
+ 	},
+ 	
+ 	
+ 	
 	/* 
 	PLUGIN!!
 	*/
@@ -634,9 +661,38 @@ tg.TimegliderTimelineView.prototype = {
 		} // end--if min_zoom == max_zoom
 	},
 	
+	/*
+	* Occurs when MOUSE-hovering over event
+	*
+	*/
 	
+	eventHover : function ($ev, ev_obj) {
+    // debug.log("HOVER:" + ev_obj.title);
+    var me = this, 
+        $hov = $(".timeglider-event-hover-info");
+    
+    $hov.position({
+	    my: "left bottom",
+	    at: "left top",
+	    of: $ev,
+	    offset: "1, -10",
+	    collision: "flip flip"}).text(me.tg_format(ev_obj.startdate));
+	   
+	   $ev.addClass("tg-event-hovered");
+	   
+	   
+  },
 	
-	
+	eventUnHover : function ($ev, ev_obj) {
+	   $(".timeglider-event-hover-info").css("left", "-1000px");
+	   $ev.removeClass("tg-event-hovered");
+  },
+  
+  tg_format : function (datestr) {
+    return "f:" + datestr;
+  },
+  
+  
   /* FILTER BOX SETUP */
   setupFilter : function () {
       var me=this;
@@ -851,7 +907,7 @@ tg.TimegliderTimelineView.prototype = {
 	
 	
 	getDateLabelForTick : function  (obj) {
-		var i;
+		var i, me=this;
 	
 		switch(obj.unit) {
 
@@ -1350,7 +1406,7 @@ tg.TimegliderTimelineView.prototype = {
   			  title:ev.title,
   			  description:ev_img + ev.description,
   			  id:eid,
-  			  startdate: ev.startdate,
+  			  startdate: me.tg_format(ev.startdate),
   			  link: ev.link,
   			  video: ev.video
   		}
@@ -1365,10 +1421,10 @@ tg.TimegliderTimelineView.prototype = {
 			  .css("z-index", me.ztop++)
 	      .position({
       				my: "right center",
-      				at: "left top",
+      				at: "left center",
       				of: $par,
-      				offset: "0, -12", // left, top
-      				collision: "fit fit"
+      				offset: "-12, -1", // left, top
+      				collision: "flip fit"
       	})
       	.draggable({stack: ".timeglider-modal"});
 
@@ -1553,10 +1609,22 @@ tg.TimegliderTimelineView.prototype = {
 
     // call it right away to establish values
     }(tg.zoomTree);
-
+    
+    
    
 
 })(timeglider);
+
+
+  
+  
+  /*
+  var doSomething = function (args) { 
+    
+      alert("global.doSomething: " + args.title);
+      
+  }
+  */
 
 
 

@@ -1,7 +1,7 @@
 
 
 // initial declaration of timeglider
-var timeglider = {version:"0.0.2"};
+var timeglider = window.timeglider = {version:"0.0.2"};
 
 
 /*

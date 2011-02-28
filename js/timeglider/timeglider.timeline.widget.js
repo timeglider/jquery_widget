@@ -17,6 +17,26 @@
 *
 */
 
+
+
+/* TESTING CALLBACKS FROM EVENTS "callback" property */
+function doSomething (args) { 
+  alert("global doSomething: " + args.title);
+}
+
+window.uniqueNamespace = uniqueNamespace  = {
+   good: function (args) { 
+    alert("global.doSomething good: " + args.title);
+  },
+   okay : function () {
+    debug.log("okay");
+  }
+  
+};
+
+
+
+
 (function($){
   /**
    * The main jQuery widget factory for Timeglider
@@ -76,6 +96,7 @@
        *           options indicate otherwise
        */
         var MAIN_TEMPLATE = "<div class='timeglider-container'>"+
+                              
                               "<div class='timeglider-loading'>loading</div>"+
                               "<div class='timeglider-centerline'></div>"+
                               "<div class='timeglider-truck' id='tg-truck'>"+
@@ -95,6 +116,7 @@
                               "<img class='timeglider-tools-bt' title='settings' src='js/timeglider/buttons/tools.png'>"+
                               "<img class='timeglider-list-bt' title='timelines' src='js/timeglider/buttons/list.png'>"+  
                               "</div>"+
+                              "<div class='timeglider-event-hover-info'></div>"+
                             "</div><span id='timeglider-measure-span'></span>";
                                    
         this.element.html(MAIN_TEMPLATE);

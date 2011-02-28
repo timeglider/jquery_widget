@@ -91,21 +91,47 @@
       this.blocks.sort(sortBlocksByImportance);
       // cycle through events and move overlapping event up
       
-      var positioned = [], blHeight, lastPos, padding = 6,
-      span_selector_class, span_div, img = "", html = '', b = {},
-      blength = this.blocks.length, title_adj = 0;
+      var positioned = [], 
+        blHeight, 
+        lastPos, 
+        padding = 6,
+        span_selector_class, 
+        span_div, 
+        img = "", 
+        html = '', 
+        b_htm = '',
+        b = {},
+        blength = this.blocks.length,
+        title_adj = 0;
       
       for (var i=0; i<blength; i++) {
         b = this.blocks[i];
 
+        // not sure why we're checking against this...
         if (b.tickScope == tickScope) {
-
-          if (jQuery.inArray(b.id, this.vis) == -1) {
+          
+          // is it not yet visible?
+          if ($.inArray(b.id, this.vis) == -1) {
+            
+            // it's not in the "visible" array, so add it
             this.vis.push(b.id);
+            title_adj = 0;
+            
+            
+            if (b.html && b.html.substr(0,4) == "<div") {
+              // chop off the end and re-glue with style & id
+              
+              b_htm = "<div"+ 
+                      " style='left:" + b.left + "px' "+
+                      "id='ev_" + b.id + "'"+
+                       b.html.substr(4);
+              
+              html += b_htm;
+              
+            } else {      
             
             // if it has an image, it's either in "layout" mode (out on timeline full size)
             // or it's going to be thumbnailed into the "bar"
-            title_adj = 0;
             if (b.image) {
               if (b.image_class == "layout") {
                 title_adj = b.image_size.height + 4;
@@ -117,8 +143,15 @@
             } 
       
             // starts out checking block against the bottom layer
+            // This actually makes changes to the block object
             checkAgainstLevel(b, 0);
            
+            
+            // KEEP 
+            if (b.y_position > 0) {
+              b.top = -1 * b.y_position;
+            }
+            
             b.fontsize < 10 ? b.opacity = b.fontsize / 10 : b.opacity=1;
             if (b.span == true) {
               span_selector_class = "timeglider-event-spanning";
@@ -128,10 +161,6 @@
               span_div = "";
             }
             
-            if (b.y_position > 0) {
-              debug.log("y positon > 0:" + b.y_position);
-              b.top = -1 * b.y_position;
-            }
 
             html += "<div class='timeglider-timeline-event " + span_selector_class + "' id='ev_" + b.id + "' "
             + "style='width:" + b.width  + "px;"
@@ -146,10 +175,12 @@
             + b.title
             + "</div></div>";
             
+          } // end if it's got valid HTML
+            
 
             } // end check for visible... EXPENSIVE!!!!
-            } // end tickScope check
-            } // end for()
+          } // end tickScope check
+        } // end for()
 
             return html;
   }; /// end getHTML
