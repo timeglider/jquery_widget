@@ -11,28 +11,11 @@
                         rafael.js
                         ba-tinyPubSub
                         jquery
-                        jquery ui (full)
+                        jquery ui 
                         jquery.mousewheel
                         jquery.ui.ipad
 *
 */
-
-
-
-/* TESTING CALLBACKS FROM EVENTS "callback" property */
-function doSomething (args) { 
-  alert("global doSomething: " + args.title);
-}
-
-window.uniqueNamespace = uniqueNamespace  = {
-   good: function (args) { 
-    alert("global.doSomething good: " + args.title);
-  },
-   okay : function () {
-    debug.log("okay");
-  }
-  
-};
 
 
 
@@ -102,9 +85,10 @@ window.uniqueNamespace = uniqueNamespace  = {
                               "<div class='timeglider-truck' id='tg-truck'>"+
                                 "<div class='timeglider-ticks'>"+
                                   "<div class='timeglider-handle'></div>"+
+                                  
                                 "</div>"+
                               "</div>"+
-                              "<div class='timeglider-slider-container'>"+
+                                  "<div class='timeglider-slider-container'>"+
                                   "<div class='timeglider-slider'></div>"+
                                   "<div class='timeglider-pan-buttons'>"+
                                   "<div class='timeglider-pan-left'></div><div class='timeglider-pan-right'></div>"+

@@ -301,21 +301,22 @@ timeglider.TimegliderTimelineView
 			// EVENT ON-CLICK !!!!!!
 			var eid = $(this).attr("id"); 
 			var ev = MED.eventPool[eid];
-			if (ev.description || ev.link) {
-			  me.eventModal(eid);
-		  } else if (ev.click_callback) {
+			 
+		  if (ev.click_callback) {
 		    
-		    var broken = ev.click_callback.split(".");
-		    var ns = broken[0];
-		    var fn = broken[1];
-		    if (broken.length == 2) {
-		      window[ns][fn](ev);
-	      } else {
-	        window[ns](ev);
-        }
-		    debug.log("click callback: " + ns + "." + fn);
+    		    var broken = ev.click_callback.split(".");
+    		    var ns = broken[0];
 		    
-	    }
+    		    if (broken.length == 2) {
+    		      var fn = broken[1];
+    		      window[ns][fn](ev);
+    	      } else {
+    	        window[ns](ev);
+            }
+		    
+	    } else {
+	          me.eventModal(eid);
+      }
 		  
 		})	
 		.delegate(".timeglider-timeline-event", "mouseover", function () { 
@@ -658,7 +659,7 @@ tg.TimegliderTimelineView.prototype = {
 				}
 			});
 			
-		} // end--if min_zoom == max_zoom
+		} // end--if min_zoom == max_zoom 
 	},
 	
 	/*
@@ -671,14 +672,15 @@ tg.TimegliderTimelineView.prototype = {
     var me = this, 
         $hov = $(".timeglider-event-hover-info");
     
+    // This works, but what if it has to sit on the bottom
     $hov.position({
 	    my: "left bottom",
 	    at: "left top",
 	    of: $ev,
 	    offset: "1, -10",
 	    collision: "flip flip"}).text(me.tg_format(ev_obj.startdate));
-	   
-	   $ev.addClass("tg-event-hovered");
+	  	   
+	  $ev.addClass("tg-event-hovered");
 	   
 	   
   },
