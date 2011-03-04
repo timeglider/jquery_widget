@@ -19,19 +19,11 @@
 
 
 
-
 (function($){
   /**
    * The main jQuery widget factory for Timeglider
    *
    *
-   */
-   
-   /* here's how to extend the jquery.glob object */
-   /*
-   var dlet = {let : ["S", "M", "T", "W", "T", "F", "S"]};
-   $.extend($.cultures.en.calendars.standard.days, dlet);
-   debug.log(jQuery.format(new Date(1955,10,5,11,12,13), "X"));
    */
    
     var timelineView, timelineMediator;

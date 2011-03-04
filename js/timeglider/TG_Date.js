@@ -143,9 +143,6 @@ timeglider.TGDate = {
 		obj.rd  = this.getRataDie(obj);
 		// .sec second is the serial second from year 0!
 		obj.sec = this.getSec(obj);
-		// for date formatting, it's easier to use native object
-		debug.log("makeDate -- js:" + obj.ye + "-" + obj.mo + "-" + obj.da + " " + obj.ho + ":" + obj.mi + ":" + obj.se);
-		obj.js_date = new Date(obj.ye, obj.mo -1, obj.da, obj.ho -1, obj.mi -1, obj.se-1, 0);
 		
 		return obj;
 	},

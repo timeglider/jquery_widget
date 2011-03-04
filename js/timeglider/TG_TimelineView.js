@@ -678,7 +678,7 @@ tg.TimegliderTimelineView.prototype = {
 	    at: "left top",
 	    of: $ev,
 	    offset: "1, -10",
-	    collision: "flip flip"}).text(me.tg_format(ev_obj.startdate));
+	    collision: "flip flip"}).text(me.tg_format(ev_obj.startdateObj));
 	  	   
 	  $ev.addClass("tg-event-hovered");
 	   
@@ -690,8 +690,8 @@ tg.TimegliderTimelineView.prototype = {
 	   $ev.removeClass("tg-event-hovered");
   },
   
-  tg_format : function (datestr) {
-    return "f:" + datestr;
+  tg_format : function (dobj) {
+    return dobj.ye + "-" + dobj.mo + "-" + dobj.da;
   },
   
   
@@ -1616,17 +1616,3 @@ tg.TimegliderTimelineView.prototype = {
    
 
 })(timeglider);
-
-
-  
-  
-  /*
-  var doSomething = function (args) { 
-    
-      alert("global.doSomething: " + args.title);
-      
-  }
-  */
-
-
-

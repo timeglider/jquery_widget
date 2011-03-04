@@ -62,8 +62,16 @@
         //  done coupled so end can validate off start
         var startEnd = TGDate.validateEventDates(ev.startdate,ev.enddate);
 
-        ev.startdateObj = startEnd.s; // TGDate.makeDateObject(ev.startdate);
-        ev.enddateObj = startEnd.e; // TGDate.makeDateObject(ev.enddate);
+        // This ought to be separated into two
+        // 
+        //     ev.startdateObj = new TGDate(ev.startdate);
+        //     ev.enddateObj = new TGDate(ev.enddate);
+        //     if (validate(ev.startdateObj, ev.enddateObj) != "") {
+        //         THROW ERROR, BREAK
+        //      }
+        //     
+        ev.startdateObj = startEnd.startobj; // TGDate.makeDateObject(ev.startdate);
+        ev.enddateObj = startEnd.endobj; // TGDate.makeDateObject(ev.enddate);
         
         // default icon
         if (!ev.icon || ev.icon === "none") {
@@ -71,8 +79,7 @@
         }  else {
           ev.icon = widget_options.icon_folder + "/" + ev.icon;
         }
-       
-                    
+            
         ev.titleWidth = tg.getStringWidth(ev.title);
         
         if (ev.image) {
@@ -89,8 +96,8 @@
 
         // time span?
         if (ev.enddateObj.sec > ev.startdateObj.sec) {
-          ev.span =true;
-          tdata.spans.push({id:ev.id, start:ev.startdateObj.sec, end:ev.enddateObj.sec})
+          ev.span = true;
+          tdata.spans.push({id:ev.id, start:ev.startdateObj.sec, end:ev.enddateObj.sec});
         } else {
           ev.span = false;
         }
