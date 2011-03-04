@@ -1,7 +1,7 @@
 
 
 // initial declaration of timeglider
-var timeglider = window.timeglider = {version:"0.0.2"};
+var timeglider = window.timeglider = {version:"0.0.3"};
 
 
 /*
@@ -29,9 +29,9 @@ timeglider.TGDate = {
 	dayNamesFull : ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
 	dayNamesAbbr : ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
 	dayNamesLet : ["S", "M", "T", "W", "T", "F", "S"],
-	units : ["da", "mo", "ye", "de", "ce", "thou"],
+	units : ["da", "mo", "ye", "de", "ce", "thou", "tenthou", "hundredthou", "mill", "tenmill", "hundredmill", "bill"],
 
-
+  // CHG::static utility
 	isLeapYear: function(y) {
     if (y % 400  == 0) {
       return true;
@@ -110,25 +110,42 @@ timeglider.TGDate = {
 		// if valid and is after start
 		var e = this.makeDateObject(end);
 		
-		return {"s": s, "e":e}
+		return {"startobj": s, "endobj":e}
 	},
 		
 	
 	// BREAK DATE
 	makeDateObject : function(datestr){
-		var str = jQuery.trim(datestr);
-		str = str.replace(",", "");
+	  
+	  var obj = {}, bce, arr = [],
+		    str = jQuery.trim(datestr);
+		    str = str.replace(",", "");
 		// is a BC date
-		var bce;
+	
 		str.substr(0,1) == "-" ? bce=1 : bce=0;
+		
+		// strip off leading "-" to normalize array
 		bce == 1 ? str = str.substr(1) : str=str;
-		
+		// remove anything not a number like "bce", etc
 		str = str.replace(/[^0-9]/g, "-");
-		var arr = str.split("-");
 		
-		var obj = {ye:this.boil(arr[0]), mo:this.boil(arr[1]), da:this.boil(arr[2]),  ho:this.boil(arr[3]), mi:this.boil(arr[4]), se:this.boil(arr[5]), bce:bce}
+		arr = str.split("-");
+		
+		obj.ye = this.boil(arr[0]),
+		obj.mo = this.boil(arr[1]),
+		obj.da = this.boil(arr[2]),
+		obj.ho = this.boil(arr[3]),
+		obj.mi = this.boil(arr[4]),
+		// .se second is the clock second -- 0-60
+		obj.se = this.boil(arr[5]),
+		obj.bce = bce;
+		// rd : serial day from year zero
 		obj.rd  = this.getRataDie(obj);
+		// .sec second is the serial second from year 0!
 		obj.sec = this.getSec(obj);
+		// for date formatting, it's easier to use native object
+		debug.log("makeDate -- js:" + obj.ye + "-" + obj.mo + "-" + obj.da + " " + obj.ho + ":" + obj.mi + ":" + obj.se);
+		obj.js_date = new Date(obj.ye, obj.mo -1, obj.da, obj.ho -1, obj.mi -1, obj.se-1, 0);
 		
 		return obj;
 	},
@@ -168,6 +185,7 @@ timeglider.TGDate = {
 		return fd.ye + "-" + fd.mo + "-" + fd.da + " " + fd.ho + ":" + fd.mi + ":00";
 	},
 	
+	// CHG:: INTERNAL
 	getSec : function (fd) {
 		// 
 		var daSec = Math.abs(fd.rd) * 86400;
@@ -178,7 +196,7 @@ timeglider.TGDate = {
 		return bc * (daSec + hoSec + miSec);
 	},
 
-
+  
 	twentyFourToTwelve : function (e) {
 		
 		var dob = {};
@@ -222,7 +240,9 @@ timeglider.TGDate = {
 		}
 	},
 	
-	
+	/*
+	* RELATES TO TICK WIDTH: SPECIFIC TO TIMELINE VIEW
+	*/
 	getMonthAdj : function (serial, tw) {
 		var d = this.getDateFromMonthNum(serial);
 		var w;
@@ -313,7 +333,9 @@ timeglider.TGDate = {
   *
   * @param mo {number} month i.e. 1 = January, 12 = December
   * @param ye {number} year
-  */
+  *
+	* RELATES TO TICK WIDTH: SPECIFIC TO TIMELINE VIEW
+	*/
 	getMonthWidth : function(mo,ye,tickWidth) {
 
 		var dayWidth = t / 28;
@@ -452,7 +474,9 @@ timeglider.TGDate = {
 	},
 
 
-
+  /*
+  * Helps calculate the position of a modulo remainder in getRataDie()
+  */
 	getMonthFromRemDays : function(dnum, yr) {
 
 	var tack = 0;
@@ -483,7 +507,7 @@ timeglider.TGDate = {
 	/*
 	*  a = initial year in span
 	*  z = last year in span
-	## used in getRataDie to calculate chunks of whole years
+	## used in getRataDie() to calculate chunks of whole years
 	*/
 	getDaysInYearSpan: function (a, z) {
 	
@@ -496,6 +520,7 @@ timeglider.TGDate = {
 		return t;
 
 	},
+	
 	
 	getDaysSoFar: function(mo,ye) {
 		var moDays;
@@ -523,13 +548,11 @@ timeglider.TGDate = {
 	/* Returns a YYYY-MM-DD HH:MM:SS string */
 	getToday : function () { 
       var d = new Date(); 
-      var df = jQuery.format(d, "S"); 
-      df = df.replace("T", " ");
-      return df;
+      return d.getFullYear() + "-" + d.getMonth() + "-" + d.getDate() + " " + d.getHours() + ":" + d.getMinutes() + ":00";
   }
 	
 	
-} // end prototype obj
+}
 
 
 
