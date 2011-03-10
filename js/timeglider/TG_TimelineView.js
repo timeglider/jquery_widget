@@ -1408,7 +1408,7 @@ tg.TimegliderTimelineView.prototype = {
   			  title:ev.title,
   			  description:ev_img + ev.description,
   			  id:eid,
-  			  startdate: me.tg_format(ev.startdate),
+  			  startdate: me.tg_format(ev.startdateObj),
   			  link: ev.link,
   			  video: ev.video
   		}
