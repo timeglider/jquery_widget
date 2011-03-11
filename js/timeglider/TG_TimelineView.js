@@ -322,13 +322,13 @@ timeglider.TimegliderTimelineView
 		.delegate(".timeglider-timeline-event", "mouseover", function () { 
 			var eid = $(this).attr("id"); 
 			var ev = MED.eventPool[eid];
-			/// debug.trace("hover, title:" + title, "note"); 
+			debug.trace("hover, title:" + ev.title, "note"); 
 			me.eventHover($(this), ev)
 		})
 		.delegate(".timeglider-timeline-event", "mouseout", function () { 
 			var eid = $(this).attr("id"); 
 			var ev = MED.eventPool[eid];
-			/// debug.trace("hover, title:" + title, "note"); 
+			debug.trace("hover, title:" + ev.title, "note"); 
 			me.eventUnHover($(this), ev)
 		})
 		
@@ -564,11 +564,13 @@ tg.TimegliderTimelineView.prototype = {
 			startSec --> the seconds-value of the
 	    initial focus date on landing @ zoom level
 		*/
-		
+		// TODO: See if we can throttle this to be only
+		// once every 100ms....
 		var startSec = MED.startSec,
 		  tickPos = $(this._views.TICKS).position().left,
 		  secPerPx = MED.getZoomInfo().spp,
 		  newSec = startSec - (tickPos * secPerPx),
+		  // alternate newDate, from seconds?
 		  newD = TGDate.getDateFromSec(newSec);
 		
 		debug.trace("ticks x:" + tickPos, "tickpos");

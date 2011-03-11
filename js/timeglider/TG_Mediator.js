@@ -65,8 +65,9 @@ reflects state back to view
 
 tg.TimegliderMediator.prototype = {
   
-    /* PUBLIC METHODS MEDIATED BY $.widget STOREFRONT */
+    /* PUBLIC METHODS MEDIATED BY $.widget front */
     gotoDate : function (fdStr) {
+      // fdStr => ISO-8601 basic
       var fd = TGDate.makeDateObject(fdStr);
       this.setFocusDate(fd);
       // setting date doesn't by itself refresh: do it "manually"
@@ -209,6 +210,7 @@ tg.TimegliderMediator.prototype = {
         if (fd != this._focusDate && "valid" === "valid") {
           // "fillout" function which redefines fd ?
           fd.mo_num = TGDate.getMonthNum(fd); 
+          // we need rataDie to do getSec
           fd.rd = TGDate.getRataDie(fd);      
           fd.sec = TGDate.getSec(fd);
 
@@ -333,6 +335,9 @@ tg.TimegliderMediator.prototype = {
             // not active ---- bring it on
             this.activeTimelines.push(id);
             // setting FD does NOT refresh
+            
+            // timeline focus_date is ISO-8601 basic
+            // ==== new TGDate()
             this.setFocusDate(TGDate.makeDateObject(lt.focus_date));
             // resetting zoomLevel DOES refresh
             this.setZoomLevel(lt.initial_zoom);
