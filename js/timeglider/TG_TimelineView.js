@@ -195,7 +195,6 @@ timeglider.TimegliderTimelineView
 	$.subscribe("mediator.refreshSignal", function () {
 		me.castTicks("refreshSignal");
 	});
-	
 
 
 	// adding to or removing from ticksArray
@@ -230,15 +229,12 @@ timeglider.TimegliderTimelineView
 					$(this).removeClass("activeTimeline");	
 				}	
         }); // end each	
-        
 	});
 	
 	
   $.subscribe("mediator.filterObjectChange", function () {
     // refresh is done inside MED -- no need to refresh here
 	});
-	
-
   /* END PUB-SUB SUBSCRIBERS */
 
 
@@ -264,10 +260,13 @@ timeglider.TimegliderTimelineView
 				  //	var Cy = e.pageY - $(PLACEMENT).offset().top;
 			    fdSec = MED.getFocusDate().sec,
 				  dcSec = Math.floor(fdSec + (offMid * secPerPx)),
-				  clk = TGDate.getDateFromSec(dcSec),
-				  foc = TGDate.getDateFromSec(fdSec);
+				  
+				  clk = new TGDate(dcSec),
+				  foc = new TGDate(fdSec);
+				  
 				
-				debug.trace("DBLCLICK:" + foc.mo + "-" + foc.ye + " dblclick:" + clk.mo + "-" + clk.ye, "note");	
+				debug.trace("DBLCLICK:" + foc.mo + "-" + foc.ye + " DBLCLICK:" + clk.mo + "-" + clk.ye, "note");	
+				
 		})			
 		.bind('mousewheel', function(event, delta) {
 						
@@ -277,6 +276,7 @@ timeglider.TimegliderTimelineView
 			      return false;
 			            
 		}); // end TRUCK EVENTS
+
 
 
 	
@@ -455,7 +455,7 @@ tg.TimegliderTimelineView.prototype = {
 	},
 	
 	displayZoomLevel : function(zl) {
-	  debug.log("displayZoomLevel zl:" + zl);
+
 	  if (zl > 0) {
 	  var me=this;
 	  if (options.display_zoom_level == true) {
@@ -569,14 +569,16 @@ tg.TimegliderTimelineView.prototype = {
 		var startSec = MED.startSec,
 		  tickPos = $(this._views.TICKS).position().left,
 		  secPerPx = MED.getZoomInfo().spp,
-		  newSec = startSec - (tickPos * secPerPx),
+		  newSec = startSec - (tickPos * secPerPx);
 		  // alternate newDate, from seconds?
-		  newD = TGDate.getDateFromSec(newSec);
+		 
+		  //OO CIRCULAR!! Too much getRataDie, etc...
+		  //XX newD = TGDate.getDateFromSec(newSec);
+		  var newD = new TGDate(newSec);
+		  // debug.trace("ticks x:" + tickPos, "tickpos");
+		  // debug.trace("FD: " + TGDate.formatFocusDate(newD), "focusdate");
 		
-		debug.trace("ticks x:" + tickPos, "tickpos");
-		debug.trace("FD: " + TGDate.formatFocusDate(newD), "focusdate");
-		
-		MED.setFocusDate(newD);
+		  MED.setFocusDate(newD);
 	},
 	
   
@@ -609,7 +611,6 @@ tg.TimegliderTimelineView.prototype = {
 		if (options.min_zoom == options.max_zoom) {
 		  // With a single zoom level, hide the zoom controller
   	  $(this._views.SLIDER_CONTAINER).css("display", "none");
-  	  debug.log("buildSlider");
   	  
     } else {
       
@@ -670,7 +671,7 @@ tg.TimegliderTimelineView.prototype = {
 	*/
 	
 	eventHover : function ($ev, ev_obj) {
-    // debug.log("HOVER:" + ev_obj.title);
+
     var me = this, 
         $hov = $(".timeglider-event-hover-info");
     
@@ -680,7 +681,7 @@ tg.TimegliderTimelineView.prototype = {
 	    at: "left top",
 	    of: $ev,
 	    offset: "1, -10",
-	    collision: "flip flip"}).text(me.tg_format(ev_obj.startdateObj));
+	    collision: "flip flip"}).text(ev_obj.startdateObj.format("YYYY-MM-DD"));
 	  	   
 	  $ev.addClass("tg-event-hovered");
 	   
@@ -778,7 +779,7 @@ tg.TimegliderTimelineView.prototype = {
 		this.clearTicks();
 	
 		MED.setTicksReady(false);
-
+    
 		// INITIAL TICK added  in center according to focus date provided
 		this.addTick({"type":"init", "focus_date":fDate});
 	
@@ -826,6 +827,7 @@ tg.TimegliderTimelineView.prototype = {
 			
 		  shiftLeft = this.tickOffsetFromDate(MED.getZoomInfo(), MED.getFocusDate(), tickWidth);
 			pos = Math.ceil(this.dimensions.container.centerx + shiftLeft);
+						
 			this.leftside = pos;
 			this.rightside = (pos + tickWidth);
 			
@@ -955,8 +957,9 @@ tg.TimegliderTimelineView.prototype = {
 				i = TGDate.getDateFromMonthNum(obj.serial);
 				return TGDate.monthNamesFull[i.mo] + ", " + i.ye; 
 			case "da": 
-				i = TGDate.getDateFromRD(obj.serial);
-				return TGDate.monthNamesAbbr[i.mo] + " " + i.da + ", " + i.ye;
+			  // COSTLY: test performance here on dragging
+				i = new TGDate(TGDate.getDateFromRD(obj.serial));
+				return i.mo + " " + i.da + ", " + i.ye;
 		
 			default: return obj.unit + ":" + obj.serial + ":" + obj.width;
 		}
@@ -983,7 +986,7 @@ tg.TimegliderTimelineView.prototype = {
 
 	/* tickUnit, fd */
 	tickOffsetFromDate : function (zoominfo, fdate, tickwidth) {
-		
+				
 		// switch unit, calculate width gain or loss.... or just loss!
 		var w = tickwidth,
 		    u = zoominfo.unit, p, prop;
@@ -1049,7 +1052,6 @@ tg.TimegliderTimelineView.prototype = {
 	
 	
   resetTicksHandle : function () {
-    debug.log("resetTicksHandle");
 		$(this._views.HANDLE).offset({"left":$(this._views.CONTAINER).offset().left});
 	},
 	
@@ -1410,7 +1412,7 @@ tg.TimegliderTimelineView.prototype = {
   			  title:ev.title,
   			  description:ev_img + ev.description,
   			  id:eid,
-  			  startdate: me.tg_format(ev.startdateObj),
+  			  startdate: ev.startdateObj.format(),
   			  link: ev.link,
   			  video: ev.video
   		}

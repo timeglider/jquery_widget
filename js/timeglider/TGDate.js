@@ -25,20 +25,25 @@ var timeglider = window.timeglider = {version:"0.1.0"};
 (function(tg){
 
 
-tg.TGDate = function (iso8601String) {
-
+tg.TGDate = function (strOrNum) {
+    
+    var dateStr, isoStr, gotSec;
+    
+    // Morton, we've got seconds coming in!
+    if (typeof(strOrNum) == "number") {
+        dateStr = isoStr = TGDate.getDateFromSec(strOrNum);
+        gotSec = strOrNum;
+    } else {
+        dateStr = isoStr = strOrNum;
+    }
   
-	  var dateStr = iso8601String, isoStr = dateStr;
-	
 	  if (isValidDateString(dateStr) === "shit") {
-	    return false;
-	    
-	  /// it's valid
+	    return {error:"Invalid date"};
+	    /// it's valid
     } else {
 	    	    
     		dateStr = dateStr.replace(",", "");
-    		
-
+  
     		if (dateStr.substr(0,1) == "-") {
     		  this.bce=1;
     		  dateStr = dateStr.substr(1);
@@ -54,6 +59,7 @@ tg.TGDate = function (iso8601String) {
 
     		this.ye = boil(arr[0]);
     		this.mo = boil(arr[1]);
+    		this.mo_num = getMoNum(this.mo, this.ye);
     		this.da = boil(arr[2]);
     		this.ho = boil(arr[3]);
     		this.mi = boil(arr[4]);
@@ -62,93 +68,126 @@ tg.TGDate = function (iso8601String) {
     		// rd : serial day from year zero
     		this.rd  = TGDate.getRataDie(this);
     		// .sec second is the serial second from year 0!
-    		this.sec = getSec(this);
+    		this.sec = gotSec || getSec(this);
+    		
     		this.dateStr = isoStr;
 
 		} 
 		
-		
+		/// INTERNAL FUNCTIONS
 
-	function isValidDateString(str) {
-	  // VALIDATE STRING
-	  var aStr = jQuery.trim(str);
-		reg = new RegExp(/[0-9-: ]/);
-		if (reg.test(aStr)) {
-		  return aStr;
-	  } else {
-	    return "shit";
-    }
-  };
+	    function isValidDateString(str) {
+    	  // VALIDATE STRING
+    	  var aStr = jQuery.trim(str);
+    		reg = new RegExp(/[0-9-: ]/);
+    		if (reg.test(aStr)) {
+    		  return aStr;
+    	  } else {
+    	    return "shit";
+        }
+      };
   
   
-	/*
-	* isValidDate
-	* Rejects dates like "2001-13-32" and such
-	* TODO: make sure no non leap years have Feb 29
-	*
-	*/
-	function isValidDate (ye, mo, da) {
+    	/*
+    	* isValidDate
+    	* Rejects dates like "2001-13-32" and such
+    	* TODO: make sure no non leap years have Feb 29
+    	*
+    	*/
+    	function isValidDate (ye, mo, da) {
 	  
-		var ld = this.getMonthDays(mo, ye);
-		// day isn't appropriate for month
-		if ((da > ld) || (da <= 0)) { return false; } 
-		// invalid month numbers
-		if ((mo > 12) || (mo < 0)) { return false; }
-		// there's no year "0"
-		if (ye == 0) { return false; }
-	  // Is it a hex number? We need to make sure it's only got 0-9
-		if ((typeof ye != "number") || (String(ye).match(/([0-9]+)/) == false)) { return false; }
+    		var ld = TGDate.getMonthDays(mo, ye);
+    		// day isn't appropriate for month
+    		if ((da > ld) || (da <= 0)) { return false; } 
+    		// invalid month numbers
+    		if ((mo > 12) || (mo < 0)) { return false; }
+    		// there's no year "0"
+    		if (ye == 0) { return false; }
+    	  // Is it a hex number? We need to make sure it's only got 0-9
+    		if ((typeof ye != "number") || (String(ye).match(/([0-9]+)/) == false)) { return false; }
 	
-		return true;
-	};
+    		return true;
+    	};
 	
-  /*
-  * boil
-  * basic wrapper for parseInt to clean leading zeros,
-  * as in dates
-  */
-	function boil (n) {
-		return parseInt(n, 10);
-	};
+      /*
+      * boil
+      * basic wrapper for parseInt to clean leading zeros,
+      * as in dates
+      */
+    	function boil (n) {
+    		return parseInt(n, 10);
+    	};
 
 
-	function getSec (fd) {
-		// 
-		var daSec = Math.abs(fd.rd) * 86400;
-		var hoSec = (fd.ho) * 3600;
-		var miSec = (fd.mi - 1) * 60;
-		var bc = 1;
-		if (fd.rd < 0) bc = -1;
-		return bc * (daSec + hoSec + miSec);
-	};
+    	function getSec (fd) {
+    		// 
+    		var daSec = Math.abs(fd.rd) * 86400;
+    		var hoSec = (fd.ho) * 3600;
+    		var miSec = (fd.mi - 1) * 60;
+    		var bc = 1;
+    		if (fd.rd < 0) bc = -1;
+    		return bc * (daSec + hoSec + miSec);
+    	};
 
+
+  
+      /* getMoNum
+      *
+      * @param mo {Number} month from 1 to 12
+      * @param ye {Number} straight year
+      *
+      */ 
+      function getMoNum (mo, ye) {
+      	    if (ye > 0) {
+      			return  ((ye -1) * 12) + mo;
+      		} else {
+      			return getMoNumBC(mo, ye);
+      		}
+      };
+  
+  
+  
+      /*
+      * getMoNumBC
+      * In BC time, serial numbers for months are going backward
+      * starting with December of 1 bce. So, a month that is actually
+      * "month 12 of year -1" is actually just -1, and November of 
+      * year 1 bce is -2. Capiche!?
+      *
+      * @param {object} ob ---> .ye (year)  .mo (month)
+      * @return {number} serial month number (negative in this case)
+      */
+      function getMoNumBC (mo, ye) {
+      	var absYe = Math.abs(ye);
+      	var n = ((absYe - 1) * 12) + (12-(mo -1));
+      	return -1 * n;
+      };
 
 } // end TGDate Function
+
 
 
 var TGDate = tg.TGDate;
 
 
-// JUST A STAND-IN FOR GENERAL FORMAT FUNCTION
-TGDate.formatFocusDate = function (fd) {
-	return fd.ye + "-" + fd.mo + "-" + fd.da + " " + fd.ho + ":" + fd.mi + ":00";
-};
 
 
 /*
-* getTimeUnitSerial
-* gets the serial number of specified time unit, using a ye-mo-da date object
+*  getTimeUnitSerial
+*  gets the serial number of specified time unit, using a ye-mo-da date object
+*  used in addToTicksArray() in Mediator
 *
-* @param fd {object} i.e. the focus date: {ye:1968, mo:8, da:20}
-* @param unit {string} scale-unit (da, mo, ye, etc)
+*  @param fd {object} i.e. the focus date: {ye:1968, mo:8, da:20}
+*  @param unit {string} scale-unit (da, mo, ye, etc)
 *
-* @return {number} a non-zero serial for the specified time unit
+*  @return {number} a non-zero serial for the specified time unit
 */
 TGDate.getTimeUnitSerial = function (fd, unit) {
 		switch (unit) {
 			case "ye": return fd.ye; break;
-			case "mo": return TGDate.getMonthNum(fd); break;
-			case "da": return TGDate.getRataDie(fd);
+			// set up mo_num inside TGDate constructor
+			case "mo": return fd.mo_num; break;
+			case "da": return fd.rd;
 			case "de": return Math.ceil(fd.ye / 10); break;
 			case "ce": return Math.ceil(fd.ye / 100); break;
 			case "thou": return Math.ceil(fd.ye / 1000); break;
@@ -208,16 +247,6 @@ TGDate.twentyFourToTwelve = function (e) {
 
 
 	
-/* @param ob -->  .ye  and  .mo */
-TGDate.getMonthNum = function (ob) {
-	    if (ob.ye > 0) {
-			return  ((ob.ye -1) * 12) + ob.mo;
-		} else {
-			return TGDate.getBCMonthNum(ob);
-		}
-};
-	
-	
 
 
 	
@@ -259,24 +288,6 @@ TGDate.getMonthAdj = function (serial, tw) {
 
 
 
-
-/*
-* getBCMonthNum
-* In BC time, serial numbers for months are going backward
-* starting with December of 1 bce. So, a month that is actually
-* "month 12 of year -1" is actually just -1, and November of 
-* year 1 bce is -2. Capiche!?
-*
-* @param {object} ob ---> .ye (year)  .mo (month)
-* @return {number} serial month number (negative in this case)
-*/
-TGDate.getBCMonthNum = function(ob) {
-	var ye = ob.ye;
-	var mo = ob.mo;
-	var absYe = Math.abs(ye);
-	var n = ((absYe - 1) * 12) + (12-(mo -1));
-	return -1 * n;
-},
 
 
 
@@ -431,7 +442,9 @@ TGDate.getDateFromRD = function (snum) {
 		inf['da'] += 1;
 	}
 
-	return {ye:yt, mo:inf['mo'], da:inf['da'], ho:ho, mi:mi};
+	return yt + "-" + inf['mo'] + "-" + inf['da'] + " " + ho + ":" + ":" + mi + ":00";
+	
+	// {ye:yt, mo:inf['mo'], da:inf['da'], ho:ho, mi:mi};
 	
 }, // end getDateFromRD
 
@@ -585,6 +598,29 @@ TGDate.dayNamesLet = ["S", "M", "T", "W", "T", "F", "S"];
 TGDate.units = ["da", "mo", "ye", "de", "ce", "thou", "tenthou", "hundredthou", "mill", "tenmill", "hundredmill", "bill"];
 
 
+
+TGDate.prototype = {
+    
+    formatFocusDate : function () {
+  	  return this.ye + "-" + this.mo + "-" + this.da + " " + this.ho + ":" + this.mi + ":00";
+    },
+    
+    
+    format : function (sig) {
+      // get universal formats from jquery.glob
+      var ret = "";
+      switch(sig) {
+        case "YYYY-MM-DD": ret = this.ye + "-" + this.mo + "-" + this.da; break;
+        case "YYYY": ret = this.ye; break;
+        default: ret = this.ye + "-" + this.mo + "-" + this.da + " " + this.ho + ":" + this.mi + ":00";
+      }
+      
+      return ret;
+      
+    }
+  
+  
+}
 })(timeglider);
 
 

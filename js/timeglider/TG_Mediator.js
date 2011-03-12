@@ -17,7 +17,6 @@ reflects state back to view
 (function(tg){
   
   
-  
   var MED = {};
   var TGDate = tg.TGDate;
   var options = {};
@@ -67,17 +66,18 @@ tg.TimegliderMediator.prototype = {
   
     /* PUBLIC METHODS MEDIATED BY $.widget front */
     gotoDate : function (fdStr) {
-      // fdStr => ISO-8601 basic
-      var fd = TGDate.makeDateObject(fdStr);
-      this.setFocusDate(fd);
+      
+      //XX var fd = TGDate.makeDateObject(fdStr);
+      this.setFocusDate(new TGDate(fdStr));
       // setting date doesn't by itself refresh: do it "manually"
       this.refresh();  
       return true;   
     },
 
     gotoDateZoom : function (fdStr, zoom) {
-        var fd = TGDate.makeDateObject(fdStr);
-        this.setFocusDate(fd);
+        
+        //XX var fd = TGDate.makeDateObject(fdStr);
+        this.setFocusDate(new TGDate(fdStr));
         // setting zoom _does_ refresh automatically
         this.setZoomLevel(zoom);  
         return true; 
@@ -98,42 +98,49 @@ tg.TimegliderMediator.prototype = {
   loadTimelineData : function (src) {
     var M = this; // model ref
     // Allow to pass in either the url for the data or the data itself.
-    if (typeof src === "object") {
-      // local/pre-loaded JSON
-      M.parseData(src);
-    } else {
- 
-    /*
-    This isn't working in jQuery 1.5 for some reason... 
-    seems fixed in 1.5.1+
-    */
-
-        $.getJSON(src, function (data) {
-              M.parseData(data);
-           }
-        );
-
-
-         //  When we're well beyond 1.5, this can be implemented
-         //  as there are still JSON bugs in 1.5.0
-         /*
-          var $aJax = $.ajax({ dataType:"json", url:src });
-
-          $aJax.then(
-            // success
-            function (data) {
-              debug.log("2nd success call");
-              M.parseData(data);
-            },
-            // failure
-            function (e) {
-              debug.log("ERROR LOADING JSON");
-            }
     
-          );
+    if (src) {
+      
+        if (typeof src === "object") {
+          // local/pre-loaded JSON
+          M.parseData(src);
+        } else {
+ 
+        /*
+        This isn't working in jQuery 1.5 for some reason... 
+        seems fixed in 1.5.1+
         */
 
-    }// end if/else for local vs url
+            $.getJSON(src, function (data) {
+                  M.parseData(data);
+               }
+            );
+
+
+             //  When we're well beyond 1.5, this can be implemented
+             //  as there are still JSON bugs in 1.5.0
+             /*
+              var $aJax = $.ajax({ dataType:"json", url:src });
+
+              $aJax.then(
+                // success
+                function (data) {
+                  M.parseData(data);
+                },
+                // failure
+                function (e) {
+                  debug.log("ERROR LOADING JSON");
+                }
+    
+              );
+            */
+
+        }// end if/else for local vs url
+    
+    } else {
+      $.publish("mediator.refreshSignal");
+    }
+    
   },
  
   /*
@@ -175,7 +182,8 @@ tg.TimegliderMediator.prototype = {
     ///  end of methods that need to go into (backbone) data model
     ///////////////////////////
 
-    /* TODO: turn to $each, adding to activeTimelines:
+    /* 
+    TODO: turn to $each, adding to activeTimelines:
     i.e. could be more than one 
     */
     setInitialTimelines : function () {
@@ -188,40 +196,40 @@ tg.TimegliderMediator.prototype = {
         }
       },
 
-      refresh : function () {
+     refresh : function () {
         $.publish("mediator.refreshSignal");
-      },
+    },
 
       // !!!TODO ---- get these back to normal setTicksReady, etc.
-      setTicksReady : function (bool) {
+    setTicksReady : function (bool) {
         this.ticksReady = bool;
         
         if (bool === true) { 
           $.publish("mediator.ticksReadySignal");
           }
-      },
+    },
 
-      getFocusDate : function () {
+    getFocusDate : function () {
         return this._focusDate;
-      },
+    },
       
-      setFocusDate : function (fd) {
+    /*
+    *  setFocusDate
+    *  @param fd [TGDate instance]
+    *      
+    */
+    setFocusDate : function (fd) {
         // !TODO :: VALIDATE FOCUS DATE
-        if (fd != this._focusDate && "valid" === "valid") {
-          // "fillout" function which redefines fd ?
-          fd.mo_num = TGDate.getMonthNum(fd); 
-          // we need rataDie to do getSec
-          fd.rd = TGDate.getRataDie(fd);      
-          fd.sec = TGDate.getSec(fd);
-
+         
+        if (fd != this._focusDate) {
           this._focusDate = fd; 
         }
-      },
+    },
     
     
-      getZoomLevel : function () {
+    getZoomLevel : function () {
         return Number(this._zoomLevel);
-      },
+    },
 
 
       /* 
@@ -232,12 +240,12 @@ tg.TimegliderMediator.prototype = {
       *  
       */
       setZoomLevel : function (z) {
-   
+           
         if (z <= this.max_zoom && z >= this.min_zoom) {
        
           // focusdate has to come first for combined zoom+focusdate switch
           this.startSec = this._focusDate.sec;
-
+          
           if (z != this._zoomLevel) {
             this._zoomLevel = z;
             this._zoomInfo = timeglider.zoomTree[z];
@@ -338,7 +346,10 @@ tg.TimegliderMediator.prototype = {
             
             // timeline focus_date is ISO-8601 basic
             // ==== new TGDate()
-            this.setFocusDate(TGDate.makeDateObject(lt.focus_date));
+            var tl_fd = new TGDate(lt.focus_date);
+            
+            this.setFocusDate(tl_fd);
+           
             // resetting zoomLevel DOES refresh
             this.setZoomLevel(lt.initial_zoom);
             

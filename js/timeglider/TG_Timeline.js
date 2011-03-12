@@ -61,18 +61,18 @@
         //  objects will include seconds, rata die
         //  done coupled so end can validate off start
         
-        var startEnd = TGDate.validateEventDates(ev.startdate,ev.enddate);
+        //XX var startEnd = TGDate.validateEventDates(ev.startdate,ev.enddate);
 
         // This ought to be separated into two
 
-        //     ev.startdateObj = new TGDate(ev.startdate);
-        //     ev.enddateObj = new TGDate(ev.enddate);
-        //     if (validate(ev.startdateObj, ev.enddateObj) != "") {
+        ev.startdateObj = new TGDate(ev.startdate);
+        ev.enddateObj = new TGDate(ev.enddate);
+       
+        // CHECK VALIDITY OF EACH DATE & MAKE SURE end > start
+        //if (TGDate.isValidDate(ev.startdateObj) != "") {
         //         THROW ERROR, BREAK
-        //      }
-        
-        ev.startdateObj = startEnd.startobj; // TGDate.makeDateObject(ev.startdate);
-        ev.enddateObj = startEnd.endobj; // TGDate.makeDateObject(ev.enddate);
+        //}
+
         
         // default icon
         if (!ev.icon || ev.icon === "none") {
