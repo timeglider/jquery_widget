@@ -10,7 +10,7 @@
 */
 /*
 ****************************************
-timeglider.TimegliderTimelineView
+timeglider.TimelineView
 ****************************************
 */
 (function(tg){
