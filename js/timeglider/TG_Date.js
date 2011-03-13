@@ -39,6 +39,7 @@ var timeglider = window.timeglider = {version:"0.1.0"};
       // Morton, we've got seconds coming in!
       if (typeof(strOrNum) == "number") {
           dateStr = isoStr = TG_Date.getDateFromSec(strOrNum);
+          debug.log("from sec dateStr:" + dateStr);
           gotSec = strOrNum;
       } else {
           dateStr = isoStr = strOrNum;
@@ -437,7 +438,7 @@ var timeglider = window.timeglider = {version:"0.1.0"};
   		inf['da'] += 1;
   	}
 
-  	var ret = yt + "-" + inf['mo'] + "-" + inf['da'] + " " + ho + ":" + ":" + mi + ":00";
+  	var ret = yt + "-" + inf['mo'] + "-" + inf['da'] + " " + ho + ":" + mi + ":00";
 	  getDateFromRDCache[snum] = ret;
 	  
 	  return ret;
