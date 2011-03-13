@@ -26,7 +26,10 @@
    *
    */
    
-    var timelineView, timelineMediator, tg = timeglider;
+    var timelineView, 
+        timelineMediator, 
+        tg = timeglider, 
+        TG_Date = timeglider.TG_Date;
    
     $.widget( "timeglider.timeline", {
       
@@ -35,7 +38,7 @@
       
       // defaults!
       options : { 
-        initial_focus:tg.TGDate.getToday(), 
+        initial_focus:tg.TG_Date.getToday(), 
         editor:'none', 
         min_zoom : 1, 
         max_zoom : 100, 
@@ -112,11 +115,11 @@
 	    
 	      if (optionsCheck == "") {
 	      
-          timelineMediator = new tg.TimegliderMediator(this.options);
-          timelineView = new tg.TimegliderTimelineView(this, timelineMediator);
+          timelineMediator = new tg.TG_Mediator(this.options);
+          timelineView = new tg.TG_TimelineView(this, timelineMediator);
 
           // after timelineView is created this stuff can be done
-          timelineMediator.setFocusDate(new tg.TGDate(this.options.initial_focus));
+          timelineMediator.setFocusDate(new TG_Date(this.options.initial_focus));
           timelineMediator.loadTimelineData(this.options.data_source);
         
         } else {

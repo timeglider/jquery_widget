@@ -18,17 +18,17 @@ reflects state back to view
   
   
   var MED = {};
-  var TGDate = tg.TGDate;
+  var TG_Date = tg.TG_Date;
   var options = {};
   var $ = jQuery;
 
   /* In progress... */
   tg.TimelineCollection = Backbone.Collection.extend({
-    model: timeglider.Timeline
+    model: timeglider.TG_Timeline
   });
   
 
-  tg.TimegliderMediator = function (wopts) {
+  tg.TG_Mediator = function (wopts) {
   
     this.options = options = wopts;
     
@@ -62,13 +62,13 @@ reflects state back to view
     } // end mediator head
     
 
-tg.TimegliderMediator.prototype = {
+tg.TG_Mediator.prototype = {
   
     /* PUBLIC METHODS MEDIATED BY $.widget front */
     gotoDate : function (fdStr) {
       
-      //XX var fd = TGDate.makeDateObject(fdStr);
-      this.setFocusDate(new TGDate(fdStr));
+      //XX var fd = TG_Date.makeDateObject(fdStr);
+      this.setFocusDate(new TG_Date(fdStr));
       // setting date doesn't by itself refresh: do it "manually"
       this.refresh();  
       return true;   
@@ -76,8 +76,8 @@ tg.TimegliderMediator.prototype = {
 
     gotoDateZoom : function (fdStr, zoom) {
         
-        //XX var fd = TGDate.makeDateObject(fdStr);
-        this.setFocusDate(new TGDate(fdStr));
+        //XX var fd = TG_Date.makeDateObject(fdStr);
+        this.setFocusDate(new TG_Date(fdStr));
         // setting zoom _does_ refresh automatically
         this.setZoomLevel(zoom);  
         return true; 
@@ -156,7 +156,7 @@ tg.TimegliderMediator.prototype = {
     for (var i=0; i<dl;i++) {
       ondeck = data[i];
       ondeck.mediator = M;
-      ti = new timeglider.Timeline(ondeck).toJSON(); // the timeline
+      ti = new timeglider.TG_Timeline(ondeck).toJSON(); // the timeline
     
     if (ti.id.length > 0) {ct++;}// at least one timeline was loaded
       // put the Model into a "collection"
@@ -215,7 +215,7 @@ tg.TimegliderMediator.prototype = {
       
     /*
     *  setFocusDate
-    *  @param fd [TGDate instance]
+    *  @param fd [TG_Date instance]
     *      
     */
     setFocusDate : function (fd) {
@@ -313,7 +313,7 @@ tg.TimegliderMediator.prototype = {
 
           if (obj.type == "init") {
             // CENTER
-            obj.serial = TGDate.getTimeUnitSerial(focusDate, obj.unit);
+            obj.serial = TG_Date.getTimeUnitSerial(focusDate, obj.unit);
             this.ticksArray = [obj];
           } else if (obj.type == "l") {
             // LEFT
@@ -345,8 +345,8 @@ tg.TimegliderMediator.prototype = {
             // setting FD does NOT refresh
             
             // timeline focus_date is ISO-8601 basic
-            // ==== new TGDate()
-            var tl_fd = new TGDate(lt.focus_date);
+            // ==== new TG_Date()
+            var tl_fd = new TG_Date(lt.focus_date);
             
             this.setFocusDate(tl_fd);
            

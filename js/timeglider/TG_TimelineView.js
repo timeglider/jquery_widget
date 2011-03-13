@@ -17,7 +17,7 @@ timeglider.TimelineView
 
  // MED below is a reference to the mediator reference
  // that will be passed into the main Constructor below
-  var TGDate = tg.TGDate, 
+  var TG_Date = tg.TG_Date, 
       PL = "", MED = "", options = {}, $ = jQuery, intervals ={}, WIDGET_ID = "";
 
   // adding a screen display for anything needed
@@ -27,11 +27,11 @@ timeglider.TimelineView
 
 
   /*
-  *  timeglider.TimegliderTimelineView
+  *  timeglider.TG_TimelineView
   *  
   *
   */
-  tg.TimegliderTimelineView = function (widget, mediator) {
+  tg.TG_TimelineView = function (widget, mediator) {
     
       // vars declared in closure above
 	    MED = mediator;
@@ -261,8 +261,8 @@ timeglider.TimelineView
 			    fdSec = MED.getFocusDate().sec,
 				  dcSec = Math.floor(fdSec + (offMid * secPerPx)),
 				  
-				  clk = new TGDate(dcSec),
-				  foc = new TGDate(fdSec);
+				  clk = new TG_Date(dcSec),
+				  foc = new TG_Date(fdSec);
 				  
 				
 				debug.trace("DBLCLICK:" + foc.mo + "-" + foc.ye + " DBLCLICK:" + clk.mo + "-" + clk.ye, "note");	
@@ -427,7 +427,7 @@ timeglider.TimelineView
 } 
 
 
-tg.TimegliderTimelineView.prototype = {
+tg.TG_TimelineView.prototype = {
 	
 	getWidgetDimensions : function () {
 			
@@ -573,10 +573,10 @@ tg.TimegliderTimelineView.prototype = {
 		  // alternate newDate, from seconds?
 		 
 		  //OO CIRCULAR!! Too much getRataDie, etc...
-		  //XX newD = TGDate.getDateFromSec(newSec);
-		  var newD = new TGDate(newSec);
+		  //XX newD = TG_Date.getDateFromSec(newSec);
+		  var newD = new TG_Date(newSec);
 		  // debug.trace("ticks x:" + tickPos, "tickpos");
-		  // debug.trace("FD: " + TGDate.formatFocusDate(newD), "focusdate");
+		  // debug.trace("FD: " + TG_Date.formatFocusDate(newD), "focusdate");
 		
 		  MED.setFocusDate(newD);
 	},
@@ -816,7 +816,7 @@ tg.TimegliderTimelineView.prototype = {
 		if (tickUnit == "mo") {
 			
 			// standard: 28 days, how many px, days to add?
-			mInfo = TGDate.getMonthAdj(serial, tickWidth);
+			mInfo = TG_Date.getMonthAdj(serial, tickWidth);
 			tickWidth = mInfo.width;
 			mDays = mInfo.days;
 			
@@ -954,11 +954,11 @@ tg.TimegliderTimelineView.prototype = {
 			case "ye": 
 				return obj.serial; 
 			case "mo": 
-				i = TGDate.getDateFromMonthNum(obj.serial);
-				return TGDate.monthNamesFull[i.mo] + ", " + i.ye; 
+				i = TG_Date.getDateFromMonthNum(obj.serial);
+				return TG_Date.monthNamesFull[i.mo] + ", " + i.ye; 
 			case "da": 
 			  // COSTLY: test performance here on dragging
-				i = new TGDate(TGDate.getDateFromRD(obj.serial));
+				i = new TG_Date(TG_Date.getDateFromRD(obj.serial));
 				return i.mo + " " + i.da + ", " + i.ye;
 		
 			default: return obj.unit + ":" + obj.serial + ":" + obj.width;
@@ -1000,7 +1000,7 @@ tg.TimegliderTimelineView.prototype = {
 				break;
 
 			case "mo":
-				var mdn = TGDate.getMonthDays(fdate.mo, fdate.ye);
+				var mdn = TG_Date.getMonthDays(fdate.mo, fdate.ye);
 			   
 				prop = ((fdate.da -1) / mdn) + (fdate.ho / (24 * mdn)) + (fdate.mi / (1440 * mdn));
 				p = w * prop;
@@ -1201,7 +1201,7 @@ tg.TimegliderTimelineView.prototype = {
 			$title.css({"top":ht, "left":t_f, "width":(t_l-t_f)});
 
 			/// for initial sweep display, setup fresh borg for organizing events
-			if (expCol == "expanded") { borg = tl.borg = new timeglider.TGOrg(); }
+			if (expCol == "expanded") { borg = tl.borg = new timeglider.TG_Org(); }
  
 			//cycle through ticks for hashed events
 			for (var tx=0; tx<ticks.length; tx++) {

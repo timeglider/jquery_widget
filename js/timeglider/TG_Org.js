@@ -19,7 +19,7 @@
   /*
   *  @constructor
   */
-  tg.TGOrg = function() {
+  tg.TG_Org = function() {
 
     this.blocks = [];
     this.ids = [];
@@ -37,7 +37,7 @@
   
     
     /*
-    * TGOrg.addBlock
+    * TG_Org.addBlock
     * Adds a 2D geometric block object, corresponding to an event
     * into the "borg" layout.
     * 
@@ -55,7 +55,7 @@
     
     
     /*
-    * TGOrg.getBorg
+    * TG_Org.getBorg
     *
     * @return {object} This particular "borg" object with its blocks, etc
     * 
@@ -65,7 +65,7 @@
     };
 
     /*
-    * TGOrg.getBlocks
+    * TG_Org.getBlocks
     * 
     * @return {array} An array of placement blocks (objects), each corresponding
     *                 to an event on the timeline.
@@ -76,7 +76,7 @@
     };
 
     /*
-    * TGOrg.getHTML
+    * TG_Org.getHTML
     * @param {string/number} tickScope This either "sweep" or the serial of a single tick (Number)
     * @return {string} HTML with events passed back to view for actual layout of timeline
     */
@@ -309,7 +309,7 @@
       }; // end checkAgainstLevel()
  
  
-  }; ///// END TGOrg
+  }; ///// END TG_Org
       
       
 	

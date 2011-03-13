@@ -7,13 +7,13 @@
 
 (function(tg){
   
-  var TGDate = tg.TGDate,
+  var TG_Date = tg.TG_Date,
       $ = jQuery,
       widget_options = {};
 
   // map model onto larger timeglider namespace
   /////////////////////////////////////////////
-  tg.Timeline = Backbone.Model.extend({
+  tg.TG_Timeline = Backbone.Model.extend({
   
   defaults: {
       "title":  "Untitled",
@@ -33,7 +33,7 @@
     var dhash                       = {"da":[], "mo":[], "ye":[], "de":[], "ce":[], "thou":[], 
                                         "tenthou":[], "hundredthou":[], "mill":[], "tenmill":[], "hundredmill":[],
                                         "bill":[]};
-    var units                       = TGDate.units; 
+    var units                       = TG_Date.units; 
     tdata.startSeconds              = [];
     tdata.endSeconds                = [];
     tdata.spans                     = [];
@@ -61,15 +61,15 @@
         //  objects will include seconds, rata die
         //  done coupled so end can validate off start
         
-        //XX var startEnd = TGDate.validateEventDates(ev.startdate,ev.enddate);
+        //XX var startEnd = TG_Date.validateEventDates(ev.startdate,ev.enddate);
 
         // This ought to be separated into two
 
-        ev.startdateObj = new TGDate(ev.startdate);
-        ev.enddateObj = new TGDate(ev.enddate);
+        ev.startdateObj = new TG_Date(ev.startdate);
+        ev.enddateObj = new TG_Date(ev.enddate);
        
         // CHECK VALIDITY OF EACH DATE & MAKE SURE end > start
-        //if (TGDate.isValidDate(ev.startdateObj) != "") {
+        //if (TG_Date.isValidDate(ev.startdateObj) != "") {
         //         THROW ERROR, BREAK
         //}
 
@@ -107,7 +107,7 @@
         for (var ux=0; ux < uxl; ux++) {
           unit = units[ux];
           ///// DATE HASHING in action 
-          ser = TGDate.getTimeUnitSerial(ev.startdateObj, unit);
+          ser = TG_Date.getTimeUnitSerial(ev.startdateObj, unit);
           if (dhash[unit][ser] !== undefined) {
             dhash[unit][ser].push(id);
           } else {
