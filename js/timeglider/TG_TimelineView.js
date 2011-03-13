@@ -10,14 +10,14 @@
 */
 /*
 ****************************************
-timeglider.TimegliderTimelineView
+timeglider.TimelineView
 ****************************************
 */
 (function(tg){
 
  // MED below is a reference to the mediator reference
  // that will be passed into the main Constructor below
-  var TGDate = tg.TGDate, 
+  var TG_Date = tg.TG_Date, 
       PL = "", MED = "", options = {}, $ = jQuery, intervals ={}, WIDGET_ID = "";
 
   // adding a screen display for anything needed
@@ -27,11 +27,11 @@ timeglider.TimegliderTimelineView
 
 
   /*
-  *  timeglider.TimegliderTimelineView
+  *  timeglider.TG_TimelineView
   *  
   *
   */
-  tg.TimegliderTimelineView = function (widget, mediator) {
+  tg.TG_TimelineView = function (widget, mediator) {
     
       // vars declared in closure above
 	    MED = mediator;
@@ -195,7 +195,6 @@ timeglider.TimegliderTimelineView
 	$.subscribe("mediator.refreshSignal", function () {
 		me.castTicks("refreshSignal");
 	});
-	
 
 
 	// adding to or removing from ticksArray
@@ -230,15 +229,12 @@ timeglider.TimegliderTimelineView
 					$(this).removeClass("activeTimeline");	
 				}	
         }); // end each	
-        
 	});
 	
 	
   $.subscribe("mediator.filterObjectChange", function () {
     // refresh is done inside MED -- no need to refresh here
 	});
-	
-
   /* END PUB-SUB SUBSCRIBERS */
 
 
@@ -264,10 +260,13 @@ timeglider.TimegliderTimelineView
 				  //	var Cy = e.pageY - $(PLACEMENT).offset().top;
 			    fdSec = MED.getFocusDate().sec,
 				  dcSec = Math.floor(fdSec + (offMid * secPerPx)),
-				  clk = TGDate.getDateFromSec(dcSec),
-				  foc = TGDate.getDateFromSec(fdSec);
+				  
+				  clk = new TG_Date(dcSec),
+				  foc = new TG_Date(fdSec);
+				  
 				
-				debug.trace("DBLCLICK:" + foc.mo + "-" + foc.ye + " dblclick:" + clk.mo + "-" + clk.ye, "note");	
+				debug.trace("DBLCLICK:" + foc.mo + "-" + foc.ye + " DBLCLICK:" + clk.mo + "-" + clk.ye, "note");	
+				
 		})			
 		.bind('mousewheel', function(event, delta) {
 						
@@ -277,6 +276,7 @@ timeglider.TimegliderTimelineView
 			      return false;
 			            
 		}); // end TRUCK EVENTS
+
 
 
 	
@@ -294,19 +294,44 @@ timeglider.TimegliderTimelineView
 				me.resetTicksHandle();
 				me.easeOutTicks();
 				me.registerDragging(); // one final time, plus more if easing...
-				// TESTING widget.doSomething();
 			}
+			
 		}) // end draggable
 		.delegate(".timeglider-timeline-event", "click", function () { 
 			// EVENT ON-CLICK !!!!!!
 			var eid = $(this).attr("id"); 
-			me.eventModal(eid);
+			var ev = MED.eventPool[eid];
+			 
+		  if (ev.click_callback) {
+		    
+    		    var broken = ev.click_callback.split(".");
+    		    var ns = broken[0];
+		    
+    		    if (broken.length == 2) {
+    		      var fn = broken[1];
+    		      window[ns][fn](ev);
+    	      } else {
+    	        window[ns](ev);
+            }
+		    
+	    } else {
+	          me.eventModal(eid);
+      }
+		  
 		})	
-		.delegate(".timeglider-timeline-event", "hover", function () { 
+		.delegate(".timeglider-timeline-event", "mouseover", function () { 
 			var eid = $(this).attr("id"); 
-			var title = MED.eventPool[eid].title;
-			debug.trace("hover, title:" + title, "note"); 
+			var ev = MED.eventPool[eid];
+			debug.trace("hover, title:" + ev.title, "note"); 
+			me.eventHover($(this), ev)
 		})
+		.delegate(".timeglider-timeline-event", "mouseout", function () { 
+			var eid = $(this).attr("id"); 
+			var ev = MED.eventPool[eid];
+			debug.trace("hover, title:" + ev.title, "note"); 
+			me.eventUnHover($(this), ev)
+		})
+		
 		.delegate(".timeglider-event-collapsed", "hover", function () { 
 			var eid = $(this).attr("id"); 
 			var title = MED.eventPool[eid].title;
@@ -402,7 +427,7 @@ timeglider.TimegliderTimelineView
 } 
 
 
-tg.TimegliderTimelineView.prototype = {
+tg.TG_TimelineView.prototype = {
 	
 	getWidgetDimensions : function () {
 			
@@ -430,7 +455,7 @@ tg.TimegliderTimelineView.prototype = {
 	},
 	
 	displayZoomLevel : function(zl) {
-	  debug.log("displayZoomLevel zl:" + zl);
+
 	  if (zl > 0) {
 	  var me=this;
 	  if (options.display_zoom_level == true) {
@@ -439,10 +464,13 @@ tg.TimegliderTimelineView.prototype = {
     }
  	},
  	
- 	getPublicMethods : function() {
- 	  return "FOO";
-  },
-	
+ 	
+ 	doSomething : function() {
+ 		    alert("FOO DO, viewer");
+ 	},
+ 	
+ 	
+ 	
 	/* 
 	PLUGIN!!
 	*/
@@ -536,17 +564,21 @@ tg.TimegliderTimelineView.prototype = {
 			startSec --> the seconds-value of the
 	    initial focus date on landing @ zoom level
 		*/
-		
+		// TODO: See if we can throttle this to be only
+		// once every 100ms....
 		var startSec = MED.startSec,
 		  tickPos = $(this._views.TICKS).position().left,
 		  secPerPx = MED.getZoomInfo().spp,
-		  newSec = startSec - (tickPos * secPerPx),
-		  newD = TGDate.getDateFromSec(newSec);
+		  newSec = startSec - (tickPos * secPerPx);
+		  // alternate newDate, from seconds?
+		 
+		  //OO CIRCULAR!! Too much getRataDie, etc...
+		  //XX newD = TG_Date.getDateFromSec(newSec);
+		  var newD = new TG_Date(newSec);
+		  // debug.trace("ticks x:" + tickPos, "tickpos");
+		  // debug.trace("FD: " + TG_Date.formatFocusDate(newD), "focusdate");
 		
-		debug.trace("ticks x:" + tickPos, "tickpos");
-		debug.trace("FD: " + TGDate.formatFocusDate(newD), "focusdate");
-		
-		MED.setFocusDate(newD);
+		  MED.setFocusDate(newD);
 	},
 	
   
@@ -579,7 +611,6 @@ tg.TimegliderTimelineView.prototype = {
 		if (options.min_zoom == options.max_zoom) {
 		  // With a single zoom level, hide the zoom controller
   	  $(this._views.SLIDER_CONTAINER).css("display", "none");
-  	  debug.log("buildSlider");
   	  
     } else {
       
@@ -631,12 +662,42 @@ tg.TimegliderTimelineView.prototype = {
 				}
 			});
 			
-		} // end--if min_zoom == max_zoom
+		} // end--if min_zoom == max_zoom 
 	},
 	
+	/*
+	* Occurs when MOUSE-hovering over event
+	*
+	*/
 	
+	eventHover : function ($ev, ev_obj) {
+
+    var me = this, 
+        $hov = $(".timeglider-event-hover-info");
+    
+    // This works, but what if it has to sit on the bottom
+    $hov.position({
+	    my: "left bottom",
+	    at: "left top",
+	    of: $ev,
+	    offset: "1, -10",
+	    collision: "flip flip"}).text(ev_obj.startdateObj.format("YYYY-MM-DD"));
+	  	   
+	  $ev.addClass("tg-event-hovered");
+	   
+	   
+  },
 	
-	
+	eventUnHover : function ($ev, ev_obj) {
+	   $(".timeglider-event-hover-info").css("left", "-1000px");
+	   $ev.removeClass("tg-event-hovered");
+  },
+  
+  tg_format : function (dobj) {
+    return dobj.ye + "-" + dobj.mo + "-" + dobj.da;
+  },
+  
+  
   /* FILTER BOX SETUP */
   setupFilter : function () {
       var me=this;
@@ -718,7 +779,7 @@ tg.TimegliderTimelineView.prototype = {
 		this.clearTicks();
 	
 		MED.setTicksReady(false);
-
+    
 		// INITIAL TICK added  in center according to focus date provided
 		this.addTick({"type":"init", "focus_date":fDate});
 	
@@ -755,7 +816,7 @@ tg.TimegliderTimelineView.prototype = {
 		if (tickUnit == "mo") {
 			
 			// standard: 28 days, how many px, days to add?
-			mInfo = TGDate.getMonthAdj(serial, tickWidth);
+			mInfo = TG_Date.getMonthAdj(serial, tickWidth);
 			tickWidth = mInfo.width;
 			mDays = mInfo.days;
 			
@@ -766,6 +827,7 @@ tg.TimegliderTimelineView.prototype = {
 			
 		  shiftLeft = this.tickOffsetFromDate(MED.getZoomInfo(), MED.getFocusDate(), tickWidth);
 			pos = Math.ceil(this.dimensions.container.centerx + shiftLeft);
+						
 			this.leftside = pos;
 			this.rightside = (pos + tickWidth);
 			
@@ -851,7 +913,7 @@ tg.TimegliderTimelineView.prototype = {
 	
 	
 	getDateLabelForTick : function  (obj) {
-		var i;
+		var i, me=this;
 	
 		switch(obj.unit) {
 
@@ -892,11 +954,12 @@ tg.TimegliderTimelineView.prototype = {
 			case "ye": 
 				return obj.serial; 
 			case "mo": 
-				i = TGDate.getDateFromMonthNum(obj.serial);
-				return TGDate.monthNamesFull[i.mo] + ", " + i.ye; 
+				i = TG_Date.getDateFromMonthNum(obj.serial);
+				return TG_Date.monthNamesFull[i.mo] + ", " + i.ye; 
 			case "da": 
-				i = TGDate.getDateFromRD(obj.serial);
-				return TGDate.monthNamesAbbr[i.mo] + " " + i.da + ", " + i.ye;
+			  // COSTLY: test performance here on dragging
+				i = new TG_Date(TG_Date.getDateFromRD(obj.serial));
+				return i.mo + " " + i.da + ", " + i.ye;
 		
 			default: return obj.unit + ":" + obj.serial + ":" + obj.width;
 		}
@@ -923,7 +986,7 @@ tg.TimegliderTimelineView.prototype = {
 
 	/* tickUnit, fd */
 	tickOffsetFromDate : function (zoominfo, fdate, tickwidth) {
-		
+				
 		// switch unit, calculate width gain or loss.... or just loss!
 		var w = tickwidth,
 		    u = zoominfo.unit, p, prop;
@@ -937,7 +1000,7 @@ tg.TimegliderTimelineView.prototype = {
 				break;
 
 			case "mo":
-				var mdn = TGDate.getMonthDays(fdate.mo, fdate.ye);
+				var mdn = TG_Date.getMonthDays(fdate.mo, fdate.ye);
 			   
 				prop = ((fdate.da -1) / mdn) + (fdate.ho / (24 * mdn)) + (fdate.mi / (1440 * mdn));
 				p = w * prop;
@@ -989,7 +1052,6 @@ tg.TimegliderTimelineView.prototype = {
 	
 	
   resetTicksHandle : function () {
-    debug.log("resetTicksHandle");
 		$(this._views.HANDLE).offset({"left":$(this._views.CONTAINER).offset().left});
 	},
 	
@@ -1139,7 +1201,7 @@ tg.TimegliderTimelineView.prototype = {
 			$title.css({"top":ht, "left":t_f, "width":(t_l-t_f)});
 
 			/// for initial sweep display, setup fresh borg for organizing events
-			if (expCol == "expanded") { borg = tl.borg = new timeglider.TGOrg(); }
+			if (expCol == "expanded") { borg = tl.borg = new timeglider.TG_Org(); }
  
 			//cycle through ticks for hashed events
 			for (var tx=0; tx<ticks.length; tx++) {
@@ -1350,7 +1412,7 @@ tg.TimegliderTimelineView.prototype = {
   			  title:ev.title,
   			  description:ev_img + ev.description,
   			  id:eid,
-  			  startdate: ev.startdate,
+  			  startdate: ev.startdateObj.format(),
   			  link: ev.link,
   			  video: ev.video
   		}
@@ -1365,10 +1427,10 @@ tg.TimegliderTimelineView.prototype = {
 			  .css("z-index", me.ztop++)
 	      .position({
       				my: "right center",
-      				at: "left top",
+      				at: "left center",
       				of: $par,
-      				offset: "0, -12", // left, top
-      				collision: "fit fit"
+      				offset: "-12, -1", // left, top
+      				collision: "flip fit"
       	})
       	.draggable({stack: ".timeglider-modal"});
 
@@ -1553,10 +1615,8 @@ tg.TimegliderTimelineView.prototype = {
 
     // call it right away to establish values
     }(tg.zoomTree);
-
+    
+    
    
 
 })(timeglider);
-
-
-

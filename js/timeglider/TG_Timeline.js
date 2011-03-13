@@ -7,13 +7,13 @@
 
 (function(tg){
   
-  var TGDate = tg.TGDate,
+  var TG_Date = tg.TG_Date,
       $ = jQuery,
       widget_options = {};
 
   // map model onto larger timeglider namespace
   /////////////////////////////////////////////
-  tg.Timeline = Backbone.Model.extend({
+  tg.TG_Timeline = Backbone.Model.extend({
   
   defaults: {
       "title":  "Untitled",
@@ -33,7 +33,7 @@
     var dhash                       = {"da":[], "mo":[], "ye":[], "de":[], "ce":[], "thou":[], 
                                         "tenthou":[], "hundredthou":[], "mill":[], "tenmill":[], "hundredmill":[],
                                         "bill":[]};
-    var units                       = TGDate.units; 
+    var units                       = TG_Date.units; 
     tdata.startSeconds              = [];
     tdata.endSeconds                = [];
     tdata.spans                     = [];
@@ -60,10 +60,19 @@
 
         //  objects will include seconds, rata die
         //  done coupled so end can validate off start
-        var startEnd = TGDate.validateEventDates(ev.startdate,ev.enddate);
+        
+        //XX var startEnd = TG_Date.validateEventDates(ev.startdate,ev.enddate);
 
-        ev.startdateObj = startEnd.s; // TGDate.makeDateObject(ev.startdate);
-        ev.enddateObj = startEnd.e; // TGDate.makeDateObject(ev.enddate);
+        // This ought to be separated into two
+
+        ev.startdateObj = new TG_Date(ev.startdate);
+        ev.enddateObj = new TG_Date(ev.enddate);
+       
+        // CHECK VALIDITY OF EACH DATE & MAKE SURE end > start
+        //if (TG_Date.isValidDate(ev.startdateObj) != "") {
+        //         THROW ERROR, BREAK
+        //}
+
         
         // default icon
         if (!ev.icon || ev.icon === "none") {
@@ -71,8 +80,7 @@
         }  else {
           ev.icon = widget_options.icon_folder + "/" + ev.icon;
         }
-       
-                    
+            
         ev.titleWidth = tg.getStringWidth(ev.title);
         
         if (ev.image) {
@@ -89,8 +97,8 @@
 
         // time span?
         if (ev.enddateObj.sec > ev.startdateObj.sec) {
-          ev.span =true;
-          tdata.spans.push({id:ev.id, start:ev.startdateObj.sec, end:ev.enddateObj.sec})
+          ev.span = true;
+          tdata.spans.push({id:ev.id, start:ev.startdateObj.sec, end:ev.enddateObj.sec});
         } else {
           ev.span = false;
         }
@@ -99,7 +107,7 @@
         for (var ux=0; ux < uxl; ux++) {
           unit = units[ux];
           ///// DATE HASHING in action 
-          ser = TGDate.getTimeUnitSerial(ev.startdateObj, unit);
+          ser = TG_Date.getTimeUnitSerial(ev.startdateObj, unit);
           if (dhash[unit][ser] !== undefined) {
             dhash[unit][ser].push(id);
           } else {

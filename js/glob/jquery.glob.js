@@ -1339,6 +1339,7 @@ function formatDate(value, format, culture) {
     return ret.join( '' );
 }
 
+
 // EXPORTS
 
 jQuery.findClosestCulture = Globalization.findClosestCulture;

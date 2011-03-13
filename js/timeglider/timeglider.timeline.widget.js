@@ -11,11 +11,13 @@
                         rafael.js
                         ba-tinyPubSub
                         jquery
-                        jquery ui (full)
+                        jquery ui 
                         jquery.mousewheel
                         jquery.ui.ipad
 *
 */
+
+
 
 (function($){
   /**
@@ -24,14 +26,10 @@
    *
    */
    
-   /* here's how to extend the jquery.glob object */
-   /*
-   var dlet = {let : ["S", "M", "T", "W", "T", "F", "S"]};
-   $.extend($.cultures.en.calendars.standard.days, dlet);
-   debug.log(jQuery.format(new Date(1955,10,5,11,12,13), "X"));
-   */
-   
-    var timelineView, timelineMediator;
+    var timelineView, 
+        timelineMediator, 
+        tg = timeglider, 
+        TG_Date = timeglider.TG_Date;
    
     $.widget( "timeglider.timeline", {
       
@@ -40,7 +38,7 @@
       
       // defaults!
       options : { 
-        initial_focus:timeglider.TGDate.getToday(), 
+        initial_focus:tg.TG_Date.getToday(), 
         editor:'none', 
         min_zoom : 1, 
         max_zoom : 100, 
@@ -76,14 +74,16 @@
        *           options indicate otherwise
        */
         var MAIN_TEMPLATE = "<div class='timeglider-container'>"+
+                              
                               "<div class='timeglider-loading'>loading</div>"+
                               "<div class='timeglider-centerline'></div>"+
                               "<div class='timeglider-truck' id='tg-truck'>"+
                                 "<div class='timeglider-ticks'>"+
                                   "<div class='timeglider-handle'></div>"+
+                                  
                                 "</div>"+
                               "</div>"+
-                              "<div class='timeglider-slider-container'>"+
+                                  "<div class='timeglider-slider-container'>"+
                                   "<div class='timeglider-slider'></div>"+
                                   "<div class='timeglider-pan-buttons'>"+
                                   "<div class='timeglider-pan-left'></div><div class='timeglider-pan-right'></div>"+
@@ -95,6 +95,7 @@
                               "<img class='timeglider-tools-bt' title='settings' src='js/timeglider/buttons/tools.png'>"+
                               "<img class='timeglider-list-bt' title='timelines' src='js/timeglider/buttons/list.png'>"+  
                               "</div>"+
+                              "<div class='timeglider-event-hover-info'></div>"+
                             "</div><span id='timeglider-measure-span'></span>";
                                    
         this.element.html(MAIN_TEMPLATE);
@@ -114,11 +115,11 @@
 	    
 	      if (optionsCheck == "") {
 	      
-          timelineMediator = new timeglider.TimegliderMediator(this.options);
-          timelineView = new timeglider.TimegliderTimelineView(this, timelineMediator);
+          timelineMediator = new tg.TG_Mediator(this.options);
+          timelineView = new tg.TG_TimelineView(this, timelineMediator);
 
           // after timelineView is created this stuff can be done
-          timelineMediator.setFocusDate(timeglider.TGDate.makeDateObject(this.options.initial_focus));
+          timelineMediator.setFocusDate(new TG_Date(this.options.initial_focus));
           timelineMediator.loadTimelineData(this.options.data_source);
         
         } else {
