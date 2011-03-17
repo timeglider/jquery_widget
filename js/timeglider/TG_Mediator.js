@@ -46,7 +46,7 @@ reflects state back to view
     this.fixed_zoom = (this.max_zoom == this.min_zoom) ? true : false;
     this.gesturing = false;
     this.gestureStartZoom = 0;
-    this.filterObject = {};
+    this.filters = {include:"", exclude:"", legend:[]};
     this.eventPool = [],
     this.timelinePool = {};
     
@@ -68,6 +68,7 @@ tg.TG_Mediator.prototype = {
     gotoDate : function (fdStr) {
       
       //XX var fd = TG_Date.makeDateObject(fdStr);
+      
       this.setFocusDate(new TG_Date(fdStr));
       // setting date doesn't by itself refresh: do it "manually"
       this.refresh();  
@@ -264,11 +265,32 @@ tg.TG_Mediator.prototype = {
         /*
         
         */
-        setFilterObject : function (obj) {
-           this.filterObject = {include:obj.include, exclude:obj.exclude}
-           $.publish("mediator.filterObjectChange");   
+        setFilters : function (obj) {
+           this.filters.include = obj.include;
+           this.filters.exclude = obj.exclude;
+           
+           $.publish("mediator.filtersChange");   
            this.refresh();      
          },
+         
+        setFiltersLegend : function (icon) {
+            // push icon into array if not there
+            // remove it if it's there
+            
+            if ($.inArray(icon, this.filters.legend) == -1) {
+              this.filters.legend.push(icon);
+            } else {
+              // remove it
+              var fol = this.filters.legend;
+              var fr = [];
+              fr = $.grep(fol, function (a) { return a != icon; });
+              this.filters.legend = fr;
+            }
+            debug.log("icons:" + this.filters.legend.toString());
+            
+            //$.publish("mediator.filtersChange");   
+            //this.refresh();      
+        },
          
 
         setGestureStart : function () {

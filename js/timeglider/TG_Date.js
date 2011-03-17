@@ -1,19 +1,19 @@
 
 
-// initial declaration of timeglider
+// initial declaration of timeglider object
 var timeglider = window.timeglider = {version:"0.1.0"};
 
 
 /*
 *  TG_Date
 *
-* You might be wondering why we're not extending the JS Date()
-* object: that might be a good idea eventually. There are some
+* You might be wondering why we're not extending JS Date().
+* That might be a good idea eventually. There are some
 * major issues with Date(): the "year zero" (or millisecond)
 * in JS and other date APIs is 1970, so timestamps are negative
-* prior to that. The timestamp of 100,000+ bce gets a little 
-* large, breaking at some point where Date can't deal with deep
-* bce dates.
+* prior to that. JS's Date() can't handle years prior to
+* -271820, so some extension needs to be created to deal with
+* times (on the order of billions of years) existing before that.
 *
 * This TG_Date object also has functionality which  goes hand-in-hand
 * with the date hashing system: each event on the timeline is hashed
@@ -24,13 +24,17 @@ var timeglider = window.timeglider = {version:"0.1.0"};
 
 (function(tg){
   
+  var tg = timeglider;
+  
   // caches speed up costly calculations
   var getRataDieCache = {},
       getDaysInYearSpanCache = {},
       getBCRataDieCache = {},
       getDateFromRDCache = {},
       getDateFromSecCache = {};
-      
+  
+  var $ = jQuery;
+   
       
   tg.TG_Date = function (strOrNum) {
     
@@ -39,6 +43,7 @@ var timeglider = window.timeglider = {version:"0.1.0"};
       // Morton, we've got seconds coming in!
       if (typeof(strOrNum) == "number") {
           dateStr = isoStr = TG_Date.getDateFromSec(strOrNum);
+          debug.trace(dateStr, "note");
           gotSec = strOrNum;
       } else {
           dateStr = isoStr = strOrNum;
@@ -437,7 +442,7 @@ var timeglider = window.timeglider = {version:"0.1.0"};
   		inf['da'] += 1;
   	}
 
-  	var ret = yt + "-" + inf['mo'] + "-" + inf['da'] + " " + ho + ":" + ":" + mi + ":00";
+  	var ret = yt + "-" + inf['mo'] + "-" + inf['da'] + " " + ho + ":" + mi + ":00";
 	  getDateFromRDCache[snum] = ret;
 	  
 	  return ret;
@@ -607,39 +612,78 @@ var timeglider = window.timeglider = {version:"0.1.0"};
   	return ret;
   };
 
-	
-  TG_Date.monthNamesFull = ["","January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-  TG_Date.monthNamesAbbr = ["","Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-  TG_Date.monthsDayNums = [0,31,28,31,30,31,30,31,31,30,31,30,31,29];
-  TG_Date.monthNamesLet = ["","J","F","M","A","M","J","J","A","S","O","N","D"];
-  TG_Date.dayNamesFull = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-  TG_Date.dayNamesAbbr = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-  TG_Date.dayNamesLet = ["S", "M", "T", "W", "T", "F", "S"];
-  TG_Date.units = ["da", "mo", "ye", "de", "ce", "thou", "tenthou", "hundredthou", "mill", "tenmill", "hundredmill", "bill"];
+
+  TG_Date.setCulture = function(culture_str) {
+    
+    jQuery.global.culture = jQuery.global.cultures[culture_str];
+  	/*
+  	*  Making use of jQuery.glob.js here --- but only for names and some other formatting
+  	*  offerings. 
+  	*/
+  	// ["","January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+    TG_Date.monthNames = jQuery.global.culture.calendar.months.names;
+    TG_Date.monthNames.unshift("");
+    // ["","Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    TG_Date.monthNamesAbbr = jQuery.global.culture.calendar.months.namesAbbr;
+    TG_Date.monthNamesAbbr.unshift("");
+  
+    TG_Date.monthNamesLet = ["","J","F","M","A","M","J","J","A","S","O","N","D"];
+    debug.log("TG_Date.monthNamesAbbr:" + TG_Date.monthNamesAbbr[1]);
+
+    TG_Date.monthsDayNums = [0,31,28,31,30,31,30,31,31,30,31,30,31,29];
+  
+    // ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+    TG_Date.dayNames = jQuery.global.culture.calendar.days.names;
+  
+    // ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+    TG_Date.dayNamesAbbr = jQuery.global.culture.calendar.days.namesAbbr;
+  
+    TG_Date.dayNamesShort = jQuery.global.culture.calendar.days.namesShort;
+  
+  
+    // NON-CULTURE
+    TG_Date.units = ["da", "mo", "ye", "de", "ce", "thou", "tenthou", "hundredthou", "mill", "tenmill", "hundredmill", "bill"];
+    
+    TG_Date.patterns = jQuery.global.culture.calendar.patterns;
+    
+  };
 
 
 
   TG_Date.prototype = {
-    
+      
       formatFocusDate : function () {
     	  return this.ye + "-" + this.mo + "-" + this.da + " " + this.ho + ":" + this.mi + ":00";
       },
     
-    
+      
       format : function (sig) {
-        // get universal formats from jquery.glob
+        // get universal formats from jquery.global
+        /*
+        d: "dd/MM/yyyy",
+        D: "dddd d MMMM yyyy",
+        t: "HH:mm",
+        T: "HH:mm:ss",
+        f: "dddd d MMMM yyyy HH:mm",
+        F: "dddd d MMMM yyyy HH:mm:ss",
+        M: "d MMMM",
+        Y: "MMMM yyyy"
+        */
+        
         var ret = "";
         switch(sig) {
           case "YYYY-MM-DD": ret = this.ye + "-" + this.mo + "-" + this.da; break;
           case "YYYY": ret = this.ye; break;
+          case "D": ret = TG_Date.patterns['D']; break;
+          
           default: ret = this.ye + "-" + this.mo + "-" + this.da + " " + this.ho + ":" + this.mi + ":00";
+          
         }
       
         return ret;
       
       }
-  
-  
+
   }
 })(timeglider);
 

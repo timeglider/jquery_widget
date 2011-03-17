@@ -44,6 +44,7 @@
         max_zoom : 100, 
         show_centerline: true, 
         data_source:"", 
+        culture:"en",
         basic_fontsize:12, 
         mouse_wheel: "zoom", 
         initial_timeline_id:'',
@@ -114,7 +115,12 @@
 	      var optionsCheck = timeglider.validateOptions(this.options);
 	    
 	      if (optionsCheck == "") {
-	      
+	        
+	        debug.log("culture: " + this.options.culture);
+	        
+          tg.TG_Date.setCulture(this.options.culture);
+          	        
+	        
           timelineMediator = new tg.TG_Mediator(this.options);
           timelineView = new tg.TG_TimelineView(this, timelineMediator);
 
@@ -150,7 +156,4 @@
 			
 }); // end widget process
 
-
-
-	
 })(jQuery);

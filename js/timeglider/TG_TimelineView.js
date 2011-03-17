@@ -18,7 +18,7 @@ timeglider.TimelineView
  // MED below is a reference to the mediator reference
  // that will be passed into the main Constructor below
   var TG_Date = tg.TG_Date, 
-      PL = "", MED = "", options = {}, $ = jQuery, intervals ={}, WIDGET_ID = "";
+      PL = "", MED = "", options = {}, $ = jQuery, intervals ={}, WIDGET_ID = "", CONTAINER, TICKS;
 
   // adding a screen display for anything needed
   debug.trace = function (stuff, goes) {
@@ -33,17 +33,17 @@ timeglider.TimelineView
   */
   tg.TG_TimelineView = function (widget, mediator) {
     
+    
+    var me = this;
+    
+    
       // vars declared in closure above
 	    MED = mediator;
 	    options = MED.options;
 	    // core identifier to "uniquify"
       PL = "#" + widget._id;
       WIDGET_ID = widget._id;
-      
-	    
-	    // vars created in wider closure above
-	    
-	    var me = this;
+      	    
 
 	/* references specific to the instance (rather than timeglider) so
 	   one can have more than one instance of the widget on a page */ 	      
@@ -65,7 +65,10 @@ timeglider.TimelineView
     		FILTER_BOX : PL + " .timeglider-filter-box",
     		TOOLS_BT : PL + " .timeglider-tools-bt"
 	    }
-	
+	  
+	  // shorthand for common elements
+	  CONTAINER = this._views.CONTAINER;
+	  TICKS = this._views.TICKS;
 	
   /*  TEMPLATES FOR THINGS LIKE MODAL WINDOWS
   *   events themselves are non-templated and rendered in TG_Org.js
@@ -119,12 +122,19 @@ timeglider.TimelineView
           "<h3>timelines</h3>"+
           "<div class='timeglider-menu-modal-content'><ul></ul></div>"+
           "<div class='timeglider-menu-modal-point-right'>"+
+          "</div>"),
+        
+      legend_modal : $.template( null,
+          "<div class='timeglider-menu-modal timeglider-legend timeglider-menu-hidden'  id='${id}_legend'>"+
+          // "<div class='close-button'><img src='img/close.png'></div>"+
+          // "<h3>legend</h3>"+
+          "<div class='timeglider-menu-modal-content'><ul id='${id}'>{{html legend_list}}</ul></div>"+
           "</div>")
 
     }
 
 
-	$(this._views.CONTAINER).css("height", $(PL).height());
+	$(CONTAINER).css("height", $(PL).height());
 	
 	this.basicFontSize = options.basic_fontsize;
 	
@@ -232,7 +242,7 @@ timeglider.TimelineView
 	});
 	
 	
-  $.subscribe("mediator.filterObjectChange", function () {
+  $.subscribe("mediator.filterChange", function () {
     // refresh is done inside MED -- no need to refresh here
 	});
   /* END PUB-SUB SUBSCRIBERS */
@@ -280,7 +290,7 @@ timeglider.TimelineView
 
 
 	
-	$(this._views.TICKS)
+	$(TICKS)
 	  	.draggable({ axis: 'x',
 			//start: function(event, ui) {
 				/// 
@@ -331,13 +341,12 @@ timeglider.TimelineView
 			debug.trace("hover, title:" + ev.title, "note"); 
 			me.eventUnHover($(this), ev)
 		})
-		
 		.delegate(".timeglider-event-collapsed", "hover", function () { 
 			var eid = $(this).attr("id"); 
 			var title = MED.eventPool[eid].title;
 			debug.trace("collapsed, title:" + title, "note"); 
 		});
-	
+		
 	
 	// TODO ---> build this into jquery-ui component behavior
 	$(".close-button-remove").live("click", function () {
@@ -346,7 +355,7 @@ timeglider.TimelineView
 
  
 
- $.tmpl(me._templates.timeline_list_modal,{}).appendTo(this._views.CONTAINER);
+ $.tmpl(me._templates.timeline_list_modal,{}).appendTo(CONTAINER);
  $(me._views.TIMELINE_LIST_BT).click(function () {
 		  $(me._views.TIMELINE_MENU).toggleClass("timeglider-menu-hidden")
 		    .position({
@@ -431,7 +440,7 @@ tg.TG_TimelineView.prototype = {
 	
 	getWidgetDimensions : function () {
 			
-			var c = $(this._views.CONTAINER),
+			var c = $(CONTAINER),
 				w = c.width(),
 				wc = Math.floor(w / 2) + 1,
 				h = c.height(),
@@ -501,7 +510,7 @@ tg.TG_TimelineView.prototype = {
     
     var d = dir || 20;
     
-    $t = $(this._views.TICKS),
+    $t = $(TICKS),
     newPos = $t.position().left + d;
         
     $t.css({left:newPos});
@@ -515,7 +524,7 @@ tg.TG_TimelineView.prototype = {
 		
 		var toff, w, tw, sw, pos, titx, 
 		  $elem, env, tb, ti, relPos, tbWidth,
-		  mo = $(this._views.CONTAINER).offset().left;
+		  mo = $(CONTAINER).offset().left;
 		
 		
 		$(".timeglider-event-spanning").each(
@@ -567,17 +576,16 @@ tg.TG_TimelineView.prototype = {
 		// TODO: See if we can throttle this to be only
 		// once every 100ms....
 		var startSec = MED.startSec,
-		  tickPos = $(this._views.TICKS).position().left,
+		  tickPos = $(TICKS).position().left,
 		  secPerPx = MED.getZoomInfo().spp,
 		  newSec = startSec - (tickPos * secPerPx);
 		  // alternate newDate, from seconds?
 		 
-		  //OO CIRCULAR!! Too much getRataDie, etc...
-		  //XX newD = TG_Date.getDateFromSec(newSec);
-		  var newD = new TG_Date(newSec);
-		  // debug.trace("ticks x:" + tickPos, "tickpos");
-		  // debug.trace("FD: " + TG_Date.formatFocusDate(newD), "focusdate");
 		
+		  var newD = new TG_Date(newSec);
+		   
+		 //  debug.trace(newD.mi, "note");
+		 
 		  MED.setFocusDate(newD);
 	},
 	
@@ -681,7 +689,7 @@ tg.TG_TimelineView.prototype = {
 	    at: "left top",
 	    of: $ev,
 	    offset: "1, -10",
-	    collision: "flip flip"}).text(ev_obj.startdateObj.format("YYYY-MM-DD"));
+	    collision: "flip flip"}).text(ev_obj.startdateObj.format("D"));
 	  	   
 	  $ev.addClass("tg-event-hovered");
 	   
@@ -721,7 +729,7 @@ tg.TG_TimelineView.prototype = {
   	          $filter_apply.click(function () {
   	            incl = $(fbox + " .timeglider-filter-include").val();
   	            excl = $(fbox + " .timeglider-filter-exclude").val();
-  	            MED.setFilterObject({include:incl, exclude:excl});
+  	            MED.setFilters({include:incl, exclude:excl});
   	            $(fbox).toggleClass("timeglider-menu-shown");
               });
 
@@ -730,7 +738,7 @@ tg.TG_TimelineView.prototype = {
               });
 
               $filter_clear.click(function () {
-                MED.setFilterObject({include:'', exclude:''});
+                MED.setFilters({include:'', exclude:''});
                 $(fbox + " .timeglider-filter-include").val('');
   	            $(fbox + " .timeglider-filter-exclude").val('');
                 $(fbox).toggleClass("timeglider-menu-shown");
@@ -756,7 +764,7 @@ tg.TG_TimelineView.prototype = {
   
 	clearTicks : function () {
 		this.tickNum = 0;
-		$(this._views.TICKS)
+		$(TICKS)
 		  .css("left", 0)
 			.html("<div class='timeglider-handle'></div>");
 	},
@@ -813,19 +821,19 @@ tg.TG_TimelineView.prototype = {
 			serial = MED.addToTicksArray({type:info.type, unit:tickUnit}, focusDate);
 						
 		// adjust tick-width for months (mo)
-		if (tickUnit == "mo") {
+  		if (tickUnit == "mo") {
+  			// starts with tickWidth set for 28 days: How many px, days to add?
+  			mInfo = TG_Date.getMonthAdj(serial, tickWidth);
+  			tickWidth = mInfo.width;
+  			mDays = mInfo.days;
 			
-			// standard: 28 days, how many px, days to add?
-			mInfo = TG_Date.getMonthAdj(serial, tickWidth);
-			tickWidth = mInfo.width;
-			mDays = mInfo.days;
-			
-		} 
+  		} 
 
 		this.tickNum ++;
 		if (info.type == "init") {
 			
 		  shiftLeft = this.tickOffsetFromDate(MED.getZoomInfo(), MED.getFocusDate(), tickWidth);
+
 			pos = Math.ceil(this.dimensions.container.centerx + shiftLeft);
 						
 			this.leftside = pos;
@@ -848,43 +856,48 @@ tg.TG_TimelineView.prototype = {
 
 		$tickDiv= $("<div class='timeglider-tick' id='" + tid + "'>"
 		            + "<div class='timeglider-tick-label' id='label'></div></div>")
-		  .appendTo(this._views.TICKS);
+		  .appendTo(TICKS);
 		
 		$tickDiv.css({width:tickWidth, left:pos, top:tick_top});
 						
 		// GET TICK DIVS FOR unit AND width
 		tInfo = this.getTickMarksInfo({unit:tickUnit, width:tickWidth});
-		tperu = (mDays > 0) ? mDays : tInfo.tperu;
-									
+		// if there's a value for month-days, us it, or use
+		// tperu = (mDays > 0) ? mDays : tInfo.tperu;
+		tperu = mDays || tInfo.tperu;				
+			
 		dist = tickWidth / tperu;
 
-    
+    // Add tick-lines when they're spaced wider than 5
 		if (dist > 5) {
 		
-			/* Raphael canvas for tick lines
-			   @param dom id-with-no-hash, width, height 
-			*/
-			var lines = Raphael(tid, tickWidth, 30),
+  			/* Raphael CANVAS for tick lines
+  			   @param tid {string} dom-id-with-no-hash, width, height 
+  			*/
+			  var lines = Raphael(tid, tickWidth, 30),
 				c, l, xd, stk = '', ht = 10,
 				downset = 20;
 				
 				for (l = 0; l < tperu; ++l) {
+				  // xd is cross distance...
 					xd = l * dist;
 					stk += "M" + xd + " " + downset + " L" + xd + " " + (ht + downset);
 				}
+				
+				// var tt = lines.text(12,8, "123");
 		
 				c = lines.path(stk);
 				// !TODO --- add stroke color into options object
 				c.attr({"stroke":"#333", "stroke-width":1});
 			} // end dist > 5  if there's enough space between tickmarks
 		
+		
 		pack = {"unit":tickUnit, "width":tickWidth, "serial":serial};
 
 		label = this.getDateLabelForTick(pack);
-		
-		
-		
+	
 		// DO OTHER STUFF TO THE TICK, MAKE THE LABEL AN ACTIONABLE ELEMENT
+		// SHOULD APPEND WHOLE LABEL + TICKLINES HERE
 		$tickDiv.children("#label").text(label);
 
 		return pack;
@@ -900,6 +913,7 @@ tg.TG_TimelineView.prototype = {
 				tperu = 24; 
 				break;
 			case "mo": 
+			  // this is adjusted for different months later
 				tperu = 30; 
 				break;
 			case "ye": 
@@ -911,64 +925,80 @@ tg.TG_TimelineView.prototype = {
 		return {"tperu":tperu};
 	},
 	
-	
+	/*
+	*  getDateLabelForTick
+	*  determines label for date unit in "ruler"
+	*  @param obj {object} carries these values:
+	                       {"unit":tickUnit, "width":tickWidth, "serial":serial}
+	*
+	*/
 	getDateLabelForTick : function  (obj) {
-		var i, me=this;
+		var i, me=this, ser = obj.serial, tw = obj.width;
 	
 		switch(obj.unit) {
 
       case "bill":
-      	if (obj.serial == 1) return "1";
-        return (obj.serial -1) + " bya";
+      	if (ser == 1) return "1";
+        return (ser -1) + " bya";
         
       case "hundredmill":
-      	if (obj.serial == 1) return "1";
-        return ((obj.serial -1) * 100) + " mya";
+      	if (ser == 1) return "1";
+        return ((ser -1) * 100) + " mya";
         
       case "tenmill":
-      	if (obj.serial == 1) return "1";
-        return ((obj.serial -1) * 10) + " mya";
+      	if (ser == 1) return "1";
+        return ((ser -1) * 10) + " mya";
         		    
       case "mill":
-    		if (obj.serial == 1) return "1";
-      	return (obj.serial -1) + " mya";
+    		if (ser == 1) return "1";
+      	return (ser -1) + " mya";
       		    
       case "hundredthou":
-  		  if (obj.serial == 1) return "1";
-    		return (obj.serial -1) + "00,000";    
+  		  if (ser == 1) return "1";
+    		return (ser -1) + "00,000";    
     		    
 		  case "tenthou":
-		    if (obj.serial == 1) return "1";
-  		  return (obj.serial -1) + "0000";
+		    if (ser == 1) return "1";
+  		  return (ser -1) + "0000";
  
 		  case "thou": 
-		    if (obj.serial == 1) return "1";
-		    return (obj.serial -1) + "000";
+		    if (ser == 1) return "1";
+		    return (ser -1) + "000";
 
 		  case "ce": 
-		    if (obj.serial == 1) return "1";
-		    return (obj.serial -1) + "00";
+		    if (ser == 1) return "1";
+		    return (ser -1) + "00";
 		    
 			case "de": 
-				return ((obj.serial -1) * 10) + "s";
+				return ((ser -1) * 10) + "s";
 			case "ye": 
-				return obj.serial; 
+				return ser; 
 			case "mo": 
-				i = TG_Date.getDateFromMonthNum(obj.serial);
-				return TG_Date.monthNamesFull[i.mo] + ", " + i.ye; 
+			   i = TG_Date.getDateFromMonthNum(ser);
+			   if (tw < 120) {
+			     return TG_Date.monthNamesAbbr[i.mo] + " " + i.ye; 
+		     } else {
+		       return TG_Date.monthNames[i.mo] + ", " + i.ye; 
+	       }
+				
+				
 			case "da": 
 			  // COSTLY: test performance here on dragging
-				i = new TG_Date(TG_Date.getDateFromRD(obj.serial));
-				return i.mo + " " + i.da + ", " + i.ye;
+			  i = new TG_Date(TG_Date.getDateFromRD(ser));
+			  if (tw < 120) {
+				  return TG_Date.monthNamesAbbr[i.mo] + " " + i.da + ", " + i.ye;
+		    } else {
+		      return TG_Date.monthNames[i.mo] + " " + i.da + ", " + i.ye;
+	      }
 		
-			default: return obj.unit + ":" + obj.serial + ":" + obj.width;
+			default: return obj.unit + ":" + ser + ":" + tw;
 		}
 		
 	},
 
 
 	tickHangies : function () {
-		var tPos = $(this._views.TICKS).position().left,
+		var tPos = $(TICKS).position().left,
 		    lHangie = this.leftside + tPos,
 		    rHangie = this.rightside + tPos - this.dimensions.container.width,
 		    tick, added = false,
@@ -1000,6 +1030,7 @@ tg.TG_TimelineView.prototype = {
 				break;
 
 			case "mo":
+			  
 				var mdn = TG_Date.getMonthDays(fdate.mo, fdate.ye);
 			   
 				prop = ((fdate.da -1) / mdn) + (fdate.ho / (24 * mdn)) + (fdate.mi / (1440 * mdn));
@@ -1052,7 +1083,7 @@ tg.TG_TimelineView.prototype = {
 	
 	
   resetTicksHandle : function () {
-		$(this._views.HANDLE).offset({"left":$(this._views.CONTAINER).offset().left});
+		$(this._views.HANDLE).offset({"left":$(CONTAINER).offset().left});
 	},
 	
 
@@ -1103,18 +1134,19 @@ tg.TG_TimelineView.prototype = {
 	   if  ((zoomLevel < ev.low_threshold) || (zoomLevel > ev.high_threshold)) {
 	     return false;
      }
-	   
-	   var incl = MED.filterObject.include;
+ 
+	   var incl = MED.filters.include;
  	   if (incl) {
  	      ia = incl.split(",");
  	      ret = false;
+ 	      // cycle through comma separated include keywords
  	      for (i=0; i<ia.length; i++) {
  	        ii = new RegExp($.trim(ia[i]), "i");
  	        if (ev.title.match(ii)) { ret = true; }
          }
       }
 
-	   var excl = MED.filterObject.exclude;
+	   var excl = MED.filters.exclude;
 	   if (excl) {
 	      ea = excl.split(",");
 	      for (e=0; e<ea.length; e++) {
@@ -1156,6 +1188,7 @@ tg.TG_TimelineView.prototype = {
 			lsec = foSec - half,
 			rsec = foSec + half,
 			spanin,
+			legend_label = "",
 			spanins = [],
 			expCol, tlTop=0,
 			cht = me.dimensions.container.height;
@@ -1168,13 +1201,17 @@ tg.TG_TimelineView.prototype = {
 			
 			expCol = tl.display;
 		  tlTop = (tl.top || (cht-120));
+			legend_label = tl.legend.length > 0 ? "<span class='tg-timeline-legend-bt'>legend</span>" : ""; 
 			
 			// TIMELINE CONTAINER
 			$tl = $("<div class='tg-timeline-envelope' id='" + tl.id
 				+ "'><div class='titleBar'><div class='timeline-title'>"
 			 	+ tl.title + "<div class='tg-timeline-env-buttons'>"
-			 	+ "<span class='timeline-info'>info</span><span class='expand-collapse'>expand/collapse</span></div></div></div></div>")
-			 	.appendTo(this._views.TICKS);
+			 	+ "<span class='timeline-info'>info</span>"
+			 	+ legend_label
+			 	// + "<span class='expand-collapse'>expand/collapse</span>"
+			 	+ "</div></div></div></div>")
+			 	.appendTo(TICKS);
 			
 			$tl.draggable({
 				axis:"y",
@@ -1187,13 +1224,17 @@ tg.TG_TimelineView.prototype = {
 				
 			ht = $tl.height();
 			
-			$(".tg-timeline-envelope#" + tl.id + " .titleBar .expand-collapse").click(function () { 
+			$(CONTAINER + " .tg-timeline-envelope#" + tl.id + " .titleBar .expand-collapse").click(function () { 
 					me.expandCollapseTimeline(tl.id );
 			} );
 			
-			$(".tg-timeline-envelope#" + tl.id + " .titleBar .timeline-info").click(function () { 
+			$(CONTAINER + " .tg-timeline-envelope#" + tl.id + " .titleBar .timeline-info").click(function () { 
   				me.timelineModal(tl.id);
   		} );
+  		
+  		$(CONTAINER + " .tg-timeline-envelope#" + tl.id + " .titleBar .tg-timeline-legend-bt").click(function () { 
+    			me.legendModal(tl.id);
+    	} );
 
 			$title = $tl.children(".titleBar");
 			t_f = cx + ((tl.bounds.first - foSec) / spp);
@@ -1374,20 +1415,23 @@ tg.TG_TimelineView.prototype = {
 	},
   
 
+  //////// MODALS 
+  
   timelineModal : function (id) {
     
     $("#tl_" + id + "_modal").remove();
   
     var tl = MED.timelinePool[id], 
-    me = this;
+    me = this,
     templ_obj = {
   			  title:tl.title,
   			  description:tl.description,
   			  id:id
-  		}
+  		};
+  		
   		
 		 $.tmpl(me._templates.timeline_modal,templ_obj)
-  			.appendTo(this._views.CONTAINER)
+  			.appendTo(CONTAINER)
   			.css("z-index", me.ztop++)
 	      .position({
       				my: "left top",
@@ -1416,6 +1460,7 @@ tg.TG_TimelineView.prototype = {
   			  link: ev.link,
   			  video: ev.video
   		}
+  		debug.log("ev.icon:" + ev.icon);
 		  
 			if (ev.video) { 
        modalTemplate = me._templates.event_modal_video;
@@ -1423,7 +1468,7 @@ tg.TG_TimelineView.prototype = {
 			}
 	
 		  $.tmpl(modalTemplate,templ_obj)
-  			.appendTo(this._views.TICKS)
+  			.appendTo(TICKS)
 			  .css("z-index", me.ztop++)
 	      .position({
       				my: "right center",
@@ -1435,6 +1480,46 @@ tg.TG_TimelineView.prototype = {
       	.draggable({stack: ".timeglider-modal"});
 
 	},
+	
+	
+	legendModal : function (id) {
+  
+    var tl = MED.timelinePool[id],
+        leg = tl.legend,
+        me = this, l, icon, title, html = "";
+    
+    for (l = 0; l < leg.length; l++) {
+      icon = options.icon_folder + leg[l].icon;
+      title = leg[l].title;
+      html += "<li><img src='" + icon + "'>" + title + "</li>";
+    }
+   
+    var templ_obj = {id:id, legend_list:html};
+  
+    $(CONTAINER + " .timeglider-legend").remove();
+  		
+  	$.tmpl(me._templates.legend_modal,templ_obj)
+  			.appendTo(CONTAINER)
+  			.css("z-index", me.ztop++)
+      	.toggleClass("timeglider-menu-hidden")
+      	.position({
+      				my: "left top",
+      				at: "left top",
+      				of: (CONTAINER),
+      				offset: "16, -4", // left, top
+      				collision: "none none"
+      	});
+
+  		$(CONTAINER + " .timeglider-legend li").click(function() { 
+  		    var legend_item_id = $(this).parent().attr("id");
+  		    var icon = ($(this).children("img").attr("src"));
+  		    $(this).toggleClass("tg-legend-icon-selected");
+  		    MED.setFiltersLegend(icon);
+  		});
+
+  },
+  
+  
 	
 	parseHTMLTable : function(table_id) {
 		var obj = {},

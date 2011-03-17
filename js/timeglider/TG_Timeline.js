@@ -17,7 +17,8 @@
   
   defaults: {
       "title":  "Untitled",
-      "events": []
+      "events": [],
+      "legend": []
   },
   
   /*
@@ -41,6 +42,7 @@
     // TODO: VALIDATE COLOR, centralize default color(options?)
     if (!tdata.color) { tdata.color = "#333333"; }
 
+    
     if (tdata.events) {
 
       var date, ev, id, unit, ser, tWidth;
@@ -58,13 +60,6 @@
           ev.id = id = "anon" + this.anonEventId++; 
         }
 
-        //  objects will include seconds, rata die
-        //  done coupled so end can validate off start
-        
-        //XX var startEnd = TG_Date.validateEventDates(ev.startdate,ev.enddate);
-
-        // This ought to be separated into two
-
         ev.startdateObj = new TG_Date(ev.startdate);
         ev.enddateObj = new TG_Date(ev.enddate);
        
@@ -73,12 +68,11 @@
         //         THROW ERROR, BREAK
         //}
 
-        
         // default icon
         if (!ev.icon || ev.icon === "none") {
           ev.icon = "";
         }  else {
-          ev.icon = widget_options.icon_folder + "/" + ev.icon;
+          ev.icon = widget_options.icon_folder + ev.icon;
         }
             
         ev.titleWidth = tg.getStringWidth(ev.title);
@@ -132,6 +126,17 @@
         tdata.bounds = {"first": fl.low, "last":fl.high };
 
     } /// end if there are events!
+    
+    /* necessary to parse this now, or just leave as is? */
+    if (tdata.legend.length > 0) {
+      var legend = tdata.legend;
+      for (var i=0; i<legend.length; i++) {
+        var legend_item = legend[i];
+        debug.log("leg. title:" + legend_item['title'])
+      }
+    }
+    
+    
 
     /// i.e. expanded or compressed...
     /// ought to be attribute at the timeline level

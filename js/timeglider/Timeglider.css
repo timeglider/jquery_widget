@@ -198,6 +198,10 @@
     display:none;
 }
 
+.timeglider-legend-modal {
+  
+}
+
 
  
 /* JUST A SHADOW TO ADD TO CLASSES */
@@ -450,9 +454,6 @@
 		
 }
 
-.timeglider-timeline-menu {
-		width:200px;
-}
 
 .timeglider-menu-modal ul {
     list-style:none;
@@ -467,9 +468,43 @@
 		cursor:pointer;
 		color:#666;
 	}
-	
+
+
+
+.timeglider-timeline-menu {
+		width:200px;
+}
+  
 .timeglider-timeline-menu ul li.activeTimeline {
   	color:#000;
+}
+
+.timeglider-legend {
+  position:absolute;
+  width:150px;
+  -webkit-border-top-left-radius: 0;
+  -webkit-border-top-right-radius: 0;
+  -moz-border-radius-topleft: 0;
+  -moz-border-radius-topright: 0;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
+
+.timeglider-legend img {
+  width:12px;
+  height:auto;
+  margin-right:8px;
+}
+
+.timeglider-legend .timeglider-menu-modal-content {
+  margin-top:8px;
+}
+
+.timeglider-legend ul li {
+  color:#999;
+}
+.timeglider-legend ul li.tg-legend-icon-selected {
+  color:#000;
 }
 
 .timeglider-filter-box {
