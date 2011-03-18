@@ -43,11 +43,6 @@ var timeglider = window.timeglider = {version:"0.1.0"};
       // Morton, we've got seconds coming in!
       if (typeof(strOrNum) == "number") {
           dateStr = isoStr = TG_Date.getDateFromSec(strOrNum);
-<<<<<<< HEAD
-          debug.log("from sec dateStr:" + dateStr);
-=======
-          debug.trace(dateStr, "note");
->>>>>>> feature
           gotSec = strOrNum;
       } else {
           dateStr = isoStr = strOrNum;
