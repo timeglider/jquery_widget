@@ -418,9 +418,9 @@ tg.TG_Mediator.prototype = {
         tg.getImageSize = function (img) {
             // var size = obj.fontSize; 
         		var $ms = $("#timeglider-measure-span").html('');
-        		$ms.append("<img id='test_img' src='" + img + "'>");
-        		var w = $("#test_img").width();
-        		var h = $("#test_img").height();
+        		$ms.append("<img id='tg-test_img' src='" + img + "'>");
+        		var w = $("#tg-test_img").width();
+        		var h = $("#tg-test_img").height();
         		$ms.html('');
         		
         		return {width:w, height:h};

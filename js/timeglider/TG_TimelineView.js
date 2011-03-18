@@ -81,7 +81,7 @@ timeglider.TimelineView
 	this._templates = {
 	    // generated, appended on the fly, then removed
       event_modal: $.template( null, "<div class='tg-modal timeglider-ev-modal ui-widget-content' id='ev_${id}_modal'>" 
-    	  + "<div class='close-button-remove'><img src='img/close.png'></div>" 
+    	  + "<div class='close-button-remove'></div>" 
     	  + "<div class='startdate'>${startdate}</div>"
     	  + "<h4 id='title'>${title}</h4>"
     	  + "<p>{{html description}}</p>"
@@ -91,12 +91,12 @@ timeglider.TimelineView
     	// generated, appended on the fly, then removed
     	event_modal_video : $.template( null,
     	  "<div class='tg-modal timeglider-ev-video-modal ui-widget-content' id='${id}_modal'>"
-    	  + "<div class='close-button-remove'><img src='img/close.png'></div>"
+    	  + "<div class='close-button-remove'></div>"
         + "<iframe width = '100%' height='300' src='${video}'></iframe></div>"),
         
       // generated, appended on the fly, then removed
       timeline_modal : $.template( null, "<div class='tg-modal timeglider-timeline-modal ui-widget-content' id='tl_${id}_modal'>" 
-      	  + "<div class='close-button-remove'><img src='img/close.png'></div>"
+      	  + "<div class='close-button-remove'></div>"
       	  + "<h4 id='title'>${title}</h4>"
       	  + "<p>{{html description}}</p>"
       	  + "</div>"),
@@ -128,7 +128,9 @@ timeglider.TimelineView
           "<div class='timeglider-menu-modal timeglider-legend timeglider-menu-hidden'  id='${id}_legend'>"+
           // "<div class='close-button'><img src='img/close.png'></div>"+
           // "<h3>legend</h3>"+
-          "<div class='timeglider-menu-modal-content'><ul id='${id}'>{{html legend_list}}</ul></div>"+
+          "<div class='timeglider-menu-modal-content'><ul id='${id}'>{{html legend_list}}</ul>"+
+          "<div class='timeglider-close-button-small timeglider-legend-close'></div>"+
+          "</div>"+
           "</div>")
 
     }
@@ -347,11 +349,15 @@ timeglider.TimelineView
 			debug.trace("collapsed, title:" + title, "note"); 
 		});
 		
-	
-	// TODO ---> build this into jquery-ui component behavior
 	$(".close-button-remove").live("click", function () {
-		$(this).parent().remove();	
+	  var $parent = $(this).parent();
+		$parent.fadeOut(300, function () { $parent.remove(); });
 	});
+	
+	$(".timeglider-legend-close").live("click", function () {
+	  var $legend = $(CONTAINER + " .timeglider-legend");
+	   $legend.fadeOut(300, function () { $legend.remove(); });
+  });
 
  
 
@@ -1483,6 +1489,7 @@ tg.TG_TimelineView.prototype = {
 	
 	
 	legendModal : function (id) {
+  /* only one legend at a time ?? */
   
     var tl = MED.timelinePool[id],
         leg = tl.legend,

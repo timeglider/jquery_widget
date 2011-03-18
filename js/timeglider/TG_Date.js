@@ -670,11 +670,15 @@ var timeglider = window.timeglider = {version:"0.1.0"};
         Y: "MMMM yyyy"
         */
         
+        // SHOULD BE:: return this.parseDate(sig);
+        
         var ret = "";
         switch(sig) {
           case "YYYY-MM-DD": ret = this.ye + "-" + this.mo + "-" + this.da; break;
           case "YYYY": ret = this.ye; break;
-          case "D": ret = TG_Date.patterns['D']; break;
+          
+          // event-hover
+          case "D": ret = this.da + " " + TG_Date.monthNamesAbbr[this.mo] + " " + this.ye; break;
           
           default: ret = this.ye + "-" + this.mo + "-" + this.da + " " + this.ho + ":" + this.mi + ":00";
           

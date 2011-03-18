@@ -78,14 +78,12 @@
         ev.titleWidth = tg.getStringWidth(ev.title);
         
         if (ev.image) {
-          if (!ev.image_class) { 
-            ev.image_class = "layout"; 
-            // get image size?
-            ev.image_size = tg.getImageSize(ev.image);
-            }
+          // register image with image collection for gathering sizes.
+          ev.image_class = ev.image_class || "layout";
+          ev.image_size = tg.getImageSize(ev.image);
         }
       
-        // microtimeline for collapsed view and other metrics
+        // for collapsed view and other metrics
         tdata.startSeconds.push(ev.startdateObj.sec);
         tdata.endSeconds.push(ev.enddateObj.sec);
 
@@ -110,7 +108,7 @@
           }
           ///////////////////////////////
         } 
-        // add*modify indexed pool
+        
         
         // PROBLEM HERE --- MAKES THIS HAVE TO BE
         // INSIDE THIS TG_Mediator CLOSURE...
