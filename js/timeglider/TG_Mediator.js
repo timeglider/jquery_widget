@@ -17,11 +17,11 @@ reflects state back to view
 (function(tg){
   
   
-  var MED = {};
-  var TG_Date = tg.TG_Date;
-  var options = {};
-  var $ = jQuery;
-
+  var MED = {},
+      TG_Date = tg.TG_Date,
+      options = {},
+      $ = jQuery;
+      
   /* In progress... */
   tg.TimelineCollection = Backbone.Collection.extend({
     model: timeglider.TG_Timeline
@@ -47,8 +47,14 @@ reflects state back to view
     this.gesturing = false;
     this.gestureStartZoom = 0;
     this.filters = {include:"", exclude:"", legend:[]};
-    this.eventPool = [],
+    this.eventPool = [];
+    // this.eventPool['ev_000'] = "hello!";
+    
     this.timelinePool = {};
+    this.imagesSized = 0;
+    this.imagesToSize = 0;
+    this.timelineDataLoaded = false,
+    this.foo = "bark";
     
     // this.setZoomLevel(options.initial_zoom);
     this.initial_timeline_id = options.initial_timeline_id;
@@ -66,9 +72,7 @@ tg.TG_Mediator.prototype = {
   
     /* PUBLIC METHODS MEDIATED BY $.widget front */
     gotoDate : function (fdStr) {
-      
-      //XX var fd = TG_Date.makeDateObject(fdStr);
-      
+            
       this.setFocusDate(new TG_Date(fdStr));
       // setting date doesn't by itself refresh: do it "manually"
       this.refresh();  
@@ -77,7 +81,6 @@ tg.TG_Mediator.prototype = {
 
     gotoDateZoom : function (fdStr, zoom) {
         
-        //XX var fd = TG_Date.makeDateObject(fdStr);
         this.setFocusDate(new TG_Date(fdStr));
         // setting zoom _does_ refresh automatically
         this.setZoomLevel(zoom);  
@@ -107,39 +110,23 @@ tg.TG_Mediator.prototype = {
           M.parseData(src);
         } else {
  
-        /*
-        This isn't working in jQuery 1.5 for some reason... 
-        seems fixed in 1.5.1+
-        */
-
+        // Not working in jQuery 1.5 : fixed in 1.5.1+
+        //  When we're well beyond jQuery 1.5, implement when...then
+        
             $.getJSON(src, function (data) {
                   M.parseData(data);
                }
             );
 
-
-             //  When we're well beyond 1.5, this can be implemented
-             //  as there are still JSON bugs in 1.5.0
-             /*
-              var $aJax = $.ajax({ dataType:"json", url:src });
-
-              $aJax.then(
-                // success
-                function (data) {
-                  M.parseData(data);
-                },
-                // failure
-                function (e) {
-                  debug.log("ERROR LOADING JSON");
-                }
-    
-              );
-            */
-
-        }// end if/else for local vs url
+        }// end if/else for local obj vs remote json
     
     } else {
-      $.publish("mediator.refreshSignal");
+      // NO INITIAL DATA
+      // focusdate has been set to today
+      this.timelineDataLoaded = true;
+      this.setZoomLevel(Math.floor((this.max_zoom + this.min_zoom) / 2));
+      this.tryLoading();
+      
     }
     
   },
@@ -159,19 +146,42 @@ tg.TG_Mediator.prototype = {
       ondeck.mediator = M;
       ti = new timeglider.TG_Timeline(ondeck).toJSON(); // the timeline
     
-    if (ti.id.length > 0) {ct++;}// at least one timeline was loaded
-      // put the Model into a "collection"
-      // TODO: create Backbone collection
-      M.swallowTimeline(ti);
+        // at least one timeline was loaded
+        // put the Model into a collection
+        // TODO: create Backbone collection
+        if (ti.id.length > 0) {
+          ct++;
+          M.swallowTimeline(ti);
+        }
+   
     }
 
     if (ct === 0) {
       alert("ERROR loading data: Check JSON with jsonLint");
     } else {
-      $.publish("mediator.timelineDataLoaded");
+      
+      this.timelineDataLoaded = true;
+      // might as well try!
+      this.tryLoading();
     }
   },
-
+  
+  /*
+  *  tryLoading
+  *  Sees if all criteria for proceeding to display the loaded data
+  *  are complete: data, image sizeing and others
+  *
+  */
+  tryLoading : function () {
+    
+    var a = (this.imagesSized == this.imagesToSize),
+        b = (this.timelineDataLoaded == true);
+    
+    if (a && b) {
+        $.publish("mediator.timelineDataLoaded");
+    }
+    
+  },
 
 
     /* Makes an indexed array of timelines */
@@ -384,7 +394,31 @@ tg.TG_Mediator.prototype = {
           // this will change the menu list/appearance
           $.publish( "mediator.activeTimelinesChange" );
 
+        },
+       
+       /*
+       *  reportImageSize
+       *  @param img {Object} has "id" of event, "src", "width" and "height" at least
+       *  
+       *  This information is reported from TG_Timeline as data is loading. Since image
+       *  size gathering sidetracks from data loading, there's a 
+       *
+       
+       */
+        reportImageSize : function (img) {
+        	var ev = MED.eventPool["ev_" + img.id];
+        	ev.image.width = img.width;
+        	ev.image.height = img.height;
+        	this.imagesSized++;
+        	
+        	if (this.imagesSized == this.imagesToSize) {
+        	  // if there are images, this would usually be
+        	  // the last step before proceeding
+        		this.tryLoading();
+        	}
         }
+
+
 
 ///// end model prototype object
 }; 
@@ -405,26 +439,6 @@ tg.TG_Mediator.prototype = {
         	return {"high":high, "low":low}
 
         };
-        
-        
-        // move to VIEW
-        /* a div with id of "hiddenDiv" has to be pre-loaded */
-        tg.getStringWidth  = function (str) {
-        		var $ms = $("#timeglider-measure-span").html(str);
-        		return $ms.width() + 20;
-        };
-        
-        // move to VIEW
-        tg.getImageSize = function (img) {
-            // var size = obj.fontSize; 
-        		var $ms = $("#timeglider-measure-span").html('');
-        		$ms.append("<img id='tg-test_img' src='" + img + "'>");
-        		var w = $("#tg-test_img").width();
-        		var h = $("#tg-test_img").height();
-        		$ms.html('');
-        		
-        		return {width:w, height:h};
-        }
         
         
         tg.validateOptions = function (widget_settings) {	
@@ -504,6 +518,5 @@ tg.TG_Mediator.prototype = {
 
         };
         
-        
-
+       
 })(timeglider);

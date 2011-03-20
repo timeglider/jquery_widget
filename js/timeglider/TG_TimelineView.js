@@ -585,13 +585,9 @@ tg.TG_TimelineView.prototype = {
 		  tickPos = $(TICKS).position().left,
 		  secPerPx = MED.getZoomInfo().spp,
 		  newSec = startSec - (tickPos * secPerPx);
-		  // alternate newDate, from seconds?
-		 
-		
+		  
 		  var newD = new TG_Date(newSec);
-		   
-		 //  debug.trace(newD.mi, "note");
-		 
+		   		 
 		  MED.setFocusDate(newD);
 	},
 	
@@ -1361,9 +1357,9 @@ tg.TG_TimelineView.prototype = {
       			}
       			
       		  img_ht = 0;
-      		  if (ev.image && ev.image_class==="layout") {
-      		    img_ht = ev.image_size.height + 2;
-      		    ev.width = ev.image_size.width + 2;
+      		  if (ev.image && ev.image.display_class === "layout") {
+      		    img_ht = ev.image.height + 2;
+      		    ev.width = ev.image.width + 2;
       	    }
 
       			ev.height = Math.ceil(ev.fontsize) + img_ht;
@@ -1457,7 +1453,7 @@ tg.TG_TimelineView.prototype = {
 		  $par = $("#" + eid),
 		  modalTemplate = me._templates.event_modal;
 		  ev = MED.eventPool[eid],
-		  ev_img = ev.image ? "<img src='" + ev.image + "'>" : "",
+		  ev_img = ev.image.src ? "<img src='" + ev.image + "'>" : "",
 		  templ_obj = {
   			  title:ev.title,
   			  description:ev_img + ev.description,
@@ -1466,7 +1462,6 @@ tg.TG_TimelineView.prototype = {
   			  link: ev.link,
   			  video: ev.video
   		}
-  		debug.log("ev.icon:" + ev.icon);
 		  
 			if (ev.video) { 
        modalTemplate = me._templates.event_modal_video;
@@ -1707,6 +1702,14 @@ tg.TG_TimelineView.prototype = {
 
     // call it right away to establish values
     }(tg.zoomTree);
+    
+    
+    
+    /* a div with id of "hiddenDiv" has to be pre-loaded */
+    tg.getStringWidth  = function (str) {
+    		var $ms = $("#timeglider-measure-span").html(str);
+    		return $ms.width() + 20;
+    };
     
     
    

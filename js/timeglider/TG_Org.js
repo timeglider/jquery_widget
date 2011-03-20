@@ -133,19 +133,18 @@
             // if it has an image, it's either in "layout" mode (out on timeline full size)
             // or it's going to be thumbnailed into the "bar"
             if (b.image) {
-              if (b.image_class == "layout") {
-                title_adj = b.image_size.height + 4;
+              if (b.image.display_class == "layout") {
+                title_adj = b.image.height + 4;
               }
-              img = "<div class='timeglider-event-image-" + b.image_class + "'><img src='" + b.image + "'></div>";
+              img = "<div class='timeglider-event-image-" + b.image.display_class + "'><img src='" + b.image.src + "'></div>";
             } else {
-              // no image at all
+              // no image
               img = "";
             } 
       
             // starts out checking block against the bottom layer
-            // This actually makes changes to the block object
+            // *** This actually makes changes to the block object
             checkAgainstLevel(b, 0);
-           
             
             // KEEP 
             if (b.y_position > 0) {

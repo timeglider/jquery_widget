@@ -9,7 +9,8 @@
   
   var TG_Date = tg.TG_Date,
       $ = jQuery,
-      widget_options = {};
+      widget_options = {},
+      app_mediator;
 
   // map model onto larger timeglider namespace
   /////////////////////////////////////////////
@@ -28,7 +29,7 @@
   _chewTimeline : function (tdata) {
 
     // TODO ==> add additional units
-    var app_mediator = tdata.mediator;
+    app_mediator = tdata.mediator;
     widget_options = app_mediator.options;
     
     var dhash                       = {"da":[], "mo":[], "ye":[], "de":[], "ce":[], "thou":[], 
@@ -52,6 +53,7 @@
       for(var ei=0; ei< l; ei++) {
 
         ev=tdata.events[ei];
+        // app_mediator.eventPool["ev_" + id] = {image:{}};
         // id = ev.id;
         if (ev.id) { 
           // TODO :: make sure it's unique... append with timeline id?
@@ -77,10 +79,17 @@
             
         ev.titleWidth = tg.getStringWidth(ev.title);
         
+        // arrives as just src -- we'll consolidate images props 
+        // and gather some new ones (width, height)
         if (ev.image) {
           // register image with image collection for gathering sizes.
-          ev.image_class = ev.image_class || "layout";
-          ev.image_size = tg.getImageSize(ev.image);
+          var display_class = ev.image_class || "layout";
+          
+          ev.image = {id: ev.id, src:ev.image, display_class:display_class};
+          // this will follow up with sizing in separate "thread"
+          getEventImageSize(ev.image);
+          
+          app_mediator.imagesToSize++;
         }
       
         // for collapsed view and other metrics
@@ -109,12 +118,8 @@
           ///////////////////////////////
         } 
         
-        
-        // PROBLEM HERE --- MAKES THIS HAVE TO BE
-        // INSIDE THIS TG_Mediator CLOSURE...
-        // HOW TO PASS IN THE mediator environment
         app_mediator.eventPool["ev_" + id] = ev;
-
+        
         }// end cycling through timeline's events
 
         // adding event secs to catalog of entire timeline
@@ -124,6 +129,8 @@
         tdata.bounds = {"first": fl.low, "last":fl.high };
 
     } /// end if there are events!
+    
+    
     
     /* necessary to parse this now, or just leave as is? */
     if (tdata.legend.length > 0) {
@@ -160,6 +167,30 @@
   }
 
 });
+
+  
+
+   function getEventImageSize (img) { 
+     
+   	  var imgTesting = new Image(),
+   	      // ID would be the event ID for the event pool
+   	      img_id = img.id,
+   	      img_src = imgTesting.src = img.src;
+
+     	imgTesting.onload = delegateHere(imgTesting, function () {
+     	  app_mediator.reportImageSize({id:img_id, src:img_src, width: this.width, height: this.height});
+     	});
+
+     	function delegateHere(contextObject, delegateMethod) {
+     	    return function() {
+     	        return delegateMethod.apply(contextObject, arguments);
+     	    }
+     	};
+     	
+   };
+
+   
+
 
 
 })(timeglider);

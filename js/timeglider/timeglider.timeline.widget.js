@@ -111,23 +111,20 @@
        */
 	    _init : function () {
 	      	      
-	      // should come out as empty string
+	      // validateOptions should come out as empty string
 	      var optionsCheck = timeglider.validateOptions(this.options);
 	    
 	      if (optionsCheck == "") {
 	        
-	        debug.log("culture: " + this.options.culture);
-	        
           tg.TG_Date.setCulture(this.options.culture);
-          	        
-	        
+    
           timelineMediator = new tg.TG_Mediator(this.options);
           timelineView = new tg.TG_TimelineView(this, timelineMediator);
 
           // after timelineView is created this stuff can be done
           timelineMediator.setFocusDate(new TG_Date(this.options.initial_focus));
           timelineMediator.loadTimelineData(this.options.data_source);
-        
+    
         } else {
           alert("Rats. There's a problem with your widget settings:" + optionsCheck);
         }
