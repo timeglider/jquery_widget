@@ -170,24 +170,28 @@
 
   
 
-   function getEventImageSize (img) { 
-     
-   	  var imgTesting = new Image(),
-   	      // ID would be the event ID for the event pool
-   	      img_id = img.id,
-   	      img_src = imgTesting.src = img.src;
+function getEventImageSize (img) { 
+  
+ 	  var imgTesting = new Image(),
+ 	      // ID would be the event ID for the event pool
+ 	      img_id = img.id,
+ 	      img_src = imgTesting.src = img.src;
+    
+    imgTesting.onerror= delegatr(imgTesting, function () {
+       	app_mediator.reportImageSize({id:img.id, src:img_src, error:true});
+    });
+    
+   	imgTesting.onload = delegatr(imgTesting, function () {
+   	     app_mediator.reportImageSize({id:img_id, src:img_src, width: this.width, height: this.height});
+   	});
 
-     	imgTesting.onload = delegateHere(imgTesting, function () {
-     	  app_mediator.reportImageSize({id:img_id, src:img_src, width: this.width, height: this.height});
-     	});
-
-     	function delegateHere(contextObject, delegateMethod) {
-     	    return function() {
-     	        return delegateMethod.apply(contextObject, arguments);
-     	    }
-     	};
-     	
-   };
+   	function delegatr(contextObject, delegateMethod) {
+   	    return function() {
+   	        return delegateMethod.apply(contextObject, arguments);
+   	    }
+   	};
+   	
+};
 
    
 

@@ -20,7 +20,7 @@
         "high_threshold": "60",
         "importance": "50",
         "ypix": "0",
-        "image_url": ""
+        "slug":""
     }
     ,
     {
@@ -37,7 +37,7 @@
         "high_threshold": "60",
         "importance": "45",
         "ypix": "0",
-        "image_url": ""
+        "slug": ""
     }
     ,
     {
@@ -54,7 +54,7 @@
         "high_threshold": "60",
         "importance": "45",
         "ypix": "0",
-        "image_url": ""
+        "slug":""
     }
     ,
     {
@@ -71,7 +71,7 @@
         "high_threshold": "60",
         "importance": "45",
         "ypix": "0",
-        "image_url": ""
+        "slug": ""
     }
     ,
     {
@@ -88,7 +88,7 @@
         "high_threshold": "60",
         "importance": "30",
         "ypix": "0",
-        "image_url": ""
+        "slug": ""
     }
     ,
     {
@@ -105,7 +105,7 @@
         "high_threshold": "60",
         "importance": "32",
         "ypix": "0",
-        "image_url": ""
+        "slug": ""
     }
     ,
     {
@@ -121,8 +121,8 @@
         "low_threshold": "1",
         "high_threshold": "60",
         "importance": "38",
-        "ypix": "0",
-        "image_url": ""
+        "image_class": "bar",
+        "image":"img/tests/idaho.jpg"
     }
     ,
     {
@@ -139,7 +139,7 @@
         "high_threshold": "60",
         "importance": "40",
         "ypix": "0",
-        "image_url": ""
+        "slug": ""
     }
     ,
     {
@@ -156,7 +156,7 @@
         "high_threshold": "60",
         "importance": "35",
         "ypix": "0",
-        "image_url": ""
+        "slug": ""
     }
     ,
     {
@@ -173,7 +173,7 @@
         "high_threshold": "60",
         "importance": "37",
         "ypix": "0",
-        "image_url": ""
+        "slug": ""
     }
     ,
     {
@@ -190,7 +190,7 @@
         "high_threshold": "60",
         "importance": "32",
         "ypix": "0",
-        "image_url": ""
+        "slug": ""
     }
     ,
     {
@@ -206,8 +206,8 @@
         "low_threshold": "1",
         "high_threshold": "60",
         "importance": "32",
-        "ypix": "0",
-        "image_url": ""
+        "image_class": "bar",
+        "image":"img/tests/idaho.jpg"
     }
     ,
     {
@@ -224,7 +224,7 @@
         "high_threshold": "60",
         "importance": "30",
         "ypix": "0",
-        "image_url": ""
+        "slug": ""
     }
     ,
     {
@@ -241,7 +241,7 @@
         "high_threshold": "60",
         "importance": "30",
         "ypix": "0",
-        "image_url": ""
+        "slug": ""
     }
     ,
     {
@@ -258,7 +258,7 @@
         "high_threshold": "60",
         "importance": "40",
         "ypix": "0",
-        "image_url": ""
+        "slug": ""
     }
     ,
     {
@@ -275,7 +275,7 @@
         "high_threshold": "60",
         "importance": "41",
         "ypix": "0",
-        "image_url": ""
+        "slug":""
     }
     ,
     {
@@ -292,7 +292,7 @@
         "high_threshold": "60",
         "importance": "40",
         "ypix": "0",
-        "image_url": ""
+        "slug": ""
     }
     ,
     {
@@ -309,7 +309,7 @@
         "high_threshold": "60",
         "importance": "45",
         "ypix": "0",
-        "image_url": ""
+        "slug": ""
     }
     ,
     {
@@ -326,7 +326,7 @@
         "high_threshold": "60",
         "importance": "40",
         "ypix": "0",
-        "image_url": ""
+        "slug": ""
     }
     ,
     {
@@ -343,7 +343,7 @@
         "high_threshold": "60",
         "importance": "30",
         "ypix": "0",
-        "image_url": ""
+        "slug": ""
     }
     ,
     {
@@ -360,7 +360,7 @@
         "high_threshold": "60",
         "importance": "56",
         "ypix": "0",
-        "image_url": ""
+        "slug": ""
     }
     ,
     {
@@ -377,7 +377,7 @@
         "high_threshold": "60",
         "importance": "52",
         "ypix": "0",
-        "image_url": ""
+        "slug":""
     }
     ,
     {
@@ -394,7 +394,7 @@
         "high_threshold": "60",
         "importance": "35",
         "ypix": "0",
-        "image_url": ""
+        "slug": ""
     }
     ,
     {
@@ -411,7 +411,7 @@
         "high_threshold": "60",
         "importance": "50",
         "ypix": "0",
-        "image_url": ""
+        "slug": ""
     }
     ,
     {
@@ -428,7 +428,7 @@
         "high_threshold": "60",
         "importance": "52",
         "ypix": "0",
-        "image_url": ""
+        "slug": ""
     }
     ,
     {
@@ -445,7 +445,7 @@
         "high_threshold": "60",
         "importance": "35",
         "ypix": "0",
-        "image_url": ""
+        "slug": ""
     }
     ,
     {
@@ -462,7 +462,7 @@
         "high_threshold": "60",
         "importance": "30",
         "ypix": "0",
-        "image_url": ""
+        "slug":""
     }
     ,
     {
@@ -479,7 +479,7 @@
         "high_threshold": "60",
         "importance": "55",
         "ypix": "0",
-        "image_url": ""
+        "slug": ""
     }
     ,
     {
@@ -496,7 +496,7 @@
         "high_threshold": "60",
         "importance": "45",
         "ypix": "0",
-        "image_url": ""
+        "slug": ""
     }
     ,
     {
@@ -513,7 +513,7 @@
         "high_threshold": "60",
         "importance": "42",
         "ypix": "0",
-        "image_url": ""
+        "slug": ""
     }
     ,
     {
@@ -530,7 +530,7 @@
         "high_threshold": "60",
         "importance": "52",
         "ypix": "0",
-        "image_url": ""
+        "slug":""
     }
     ,
     {
@@ -547,7 +547,7 @@
         "high_threshold": "60",
         "importance": "35",
         "ypix": "0",
-        "image_url": ""
+        "slug": ""
     }
     ,
     {
@@ -564,7 +564,7 @@
         "high_threshold": "60",
         "importance": "35",
         "ypix": "0",
-        "image_url": ""
+        "slug": ""
     }
     ,
     {
@@ -581,7 +581,7 @@
         "high_threshold": "60",
         "importance": "30",
         "ypix": "0",
-        "image_url": ""
+        "slug": ""
     }
     ,
     {
@@ -598,7 +598,7 @@
         "high_threshold": "60",
         "importance": "50",
         "ypix": "0",
-        "image_url": ""
+        "slug": ""
     }
     ,
     {
@@ -614,8 +614,8 @@
         "low_threshold": "1",
         "high_threshold": "60",
         "importance": "54",
-        "ypix": "0",
-        "image_url": ""
+        "image_class": "bar",
+        "image":"img/tests/idaho.jpg"
     }
     ,
     {
@@ -632,7 +632,7 @@
         "high_threshold": "60",
         "importance": "54",
         "ypix": "0",
-        "image_url": ""
+        "slug": ""
     }
     ,
     {
@@ -649,7 +649,7 @@
         "high_threshold": "60",
         "importance": "55",
         "ypix": "0",
-        "image_url": ""
+        "slug": ""
     }
     ,
     {
@@ -666,7 +666,7 @@
         "high_threshold": "60",
         "importance": "30",
         "ypix": "0",
-        "image_url": ""
+        "slug": ""
     }
     ,
     {
@@ -683,7 +683,7 @@
         "high_threshold": "60",
         "importance": "35",
         "ypix": "0",
-        "image_url": ""
+        "slug":""
     }
     ,
     {
@@ -700,7 +700,7 @@
         "high_threshold": "60",
         "importance": "40",
         "ypix": "0",
-        "image_url": ""
+        "slug": ""
     }
     ,
     {
@@ -717,7 +717,7 @@
         "high_threshold": "60",
         "importance": "40",
         "ypix": "0",
-        "image_url": ""
+        "slug": ""
     }
     ,
     {
@@ -734,7 +734,7 @@
         "high_threshold": "60",
         "importance": "48",
         "ypix": "0",
-        "image_url": ""
+        "slug": ""
     }
     ,
     {
@@ -751,7 +751,7 @@
         "high_threshold": "60",
         "importance": "40",
         "ypix": "0",
-        "image_url": ""
+        "slug": ""
     }
     ,
     {
@@ -768,7 +768,7 @@
         "high_threshold": "60",
         "importance": "40",
         "ypix": "0",
-        "image_url": ""
+        "slug": ""
     }
     ,
     {
@@ -785,7 +785,7 @@
         "high_threshold": "60",
         "importance": "63",
         "ypix": "0",
-        "image_url": ""
+        "image":"img/tests/missing_image.jpg"
     }
     ,
     {
@@ -802,7 +802,7 @@
         "high_threshold": "60",
         "importance": "35",
         "ypix": "0",
-        "image_url": ""
+        "slug": ""
     }
     ,
     {
@@ -819,7 +819,7 @@
         "high_threshold": "60",
         "importance": "45",
         "ypix": "0",
-        "image_url": ""
+        "slug": ""
     }
     ,
     {
@@ -836,7 +836,7 @@
         "high_threshold": "60",
         "importance": "30",
         "ypix": "0",
-        "image_url": ""
+        "slug": ""
     }
     ,
     {
@@ -853,7 +853,7 @@
         "high_threshold": "60",
         "importance": "49",
         "ypix": "0",
-        "image_url": ""
+        "slug": ""
     }
     ,
     {
@@ -870,7 +870,7 @@
         "high_threshold": "60",
         "importance": "55",
         "ypix": "0",
-        "image_url": ""
+        "slug": ""
     }
     ,
     {
@@ -887,7 +887,7 @@
         "high_threshold": "60",
         "importance": "45",
         "ypix": "0",
-        "image_url": ""
+        "slug":""
     }
     ,
     {
@@ -904,7 +904,7 @@
         "high_threshold": "60",
         "importance": "49",
         "ypix": "0",
-        "image_url": ""
+        "slug": ""
     }
     ,
     {
@@ -921,7 +921,7 @@
         "high_threshold": "60",
         "importance": "32",
         "ypix": "0",
-        "image_url": ""
+        "slug": ""
     }
     ,
     {
@@ -938,7 +938,7 @@
         "high_threshold": "60",
         "importance": "45",
         "ypix": "0",
-        "image_url": ""
+        "slug": ""
     }
     ,
     {
@@ -955,7 +955,7 @@
         "high_threshold": "60",
         "importance": "42",
         "ypix": "0",
-        "image_url": ""
+        "slug": ""
     }
     ,
     {
@@ -972,7 +972,7 @@
         "high_threshold": "60",
         "importance": "46",
         "ypix": "0",
-        "image_url": ""
+        "slug":""
     }
     ,
     {
@@ -989,7 +989,7 @@
         "high_threshold": "60",
         "importance": "45",
         "ypix": "0",
-        "image_url": ""
+        "slug": ""
     }
     ,
     {
@@ -1006,7 +1006,7 @@
         "high_threshold": "60",
         "importance": "45",
         "ypix": "0",
-        "image_url": ""
+        "slug": ""
     }
     ,
     {
@@ -1023,7 +1023,7 @@
         "high_threshold": "60",
         "importance": "45",
         "ypix": "0",
-        "image_url": ""
+        "slug": ""
     }
     ,
     {
@@ -1040,7 +1040,7 @@
         "high_threshold": "60",
         "importance": "42",
         "ypix": "0",
-        "image_url": ""
+        "slug":""
     }
     ,
     {
@@ -1057,7 +1057,7 @@
         "high_threshold": "60",
         "importance": "45",
         "ypix": "0",
-        "image_url": ""
+        "slug": ""
     }
     ,
     {
@@ -1074,7 +1074,7 @@
         "high_threshold": "60",
         "importance": "45",
         "ypix": "0",
-        "image_url": ""
+        "slug": ""
     }
     ,
     {
@@ -1091,7 +1091,7 @@
         "high_threshold": "60",
         "importance": "45",
         "ypix": "0",
-        "image_url": ""
+        "slug": ""
     }
     ,
     {
@@ -1108,7 +1108,7 @@
         "high_threshold": "60",
         "importance": "45",
         "ypix": "0",
-        "image_url": ""
+        "slug":""
     }
     ,
     {
@@ -1125,7 +1125,7 @@
         "high_threshold": "60",
         "importance": "55",
         "ypix": "0",
-        "image_url": ""
+        "slug": ""
     }
     ,
     {
@@ -1142,7 +1142,7 @@
         "high_threshold": "60",
         "importance": "42",
         "ypix": "0",
-        "image_url": ""
+        "slug": ""
     }
     ,
     {
@@ -1159,7 +1159,7 @@
         "high_threshold": "60",
         "importance": "52",
         "ypix": "0",
-        "image_url": ""
+        "slug": ""
     }
     ,
     {
@@ -1176,7 +1176,7 @@
         "high_threshold": "60",
         "importance": "50",
         "ypix": "0",
-        "image_url": ""
+        "slug": ""
     }
     ,
     {
@@ -1193,7 +1193,7 @@
         "high_threshold": "60",
         "importance": "50 ",
         "ypix": "0",
-        "image_url": ""
+        "slug": ""
     }
     ,
     {
@@ -1209,8 +1209,8 @@
         "low_threshold": "1",
         "high_threshold": "60",
         "importance": "25",
-        "ypix": "0",
-        "image_url": ""
+        "image_class": "bar",
+        "image":"img/tests/idaho.jpg"
     }
     ,
     {
@@ -1227,7 +1227,7 @@
         "high_threshold": "60",
         "importance": "50",
         "ypix": "0",
-        "image_url": ""
+        "slug": ""
     }
     ,
     {
@@ -1244,7 +1244,7 @@
         "high_threshold": "60",
         "importance": "51",
         "ypix": "0",
-        "image_url": ""
+        "slug": ""
     }
     ,
     {
@@ -1261,7 +1261,7 @@
         "high_threshold": "60",
         "importance": "45",
         "ypix": "0",
-        "image_url": ""
+        "slug": ""
     }
     ,
     {
@@ -1278,7 +1278,7 @@
         "high_threshold": "60",
         "importance": "42",
         "ypix": "0",
-        "image_url": ""
+        "slug": ""
     }
     ,
     {
@@ -1295,7 +1295,7 @@
         "high_threshold": "60",
         "importance": "45",
         "ypix": "0",
-        "image_url": ""
+        "slug": ""
     }
     ,
     {
@@ -1312,7 +1312,7 @@
         "high_threshold": "60",
         "importance": "45",
         "ypix": "0",
-        "image_url": ""
+        "slug": ""
     }
     ,
     {
@@ -1329,7 +1329,7 @@
         "high_threshold": "60",
         "importance": "42",
         "ypix": "0",
-        "image_url": ""
+        "slug":""
     }
     ,
     {
@@ -1346,7 +1346,7 @@
         "high_threshold": "60",
         "importance": "45",
         "ypix": "0",
-        "image_url": ""
+        "slug": ""
     }
     ,
     {
@@ -1363,7 +1363,7 @@
         "high_threshold": "60",
         "importance": "45",
         "ypix": "0",
-        "image_url": ""
+        "slug": ""
     }
     ,
     {
@@ -1380,7 +1380,7 @@
         "high_threshold": "60",
         "importance": "42",
         "ypix": "0",
-        "image_url": ""
+        "slug": ""
     }
     ,
     {
@@ -1397,7 +1397,7 @@
         "high_threshold": "60",
         "importance": "45",
         "ypix": "0",
-        "image_url": ""
+        "slug": ""
     }
     ,
     {
@@ -1414,7 +1414,7 @@
         "high_threshold": "60",
         "importance": "45",
         "ypix": "0",
-        "image_url": ""
+        "slug": ""
     }
     ,
     {
@@ -1431,7 +1431,7 @@
         "high_threshold": "60",
         "importance": "52",
         "ypix": "0",
-        "image_url": ""
+        "slug":""
     }
     ,
     {
@@ -1448,7 +1448,7 @@
         "high_threshold": "60",
         "importance": "42",
         "ypix": "0",
-        "image_url": ""
+        "slug": ""
     }
     ,
     {
@@ -1465,7 +1465,7 @@
         "high_threshold": "60",
         "importance": "45",
         "ypix": "0",
-        "image_url": ""
+        "slug": ""
     }
     ,
     {
@@ -1482,7 +1482,7 @@
         "high_threshold": "60",
         "importance": "41",
         "ypix": "0",
-        "image_url": ""
+        "slug": ""
     }
     ,
     {
@@ -1499,7 +1499,7 @@
         "high_threshold": "60",
         "importance": "42",
         "ypix": "0",
-        "image_url": ""
+        "slug": ""
     }
     ,
     {
@@ -1516,7 +1516,7 @@
         "high_threshold": "60",
         "importance": "60",
         "ypix": "0",
-        "image_url": ""
+        "slug": ""
     }
     ,
     {
@@ -1533,7 +1533,7 @@
         "high_threshold": "60",
         "importance": "45",
         "ypix": "0",
-        "image_url": ""
+        "slug":""
     }
     ,
     {
@@ -1550,7 +1550,7 @@
         "high_threshold": "60",
         "importance": "52",
         "ypix": "0",
-        "image_url": ""
+        "slug": ""
     }
     ,
     {
@@ -1567,7 +1567,7 @@
         "high_threshold": "60",
         "importance": "42",
         "ypix": "0",
-        "image_url": ""
+        "slug": ""
     }
     ,
     {
@@ -1584,7 +1584,7 @@
         "high_threshold": "60",
         "importance": "45",
         "ypix": "0",
-        "image_url": ""
+        "slug": ""
     }
     ,
     {
@@ -1601,7 +1601,7 @@
         "high_threshold": "60",
         "importance": "45",
         "ypix": "0",
-        "image_url": ""
+        "slug": ""
     }
     ,
     {
@@ -1618,7 +1618,7 @@
         "high_threshold": "60",
         "importance": "42",
         "ypix": "0",
-        "image_url": ""
+        "slug": ""
     }
     ,
     {
@@ -1635,7 +1635,7 @@
         "high_threshold": "60",
         "importance": "45",
         "ypix": "0",
-        "image_url": ""
+        "slug":""
     }
     ,
     {
@@ -1652,7 +1652,7 @@
         "high_threshold": "60",
         "importance": "45",
         "ypix": "0",
-        "image_url": ""
+        "slug": ""
     }
     ,
     {
@@ -1669,7 +1669,7 @@
         "high_threshold": "60",
         "importance": "32",
         "ypix": "0",
-        "image_url": ""
+        "slug": ""
     }
 
 	,
@@ -1687,7 +1687,7 @@
         "high_threshold": "100",
         "importance": "35",
         "ypix": "0",
-        "image_url": ""
+        "slug": ""
     },
 
 	{
@@ -1704,7 +1704,7 @@
 	        "high_threshold": "100",
 	        "importance": "60",
 	        "ypix": "0",
-	        "image_url": ""
+	        "slug": ""
 	    }
     ]
 }

@@ -1359,7 +1359,7 @@ tg.TG_TimelineView.prototype = {
       		  img_ht = 0;
       		  if (ev.image && ev.image.display_class === "layout") {
       		    img_ht = ev.image.height + 2;
-      		    ev.width = ev.image.width + 2;
+      		    ev.width = (ev.image.width > ev.width) ? ev.image.width : ev.width;
       	    }
 
       			ev.height = Math.ceil(ev.fontsize) + img_ht;
@@ -1453,7 +1453,7 @@ tg.TG_TimelineView.prototype = {
 		  $par = $("#" + eid),
 		  modalTemplate = me._templates.event_modal;
 		  ev = MED.eventPool[eid],
-		  ev_img = ev.image.src ? "<img src='" + ev.image + "'>" : "",
+		  ev_img = (ev.image && ev.image.src) ? "<img src='" + ev.image.src + "'>" : "",
 		  templ_obj = {
   			  title:ev.title,
   			  description:ev_img + ev.description,

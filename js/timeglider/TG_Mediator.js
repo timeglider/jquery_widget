@@ -406,11 +406,19 @@ tg.TG_Mediator.prototype = {
        
        */
         reportImageSize : function (img) {
-        	var ev = MED.eventPool["ev_" + img.id];
-        	ev.image.width = img.width;
-        	ev.image.height = img.height;
+         
+          var ev = MED.eventPool["ev_" + img.id];
+          
+          if (!img.error) {
+          	ev.image.width = img.width;
+          	ev.image.height = img.height;
+       	  } else {
+          	ev.image = {}
+          	debug.log("WHOOPS: MISSING IMAGE: " + img.src);
+     	    }
+
         	this.imagesSized++;
-        	
+          
         	if (this.imagesSized == this.imagesToSize) {
         	  // if there are images, this would usually be
         	  // the last step before proceeding
