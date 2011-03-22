@@ -130,6 +130,7 @@ timeglider.TimelineView
           // "<h3>legend</h3>"+
           "<div class='timeglider-menu-modal-content'><ul id='${id}'>{{html legend_list}}</ul>"+
           "<div class='timeglider-close-button-small timeglider-legend-close'></div>"+
+          "<div class='timeglider-legend-all'>all</div>"+
           "</div>"+
           "</div>")
 
@@ -169,6 +170,7 @@ timeglider.TimelineView
   
    	
 	$.subscribe("mediator.ticksOffsetChange", function () {
+	  debug.log("subscriber: ticksOffsetChange");
 		me.tickHangies();
 		me.registerTitles();
 		me.registerDragging();
@@ -183,8 +185,8 @@ timeglider.TimelineView
 		var zl = MED.getZoomLevel();
 		// if the slider isn't already at the given value change it
 		$(me._views.SLIDER).slider("value", me.invSliderVal(zl));
-		
     me.displayZoomLevel(zl);
+    
     me.castTicks("zoomLevelChange");
 		
 	});
@@ -205,6 +207,10 @@ timeglider.TimelineView
     	! The only view method that responds directly to a model refresh()
 	*/
 	$.subscribe("mediator.refreshSignal", function () {
+	  
+  	me.tickNum = 0;
+  	me.leftside = 0;
+  	
 		me.castTicks("refreshSignal");
 	});
 
@@ -304,12 +310,13 @@ timeglider.TimelineView
 		
 			stop: function(event, ui) {
 				me.resetTicksHandle();
-				me.easeOutTicks();
-				me.registerDragging(); // one final time, plus more if easing...
+				me.registerDragging();
+    		
+				// me.easeOutTicks();  
 			}
 			
 		}) // end draggable
-		.delegate(".timeglider-timeline-event", "click", function () { 
+		.delegate(CONTAINER + " .timeglider-timeline-event", "click", function () { 
 			// EVENT ON-CLICK !!!!!!
 			var eid = $(this).attr("id"); 
 			var ev = MED.eventPool[eid];
@@ -349,14 +356,22 @@ timeglider.TimelineView
 			debug.trace("collapsed, title:" + title, "note"); 
 		});
 		
-	$(".close-button-remove").live("click", function () {
+	$(CONTAINER + " .close-button-remove").live("click", function () {
 	  var $parent = $(this).parent();
 		$parent.fadeOut(300, function () { $parent.remove(); });
 	});
 	
-	$(".timeglider-legend-close").live("click", function () {
+	$(CONTAINER + " .timeglider-legend-close").live("click", function () {
 	  var $legend = $(CONTAINER + " .timeglider-legend");
 	   $legend.fadeOut(300, function () { $legend.remove(); });
+  });
+  
+  $(CONTAINER + " .timeglider-legend-all").live("click", function () {
+    $(CONTAINER + " .timeglider-legend li").each(function () {
+      $(this).removeClass("tg-legend-icon-selected");
+    });
+    debug.log("okay, setfiltersLeg in MED");
+	  MED.setFiltersLegend("all");
   });
 
  
@@ -765,6 +780,7 @@ tg.TG_TimelineView.prototype = {
   
   
 	clearTicks : function () {
+	  this.leftside = 0;
 		this.tickNum = 0;
 		$(TICKS)
 		  .css("left", 0)
@@ -778,6 +794,9 @@ tg.TG_TimelineView.prototype = {
 	  a left-right alternating loop fills out the width of the current frame
 	*/
 	castTicks : function (orig) {
+	  	  	
+	  this.clearTicks();
+    
 		var zLevel = MED.getZoomLevel(),
 			fDate = MED.getFocusDate(),
 			tickWidth = MED.getZoomInfo().width,
@@ -786,7 +805,6 @@ tg.TG_TimelineView.prototype = {
 			nTicks = Math.ceil(this.dimensions.container.width / tickWidth) + 4,
 			leftright = 'l';
 			
-		this.clearTicks();
 	
 		MED.setTicksReady(false);
     
@@ -1244,7 +1262,7 @@ tg.TG_TimelineView.prototype = {
 			$title.css({"top":ht, "left":t_f, "width":(t_l-t_f)});
 
 			/// for initial sweep display, setup fresh borg for organizing events
-			if (expCol == "expanded") { borg = tl.borg = new timeglider.TG_Org(); }
+			if (expCol == "expanded") { tl.borg = borg = new timeglider.TG_Org(); }
  
 			//cycle through ticks for hashed events
 			for (var tx=0; tx<ticks.length; tx++) {
@@ -1283,9 +1301,13 @@ tg.TG_TimelineView.prototype = {
 	}, // ends freshTimelines()
 
   
-	/* 
-		this is per tick... pretty WET with freshTimelines()...
-	*/
+  
+  /*
+  * appendTimelines
+  * @param tick {Object} contains serial, time-unit, and more info
+  *
+  *
+  */
 	appendTimelines : function (tick) {
       
 			var active = MED.activeTimelines, 

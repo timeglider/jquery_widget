@@ -86,6 +86,12 @@ tg.TG_Mediator.prototype = {
         this.setZoomLevel(zoom);  
         return true; 
     },
+    
+   doRefresh : function (fdStr, zoom) {
+        this.refresh();  
+        return true; 
+    },
+    
   
   
   
@@ -205,10 +211,11 @@ tg.TG_Mediator.prototype = {
           me.toggleTimeline(tid);
           }, 1000);
         }
-      },
+      }, 
 
      refresh : function () {
-        $.publish("mediator.refreshSignal");
+       this.startSec = this._focusDate.sec;
+       $.publish("mediator.refreshSignal");       
     },
 
       // !!!TODO ---- get these back to normal setTicksReady, etc.
@@ -234,12 +241,19 @@ tg.TG_Mediator.prototype = {
          
         if (fd != this._focusDate) {
           this._focusDate = fd; 
+          debug.trace("setting fd:" + fd.dateStr, "note");
         }
     },
     
     
     getZoomLevel : function () {
         return Number(this._zoomLevel);
+    },
+    
+    zoom: function (n) {
+      debug.log("mediator zoom:" + n);
+      var new_zoom = this._zoomLevel + n;
+      this.setZoomLevel(new_zoom);
     },
 
 
@@ -282,24 +296,31 @@ tg.TG_Mediator.prototype = {
            $.publish("mediator.filtersChange");   
            this.refresh();      
          },
-         
+        
+        
         setFiltersLegend : function (icon) {
-            // push icon into array if not there
-            // remove it if it's there
             
-            if ($.inArray(icon, this.filters.legend) == -1) {
-              this.filters.legend.push(icon);
+            if (icon == "all") {
+              this.filters.legend = [];
+              $.publish("mediator.legendAll");  
             } else {
-              // remove it
-              var fol = this.filters.legend;
-              var fr = [];
-              fr = $.grep(fol, function (a) { return a != icon; });
-              this.filters.legend = fr;
-            }
-            debug.log("icons:" + this.filters.legend.toString());
             
-            //$.publish("mediator.filtersChange");   
-            //this.refresh();      
+              if ($.inArray(icon, this.filters.legend) == -1) {
+                this.filters.legend.push(icon);
+              } else {
+                // remove it
+                var fol = this.filters.legend;
+                var fr = [];
+                fr = $.grep(fol, function (a) { return a != icon; });
+                this.filters.legend = fr;
+              }
+            
+            } // end if/else for "clear"
+            
+            debug.log("icons:" + this.filters.legend.toString());
+            $.publish("mediator.legendChange");   
+            
+            this.refresh();      
         },
          
 

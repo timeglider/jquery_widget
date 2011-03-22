@@ -143,8 +143,16 @@
         debug.log("d:" + z);
         timelineMediator.gotoDateZoom(d,z);
       },
-    
-  
+      
+      doRefresh : function (d, z) {
+        timelineMediator.doRefresh();
+      },
+      
+      zoom : function (n) {
+        debug.log("widget zoom:" + n);
+        timelineMediator.zoom(n);
+      },
+
       destroy : function () {
         // anything else?
         $.Widget.prototype.destroy.apply(this, arguments); // default destroy

@@ -198,11 +198,6 @@
     display:none;
 }
 
-.timeglider-legend-modal {
-  
-}
-
-
  
 /* JUST A SHADOW TO ADD TO CLASSES */
 .tg-modal, .timeglider-event-hover-info, .timeglider-menu-modal {
@@ -517,6 +512,17 @@
 .timeglider-legend ul li.tg-legend-icon-selected {
   color:#000;
 }
+
+.timeglider-legend-all {
+  float:right;
+  font-size:9px;
+  color:#777;
+  cursor:pointer;
+  margin-right:12px;
+  margin-top:-4px;
+}
+
+
 
 .timeglider-filter-box {
   width:200px;
