@@ -80,18 +80,17 @@ tg.TG_Mediator.prototype = {
     },
 
     gotoDateZoom : function (fdStr, zoom) {
-        
         this.setFocusDate(new TG_Date(fdStr));
         // setting zoom _does_ refresh automatically
         this.setZoomLevel(zoom);  
         return true; 
     },
     
-   doRefresh : function (fdStr, zoom) {
-        this.refresh();  
-        return true; 
+    zoom : function (n) {
+      var new_zoom = this.getZoomLevel() + parseInt(n);
+      debug.log("mediator zoom:" + new_zoom);
+      this.setZoomLevel(new_zoom);
     },
-    
   
   
   
@@ -208,7 +207,7 @@ tg.TG_Mediator.prototype = {
       var tid = this.initial_timeline_id;
       if (tid) {
         setTimeout(function () { 
-          me.toggleTimeline(tid);
+          MED.toggleTimeline(tid);
           }, 1000);
         }
       }, 
@@ -247,14 +246,9 @@ tg.TG_Mediator.prototype = {
     
     
     getZoomLevel : function () {
-        return Number(this._zoomLevel);
+        return parseInt(this._zoomLevel);
     },
     
-    zoom: function (n) {
-      debug.log("mediator zoom:" + n);
-      var new_zoom = this._zoomLevel + n;
-      this.setZoomLevel(new_zoom);
-    },
 
 
       /* 
@@ -286,42 +280,51 @@ tg.TG_Mediator.prototype = {
           return this._zoomInfo;
         },
         
+        
+        
+        
         /*
         
         */
         setFilters : function (obj) {
-           this.filters.include = obj.include;
-           this.filters.exclude = obj.exclude;
-           
-           $.publish("mediator.filtersChange");   
-           this.refresh();      
-         },
-        
-        
-        setFiltersLegend : function (icon) {
+          
+          switch (obj.origin) {
+          
+            case "clude":
+              this.filters.include = obj.include;
+              this.filters.exclude = obj.exclude;
+            break;
+          
+            case "legend":
+          
+                var icon = obj.icon;
             
-            if (icon == "all") {
-              this.filters.legend = [];
-              $.publish("mediator.legendAll");  
-            } else {
+                if (icon == "all") {
+                  this.filters.legend = [];
+                  $.publish("mediator.legendAll");  
+                } else {
             
-              if ($.inArray(icon, this.filters.legend) == -1) {
-                this.filters.legend.push(icon);
-              } else {
-                // remove it
-                var fol = this.filters.legend;
-                var fr = [];
-                fr = $.grep(fol, function (a) { return a != icon; });
-                this.filters.legend = fr;
-              }
+                  if ($.inArray(icon, this.filters.legend) == -1) {
+                    this.filters.legend.push(icon);
+                  } else {
+                    // remove it
+                    var fol = this.filters.legend;
+                    var fr = [];
+                    fr = $.grep(fol, function (a) { return a != icon; });
+                    this.filters.legend = fr;
+                  }
             
-            } // end if/else for "clear"
+                 } // end if/else for "clear"
+               
+            break;
             
-            debug.log("icons:" + this.filters.legend.toString());
-            $.publish("mediator.legendChange");   
-            
+          } // end switch
+       
+            $.publish("mediator.filtersChange");   
             this.refresh();      
         },
+         
+         
          
 
         setGestureStart : function () {

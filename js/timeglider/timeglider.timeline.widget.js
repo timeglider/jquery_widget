@@ -144,12 +144,7 @@
         timelineMediator.gotoDateZoom(d,z);
       },
       
-      doRefresh : function (d, z) {
-        timelineMediator.doRefresh();
-      },
-      
       zoom : function (n) {
-        debug.log("widget zoom:" + n);
         timelineMediator.zoom(n);
       },
 

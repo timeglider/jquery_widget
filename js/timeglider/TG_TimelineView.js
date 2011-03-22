@@ -170,7 +170,6 @@ timeglider.TimelineView
   
    	
 	$.subscribe("mediator.ticksOffsetChange", function () {
-	  debug.log("subscriber: ticksOffsetChange");
 		me.tickHangies();
 		me.registerTitles();
 		me.registerDragging();
@@ -370,8 +369,7 @@ timeglider.TimelineView
     $(CONTAINER + " .timeglider-legend li").each(function () {
       $(this).removeClass("tg-legend-icon-selected");
     });
-    debug.log("okay, setfiltersLeg in MED");
-	  MED.setFiltersLegend("all");
+	  MED.setFilters({origin:"legend", icon: "all"});
   });
 
  
@@ -746,7 +744,7 @@ tg.TG_TimelineView.prototype = {
   	          $filter_apply.click(function () {
   	            incl = $(fbox + " .timeglider-filter-include").val();
   	            excl = $(fbox + " .timeglider-filter-exclude").val();
-  	            MED.setFilters({include:incl, exclude:excl});
+  	            MED.setFilters({origin:"clude", include:incl, exclude:excl});
   	            $(fbox).toggleClass("timeglider-menu-shown");
               });
 
@@ -755,7 +753,7 @@ tg.TG_TimelineView.prototype = {
               });
 
               $filter_clear.click(function () {
-                MED.setFilters({include:'', exclude:''});
+                MED.setFilters({origin:"clude", include:'', exclude:''});
                 $(fbox + " .timeglider-filter-include").val('');
   	            $(fbox + " .timeglider-filter-exclude").val('');
                 $(fbox).toggleClass("timeglider-menu-shown");
@@ -1174,7 +1172,14 @@ tg.TG_TimelineView.prototype = {
 	        if (ev.title.match(ei)) { ret = false; }
         }
      }
-	   
+     
+     var ev_icon = ev.icon;
+     if (MED.filters.legend.length > 0) {
+       if ($.inArray(ev_icon, MED.filters.legend) == -1) {
+         ret = false;
+       }
+     }
+ 
 	   return ret;
   },
   
@@ -1538,7 +1543,7 @@ tg.TG_TimelineView.prototype = {
   		    var legend_item_id = $(this).parent().attr("id");
   		    var icon = ($(this).children("img").attr("src"));
   		    $(this).toggleClass("tg-legend-icon-selected");
-  		    MED.setFiltersLegend(icon);
+  		    MED.setFilters({origin:"legend", icon: icon});
   		});
 
   },
