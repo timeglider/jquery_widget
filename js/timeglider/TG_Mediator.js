@@ -20,7 +20,11 @@ reflects state back to view
   var MED = {},
       TG_Date = tg.TG_Date,
       options = {},
-      $ = jQuery;
+      $ = jQuery,
+      contants = {
+        
+        
+      }
       
   /* In progress... */
   tg.TimelineCollection = Backbone.Collection.extend({
@@ -115,18 +119,16 @@ tg.TG_Mediator.prototype = {
           M.parseData(src);
         } else {
  
-        // Not working in jQuery 1.5 : fixed in 1.5.1+
-        //  When we're well beyond jQuery 1.5, implement when...then
-        
+ 
             $.getJSON(src, function (data) {
                   M.parseData(data);
                }
             );
 
-        }// end if/else for local obj vs remote json
+        }// end [obj vs remote]
     
     } else {
-      // NO INITIAL DATA
+      // NO INITIAL DATA: That's cool, still build the timeline
       // focusdate has been set to today
       this.timelineDataLoaded = true;
       this.setZoomLevel(Math.floor((this.max_zoom + this.min_zoom) / 2));
@@ -244,7 +246,13 @@ tg.TG_Mediator.prototype = {
         }
     },
     
-    
+    /*
+    * getZoomLevel
+    * @return {Number} zoom level number from 1 to 100
+    *
+    *
+    *
+    */
     getZoomLevel : function () {
         return parseInt(this._zoomLevel);
     },
@@ -276,15 +284,23 @@ tg.TG_Mediator.prototype = {
         }, 
 
 
+       /*
+        *  getZoomInfo
+        *  @return obj {Object} with 
+        *          zoomLevel (Number), label (String), tickWidth (Number), unit (String)
+        *
+        */
         getZoomInfo : function () {
           return this._zoomInfo;
         },
         
         
         
-        
         /*
-        
+        *  setFilters
+        *  @param obj {Object} containing: 
+        *         origin ("clude", "legend"), include (Str), exclude (Str), legend (Obj)
+        *
         */
         setFilters : function (obj) {
           
@@ -326,7 +342,6 @@ tg.TG_Mediator.prototype = {
          
          
          
-
         setGestureStart : function () {
           this.gestureStartZoom = this.getZoomLevel();
         },
@@ -337,14 +352,20 @@ tg.TG_Mediator.prototype = {
 
 
         setTicksOffset : function (newOffset) {
-          // This would be the same as the focus date...
+          // This triggers changing the focus date
           // main listener hub for date focus and tick-appending
           this._ticksOffset = newOffset;
           /* In other words, ticks are being dragged! */
           $.publish( "mediator.ticksOffsetChange" );
         },
 
-
+        /*
+        *  getTickBySerial
+        *  @param serial {Number} serial date unit number (rata die, monthnum, year, etc)
+        *
+        *  @return {Object} info about _existing_ displayed tick
+        *
+        */
         getTickBySerial : function (serial) {
           var ta = this.ticksArray,
           tal = ta.length;
@@ -356,14 +377,15 @@ tg.TG_Mediator.prototype = {
         },
 
         /*
-        *	@param obj -----  
-        *		serial: #initial tick
-        *		type:init|l|r
-        *		unit:ye | mo | da | etc
-        *		width: #px
-        *		left: #px
-        *	@param focusDate ----
-        *		used for initial tick; others set off init
+        *  addToTicksArray
+        *	 @param obj {Object} 
+        *		  serial: #initial tick
+        *		  type:init|l|r
+        *		  unit:ye | mo | da | etc
+        *		  width: #px
+        *		  left: #px
+        *	 @param focusDate {TG_Date}
+        *		 used for initial tick; others set off init
         */
         addToTicksArray : function (obj, focusDate) {
 

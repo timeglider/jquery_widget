@@ -97,7 +97,7 @@
         padding = 6,
         span_selector_class, 
         span_div, 
-        img = "", 
+        img = '', icon = ''
         html = '', 
         b_htm = '',
         b = {},
@@ -160,6 +160,13 @@
               span_div = "";
             }
             
+            if (b.icon) {
+              icon = "<img class='timeglider-event-icon' src='" + b.icon + "' style='height:"
+            + b.fontsize + "px;left:-" + (b.fontsize + 2) + "px; top:" + title_adj + "px'>";
+            } else {
+              icon = '';
+            }
+            
 
             html += "<div class='timeglider-timeline-event " + span_selector_class + "' id='ev_" + b.id + "' "
             + "style='width:" + b.width  + "px;"
@@ -168,8 +175,7 @@
             + "opacity:" + b.opacity + ";"
             + "top:" + b.top + "px;"
             + "font-size:" + b.fontsize  + "px;'>"
-            + "<img class='timeglider-event-icon' src='" + b.icon + "' style='height:"
-            + b.fontsize + "px;left:-" + (b.fontsize + 2) + "px; top:" + title_adj + "px'>" + img + span_div 
+            + icon + img + span_div 
             + "<div class='timeglider-event-title' style='top:" + title_adj + "px'>" 
             + b.title
             + "</div></div>";
