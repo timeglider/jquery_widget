@@ -1,0 +1,20 @@
+# ignore these files!
+.gitignore
+_*
+.DS_Store
+json_tests/med.json
+img/tests*
+svg.html
+svg.svg
+js/log_test.html
+compiler.jar
+jsonp/
+xml/
+index.php
+.htaccess
+docs-style.css
+docs.php
+jquery.qtip-1.0.0-rc3.min.js
+med.html
+med_parser.html
+min.html
