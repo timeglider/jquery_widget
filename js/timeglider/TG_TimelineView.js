@@ -104,7 +104,7 @@ timeglider.TimelineView
      // generated, appended on the fly, then removed
      filter_modal : $.template( null,
           "<div class='tg-modal timeglider-menu-modal timeglider-filter-box timeglider-menu-hidden'>"+
-          "<div class='close-button'><img src='img/close.png'></div>"+
+          "<div class='close-button'></div>"+
           "<h3>filter</h3>"+
           "<div class='timeglider-menu-modal-content'>"+
           "<div class='timeglider-formline'>show: "+
@@ -118,7 +118,7 @@ timeglider.TimelineView
           
       timeline_list_modal : $.template( null,
           "<div class='timeglider-menu-modal timeglider-timeline-menu timeglider-menu-hidden'>"+
-          "<div class='close-button'><img src='img/close.png'></div>"+
+          "<div class='close-button'></div>"+
           "<h3>timelines</h3>"+
           "<div class='timeglider-menu-modal-content'><ul></ul></div>"+
           "<div class='timeglider-menu-modal-point-right'>"+
@@ -126,8 +126,6 @@ timeglider.TimelineView
         
       legend_modal : $.template( null,
           "<div class='timeglider-menu-modal timeglider-legend timeglider-menu-hidden'  id='${id}_legend'>"+
-          // "<div class='close-button'><img src='img/close.png'></div>"+
-          // "<h3>legend</h3>"+
           "<div class='timeglider-menu-modal-content'><ul id='${id}'>{{html legend_list}}</ul>"+
           "<div class='timeglider-close-button-small timeglider-legend-close'></div>"+
           "<div class='timeglider-legend-all'>all</div>"+
@@ -440,13 +438,22 @@ timeglider.TimelineView
 	  
 	  tgcompnt.addEventListener("gesturestart", function (e) {
 	    	  e.preventDefault();
-	        debug.trace("gesture zoom:" + MED.getZoomLevel(), "note");
+	        $("#output").append("<br>gesture zoom:" + MED.getZoomLevel());
 	    }, false);
+	    
+	    tgcompnt.addEventListener("gestureend", function (e) {
+  	    	  e.preventDefault();
+  	        $("#output").append("<br>gesture end:" + MED.getZoomLevel());
+  	    }, false);
 	  
 	  
 	  tgcompnt.addEventListener("gesturechange", function (e) {
     	    	  e.preventDefault();
-    	        debug.trace("gesture change!!!!", "note");
+    	    	  //var gLeft = e.touches.item(0).pageX;
+    	    	  //var gRight = e.touches.item(1).pageX;
+    	    	  var gLeft = "l", gRight = "r";
+    	        $("#output").append("[" + gLeft + ":" + gRight + "]");
+    	        
     	 }, false);
 	    
 	}
@@ -704,7 +711,7 @@ tg.TG_TimelineView.prototype = {
 	    at: "left top",
 	    of: $ev,
 	    offset: "1, -10",
-	    collision: "flip flip"}).text(ev_obj.startdateObj.format("D"));
+	    collision: "flip flip"}).text(ev_obj.startdateObj.format("D", true));
 	  	   
 	  $ev.addClass("tg-event-hovered");
 	   
@@ -716,9 +723,6 @@ tg.TG_TimelineView.prototype = {
 	   $ev.removeClass("tg-event-hovered");
   },
   
-  tg_format : function (dobj) {
-    return dobj.ye + "-" + dobj.mo + "-" + dobj.da;
-  },
   
   
   /* FILTER BOX SETUP */
@@ -1485,7 +1489,7 @@ tg.TG_TimelineView.prototype = {
   			  title:ev.title,
   			  description:ev_img + ev.description,
   			  id:eid,
-  			  startdate: ev.startdateObj.format(),
+  			  startdate: ev.startdateObj.format("D", true),
   			  link: ev.link,
   			  video: ev.video
   		}

@@ -50,11 +50,12 @@ var rightClickEvent = null;		// the original event
 var holdTimeout = null;			// timeout reference
 var cancelMouseUp = false;		// prevents a click from occuring as we want the context menu
 
-
+/*
 function cancelTap() {
 	tapValid = false;
 }
-
+*/
+// function() { tapValid = false; }
 function cancelHold() {
 	if (rightClickPending) {
 		window.clearTimeout(holdTimeout);
@@ -69,9 +70,54 @@ function startHold(event) {
 
 	rightClickPending = true; // We could be performing a right click
 	rightClickEvent = (event.changedTouches)[0];
-	holdTimeout = window.setTimeout("doRightClick();", 800);
+	// this invokes the body of doRightClick (removed) below
+	holdTimeout = window.setTimeout(function () {
+	  
+	  ///////////////
+	  
+	  rightClickPending = false;
+
+  	//
+  	// We need to mouse up (as we were down)
+  	//
+  	var first = rightClickEvent,
+  		simulatedEvent = document.createEvent("MouseEvent");
+  	simulatedEvent.initMouseEvent("mouseup", true, true, window, 1, first.screenX, first.screenY, first.clientX, first.clientY,
+  			false, false, false, false, 0, null);
+  	first.target.dispatchEvent(simulatedEvent);
+
+  	//
+  	// emulate a right click
+  	//
+  	simulatedEvent = document.createEvent("MouseEvent");
+  	simulatedEvent.initMouseEvent("mousedown", true, true, window, 1, first.screenX, first.screenY, first.clientX, first.clientY,
+  			false, false, false, false, 2, null);
+  	first.target.dispatchEvent(simulatedEvent);
+
+  	//
+  	// Show a context menu
+  	//
+  	simulatedEvent = document.createEvent("MouseEvent");
+  	simulatedEvent.initMouseEvent("contextmenu", true, true, window, 1, first.screenX + 50, first.screenY + 5, first.clientX + 50, first.clientY + 5,
+                                    false, false, false, false, 2, null);
+  	first.target.dispatchEvent(simulatedEvent);
+
+
+  	//
+  	// Note:: I don't mouse up the right click here however feel free to add if required
+  	//
+
+
+  	cancelMouseUp = true;
+  	rightClickEvent = null; // Release memory
+	  
+	  //////////////
+	  
+	  }, 800);
 }
 
+
+/*
 
 function doRightClick() {
 	rightClickPending = false;
@@ -110,6 +156,8 @@ function doRightClick() {
 	cancelMouseUp = true;
 	rightClickEvent = null; // Release memory
 }
+*/
+
 
 
 //
@@ -138,7 +186,7 @@ function iPadTouchStart(event) {
 	if (!tapValid) {
 		lastTap = first.target;
 		tapValid = true;
-		tapTimeout = window.setTimeout("cancelTap();", 600);
+		tapTimeout = window.setTimeout(function() { tapValid = false; }, 600);
 		startHold(event);
 	}
 	else {
@@ -169,7 +217,7 @@ function iPadTouchStart(event) {
 		else {
 			lastTap = first.target;
 			tapValid = true;
-			tapTimeout = window.setTimeout("cancelTap();", 600);
+			tapTimeout = window.setTimeout(function() { tapValid = false; }, 600);
 			startHold(event);
 		}
 	}

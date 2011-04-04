@@ -61,9 +61,11 @@
         } else { 
           ev.id = id = "anon" + this.anonEventId++; 
         }
-
-        ev.startdateObj = new TG_Date(ev.startdate);
-        ev.enddateObj = new TG_Date(ev.enddate);
+        
+        
+        ev.date_limit = (ev.date_limit || "da");
+        ev.startdateObj = new TG_Date(ev.startdate, ev.date_limit);
+        ev.enddateObj = new TG_Date(ev.enddate, ev.date_limit);
        
         // CHECK VALIDITY OF EACH DATE & MAKE SURE end > start
         //if (TG_Date.isValidDate(ev.startdateObj) != "") {
@@ -103,6 +105,7 @@
         } else {
           ev.span = false;
         }
+        
         //// !! TODO VALIDATE DATE respecting startdate, too
         var uxl=units.length;
         for (var ux=0; ux < uxl; ux++) {

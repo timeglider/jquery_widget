@@ -50,6 +50,7 @@ reflects state back to view
     this.fixed_zoom = (this.max_zoom == this.min_zoom) ? true : false;
     this.gesturing = false;
     this.gestureStartZoom = 0;
+    this.gestureStartScale = 0; // .999 etc reduced to 1 to 100
     this.filters = {include:"", exclude:"", legend:[]};
     this.eventPool = [];
     // this.eventPool['ev_000'] = "hello!";
@@ -340,11 +341,6 @@ tg.TG_Mediator.prototype = {
             this.refresh();      
         },
          
-         
-         
-        setGestureStart : function () {
-          this.gestureStartZoom = this.getZoomLevel();
-        },
 
         getTicksOffset : function () {
           return this._ticksOffset;

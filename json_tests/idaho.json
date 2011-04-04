@@ -12,7 +12,7 @@
         "title": "Smallpox Strikes the Shoshone",
         "startdate": "1740-07-01 12:00",
         "enddate": "1800-07-01 12:00",
-        "date_limit": "none",
+        
         "description": "Shoshone bands obtain horses for transportation but are decimated by smallpox spread from European sources.",
         "link": "",
         "icon": "triangle_green.png",
@@ -45,7 +45,7 @@
         "title": "Louisiana Purchase",
         "startdate": "1803-07-01 12:00",
         "enddate": "1803-07-01 12:00",
-        "date_limit": "none",
+        
         "description": "The United States purchases Louisiana Territory.",
         "event_type": "event",
         "link": "",
@@ -62,7 +62,7 @@
         "title": "Lewis and Clark Enter Idaho",
         "startdate": "1805-07-01 12:00",
         "enddate": "1805-07-01 12:00",
-        "date_limit": "none",
+        
         "description": "Captains Meriwether Lewis and William Clark enter area that would become Idaho at Lemhi Pass.",
         "event_type": "event",
         "link": "",
@@ -79,7 +79,7 @@
         "title": "Kullyspell House Erected",
         "startdate": "1809-07-01 12:00",
         "enddate": "1809-07-01 12:00",
-        "date_limit": "none",
+        
         "description": "Kullyspell House, first non-native establishment in Northwest, is erected near Lake Pend Oreille.",
         "event_type": "event",
         "link": "",
@@ -96,7 +96,7 @@
         "title": "Fort Henry Established",
         "startdate": "1810-07-01 12:00",
         "enddate": "1810-07-01 12:00",
-        "date_limit": "none",
+        
         "description": "Fort Henry, first American fur post west of Rocky Mountains, established near St. Anthony.",
         "event_type": "event",
         "link": "",
@@ -113,7 +113,7 @@
         "title": "Astorian Parties explore Idaho",
         "startdate": "1811-07-01 12:00",
         "enddate": "1811-07-01 12:00",
-        "date_limit": "none",
+        
         "description": "Astorian parties under Wilson Price Hunt explore portions of the future Oregon Trail in Idaho.",
         "event_type": "event",
         "link": "",
@@ -130,7 +130,7 @@
         "title": "Joint Occupation Treaty for Oregon Territory",
         "startdate": "1818-07-01 12:00",
         "enddate": "1818-07-01 12:00",
-        "date_limit": "none",
+        
         "description": "U.S. &amp;amp; Great Britain sign Joint Occupation Treaty for Oregon Territory.",
         "event_type": "event",
         "link": "",
@@ -147,7 +147,7 @@
         "title": "Mackenzie Rendezvous with Native Americans",
         "startdate": "1819-07-01 12:00",
         "enddate": "1819-07-01 12:00",
-        "date_limit": "none",
+        
         "description": "Donald Mackenzie holds a rendezvous with Native Americans on the Boise River. Adams-Onis treaty between Spain and the United States establishes Idaho's future southern border on the 42nd Parallel. Mackenzie attempts to set up a post on the Boise River.",
         "event_type": "event",
         "link": "",
@@ -164,7 +164,7 @@
         "title": "Mackenzie Negotiates Peace Treaty with Shoshone",
         "startdate": "1820-07-01 12:00",
         "enddate": "1820-07-01 12:00",
-        "date_limit": "none",
+        
         "description": "Mackenzie negotiates a peace treaty with the Shoshone on Little Lost River and explores most of what would become Goodale's Cutoff.",
         "event_type": "event",
         "link": "",
@@ -215,7 +215,7 @@
         "title": "Bonneville's Wagon Train Across South Pass",
         "startdate": "1830-07-01 12:00",
         "enddate": "1830-07-01 12:00",
-        "date_limit": "none",
+        
         "description": "Captain B.L.E. Bonneville takes a wagon train across South Pass to Green River.",
         "event_type": "event",
         "link": "",
@@ -249,7 +249,7 @@
         "title": "Forts Laramie, Boise, and Hall are established.",
         "startdate": "1834-07-01 12:00",
         "enddate": "1834-07-01 12:00",
-        "date_limit": "none",
+        
         "description": "Forts Laramie, Boise, and Hall are established.",
         "event_type": "event",
         "link": "",
@@ -266,7 +266,7 @@
         "title": "Spaulding Establishes Mission near Lapwai",
         "startdate": "1836-07-01 12:00",
         "enddate": "1836-07-01 12:00",
-        "date_limit": "none",
+        
         "description": "Henry H. Spalding establishes a mission near Lapwai, where he prints the Northwest's first book, establishes Idaho's first school, develops Idaho's first irrigation system, and grows the state's first potatoes. Narcissa Whitman and Eliza Spalding are the first white women to cross the continental divide (South Pass).",
         "event_type": "event",
         "link": "",
@@ -317,7 +317,7 @@
         "title": "Heavy Emigration",
         "startdate": "1849-07-01 12:00",
         "enddate": "1849-07-01 12:00",
-        "date_limit": "none",
+        
         "description": "Over 20,000 emigrants who join the gold rush come through southeastern Idaho on the California Trail. Heavy traffic continues on the trail for many years.",
         "event_type": "event",
         "link": "",
@@ -334,7 +334,7 @@
         "title": "Military Post Established",
         "startdate": "1849-07-01 12:00",
         "enddate": "1849-07-01 12:00",
-        "date_limit": "none",
+        
         "description": "U.S. Military post, Cantonment Loring, is established near Fort Hall.",
         "event_type": "event",
         "link": "",
@@ -351,7 +351,7 @@
         "title": "Gold Discovered",
         "startdate": "1852-07-01 12:00",
         "enddate": "1852-07-01 12:00",
-        "date_limit": "none",
+        
         "description": "French Canadians discover gold on the Pend Oreille River.",
         "event_type": "event",
         "link": "",
@@ -368,7 +368,7 @@
         "title": "Washington Territory is Created.",
         "startdate": "1853-07-01 12:00",
         "enddate": "1853-07-01 12:00",
-        "date_limit": "none",
+        
         "description": "Washington Territory is created.",
         "event_type": "event",
         "link": "",
@@ -385,7 +385,7 @@
         "title": "Fort Lemhi Established",
         "startdate": "1855-07-01 12:00",
         "enddate": "1855-07-01 12:00",
-        "date_limit": "none",
+        
         "description": "Salmon River mission (Fort Lemhi) is established by Mormon missionaries, to be abandoned in 1858.",
         "event_type": "event",
         "link": "",
@@ -402,7 +402,7 @@
         "title": "Oregon Becomes a State",
         "startdate": "1859-07-01 12:00",
         "enddate": "1859-07-01 12:00",
-        "date_limit": "none",
+        
         "description": "Oregon is admitted as a state.",
         "event_type": "event",
         "link": "",
@@ -436,7 +436,7 @@
         "title": "Mining Strike",
         "startdate": "1860-07-01 12:00",
         "enddate": "1863-07-01 12:00",
-        "date_limit": "none",
+        
         "description": "Major mining strikes occur near Pierce, Florence, Idaho City, and Silver City.",
         "event_type": "event",
         "link": "",
@@ -470,7 +470,7 @@
         "title": "Idaho Becomes a Territory",
         "startdate": "1863-07-01 12:00",
         "enddate": "1863-07-01 12:00",
-        "date_limit": "none",
+        
         "description": "Idaho becomes a territory on March 4 with Lewiston as its capital. The Bear River Massacre, the West's largest slaughter of Indians, is fought near present-day Preston.",
         "event_type": "event",
         "link": "",
@@ -521,7 +521,7 @@
         "title": "Snake Indian War",
         "startdate": "1866-07-01 12:00",
         "enddate": "1868-07-01 12:00",
-        "date_limit": "none",
+        
         "description": "Snake Indian War.",
         "event_type": "event",
         "link": "",
@@ -538,7 +538,7 @@
         "title": "Idaho's First Labor Union",
         "startdate": "1867-07-01 12:00",
         "enddate": "1867-07-01 12:00",
-        "date_limit": "none",
+        
         "description": "Owyhee Miners' League in Owyhee County organizes as state's first labor union.",
         "event_type": "event",
         "link": "",
@@ -555,7 +555,7 @@
         "title": "Population 17,804",
         "startdate": "1870-07-01 12:00",
         "enddate": "1870-07-01 12:00",
-        "date_limit": "none",
+        
         "description": "Idaho population 17,804.",
         "event_type": "event",
         "link": "",
@@ -606,7 +606,7 @@
         "title": "Nez Perce War",
         "startdate": "1877-07-01 12:00",
         "enddate": "1877-07-01 12:00",
-        "date_limit": "none",
+        
         "description": "Nez Perce Indian War.",
         "event_type": "event",
         "link": "",
@@ -623,7 +623,7 @@
         "title": "Bannock War",
         "startdate": "1878-07-01 12:00",
         "enddate": "1878-07-01 12:00",
-        "date_limit": "none",
+        
         "description": "Bannock Indian War.",
         "event_type": "event",
         "link": "",
@@ -640,7 +640,7 @@
         "title": "Sheepeater Indian Campaign",
         "startdate": "1879-07-01 12:00",
         "enddate": "1879-07-01 12:00",
-        "date_limit": "none",
+        
         "description": "Sheepeater Indian campaign.",
         "event_type": "event",
         "link": "",
@@ -657,7 +657,7 @@
         "title": "Population 32,610",
         "startdate": "1880-07-01 12:00",
         "enddate": "1880-07-01 12:00",
-        "date_limit": "none",
+        
         "description": "Idaho population 32,610. Boise and Lewiston independent school districts are created.",
         "event_type": "event",
         "link": "",
@@ -674,7 +674,7 @@
         "title": "Historical Society of Idaho Forms",
         "startdate": "1881-07-01 12:00",
         "enddate": "1881-07-01 12:00",
-        "date_limit": "none",
+        
         "description": "Historical Society of Idaho Pioneers forms to collect and preserve a reliable history of the early settlement of the territory.",
         "event_type": "event",
         "link": "",
@@ -691,7 +691,7 @@
         "title": "First Electric Light",
         "startdate": "1882-07-01 12:00",
         "enddate": "1882-07-01 12:00",
-        "date_limit": "none",
+        
         "description": "State's first electric light is turned on at the Philadelphia Smelter near Ketchum.",
         "event_type": "event",
         "link": "",
@@ -759,7 +759,7 @@
         "title": "University of Idaho Established",
         "startdate": "1889-07-01 12:00",
         "enddate": "1889-07-01 12:00",
-        "date_limit": "none",
+        
         "description": "Constitutional Convention convenes on July 4, with the constitution ratified by the people on November 5. Territorial Legislature establishes the University of Idaho.",
         "event_type": "event",
         "link": "",
@@ -793,7 +793,7 @@
         "title": "First Classes Held at College of Idaho",
         "startdate": "1891-07-01 12:00",
         "enddate": "1891-07-01 12:00",
-        "date_limit": "none",
+        
         "description": "First classes are held at the College of Idaho, in Caldwell.",
         "event_type": "event",
         "link": "",
@@ -827,7 +827,7 @@
         "title": "Population, 161,722",
         "startdate": "1900-07-01 12:00",
         "enddate": "1900-07-01 12:00",
-        "date_limit": "none",
+        
         "description": "Idaho population 161,722.",
         "event_type": "event",
         "link": "",
@@ -844,7 +844,7 @@
         "title": "Completion of Milner Dam",
         "startdate": "1904-07-01 12:00",
         "enddate": "1904-07-01 12:00",
-        "date_limit": "none",
+        
         "description": "Completion of Milner Dam brings irrigation to the south side of the Snake River.",
         "event_type": "event",
         "link": "",
@@ -858,7 +858,7 @@
     ,
     {
         "id": "1441",
-        "title": "Governer Assassinated",
+        "title": "Governor Assassinated",
         "startdate": "1905-07-01 12:00",
         "enddate": "0-00-01 00:00",
         "date_limit": "ho",
@@ -895,7 +895,7 @@
         "title": "Borah Elected to Senate",
         "startdate": "1907-07-01 12:00",
         "enddate": "1907-07-01 12:00",
-        "date_limit": "none",
+        
         "description": "William E. Borah is elected to the U.S. Senate, where he serves 33 years. ",
         "event_type": "event",
         "link": "",
@@ -929,7 +929,7 @@
         "title": "Idaho Historical Society is founded.",
         "startdate": "1907-07-01 12:00",
         "enddate": "1907-07-01 12:00",
-        "date_limit": "none",
+        
         "description": "",
         "event_type": "event",
         "link": "",
@@ -980,7 +980,7 @@
         "title": "First Jewish Governor in US",
         "startdate": "1914-07-01 12:00",
         "enddate": "1914-07-01 12:00",
-        "date_limit": "none",
+        
         "description": "Moses Alexander is first elected Jewish governor in United States.",
         "event_type": "event",
         "link": "",
@@ -997,7 +997,7 @@
         "title": "State Board of Education Established",
         "startdate": "1917-04-16 20:59",
         "enddate": "1917-04-16 20:59",
-        "date_limit": "none",
+        
         "description": "State Board of Education is established.",
         "event_type": "event",
         "link": "",
@@ -1014,7 +1014,7 @@
         "title": "Battleship Idaho Launched",
         "startdate": "1917-07-01 12:00",
         "enddate": "1917-07-01 12:00",
-        "date_limit": "none",
+        
         "description": "Battleship Idaho  is launched.",
         "event_type": "event",
         "link": "",
@@ -1031,7 +1031,7 @@
         "title": "Idaho population 431,866.",
         "startdate": "1920-07-01 12:00",
         "enddate": "1920-07-01 12:00",
-        "date_limit": "none",
+        
         "description": "",
         "event_type": "event",
         "link": "",
@@ -1048,7 +1048,7 @@
         "title": "Capitol Building Completed",
         "startdate": "1920-07-01 12:00",
         "enddate": "1920-07-01 12:00",
-        "date_limit": "none",
+        
         "description": "",
         "event_type": "event",
         "link": "",
@@ -1065,7 +1065,7 @@
         "title": "Father of Television",
         "startdate": "1920-07-01 12:00",
         "enddate": "1920-07-01 12:00",
-        "date_limit": "none",
+        
         "description": "Philo Farnsworth, 15-year-old student and inventor from Rigby, develops concepts that lead to invention of television and earn him the name 'Father of Television'.",
         "event_type": "event",
         "link": "",
@@ -1099,7 +1099,7 @@
         "title": "Craters of the Moon established",
         "startdate": "1924-07-01 12:00",
         "enddate": "1924-07-01 12:00",
-        "date_limit": "none",
+        
         "description": "Craters of the Moon National Monument is established.",
         "event_type": "event",
         "link": "",
@@ -1116,7 +1116,7 @@
         "title": "First Commercial Airmail Service in US",
         "startdate": "1926-07-01 12:00",
         "enddate": "1926-07-01 12:00",
-        "date_limit": "none",
+        
         "description": "First commercial airmail service in the U.S. begins in Boise.",
         "event_type": "event",
         "link": "",
@@ -1133,7 +1133,7 @@
         "title": "Population 445,032",
         "startdate": "1930-07-01 12:00",
         "enddate": "1930-07-01 12:00",
-        "date_limit": "none",
+        
         "description": "Idaho population 445,032.",
         "event_type": "event",
         "link": "",
@@ -1150,7 +1150,7 @@
         "title": "Leading Silver Producer in US",
         "startdate": "1934-07-01 12:00",
         "enddate": "1934-07-01 12:00",
-        "date_limit": "none",
+        
         "description": "Idaho becomes nation's leading silver producer.",
         "event_type": "event",
         "link": "",
@@ -1167,7 +1167,7 @@
         "title": "Sun Valley Established",
         "startdate": "1936-07-01 12:00",
         "enddate": "1936-07-01 12:00",
-        "date_limit": "none",
+        
         "description": "Sun Valley resort is established by the Union Pacific Railroad. World's first ski chair lift opens at Sun Valley.",
         "event_type": "event",
         "link": "",
@@ -1184,7 +1184,7 @@
         "title": "Albertsons Opens",
         "startdate": "1939-07-01 12:00",
         "enddate": "1939-07-01 12:00",
-        "date_limit": "none",
+        
         "description": "Joe Albertson opens his first supermarket in Boise.",
         "event_type": "event",
         "link": "",
@@ -1201,7 +1201,7 @@
         "title": "Population 524,873",
         "startdate": "1940-08-01 12:00",
         "enddate": "1940-08-01 12:00",
-        "date_limit": "none",
+        
         "description": "Idaho population 524,873.",
         "event_type": "event",
         "link": "",
@@ -1218,7 +1218,7 @@
         "title": "Simplot Opens",
         "startdate": "1941-07-01 12:00",
         "enddate": "1941-07-01 12:00",
-        "date_limit": "none",
+        
         "description": "J.R. Simplot begins potato dehydration operations in Caldwell.",
         "event_type": "event",
         "link": "",
@@ -1235,7 +1235,7 @@
         "title": "Japanese American Internment",
         "startdate": "1942-07-01 12:00",
         "enddate": "1942-07-01 12:00",
-        "date_limit": "none",
+        
         "description": "Japanese-Americans are placed in internment camp near Eden.",
         "event_type": "event",
         "link": "",
@@ -1252,7 +1252,7 @@
         "title": "National Reactor Testing Station Established",
         "startdate": "1949-07-01 12:00",
         "enddate": "1949-07-01 12:00",
-        "date_limit": "none",
+        
         "description": "National Reactor Testing Station (NRTS) is established.",
         "event_type": "event",
         "link": "",
@@ -1269,7 +1269,7 @@
         "title": "Population 588,637",
         "startdate": "1950-07-01 12:00",
         "enddate": "1950-07-01 12:00",
-        "date_limit": "none",
+        
         "description": "Idaho population 588,637.",
         "event_type": "event",
         "link": "",
@@ -1286,7 +1286,7 @@
         "title": "Nuclear Fission to Produce Energy",
         "startdate": "1951-07-01 12:00",
         "enddate": "1951-07-01 12:00",
-        "date_limit": "none",
+        
         "description": "NRTS becomes site of the worlds' first use of nuclear fission to produce electricity. Experimental Breeder Reactor No. 1 is later designated a National Landmark.",
         "event_type": "event",
         "link": "",
@@ -1303,7 +1303,7 @@
         "title": "Television Comes to Idaho",
         "startdate": "1953-07-01 12:00",
         "enddate": "1953-07-01 12:00",
-        "date_limit": "none",
+        
         "description": "Television comes to Idaho with KIDO-TV in Boise.",
         "event_type": "event",
         "link": "",
@@ -1320,7 +1320,7 @@
         "title": "Population 667,191",
         "startdate": "1960-07-01 12:00",
         "enddate": "1960-07-01 12:00",
-        "date_limit": "none",
+        
         "description": "Idaho population 667,191.",
         "event_type": "event",
         "link": "",
@@ -1337,7 +1337,7 @@
         "title": "Ernest Hemingway Dies",
         "startdate": "1961-07-01 12:00",
         "enddate": "1961-07-01 12:00",
-        "date_limit": "none",
+        
         "description": "Ernest Hemingway dies in Ketchum.",
         "event_type": "event",
         "link": "",
@@ -1354,7 +1354,7 @@
         "title": "3% Sales Tax",
         "startdate": "1966-07-01 12:00",
         "enddate": "1966-07-01 12:00",
-        "date_limit": "none",
+        
         "description": "Voters uphold 3% state sales tax.",
         "event_type": "event",
         "link": "",
@@ -1371,7 +1371,7 @@
         "title": "Population 713,015",
         "startdate": "1970-07-01 12:00",
         "enddate": "1970-07-01 12:00",
-        "date_limit": "none",
+        
         "description": "Idaho population 713,015.",
         "event_type": "event",
         "link": "",
@@ -1388,7 +1388,7 @@
         "title": "Sunshine Mine Fire",
         "startdate": "1972-07-01 12:00",
         "enddate": "1972-07-01 12:00",
-        "date_limit": "none",
+        
         "description": "Fire at the Sunshine Mine in Kellogg takes 91 lives.",
         "event_type": "event",
         "link": "",
@@ -1405,7 +1405,7 @@
         "title": "Port of Lewiston Opens",
         "startdate": "1975-07-01 12:00",
         "enddate": "1975-07-01 12:00",
-        "date_limit": "none",
+        
         "description": "Port of Lewiston opens Idaho to ocean-going shipping.",
         "event_type": "event",
         "link": "",
@@ -1422,7 +1422,7 @@
         "title": "Teton Dam Collapse",
         "startdate": "1976-07-01 12:00",
         "enddate": "1976-07-01 12:00",
-        "date_limit": "none",
+        
         "description": "Teton Dam collapses, killing 11 and forcing thousands to flee their homes.",
         "event_type": "event",
         "link": "",
@@ -1439,7 +1439,7 @@
         "title": "Governor Appointed Secretary of Interior",
         "startdate": "1977-07-01 12:00",
         "enddate": "1977-07-01 12:00",
-        "date_limit": "none",
+        
         "description": "Governor Cecil D. Andrus is appointed Secretary of the Interior.",
         "event_type": "event",
         "link": "",
@@ -1456,7 +1456,7 @@
         "title": "Property Tax Restrictions",
         "startdate": "1978-07-01 12:00",
         "enddate": "1978-07-01 12:00",
-        "date_limit": "none",
+        
         "description": "Voters approve tax limitation placing severe restrictions on the use of the property tax.",
         "event_type": "event",
         "link": "",
@@ -1473,7 +1473,7 @@
         "title": "Senator Appointed Chairman Senate Foreign Relations Committee",
         "startdate": "1979-07-01 12:00",
         "enddate": "1979-07-01 12:00",
-        "date_limit": "none",
+        
         "description": "Senator Frank Church becomes chairman of the Senate Foreign Relations Committee.",
         "event_type": "event",
         "link": "",
@@ -1490,7 +1490,7 @@
         "title": "Population 944,038",
         "startdate": "1980-07-01 12:00",
         "enddate": "1980-07-01 12:00",
-        "date_limit": "none",
+        
         "description": "Idaho population 944,038. ",
         "event_type": "event",
         "link": "",
@@ -1507,7 +1507,7 @@
         "title": "Mount St Helens erupts",
         "startdate": "1981-07-01 12:00",
         "enddate": "1981-07-01 12:00",
-        "date_limit": "none",
+        
         "description": "Eruption of Mt. St. Helens in Washington leaves north Idaho covered with a layer of volcanic ash.",
         "event_type": "event",
         "link": "",
@@ -1524,7 +1524,7 @@
         "title": "Senator Appointed Chairman Energy and Natural Resources Committee",
         "startdate": "1981-07-01 12:00",
         "enddate": "1981-07-01 12:00",
-        "date_limit": "none",
+        
         "description": "Senator James McClure becomes chairman of the Senate Energy and Natural Resources Committee in the 97th - 99th Congresses.",
         "event_type": "event",
         "link": "",
@@ -1541,7 +1541,7 @@
         "title": "Earthquake",
         "startdate": "1983-07-01 12:00",
         "enddate": "1983-07-01 12:00",
-        "date_limit": "none",
+        
         "description": "An earthquake measuring 7.3 on the Richter scale kills two Challis children and caused millions of dollars of damage.",
         "event_type": "event",
         "link": "",
@@ -1558,7 +1558,7 @@
         "title": "Harmon Killebrew Inducted to Baseball Hall of Fame",
         "startdate": "1984-07-01 12:00",
         "enddate": "1984-07-01 12:00",
-        "date_limit": "none",
+        
         "description": "Harmon Killebrew of Payette inducted into Baseball Hall of Fame.",
         "event_type": "event",
         "link": "",
@@ -1575,7 +1575,6 @@
         "title": "Idaho Finalists in NASA Teacher in Space Program",
         "startdate": "1985-07-01 12:00",
         "enddate": "1985-07-01 12:00",
-        "date_limit": "none",
         "description": "David Marquart (Boise) and Barbara Morgan (McCall) are among 10 finalists out of 11,000 applicants in the NASA Teacher in Space program. Barbara Morgan later becomes Teacher in Space backup to Christa McAuliffe, and Teacher in Space designee in 1986, and later the first education mission specialist.",
         "event_type": "event",
         "link": "",
@@ -1609,7 +1608,7 @@
         "title": "Statehood Centennial",
         "startdate": "1990-07-03 12:00",
         "enddate": "1990-07-03 12:00",
-        "date_limit": "none",
+        
         "description": "Idaho celebrates Statehood Centennial - July 3.",
         "event_type": "event",
         "link": "",
