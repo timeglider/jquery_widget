@@ -78,6 +78,7 @@
 "description": "<img src='img/eich.jpg' style='float:left;margin-right:8px;margin-bottom:8px'>JavaScript was originally developed by Brendan Eich of Netscape under the name Mocha. LiveScript was the official name for the language when it first shipped in beta releases of Netscape Navigator 2.0 in September 1995",
 "startdate": "1995-04-01 12:00:00",
 "enddate": "1995-04-01 12:00:00",
+"date_limit":"mo",
 "link":"http://en.wikipedia.org/wiki/JavaScript",
 "importance":"40",
 "icon":"flag_green.png"
@@ -88,6 +89,7 @@
 "description": "LiveScript is Renamed JavaScript in a joint announcement with Netscape and Sun Microsystems",
 "startdate": "1996-08-04 12:00:00",
 "enddate": "1996-08-04 12:00:00",
+"date_limit":"mo",
 "link":"http://en.wikipedia.org/wiki/JavaScript",
 "importance":"55",
 "icon":"star_green.png",
@@ -100,6 +102,7 @@
 "description": "Very fast Javascript engine introduced",
 "startdate": "1997-10-01 12:00:00",
 "enddate": "1997-10-01 12:00:00",
+"date_limit":"mo",
 "link":"http://www.mozilla.org/rhino/history.html",
 "importance":"35",
 "icon":"square_gray.png"
@@ -111,6 +114,7 @@
 "description": "There's been some turmoil in the world of ECMAScript.<br><br>While many are – even, at least, vaguely – familiar with the development of ECMAScript 4 the devil is in the details. I’ve blogged about ES4 extensively in the past – and even did a speaking tour last fall educating developers about its details and implementations, however, a lot has happened since that time.",
 "startdate": "2008-08-14 12:00:00",
 "enddate": "2008-08-14 12:00:00",
+"date_limit":"da",
 "link":"http://ejohn.org/blog/ecmascript-harmony/",
 "importance":"30",
 "icon":"quote.png"
@@ -122,6 +126,7 @@
 "description": "Seminal essay by Jesse James Garrett: 'An Ajax application eliminates the start-stop-start-stop nature of interaction on the Web by introducing an intermediary—an Ajax engine—between the user and the server. It seems like adding a layer to the application would make it less responsive, but the opposite is true.'",
 "startdate": "2005-02-18 12:00:00",
 "enddate": "2005-02-18 12:00:00",
+"date_limit":"da",
 "link":"http://www.adaptivepath.com/ideas/e000385",
 "importance":"42",
 "icon":"quote.png"
@@ -132,9 +137,11 @@
 {
 "id":"jshist-dry",
 "title": "The Bad Rap Years",
+
 "description": "Of Javascript's initial insinuation into browsers, WWW founder Robert Cailliau said, 'the programming-vacuum filled itself with the most horrible kluge in the history of computing: Javascript.' But now JS is 'hawt' and its clay-like flexibility makes it enjoyable, inspiring more artistry and cleverness than other languages.",
 "startdate": "1998-01-01 12:00:00",
 "enddate": "2004-01-01 12:00:00",
+"date_limit":"mo",
 "link":"http://en.wikipedia.org/wiki/JavaScript",
 "importance":"52",
 "icon":"none"
@@ -147,6 +154,7 @@
 "description": "JScript added new date methods to fix the non-Y2K-friendly methods in JavaScript, which were based on java.util.Date. JScript was included in Internet Explorer 3.0.",
 "startdate": "1996-08-01 12:00:00",
 "enddate": "1996-08-01 12:00:00",
+"date_limit":"mo",
 "link":"http://en.wikipedia.org/wiki/JScript",
 "importance":"35",
 "icon":"triangle_green.png"
@@ -158,6 +166,7 @@
 "description": "Netscape announced that it had submitted JavaScript to Ecma International for consideration as an industry standard, and subsequent work resulted in the standardized version named ECMAScript",
 "startdate": "1997-06-01 12:00:00",
 "enddate": "1997-06-01 12:00:00",
+"date_limit":"mo",
 "link":"http://www.ecmascript.org/",
 "importance":"35",
 "icon":"triangle_green.png"
@@ -191,6 +200,7 @@
 "description": "Douglas Crockford was the first to specify and popularize the JSON format. JSON was used at State Software, a company co-founded by Crockford, starting around 2001. The JSON.org website was launched in 2002. In December 2005, Yahoo! began offering some of its web services in JSON.  Google started offering JSON feeds for its GData web protocol in December 2006.",
 "startdate": "2005-12-01 12:00:00",
 "enddate": "2005-12-01 12:00:00",
+"date_limit":"mo",
 "link":"http://json.org",
 "importance":"35",
 "icon":"triangle_green.png"
@@ -213,6 +223,7 @@
 "description": "Valerio Proietti first authored the framework, taking as his inspiration Prototype and Dean Edward's base2. MooTools originated from Moo.fx, a popular plug-in Proietti produced for Prototype in October 2005, which is still maintained and used",
 "startdate": "2006-09-01 12:00:00",
 "enddate": "2006-09-01 12:00:00",
+"date_limit":"mo",
 "link":"http://mootools.net/",
 "importance":"35",
 "icon":"triangle_green.png"
@@ -224,6 +235,7 @@
 "description": "Development on YUI began in 2005 and Yahoo! properties such as My Yahoo! and the Yahoo! front page began using YUI in the summer of that year. YUI was released for public use in February 2006.",
 "startdate": "2006-02-01 12:00:00",
 "enddate": "2006-02-01 12:00:00",
+"date_limit":"mo",
 "link":"http://developer.yahoo.com/yui/",
 "importance":"35",
 "icon":"triangle_green.png"
@@ -248,6 +260,7 @@
 "description": "Google Web Toolkit is an open source set of tools that allows web developers to create and maintain complex JavaScript front-end applications in Java. Other than a few native libraries, everything is Java source that can be built on any supported platform with the included GWT Ant build files.",
 "startdate": "2006-05-17 12:00:00",
 "enddate": "2006-05-17 12:00:00",
+"date_limit":"mo",
 "link":"http://en.wikipedia.org/wiki/Google_Web_Toolkit",
 "importance":"35",
 "icon":"triangle_green.png"
@@ -261,6 +274,7 @@
 "description": "Ext.Ajax provided features such as global headers and parameters, cross library file uploads and global Ajax events.",
 "startdate": "2007-08-02 12:00:00",
 "enddate": "2007-08-02 12:00:00",
+"date_limit":"mo",
 "link":"http://www.sencha.com/products/js/",
 "importance":"35",
 "icon":"triangle_green.png"
@@ -271,6 +285,7 @@
 "description": "Very fast Javascript engine introduced",
 "startdate": "2008-12-01 12:00:00",
 "enddate": "2008-12-01 12:00:00",
+"date_limit":"mo",
 "link":"http://code.google.com/p/v8/",
 "importance":"35",
 "icon":"square_gray.png"
