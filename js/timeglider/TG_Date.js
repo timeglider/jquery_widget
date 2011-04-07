@@ -36,12 +36,10 @@ var timeglider = window.timeglider = {version:"0.1.0"};
       getDateFromRDCache = {},
       getDateFromSecCache = {};
   
-  
-   
       
   tg.TG_Date = function (strOrNum, display_limit) {
 
-      var dateStr, isoStr, gotSec;
+      var dateStr, isoStr, gotSec, dummyDate;
     
       // Morton, we've got seconds coming in!
       if (typeof(strOrNum) == "number") {
@@ -89,8 +87,15 @@ var timeglider = window.timeglider = {version:"0.1.0"};
       		// Esp. for formatting, we'll use jQuery.global for dates that
       		// support the Date() object; before 50,000 bce, we'll need to 
       		// resort to another formatting system that looks only at years.
-    			this.jsDate = new Date(this.ye, (this.mo-1), this.da, this.ho, this.mi, this.se, 0);
-      	
+          
+    			this.jsDate = dummyDate = new Date(this.ye, (this.mo-1), this.da, this.ho, this.mi, this.se, 0);
+    			
+    			debug.log("-- init to str:" + dummyDate.toString());
+      	  debug.log("-- formatted:" + $.global.format(dummyDate, "f"));
+      	  
+      	  var d1 = new Date(1948,11,5,10,0,0,0);
+      	  debug.log("-- dummy formatted:" + $.global.format(d1, "f"));
+      	  
       		this.dateStr = isoStr;
       		
   		} 
@@ -626,18 +631,15 @@ var timeglider = window.timeglider = {version:"0.1.0"};
     
     jQuery.global.culture = jQuery.global.cultures[culture_str];
   	/*
-  	*  Making use of jQuery.glob.js here --- but only for names and some other formatting
+  	*  Making use of jQuery.global.js here --- but only for names and some other formatting
   	*  offerings. 
   	*/
   	// ["","January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-    TG_Date.monthNames = jQuery.global.culture.calendar.months.names;
-    TG_Date.monthNames.unshift("");
+    TG_Date.monthNames = $.merge([""],jQuery.global.culture.calendar.months.names);
     // ["","Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-    TG_Date.monthNamesAbbr = jQuery.global.culture.calendar.months.namesAbbr;
-    TG_Date.monthNamesAbbr.unshift("");
+    TG_Date.monthNamesAbbr = $.merge([""],jQuery.global.culture.calendar.months.namesAbbr);
   
     TG_Date.monthNamesLet = ["","J","F","M","A","M","J","J","A","S","O","N","D"];
-    debug.log("TG_Date.monthNamesAbbr:" + TG_Date.monthNamesAbbr[1]);
 
     TG_Date.monthsDayNums = [0,31,28,31,30,31,30,31,31,30,31,30,31,29];
   
@@ -697,13 +699,11 @@ var timeglider = window.timeglider = {version:"0.1.0"};
             case "da": sig = "D"; break;
             case "ho": sig = "f"; break;
             
-            default: sig = "D";
+            default: sig = "f";
           }
         }
-        
         // If the date is bce, get the bce equivalent for 
         // the culture and append it or prepend it...
-  
         return $.global.format(this.jsDate, sig);
 
       }

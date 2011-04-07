@@ -162,11 +162,9 @@ Globalization.format = function(value, format, culture) {
     }
     return value;
 }
-
 Globalization.parseInt = function(value, radix, culture) {
     return Math.floor( this.parseFloat( value, radix, culture ) );
 }
-
 Globalization.parseFloat = function(value, radix, culture) {
 	// make radix optional
 	if (typeof radix === "string") {
@@ -255,8 +253,6 @@ Globalization.parseFloat = function(value, radix, culture) {
     }
     return ret;
 }
-
-
 Globalization.parseDate = function(value, formats, culture) {
     culture = this.findClosestCulture( culture );
 
@@ -470,6 +466,17 @@ var en = cultures["default"] = cultures.en = Globalization.extend(true, {
             monthsGenitive:
                 Same as months but used when the day preceeds the month.
                 Omit if the culture has no genitive distinction in month names.
+                For an explaination of genitive months, see http://blogs.msdn.com/michkap/archive/2004/12/25/332259.aspx
+            convert:
+                Allows for the support of non-gregorian based calendars. This convert object is used to
+                to convert a date to and from a gregorian calendar date to handle parsing and formatting.
+                The two functions:
+                    fromGregorian(date)
+                        Given the date as a parameter, return an array with parts [year, month, day]
+                        corresponding to the non-gregorian based year, month, and day for the calendar.
+                    toGregorian(year, month, day)
+                        Given the non-gregorian year, month, and day, return a new Date() object
+                        set to the corresponding date in the gregorian calendar.
             */
         }
     }
@@ -722,7 +729,6 @@ function expandYear(cal, year) {
     return year;
 }
 
-
 function getEra(date, eras) {
     if ( !eras ) return 0;
     var start, ticks = date.getTime();
@@ -734,7 +740,6 @@ function getEra(date, eras) {
     }
     return 0;
 }
-
 
 function toUpper(value) {
     // 'he-IL' has non-breaking space in weekday names.
@@ -901,10 +906,11 @@ function getParseRegExp(cal, format) {
             add;
         switch ( m ) {
             case 'dddd': case 'ddd':
-            case 'MMMM': case 'MMM':
-            case 'gg': case 'g':
+            
+            case 'MMMM': case 'MMM': case 'gg': case 'g':
                 add = "(\\D+)";
                 break;
+                
             case 'tt': case 't':
                 add = "(\\D*)";
                 break;
@@ -1131,7 +1137,6 @@ function parseExact(value, format, culture) {
     return result;
 }
 
-
 function formatDate(value, format, culture) {
     var cal = culture.calendar,
         convert = cal.convert;
@@ -1342,15 +1347,7 @@ function formatDate(value, format, culture) {
         }
     }
     return ret.join( '' );
-    
-}; // end formatDate()
-
-
-
-
-
-
-
+}
 
 // EXPORTS
 jQuery.global = Globalization;
