@@ -89,7 +89,7 @@ var timeglider = window.timeglider = {version:"0.1.0"};
       		// Esp. for formatting, we'll use jQuery.global for dates that
       		// support the Date() object; before 50,000 bce, we'll need to 
       		// resort to another formatting system that looks only at years.
-    			this.jsDate = new Date(this.ye, this.mo, this.da, this.ho, this.mi, this.se, 0);
+    			this.jsDate = new Date(this.ye, (this.mo-1), this.da, this.ho, this.mi, this.se, 0);
       	
       		this.dateStr = isoStr;
       		
