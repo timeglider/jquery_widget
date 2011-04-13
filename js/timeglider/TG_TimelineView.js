@@ -85,8 +85,9 @@ timeglider.TimelineView
     	  + "<div class='startdate'>${startdate}</div>"
     	  + "<h4 id='title'>${title}</h4>"
     	  + "<p>{{html description}}</p>"
-    	  + "<ul class='timeglider-ev-modal-links'><li><a target='_blank' href='${link}'>link</a></li></ul>"
+    	  + "<ul class='timeglider-ev-modal-links'>{{html links}}</ul>"
     	  + "</div>"),
+    	  // <li><a target='_blank' href=''>link</a></li> removed from links ul above
     	  
     	// generated, appended on the fly, then removed
     	event_modal_video : $.template( null,
@@ -1477,6 +1478,25 @@ tg.TG_TimelineView.prototype = {
   
   },
   
+  
+  createEventLinksMenu : function (linkage) {
+    var html = '', l = 0, lUrl = "", lLab="";
+    
+    if (typeof(linkage) == "string") {
+      // single url string for link: use "link"
+      html = "<li><a href='" + linkage + "' target='_blank'>link</a></li>"
+    } else if (typeof(linkage) == "object"){
+      // array of links with labels and urls
+      for (l=0; l<linkage.length; l++) {
+        lUrl = linkage[l].url;
+        lLab = linkage[l].label;
+        html += "<li><a href='" + lUrl + "' target='_blank'>" + lLab + "</a></li>"
+      }
+    }
+    return html;
+  },
+  
+  
 	eventModal : function (eid) {
 		// get position
 		$("#ev_" + eid + "_modal").remove();
@@ -1485,12 +1505,14 @@ tg.TG_TimelineView.prototype = {
 		  modalTemplate = me._templates.event_modal;
 		  ev = MED.eventPool[eid],
 		  ev_img = (ev.image && ev.image.src) ? "<img src='" + ev.image.src + "'>" : "",
-		  templ_obj = {
+		  links = this.createEventLinksMenu(ev.link),
+		  
+		  templ_obj = { 
   			  title:ev.title,
   			  description:ev_img + ev.description,
   			  id:eid,
   			  startdate: ev.startdateObj.format("D", true),
-  			  link: ev.link,
+  			  links: links,
   			  video: ev.video
   		}
 		  

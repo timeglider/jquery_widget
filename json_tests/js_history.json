@@ -155,7 +155,7 @@
 "startdate": "1996-08-01 12:00:00",
 "enddate": "1996-08-01 12:00:00",
 "date_limit":"mo",
-"link":"http://en.wikipedia.org/wiki/JScript",
+"link":[{"url":"http://en.wikipedia.org/wiki/JScript", "label":"wikipedia"}, {"url":"http://nytimes.com", "label":"NYT"}],
 "importance":"35",
 "icon":"triangle_green.png"
 },
