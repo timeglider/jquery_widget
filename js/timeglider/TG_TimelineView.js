@@ -354,9 +354,10 @@ timeglider.TimelineView
 			debug.trace("collapsed, title:" + title, "note"); 
 		});
 		
-	$(CONTAINER + " .close-button-remove").live("click", function () {
-	  var $parent = $(this).parent();
-		$parent.fadeOut(300, function () { $parent.remove(); });
+	$(CONTAINER).delegate(".close-button-remove", "click", function () {
+	  var parent_id = $(this).parent().attr("id");
+	  debug.log("DEL:" + parent_id);
+	  $("#" + parent_id).remove();
 	});
 	
 	$(CONTAINER + " .timeglider-legend-close").live("click", function () {
@@ -1346,6 +1347,7 @@ tg.TG_TimelineView.prototype = {
 	}, // end appendTimelines()
 	
 	
+  
   // events array, MED, tl, borg, 
   // "sweep" vs tick.serial  (or fresh/append)
   compileTickEventsAsHtml : function (tl, idArr, tick_serial, btype) {
@@ -1479,6 +1481,8 @@ tg.TG_TimelineView.prototype = {
   },
   
   
+  
+	
   createEventLinksMenu : function (linkage) {
     var html = '', l = 0, lUrl = "", lLab="";
     
@@ -1495,6 +1499,7 @@ tg.TG_TimelineView.prototype = {
     }
     return html;
   },
+  
   
   
 	eventModal : function (eid) {

@@ -208,6 +208,7 @@
 	-ms-filter: "progid:DXImageTransform.Microsoft.Shadow(Strength=4, Direction=135, Color='#333333')";
 	/* For IE 5.5 - 7 */
 	filter: progid:DXImageTransform.Microsoft.Shadow(Strength=4, Direction=135, Color='#333333');
+	position:absolute;
 }
 
 .close-button-remove, .close-button-filter, .close-button-toggleMenu {
@@ -593,7 +594,6 @@
 	height:20px;
 	width:1px;
 }
-
 
 .timeglider-ev-modal, .timeglider-timeline-modal {
   -webkit-border-radius:5px;

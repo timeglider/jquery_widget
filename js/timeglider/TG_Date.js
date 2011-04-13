@@ -90,11 +90,7 @@ var timeglider = window.timeglider = {version:"0.1.0"};
           
     			this.jsDate = dummyDate = new Date(this.ye, (this.mo-1), this.da, this.ho, this.mi, this.se, 0);
     			
-    			debug.log("-- init to str:" + dummyDate.toString());
-      	  debug.log("-- formatted:" + $.global.format(dummyDate, "f"));
-      	  
       	  var d1 = new Date(1948,11,5,10,0,0,0);
-      	  debug.log("-- dummy formatted:" + $.global.format(d1, "f"));
       	  
       		this.dateStr = isoStr;
       		
