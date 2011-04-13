@@ -1505,6 +1505,7 @@ tg.TG_TimelineView.prototype = {
 	eventModal : function (eid) {
 		// get position
 		$("#ev_" + eid + "_modal").remove();
+		
 		var me = this,
 		  $par = $("#" + eid),
 		  modalTemplate = me._templates.event_modal;
@@ -1536,7 +1537,9 @@ tg.TG_TimelineView.prototype = {
       				offset: "-12, -1", // left, top
       				collision: "flip fit"
       	})
-      	.draggable({stack: ".timeglider-modal"});
+      	.draggable()
+      	.hover(function () { $(this).css("z-index", me.ztop++); });
+      	
 
 	},
 	
