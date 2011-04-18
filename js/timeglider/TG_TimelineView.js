@@ -163,7 +163,6 @@ timeglider.TimelineView
   /* PUB-SUB "LISTENERS" SUBSCRIBERS */
   
   $.subscribe("mediator.timelineDataLoaded", function () {
-      MED.setInitialTimelines();
       $(".timeglider-loading").fadeOut(500);     
   });
   

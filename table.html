@@ -55,9 +55,9 @@
 	$(document).ready(function () { 
 		
 		var tg1 = $("#placement").timeline({
-				"min_zoom":20, 
-				"max_zoom":50, 
-				"initial_timeline_id": "mylife",
+				"min_zoom":18, 
+				"max_zoom":55, 
+				// data source is the id of the table!
 				"data_source":"#mylife"
 		});
 		
@@ -66,12 +66,19 @@
 </script>
 
 
+
+<!-- TIMEGLIDERPLACEMENT: Put the intended location for the timeline  
+     directly above the data table -->
 <div id='placement'></div>
+
+<!-- TIMELINE PROPERTIES are set as attributes of the table element,
+     most importantly the id, focus_date, and initial_zoom -->
+
 <table class='timeline-table' id="mylife" focus_date="1985-06-12" title="my life" initial_zoom="48" description="The Wild and Wooly times of Michael Richardson.">
 	
     <tr>
 	<!-- The classes below are critical for mapping out data from the 
-	     <td> elements that follow. Order is not important -->
+	     <td> elements that follow, though order is not important -->
     <th class="tg-startdate">start date</th>
 	<th class="tg-enddate">end date</th>
     <th class="tg-title">title</th>

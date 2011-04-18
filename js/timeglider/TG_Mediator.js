@@ -62,7 +62,8 @@ reflects state back to view
     this.foo = "bark";
     
     // this.setZoomLevel(options.initial_zoom);
-    this.initial_timeline_id = options.initial_timeline_id;
+    this.initial_timeline_id = options.initial_timeline_id || "";
+    this.sole_timeline_id = "";
     
     if (options.max_zoom === options.min_zoom) {
       this.fixed_zoom = options.min_zoom;
@@ -206,13 +207,15 @@ tg.TG_Mediator.prototype = {
     var M = this; // model ref
     var ct = 0;
     var dl = data.length, ti = {}, ondeck = {};
-
+    
     for (var i=0; i<dl;i++) {
+      
       ondeck = data[i];
       ondeck.mediator = M;
       ti = new timeglider.TG_Timeline(ondeck).toJSON(); // the timeline
-    
+
         if (ti.id.length > 0) {
+         
           ct++;
           M.swallowTimeline(ti);
         }
@@ -241,15 +244,19 @@ tg.TG_Mediator.prototype = {
         b = (this.timelineDataLoaded == true);
     
     if (a && b) {
+        this.setInitialTimelines();
+       
         $.publish("mediator.timelineDataLoaded");
     }
+    
     
   },
 
 
     /* Makes an indexed array of timelines */
     swallowTimeline : function (obj) {
-      this.timelinePool[obj.id] = obj;	
+      this.sole_timeline_id = obj.id;
+      this.timelinePool[obj.id] = obj;
       $.publish("mediator.timelineListChangeSignal");
     },
 
@@ -262,7 +269,8 @@ tg.TG_Mediator.prototype = {
     */
     setInitialTimelines : function () {
       var me = this;
-      var tid = this.initial_timeline_id;
+      var tid = this.initial_timeline_id || this.sole_timeline_id;
+      debug.log("TID:" + tid);
       if (tid) {
         setTimeout(function () { 
           MED.toggleTimeline(tid);
