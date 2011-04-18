@@ -1,8 +1,5 @@
-
-
 // initial declaration of timeglider object
 var timeglider = window.timeglider = {version:"0.1.0"};
-
 
 /*
 *  TG_Date
@@ -22,8 +19,6 @@ var timeglider = window.timeglider = {version:"0.1.0"};
 * according to day, year, decade, century, millenia, etc
 *
 */
-
-
 
 (function(tg){
   

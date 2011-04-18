@@ -1484,6 +1484,8 @@ tg.TG_TimelineView.prototype = {
   
 	
   createEventLinksMenu : function (linkage) {
+    if (!linkage) return "";
+    
     var html = '', l = 0, lUrl = "", lLab="";
     
     if (typeof(linkage) == "string") {
