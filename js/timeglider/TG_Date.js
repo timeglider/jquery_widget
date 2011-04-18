@@ -46,6 +46,10 @@ var timeglider = window.timeglider = {version:"0.1.0"};
           dateStr = isoStr = TG_Date.getDateFromSec(strOrNum);
           gotSec = strOrNum;
       } else {
+          // string
+          if (strOrNum == "today") {
+            strOrNum = TG_Date.getToday();
+          } 
           dateStr = isoStr = strOrNum;
       }
   

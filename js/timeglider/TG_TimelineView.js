@@ -1539,8 +1539,6 @@ tg.TG_TimelineView.prototype = {
       	})
       	.draggable()
       	.hover(function () { $(this).css("z-index", me.ztop++); });
-      	
-
 	},
 	
 	

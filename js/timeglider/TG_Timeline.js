@@ -43,7 +43,6 @@
     // TODO: VALIDATE COLOR, centralize default color(options?)
     if (!tdata.color) { tdata.color = "#333333"; }
 
-    
     if (tdata.events) {
 
       var date, ev, id, unit, ser, tWidth;

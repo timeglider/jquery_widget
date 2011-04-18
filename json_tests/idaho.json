@@ -14,7 +14,6 @@
         "enddate": "1800-07-01 12:00",
         
         "description": "Shoshone bands obtain horses for transportation but are decimated by smallpox spread from European sources.",
-        "link": "",
         "icon": "triangle_green.png",
         "low_threshold": "1",
         "high_threshold": "60",
@@ -31,7 +30,6 @@
         "date_limit": "ye",
         "description": "Early historic Indian culture, with adaptation brought on by white contact, trade goods, and other fur-trade activities is represented across the state.",
         "event_type": "event",
-        "link": "",
         "icon": "triangle_green.png",
         "low_threshold": "1",
         "high_threshold": "60",
@@ -48,7 +46,6 @@
         
         "description": "The United States purchases Louisiana Territory.",
         "event_type": "event",
-        "link": "",
         "icon": "triangle_green.png",
         "low_threshold": "1",
         "high_threshold": "60",
@@ -65,7 +62,6 @@
         
         "description": "Captains Meriwether Lewis and William Clark enter area that would become Idaho at Lemhi Pass.",
         "event_type": "event",
-        "link": "",
         "icon": "triangle_green.png",
         "low_threshold": "1",
         "high_threshold": "60",
@@ -82,7 +78,6 @@
         
         "description": "Kullyspell House, first non-native establishment in Northwest, is erected near Lake Pend Oreille.",
         "event_type": "event",
-        "link": "",
         "icon": "triangle_green.png",
         "low_threshold": "1",
         "high_threshold": "60",
@@ -99,7 +94,6 @@
         
         "description": "Fort Henry, first American fur post west of Rocky Mountains, established near St. Anthony.",
         "event_type": "event",
-        "link": "",
         "icon": "triangle_green.png",
         "low_threshold": "1",
         "high_threshold": "60",
@@ -116,7 +110,6 @@
         
         "description": "Astorian parties under Wilson Price Hunt explore portions of the future Oregon Trail in Idaho.",
         "event_type": "event",
-        "link": "",
         "icon": "triangle_green.png",
         "low_threshold": "1",
         "high_threshold": "60",
@@ -133,7 +126,6 @@
         
         "description": "U.S. &amp;amp; Great Britain sign Joint Occupation Treaty for Oregon Territory.",
         "event_type": "event",
-        "link": "",
         "icon": "triangle_green.png",
         "low_threshold": "1",
         "high_threshold": "60",
@@ -150,7 +142,6 @@
         
         "description": "Donald Mackenzie holds a rendezvous with Native Americans on the Boise River. Adams-Onis treaty between Spain and the United States establishes Idaho's future southern border on the 42nd Parallel. Mackenzie attempts to set up a post on the Boise River.",
         "event_type": "event",
-        "link": "",
         "icon": "triangle_green.png",
         "low_threshold": "1",
         "high_threshold": "60",
@@ -167,7 +158,6 @@
         
         "description": "Mackenzie negotiates a peace treaty with the Shoshone on Little Lost River and explores most of what would become Goodale's Cutoff.",
         "event_type": "event",
-        "link": "",
         "icon": "triangle_green.png",
         "low_threshold": "1",
         "high_threshold": "60",
@@ -184,7 +174,6 @@
         "date_limit": "ye",
         "description": "Hudson's Bay Company and North West Company merge.",
         "event_type": "event",
-        "link": "",
         "icon": "triangle_green.png",
         "low_threshold": "1",
         "high_threshold": "60",
@@ -201,7 +190,6 @@
         "date_limit": "ye",
         "description": "William Ashley organizes the Rocky Mountain Fur Company, which institutes the practice of annual rendezvous.",
         "event_type": "event",
-        "link": "",
         "icon": "triangle_green.png",
         "low_threshold": "1",
         "high_threshold": "60",
@@ -218,7 +206,6 @@
         
         "description": "Captain B.L.E. Bonneville takes a wagon train across South Pass to Green River.",
         "event_type": "event",
-        "link": "",
         "icon": "triangle_green.png",
         "low_threshold": "1",
         "high_threshold": "60",
@@ -235,7 +222,6 @@
         "date_limit": "ye",
         "description": "A trapper's wheeled caravan travels over part of the Oregon Trail west of Casper to the Wind River rendezvous.",
         "event_type": "event",
-        "link": "",
         "icon": "triangle_green.png",
         "low_threshold": "1",
         "high_threshold": "60",
@@ -252,7 +238,6 @@
         
         "description": "Forts Laramie, Boise, and Hall are established.",
         "event_type": "event",
-        "link": "",
         "icon": "triangle_green.png",
         "low_threshold": "1",
         "high_threshold": "60",
@@ -269,7 +254,6 @@
         
         "description": "Henry H. Spalding establishes a mission near Lapwai, where he prints the Northwest's first book, establishes Idaho's first school, develops Idaho's first irrigation system, and grows the state's first potatoes. Narcissa Whitman and Eliza Spalding are the first white women to cross the continental divide (South Pass).",
         "event_type": "event",
-        "link": "",
         "icon": "triangle_green.png",
         "low_threshold": "1",
         "high_threshold": "60",
@@ -286,7 +270,6 @@
         "date_limit": "ye",
         "description": "First Oregon Trail wagons cross Idaho.",
         "event_type": "event",
-        "link": "",
         "icon": "triangle_green.png",
         "low_threshold": "1",
         "high_threshold": "60",
@@ -303,7 +286,6 @@
         "date_limit": "ye",
         "description": "Treaty settles the Oregon boundary dispute with England.",
         "event_type": "event",
-        "link": "",
         "icon": "triangle_green.png",
         "low_threshold": "1",
         "high_threshold": "60",
@@ -320,7 +302,6 @@
         
         "description": "Over 20,000 emigrants who join the gold rush come through southeastern Idaho on the California Trail. Heavy traffic continues on the trail for many years.",
         "event_type": "event",
-        "link": "",
         "icon": "triangle_green.png",
         "low_threshold": "1",
         "high_threshold": "60",
@@ -337,7 +318,6 @@
         
         "description": "U.S. Military post, Cantonment Loring, is established near Fort Hall.",
         "event_type": "event",
-        "link": "",
         "icon": "triangle_green.png",
         "low_threshold": "1",
         "high_threshold": "60",
@@ -354,7 +334,6 @@
         
         "description": "French Canadians discover gold on the Pend Oreille River.",
         "event_type": "event",
-        "link": "",
         "icon": "triangle_green.png",
         "low_threshold": "1",
         "high_threshold": "60",
@@ -371,7 +350,6 @@
         
         "description": "Washington Territory is created.",
         "event_type": "event",
-        "link": "",
         "icon": "triangle_green.png",
         "low_threshold": "1",
         "high_threshold": "60",
@@ -388,7 +366,6 @@
         
         "description": "Salmon River mission (Fort Lemhi) is established by Mormon missionaries, to be abandoned in 1858.",
         "event_type": "event",
-        "link": "",
         "icon": "triangle_green.png",
         "low_threshold": "1",
         "high_threshold": "60",
@@ -405,7 +382,6 @@
         
         "description": "Oregon is admitted as a state.",
         "event_type": "event",
-        "link": "",
         "icon": "triangle_green.png",
         "low_threshold": "1",
         "high_threshold": "60",
@@ -422,7 +398,6 @@
         "date_limit": "ye",
         "description": "Franklin, first town in Idaho, is established.",
         "event_type": "event",
-        "link": "",
         "icon": "triangle_green.png",
         "low_threshold": "1",
         "high_threshold": "60",
@@ -439,7 +414,6 @@
         
         "description": "Major mining strikes occur near Pierce, Florence, Idaho City, and Silver City.",
         "event_type": "event",
-        "link": "",
         "icon": "triangle_red.png",
         "low_threshold": "1",
         "high_threshold": "60",
@@ -456,7 +430,6 @@
         "date_limit": "ye",
         "description": "Lewiston's Golden Age is Idaho's first newspaper.",
         "event_type": "event",
-        "link": "",
         "icon": "triangle_green.png",
         "low_threshold": "1",
         "high_threshold": "60",
@@ -473,7 +446,6 @@
         
         "description": "Idaho becomes a territory on March 4 with Lewiston as its capital. The Bear River Massacre, the West's largest slaughter of Indians, is fought near present-day Preston.",
         "event_type": "event",
-        "link": "",
         "icon": "triangle_green.png",
         "low_threshold": "1",
         "high_threshold": "60",
@@ -490,7 +462,6 @@
         "date_limit": "ye",
         "description": "Territorial Legislature approves moving capital to Boise.",
         "event_type": "event",
-        "link": "",
         "icon": "triangle_green.png",
         "low_threshold": "1",
         "high_threshold": "60",
@@ -507,7 +478,6 @@
         "date_limit": "ye",
         "description": "Telegraph service reaches Idaho.",
         "event_type": "event",
-        "link": "",
         "icon": "triangle_green.png",
         "low_threshold": "1",
         "high_threshold": "60",
@@ -524,7 +494,6 @@
         
         "description": "Snake Indian War.",
         "event_type": "event",
-        "link": "",
         "icon": "triangle_green.png",
         "low_threshold": "1",
         "high_threshold": "60",
@@ -541,7 +510,6 @@
         
         "description": "Owyhee Miners' League in Owyhee County organizes as state's first labor union.",
         "event_type": "event",
-        "link": "",
         "icon": "triangle_green.png",
         "low_threshold": "1",
         "high_threshold": "60",
@@ -558,7 +526,6 @@
         
         "description": "Idaho population 17,804.",
         "event_type": "event",
-        "link": "",
         "icon": "plus_blue.png",
         "low_threshold": "1",
         "high_threshold": "60",
@@ -575,7 +542,6 @@
         "date_limit": "ye",
         "description": "U.S. Assay office and Idaho prison are completed.",
         "event_type": "event",
-        "link": "",
         "icon": "triangle_green.png",
         "low_threshold": "1",
         "high_threshold": "60",
@@ -592,7 +558,6 @@
         "date_limit": "da",
         "description": "Railroad service reaches Idaho at Franklin.",
         "event_type": "event",
-        "link": "",
         "icon": "triangle_green.png",
         "low_threshold": "1",
         "high_threshold": "60",
@@ -609,7 +574,6 @@
         
         "description": "Nez Perce Indian War.",
         "event_type": "event",
-        "link": "",
         "icon": "triangle_red.png",
         "low_threshold": "1",
         "high_threshold": "60",
@@ -626,7 +590,6 @@
         
         "description": "Bannock Indian War.",
         "event_type": "event",
-        "link": "",
         "icon": "triangle_red.png",
         "low_threshold": "1",
         "high_threshold": "60",
@@ -643,7 +606,6 @@
         
         "description": "Sheepeater Indian campaign.",
         "event_type": "event",
-        "link": "",
         "icon": "triangle_red.png",
         "low_threshold": "1",
         "high_threshold": "60",
@@ -660,7 +622,6 @@
         
         "description": "Idaho population 32,610. Boise and Lewiston independent school districts are created.",
         "event_type": "event",
-        "link": "",
         "icon": "plus_blue.png",
         "low_threshold": "1",
         "high_threshold": "60",
@@ -677,7 +638,6 @@
         
         "description": "Historical Society of Idaho Pioneers forms to collect and preserve a reliable history of the early settlement of the territory.",
         "event_type": "event",
-        "link": "",
         "icon": "triangle_green.png",
         "low_threshold": "1",
         "high_threshold": "60",
@@ -694,7 +654,6 @@
         
         "description": "State's first electric light is turned on at the Philadelphia Smelter near Ketchum.",
         "event_type": "event",
-        "link": "",
         "icon": "triangle_green.png",
         "low_threshold": "1",
         "high_threshold": "60",
@@ -711,7 +670,6 @@
         "date_limit": "ye",
         "description": "Commercial telephone service in Idaho begins at Hailey.",
         "event_type": "event",
-        "link": "",
         "icon": "triangle_green.png",
         "low_threshold": "1",
         "high_threshold": "60",
@@ -728,7 +686,6 @@
         "date_limit": "ye",
         "description": "Silver is discovered in the Coeur d'Alene mining district, which eventually becomes nation's richest.",
         "event_type": "event",
-        "link": "",
         "icon": "triangle_green.png",
         "low_threshold": "1",
         "high_threshold": "60",
@@ -745,7 +702,6 @@
         "date_limit": "ye",
         "description": "Completion of the Oregon Short Line.",
         "event_type": "event",
-        "link": "",
         "icon": "triangle_green.png",
         "low_threshold": "1",
         "high_threshold": "60",
@@ -762,7 +718,6 @@
         
         "description": "Constitutional Convention convenes on July 4, with the constitution ratified by the people on November 5. Territorial Legislature establishes the University of Idaho.",
         "event_type": "event",
-        "link": "",
         "icon": "triangle_green.png",
         "low_threshold": "1",
         "high_threshold": "60",
@@ -779,7 +734,6 @@
         "date_limit": "ye",
         "description": "Idaho population 88,548. Idaho becomes 43rd state on July 3.",
         "event_type": "event",
-        "link": "",
         "icon": "goldstar",
         "low_threshold": "1",
         "high_threshold": "60",
@@ -796,7 +750,6 @@
         
         "description": "First classes are held at the College of Idaho, in Caldwell.",
         "event_type": "event",
-        "link": "",
         "icon": "triangle_green.png",
         "low_threshold": "1",
         "high_threshold": "60",
@@ -813,7 +766,6 @@
         "date_limit": "ho",
         "description": "Butch Cassidy robs the bank in Montpelier.",
         "event_type": "event",
-        "link": "",
         "icon": "triangle_red.png",
         "low_threshold": "1",
         "high_threshold": "60",
@@ -830,7 +782,6 @@
         
         "description": "Idaho population 161,722.",
         "event_type": "event",
-        "link": "",
         "icon": "plus_blue.png",
         "low_threshold": "1",
         "high_threshold": "60",
@@ -847,7 +798,6 @@
         
         "description": "Completion of Milner Dam brings irrigation to the south side of the Snake River.",
         "event_type": "event",
-        "link": "",
         "icon": "triangle_green.png",
         "low_threshold": "1",
         "high_threshold": "60",
@@ -864,7 +814,6 @@
         "date_limit": "ho",
         "description": "Former Governor Frank Steunenberg is assassinated.",
         "event_type": "event",
-        "link": "",
         "icon": "triangle_red.png",
         "low_threshold": "1",
         "high_threshold": "60",
@@ -881,7 +830,6 @@
         "date_limit": "ho",
         "description": "Largest sawmill in the United States opens at Potlatch.",
         "event_type": "event",
-        "link": "",
         "icon": "triangle_green.png",
         "low_threshold": "1",
         "high_threshold": "60",
@@ -898,7 +846,6 @@
         
         "description": "William E. Borah is elected to the U.S. Senate, where he serves 33 years. ",
         "event_type": "event",
-        "link": "",
         "icon": "triangle_green.png",
         "low_threshold": "1",
         "high_threshold": "60",
@@ -915,7 +862,6 @@
         "date_limit": "da",
         "description": "",
         "event_type": "event",
-        "link": "",
         "icon": "circle_orange.png",
         "low_threshold": "1",
         "high_threshold": "60",
@@ -932,7 +878,6 @@
         
         "description": "",
         "event_type": "event",
-        "link": "",
         "icon": "triangle_green.png",
         "low_threshold": "1",
         "high_threshold": "60",
@@ -949,7 +894,6 @@
         "date_limit": "ye",
         "description": "Idaho population 325,594. ",
         "event_type": "event",
-        "link": "",
         "icon": "plus_blue.png",
         "low_threshold": "1",
         "high_threshold": "60",
@@ -966,7 +910,6 @@
         "date_limit": "mo",
         "description": "Forest fires consume one-sixth of north Idaho's forests.",
         "event_type": "event",
-        "link": "",
         "icon": "triangle_red.png",
         "low_threshold": "1",
         "high_threshold": "60",
@@ -983,7 +926,6 @@
         
         "description": "Moses Alexander is first elected Jewish governor in United States.",
         "event_type": "event",
-        "link": "",
         "icon": "triangle_green.png",
         "low_threshold": "1",
         "high_threshold": "60",
@@ -1000,7 +942,6 @@
         
         "description": "State Board of Education is established.",
         "event_type": "event",
-        "link": "",
         "icon": "triangle_green.png",
         "low_threshold": "1",
         "high_threshold": "60",
@@ -1017,7 +958,6 @@
         
         "description": "Battleship Idaho  is launched.",
         "event_type": "event",
-        "link": "",
         "icon": "triangle_green.png",
         "low_threshold": "1",
         "high_threshold": "60",
@@ -1034,7 +974,6 @@
         
         "description": "",
         "event_type": "event",
-        "link": "",
         "icon": "plus_blue.png",
         "low_threshold": "1",
         "high_threshold": "60",
@@ -1051,7 +990,6 @@
         
         "description": "",
         "event_type": "event",
-        "link": "",
         "icon": "triangle_green.png",
         "low_threshold": "1",
         "high_threshold": "60",
@@ -1068,7 +1006,6 @@
         
         "description": "Philo Farnsworth, 15-year-old student and inventor from Rigby, develops concepts that lead to invention of television and earn him the name 'Father of Television'.",
         "event_type": "event",
-        "link": "",
         "icon": "triangle_green.png",
         "low_threshold": "1",
         "high_threshold": "60",
@@ -1085,7 +1022,6 @@
         "date_limit": "da",
         "description": "Idaho's first radio station, KFAU, at Boise High School, goes on the air in 1922.",
         "event_type": "event",
-        "link": "",
         "icon": "triangle_green.png",
         "low_threshold": "1",
         "high_threshold": "60",
@@ -1102,7 +1038,6 @@
         
         "description": "Craters of the Moon National Monument is established.",
         "event_type": "event",
-        "link": "",
         "icon": "triangle_green.png",
         "low_threshold": "1",
         "high_threshold": "60",
@@ -1119,7 +1054,6 @@
         
         "description": "First commercial airmail service in the U.S. begins in Boise.",
         "event_type": "event",
-        "link": "",
         "icon": "triangle_green.png",
         "low_threshold": "1",
         "high_threshold": "60",
@@ -1136,7 +1070,6 @@
         
         "description": "Idaho population 445,032.",
         "event_type": "event",
-        "link": "",
         "icon": "plus_blue.png",
         "low_threshold": "1",
         "high_threshold": "60",
@@ -1153,7 +1086,6 @@
         
         "description": "Idaho becomes nation's leading silver producer.",
         "event_type": "event",
-        "link": "",
         "icon": "triangle_green.png",
         "low_threshold": "1",
         "high_threshold": "60",
@@ -1170,7 +1102,6 @@
         
         "description": "Sun Valley resort is established by the Union Pacific Railroad. World's first ski chair lift opens at Sun Valley.",
         "event_type": "event",
-        "link": "",
         "icon": "triangle_green.png",
         "low_threshold": "1",
         "high_threshold": "60",
@@ -1187,7 +1118,6 @@
         
         "description": "Joe Albertson opens his first supermarket in Boise.",
         "event_type": "event",
-        "link": "",
         "icon": "triangle_green.png",
         "low_threshold": "1",
         "high_threshold": "60",
@@ -1204,7 +1134,6 @@
         
         "description": "Idaho population 524,873.",
         "event_type": "event",
-        "link": "",
         "icon": "plus_blue.png",
         "low_threshold": "1",
         "high_threshold": "60",
@@ -1221,7 +1150,6 @@
         
         "description": "J.R. Simplot begins potato dehydration operations in Caldwell.",
         "event_type": "event",
-        "link": "",
         "icon": "triangle_green.png",
         "low_threshold": "1",
         "high_threshold": "60",
@@ -1238,7 +1166,6 @@
         
         "description": "Japanese-Americans are placed in internment camp near Eden.",
         "event_type": "event",
-        "link": "",
         "icon": "triangle_red.png",
         "low_threshold": "1",
         "high_threshold": "60",
@@ -1255,7 +1182,6 @@
         
         "description": "National Reactor Testing Station (NRTS) is established.",
         "event_type": "event",
-        "link": "",
         "icon": "triangle_green.png",
         "low_threshold": "1",
         "high_threshold": "60",
@@ -1272,7 +1198,6 @@
         
         "description": "Idaho population 588,637.",
         "event_type": "event",
-        "link": "",
         "icon": "plus_blue.png",
         "low_threshold": "1",
         "high_threshold": "60",
@@ -1289,7 +1214,6 @@
         
         "description": "NRTS becomes site of the worlds' first use of nuclear fission to produce electricity. Experimental Breeder Reactor No. 1 is later designated a National Landmark.",
         "event_type": "event",
-        "link": "",
         "icon": "triangle_green.png",
         "low_threshold": "1",
         "high_threshold": "60",
@@ -1306,7 +1230,6 @@
         
         "description": "Television comes to Idaho with KIDO-TV in Boise.",
         "event_type": "event",
-        "link": "",
         "icon": "triangle_green.png",
         "low_threshold": "1",
         "high_threshold": "60",
@@ -1323,7 +1246,6 @@
         
         "description": "Idaho population 667,191.",
         "event_type": "event",
-        "link": "",
         "icon": "plus_blue.png",
         "low_threshold": "1",
         "high_threshold": "60",
@@ -1340,7 +1262,6 @@
         
         "description": "Ernest Hemingway dies in Ketchum.",
         "event_type": "event",
-        "link": "",
         "icon": "triangle_gray",
         "low_threshold": "1",
         "high_threshold": "60",
@@ -1357,7 +1278,6 @@
         
         "description": "Voters uphold 3% state sales tax.",
         "event_type": "event",
-        "link": "",
         "icon": "triangle_green.png",
         "low_threshold": "20",
         "high_threshold": "60",
@@ -1374,7 +1294,6 @@
         
         "description": "Idaho population 713,015.",
         "event_type": "event",
-        "link": "",
         "icon": "plus_blue.png",
         "low_threshold": "1",
         "high_threshold": "60",
@@ -1391,7 +1310,6 @@
         
         "description": "Fire at the Sunshine Mine in Kellogg takes 91 lives.",
         "event_type": "event",
-        "link": "",
         "icon": "triangle_red.png",
         "low_threshold": "1",
         "high_threshold": "60",
@@ -1408,7 +1326,6 @@
         
         "description": "Port of Lewiston opens Idaho to ocean-going shipping.",
         "event_type": "event",
-        "link": "",
         "icon": "triangle_green.png",
         "low_threshold": "1",
         "high_threshold": "60",
@@ -1425,7 +1342,6 @@
         
         "description": "Teton Dam collapses, killing 11 and forcing thousands to flee their homes.",
         "event_type": "event",
-        "link": "",
         "icon": "triangle_red.png",
         "low_threshold": "1",
         "high_threshold": "60",
@@ -1442,7 +1358,6 @@
         
         "description": "Governor Cecil D. Andrus is appointed Secretary of the Interior.",
         "event_type": "event",
-        "link": "",
         "icon": "triangle_green.png",
         "low_threshold": "1",
         "high_threshold": "60",
@@ -1459,7 +1374,6 @@
         
         "description": "Voters approve tax limitation placing severe restrictions on the use of the property tax.",
         "event_type": "event",
-        "link": "",
         "icon": "triangle_green.png",
         "low_threshold": "1",
         "high_threshold": "60",
@@ -1476,7 +1390,6 @@
         
         "description": "Senator Frank Church becomes chairman of the Senate Foreign Relations Committee.",
         "event_type": "event",
-        "link": "",
         "icon": "triangle_green.png",
         "low_threshold": "1",
         "high_threshold": "60",
@@ -1493,7 +1406,6 @@
         
         "description": "Idaho population 944,038. ",
         "event_type": "event",
-        "link": "",
         "icon": "plus_blue.png",
         "low_threshold": "1",
         "high_threshold": "60",
@@ -1510,7 +1422,6 @@
         
         "description": "Eruption of Mt. St. Helens in Washington leaves north Idaho covered with a layer of volcanic ash.",
         "event_type": "event",
-        "link": "",
         "icon": "triangle_red.png",
         "low_threshold": "1",
         "high_threshold": "60",
@@ -1527,7 +1438,6 @@
         
         "description": "Senator James McClure becomes chairman of the Senate Energy and Natural Resources Committee in the 97th - 99th Congresses.",
         "event_type": "event",
-        "link": "",
         "icon": "triangle_green.png",
         "low_threshold": "1",
         "high_threshold": "60",
@@ -1544,7 +1454,6 @@
         
         "description": "An earthquake measuring 7.3 on the Richter scale kills two Challis children and caused millions of dollars of damage.",
         "event_type": "event",
-        "link": "",
         "icon": "triangle_red.png",
         "low_threshold": "1",
         "high_threshold": "60",
@@ -1561,7 +1470,6 @@
         
         "description": "Harmon Killebrew of Payette inducted into Baseball Hall of Fame.",
         "event_type": "event",
-        "link": "",
         "icon": "circle_orange.png",
         "low_threshold": "1",
         "high_threshold": "60",
@@ -1577,7 +1485,6 @@
         "enddate": "1985-07-01 12:00",
         "description": "David Marquart (Boise) and Barbara Morgan (McCall) are among 10 finalists out of 11,000 applicants in the NASA Teacher in Space program. Barbara Morgan later becomes Teacher in Space backup to Christa McAuliffe, and Teacher in Space designee in 1986, and later the first education mission specialist.",
         "event_type": "event",
-        "link": "",
         "icon": "triangle_green.png",
         "low_threshold": "1",
         "high_threshold": "60",
@@ -1594,7 +1501,6 @@
         "date_limit": "ye",
         "description": "Idaho population 1,006,749. ",
         "event_type": "event",
-        "link": "",
         "icon": "plus_blue.png",
         "low_threshold": "1",
         "high_threshold": "60",
@@ -1611,7 +1517,6 @@
         
         "description": "Idaho celebrates Statehood Centennial - July 3.",
         "event_type": "event",
-        "link": "",
         "icon": "triangle_green.png",
         "low_threshold": "1",
         "high_threshold": "60",
@@ -1628,7 +1533,6 @@
         "date_limit": "da",
         "description": "Linda Copple Trout becomes the first woman appointed to the Idaho Supreme Court.",
         "event_type": "event",
-        "link": "",
         "icon": "triangle_green.png",
         "low_threshold": "1",
         "high_threshold": "60",
@@ -1645,7 +1549,6 @@
         "date_limit": "ye",
         "description": "Idaho ranks third nationwide in percentage population growth after the state adds another 33,000 residents.",
         "event_type": "event",
-        "link": "",
         "icon": "plus_blue.png",
         "low_threshold": "1",
         "high_threshold": "60",
@@ -1662,7 +1565,6 @@
         "date_limit": "da",
         "description": "Picabo Street becomes first American to win World Cup downhill title",
         "event_type": "event",
-        "link": "",
         "icon": "circle_orange.png",
         "low_threshold": "1",
         "high_threshold": "60",
@@ -1680,7 +1582,6 @@
         "date_limit": "da",
         "description": "Larry Edwin Craig (born July 20, 1945) is a former Republican politician from the U.S. state of Idaho. He served eighteen years in the U.S. Senate (1991–2009), preceded by ten years in the U.S. House, representing Idaho's first district (1981–91). His 28 years in the Congress rank as the second-longest in Idaho history, trailing only William Borah, who served over 32 years in the Senate. In addition to serving in Congress, Craig has been a member of the Board of Directors of the National Rifle Association since 1983. Craig has also been selected for induction into the Idaho Hall of Fame. Although he was selected in March 2007, the announcement was made in October 2007.",
         "event_type": "event",
-        "link": "",
         "icon": "square_blue.png",
         "low_threshold": "1",
         "high_threshold": "100",
