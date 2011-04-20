@@ -359,6 +359,10 @@ timeglider.TimelineView
 	  $("#" + parent_id).remove();
 	});
 	
+	$(CONTAINER).delegate(".timeglider-more-plus", "click", function () {
+	  MED.zoom(-1);
+	});
+	
 	$(CONTAINER + " .timeglider-legend-close").live("click", function () {
 	  var $legend = $(CONTAINER + " .timeglider-legend");
 	   $legend.fadeOut(300, function () { $legend.remove(); });
@@ -471,16 +475,16 @@ tg.TG_TimelineView.prototype = {
 				w = c.width(),
 				wc = Math.floor(w / 2) + 1,
 				h = c.height(),
-				hc = Math.floor(h/2);
-					
-				var lft = c.position().left,
-				offset = c.offset();
-		  
-		  var f_height = (options.show_footer == true) ? $(this._views.FOOTER).height() : 0;
-	
-			var container = {"width":w, "height":h, "centerx":wc, "centery":hc, "left": lft, "offset": offset};
-			var footer = {"height":f_height};
-			var tick = {"top":h - f_height - 30};
+				hc = Math.floor(h/2),
+				t_height = 30,
+				lft = c.position().left,
+				offset = c.offset(),
+				f_height = (options.show_footer == true) ? $(this._views.FOOTER).height() : 0,
+				t_top = h - f_height - t_height,
+				// objects to return
+				container = {"width":w, "height":h, "centerx":wc, "centery":hc, "left": lft, "offset": offset},
+				footer = {"height":f_height},
+				tick = {"top":t_top};
 			
 			return {container:container, tick:tick, footer:footer}
 		  
@@ -1141,10 +1145,16 @@ tg.TG_TimelineView.prototype = {
 		}
 	},
 	
-	/* WOAH! MOVE THIS TO MEDIATOR/TIMELINE MODEL!!!! */
+	/* TODO! MOVE THIS TO MEDIATOR/TIMELINE MODEL!!!! */
 	setTimelineProp : function (id, prop, value) {
 		var tl = MED.timelinePool[id];
 		tl[prop] = value;	
+	},
+	
+	/* TODO! MOVE THIS TO MEDIATOR/TIMELINE MODEL!!!! */
+	getTimelineProp : function (id, prop) {
+		var tl = MED.timelinePool[id];
+		return tl[prop];	
 	},
 	
 	
@@ -1198,7 +1208,7 @@ tg.TG_TimelineView.prototype = {
 	*/
 	freshTimelines : function () {
 
-		var t, i, tl, tu, ts, tick, tE, ht, t_f, t_l,
+		var t, i, tl, tu, ts, tick, tE, tl_ht, t_f, t_l,
 			active = MED.activeTimelines,
 			ticks = MED.ticksArray,
 			borg = '',
@@ -1220,9 +1230,9 @@ tg.TG_TimelineView.prototype = {
 			spanin,
 			legend_label = "",
 			spanins = [],
-			expCol, tlTop=0,
-			cht = me.dimensions.container.height;
-			
+			expCol, tl_top=0,
+			cht = me.dimensions.container.height,
+			ceil = me.dimensions.tick.top;
 		//////////////////////////////////////////
 		for (var a=0; a<active.length; a++) {
 
@@ -1230,7 +1240,7 @@ tg.TG_TimelineView.prototype = {
 			tl = MED.timelinePool[active[a]];
 			
 			expCol = tl.display;
-		  tlTop = (tl.top || (cht-120));
+		  tl_top = (tl.top || (cht-120));
 			legend_label = tl.legend.length > 0 ? "<span class='tg-timeline-legend-bt'>legend</span>" : ""; 
 			
 			// TIMELINE CONTAINER
@@ -1250,9 +1260,9 @@ tg.TG_TimelineView.prototype = {
 					me.setTimelineProp(tl.id,"top", $(this).css("top"));	
 				}
 			})
-				.css("top", tlTop);
+				.css("top", tl_top);
 				
-			ht = $tl.height();
+			tl_ht = $tl.height();
 			
 			$(CONTAINER + " .tg-timeline-envelope#" + tl.id + " .titleBar .expand-collapse").click(function () { 
 					me.expandCollapseTimeline(tl.id );
@@ -1269,7 +1279,7 @@ tg.TG_TimelineView.prototype = {
 			$title = $tl.children(".titleBar");
 			t_f = cx + ((tl.bounds.first - foSec) / spp);
 			t_l = cx + ((tl.bounds.last - foSec) / spp);
-			$title.css({"top":ht, "left":t_f, "width":(t_l-t_f)});
+			$title.css({"top":tl_ht, "left":t_f, "width":(t_l-t_f)});
 
 			/// for initial sweep display, setup fresh borg for organizing events
 			if (expCol == "expanded") { tl.borg = borg = new timeglider.TG_Org(); }
@@ -1295,7 +1305,7 @@ tg.TG_TimelineView.prototype = {
 			stuff = this.compileTickEventsAsHtml(tl, idArr, 0, "sweep");
 			
 			if (expCol == "expanded") {
-				stuff = borg.getHTML("sweep");
+				stuff = borg.getHTML("sweep", (tl_top));
 				tl.borg = borg.getBorg();
 			}
 			
@@ -1321,20 +1331,21 @@ tg.TG_TimelineView.prototype = {
 	appendTimelines : function (tick) {
       
 			var active = MED.activeTimelines, 
-			    $tl, tl, stuff = "";
-		    
+			    $tl, tl, tl_top, stuff = "",
+			    me = this;
+			    
 			// FOR EACH TIMELINE...
 			for (var a=0; a<active.length; a++) {
 
 				tl = MED.timelinePool[active[a]];
-
+        
 				// get the events from timeline model hash
 				idArr = this.getTimelineEventsByTick({tick:tick, timeline:tl});
 				stuff = this.compileTickEventsAsHtml(tl, idArr, tick.serial, "append");
 				 
 				// borg it if it's expanded.
 				if (tl.display == "expanded"){ 
-						stuff = tl.borg.getHTML(tick.serial);
+						stuff = tl.borg.getHTML(tick.serial, tl.top);
 				}
 
 				$tl = $(".tg-timeline-envelope#" + tl.id).append(stuff);

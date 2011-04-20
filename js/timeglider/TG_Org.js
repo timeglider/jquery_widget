@@ -8,12 +8,11 @@
 (function(tg){
 
   // standard "brick" height for placement grid
-  var lev_ht = tg.levelHeight = 8;
-  
-  // number of available levels for events
-  var tree_levels = 300;
-  
-  var $ = jQuery;
+  var lev_ht = tg.levelHeight = 8,
+      // number of available levels for events
+      tree_levels = 300,
+      $ = jQuery,
+      ceiling_padding = 16;
   
   
   /*
@@ -77,10 +76,12 @@
 
     /*
     * TG_Org.getHTML
-    * @param {string/number} tickScope This either "sweep" or the serial of a single tick (Number)
+    * @param {string|number} tickScope This either "sweep" or the serial of a single tick (Number)
+    * @param {number} ceiling The max height of the timeline display, after which a "+" appears
     * @return {string} HTML with events passed back to view for actual layout of timeline
     */
-    this.getHTML = function (tickScope) {
+    this.getHTML = function (tickScope, ceiling) {
+      
       if (tickScope == "sweep") { 
         freshTree();
         this.vis = [];
@@ -167,18 +168,28 @@
               icon = '';
             }
             
-
-            html += "<div class='timeglider-timeline-event " + span_selector_class + "' id='ev_" + b.id + "' "
-            + "style='width:" + b.width  + "px;"
-            + "height:" + b.height + "px;"
-            + "left:" + b.left  + "px;" 
-            + "opacity:" + b.opacity + ";"
-            + "top:" + b.top + "px;"
-            + "font-size:" + b.fontsize  + "px;'>"
-            + icon + img + span_div 
-            + "<div class='timeglider-event-title' style='top:" + title_adj + "px'>" 
-            + b.title
-            + "</div></div>";
+          // things that are higher have lower "top" values
+          debug.log("ceiling:" + ceiling);
+           if (Math.abs(b.top) > (ceiling - ceiling_padding)) {
+             // if things are higher than the ceiling, show plus signs instead,
+             // and we'll zoom in with these.
+              html += "<div class='timeglider-more-plus' style='left:" + b.left  + 
+                    "px; top:-" + (ceiling - (Math.floor(ceiling_padding/3))) + "px'>+</div>";
+           } else {
+            
+              html += "<div class='timeglider-timeline-event " + span_selector_class + "' id='ev_" + b.id + "' "
+              + "style='width:" + b.width  + "px;"
+              + "height:" + b.height + "px;"
+              + "left:" + b.left  + "px;" 
+              + "opacity:" + b.opacity + ";"
+              + "top:" + b.top + "px;"
+              + "font-size:" + b.fontsize  + "px;'>"
+              + icon + img + span_div 
+              + "<div class='timeglider-event-title' style='top:" + title_adj + "px'>" 
+              + b.title
+              + "</div></div>";
+            
+           }// end if/else :: height > ceiling
             
           } // end if it's got valid HTML
             
@@ -191,7 +202,10 @@
   }; /// end getHTML
 
 
-  /// Private stuff ///
+
+
+
+  /// PRIVATE STUFF ///
   
   /*
   * freshTree

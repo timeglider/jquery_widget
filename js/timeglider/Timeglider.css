@@ -665,5 +665,12 @@ ul.timeglider-ev-modal-links li {
 ul.timeglider-ev-modal-links li a {
   color:#374b99;
 }
-	
+
+.timeglider-more-plus {
+  position:absolute;
+  color:#A4DD90;
+  font-weight:bold;
+  font-size:10px;
+  cursor:pointer;
+}
 
