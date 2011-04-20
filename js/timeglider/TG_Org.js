@@ -168,8 +168,7 @@
               icon = '';
             }
             
-          // things that are higher have lower "top" values
-          debug.log("ceiling:" + ceiling);
+          // note: divs that are higher have lower "top" values
            if (Math.abs(b.top) > (ceiling - ceiling_padding)) {
              // if things are higher than the ceiling, show plus signs instead,
              // and we'll zoom in with these.

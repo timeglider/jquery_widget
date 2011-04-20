@@ -355,7 +355,6 @@ timeglider.TimelineView
 		
 	$(CONTAINER).delegate(".close-button-remove", "click", function () {
 	  var parent_id = $(this).parent().attr("id");
-	  debug.log("DEL:" + parent_id);
 	  $("#" + parent_id).remove();
 	});
 	
@@ -1240,7 +1239,8 @@ tg.TG_TimelineView.prototype = {
 			tl = MED.timelinePool[active[a]];
 			
 			expCol = tl.display;
-		  tl_top = (tl.top || (cht-120));
+			
+		  tl_top = (tl.top) ? parseInt(tl.top.replace("px", "")) : (cht-120); // sets up default
 			legend_label = tl.legend.length > 0 ? "<span class='tg-timeline-legend-bt'>legend</span>" : ""; 
 			
 			// TIMELINE CONTAINER
@@ -1249,7 +1249,7 @@ tg.TG_TimelineView.prototype = {
 			 	+ tl.title + "<div class='tg-timeline-env-buttons'>"
 			 	+ "<span class='timeline-info'>info</span>"
 			 	+ legend_label
-			 	// + "<span class='expand-collapse'>expand/collapse</span>"
+			 	// + "<span class='expand-collapse'>expand/collapse</span>" 
 			 	+ "</div></div></div></div>")
 			 	.appendTo(TICKS);
 			
@@ -1257,7 +1257,8 @@ tg.TG_TimelineView.prototype = {
 				axis:"y",
 				handle:".titleBar", 
 				stop: function () {
-					me.setTimelineProp(tl.id,"top", $(this).css("top"));	
+					me.setTimelineProp(tl.id,"top", $(this).css("top"));
+					MED.refresh();	
 				}
 			})
 				.css("top", tl_top);
@@ -1305,7 +1306,7 @@ tg.TG_TimelineView.prototype = {
 			stuff = this.compileTickEventsAsHtml(tl, idArr, 0, "sweep");
 			
 			if (expCol == "expanded") {
-				stuff = borg.getHTML("sweep", (tl_top));
+				stuff = borg.getHTML("sweep", tl_top);
 				tl.borg = borg.getBorg();
 			}
 			
@@ -1781,7 +1782,7 @@ tg.TG_TimelineView.prototype = {
     		var $ms = $("#timeglider-measure-span").html(str);
     		return $ms.width() + 20;
     };
-    
+  
     
    
 
