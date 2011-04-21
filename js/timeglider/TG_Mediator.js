@@ -50,6 +50,7 @@ reflects state back to view
     this.fixed_zoom = (this.max_zoom == this.min_zoom) ? true : false;
     this.gesturing = false;
     this.gestureStartZoom = 0;
+    this.gestureStartScale = 0; // .999 etc reduced to 1 to 100
     this.filters = {include:"", exclude:"", legend:[]};
     this.eventPool = [];
     // this.eventPool['ev_000'] = "hello!";
@@ -61,7 +62,8 @@ reflects state back to view
     this.foo = "bark";
     
     // this.setZoomLevel(options.initial_zoom);
-    this.initial_timeline_id = options.initial_timeline_id;
+    this.initial_timeline_id = options.initial_timeline_id || "";
+    this.sole_timeline_id = "";
     
     if (options.max_zoom === options.min_zoom) {
       this.fixed_zoom = options.min_zoom;
@@ -99,11 +101,6 @@ tg.TG_Mediator.prototype = {
   
   
   /*
-  TODO
-  Put this stuff into backbone collection of TimelineModel() instances
-  */
-  
-  /*
   * loadTimelineData
   * @param src {object} object OR json data to be parsed for loading
   * TODO: create option for XML input
@@ -114,12 +111,18 @@ tg.TG_Mediator.prototype = {
     
     if (src) {
       
+        debug.log("HELLO??");
         if (typeof src === "object") {
           // local/pre-loaded JSON
           M.parseData(src);
+        } else if (src.substr(0,1) == "#") {
+          
+          debug.log("IT'S A TABLE!");
+          var tableData = [M.getTableTimelineData(src)];
+          // debug.log(JSON.stringify(tableData));
+          M.parseData(tableData);
         } else {
- 
- 
+
             $.getJSON(src, function (data) {
                   M.parseData(data);
                }
@@ -137,6 +140,63 @@ tg.TG_Mediator.prototype = {
     }
     
   },
+  
+  /*
+  *  getTableTimelineData
+  *  @param table_id {string} the html/DOM id of the table
+  *  @return timeline data object ready for parsing
+  *
+  */
+  getTableTimelineData : function (table_id) {
+
+      var tl = {},
+          now = 0,
+          keys = [], field, value,
+		      event_id = '',
+		      $table = $(table_id);
+
+		  // timeline head
+		  tl.id = table_id.substr(1);		 
+		  tl.title = $table.attr("title") || "untitled";
+		  tl.description = $table.attr("description") || "";
+		  tl.focus_date = $table.attr("focus_date") || TG_Date.getToday;
+		  tl.initial_zoom = $table.attr("initial_zoom") || 20;
+		  tl.events = [];
+
+      $table.find('tr').each(function(i){
+
+          	var children = $(this).children(),
+              row_obj;
+
+          	// first row -- <th> or <td>, gather the field names
+           	if ( i === 0 ) {
+
+            	keys = children.map(function(){
+	            	// using "tg-*" map each column to the corresponding data
+              		return $(this).attr( 'class' ).replace( /^.*?\btg-(\S+)\b.*?$/, '$1' );
+            	}).get();
+
+          	} else {
+				// i.e. an event
+           		row_obj = {};
+
+				children.each(function(i){
+					field = keys[i],
+					value = $(this).text();
+					// TODO: VALIDATE EVENT STUFF HERE
+
+					row_obj[ field ] = value;
+				});
+				event_id = 'ev_' + now++;
+				row_obj.id = event_id;
+            	tl.events.push(row_obj);
+
+          	} // end if-else i===0
+    }); // end .each()
+    
+        $table.css("display", "none");
+        return tl;
+  },
  
   /*
   * parseData
@@ -147,16 +207,15 @@ tg.TG_Mediator.prototype = {
     var M = this; // model ref
     var ct = 0;
     var dl = data.length, ti = {}, ondeck = {};
-
+    
     for (var i=0; i<dl;i++) {
+      
       ondeck = data[i];
       ondeck.mediator = M;
       ti = new timeglider.TG_Timeline(ondeck).toJSON(); // the timeline
-    
-        // at least one timeline was loaded
-        // put the Model into a collection
-        // TODO: create Backbone collection
+
         if (ti.id.length > 0) {
+         
           ct++;
           M.swallowTimeline(ti);
         }
@@ -185,15 +244,19 @@ tg.TG_Mediator.prototype = {
         b = (this.timelineDataLoaded == true);
     
     if (a && b) {
+        this.setInitialTimelines();
+       
         $.publish("mediator.timelineDataLoaded");
     }
+    
     
   },
 
 
     /* Makes an indexed array of timelines */
     swallowTimeline : function (obj) {
-      this.timelinePool[obj.id] = obj;	
+      this.sole_timeline_id = obj.id;
+      this.timelinePool[obj.id] = obj;
       $.publish("mediator.timelineListChangeSignal");
     },
 
@@ -206,7 +269,8 @@ tg.TG_Mediator.prototype = {
     */
     setInitialTimelines : function () {
       var me = this;
-      var tid = this.initial_timeline_id;
+      var tid = this.initial_timeline_id || this.sole_timeline_id;
+      debug.log("TID:" + tid);
       if (tid) {
         setTimeout(function () { 
           MED.toggleTimeline(tid);
@@ -340,11 +404,6 @@ tg.TG_Mediator.prototype = {
             this.refresh();      
         },
          
-         
-         
-        setGestureStart : function () {
-          this.gestureStartZoom = this.getZoomLevel();
-        },
 
         getTicksOffset : function () {
           return this._ticksOffset;
@@ -493,6 +552,9 @@ tg.TG_Mediator.prototype = {
         	return {"high":high, "low":low}
 
         };
+        
+  
+    	  
         
         
         tg.validateOptions = function (widget_settings) {	

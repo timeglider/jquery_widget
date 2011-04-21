@@ -85,8 +85,9 @@ timeglider.TimelineView
     	  + "<div class='startdate'>${startdate}</div>"
     	  + "<h4 id='title'>${title}</h4>"
     	  + "<p>{{html description}}</p>"
-    	  + "<ul class='timeglider-ev-modal-links'><li><a target='_blank' href='${link}'>link</a></li></ul>"
+    	  + "<ul class='timeglider-ev-modal-links'>{{html links}}</ul>"
     	  + "</div>"),
+    	  // <li><a target='_blank' href=''>link</a></li> removed from links ul above
     	  
     	// generated, appended on the fly, then removed
     	event_modal_video : $.template( null,
@@ -104,7 +105,7 @@ timeglider.TimelineView
      // generated, appended on the fly, then removed
      filter_modal : $.template( null,
           "<div class='tg-modal timeglider-menu-modal timeglider-filter-box timeglider-menu-hidden'>"+
-          "<div class='close-button'><img src='img/close.png'></div>"+
+          "<div class='close-button'></div>"+
           "<h3>filter</h3>"+
           "<div class='timeglider-menu-modal-content'>"+
           "<div class='timeglider-formline'>show: "+
@@ -118,7 +119,7 @@ timeglider.TimelineView
           
       timeline_list_modal : $.template( null,
           "<div class='timeglider-menu-modal timeglider-timeline-menu timeglider-menu-hidden'>"+
-          "<div class='close-button'><img src='img/close.png'></div>"+
+          "<div class='close-button'></div>"+
           "<h3>timelines</h3>"+
           "<div class='timeglider-menu-modal-content'><ul></ul></div>"+
           "<div class='timeglider-menu-modal-point-right'>"+
@@ -126,8 +127,6 @@ timeglider.TimelineView
         
       legend_modal : $.template( null,
           "<div class='timeglider-menu-modal timeglider-legend timeglider-menu-hidden'  id='${id}_legend'>"+
-          // "<div class='close-button'><img src='img/close.png'></div>"+
-          // "<h3>legend</h3>"+
           "<div class='timeglider-menu-modal-content'><ul id='${id}'>{{html legend_list}}</ul>"+
           "<div class='timeglider-close-button-small timeglider-legend-close'></div>"+
           "<div class='timeglider-legend-all'>all</div>"+
@@ -164,7 +163,6 @@ timeglider.TimelineView
   /* PUB-SUB "LISTENERS" SUBSCRIBERS */
   
   $.subscribe("mediator.timelineDataLoaded", function () {
-      MED.setInitialTimelines();
       $(".timeglider-loading").fadeOut(500);     
   });
   
@@ -355,9 +353,13 @@ timeglider.TimelineView
 			debug.trace("collapsed, title:" + title, "note"); 
 		});
 		
-	$(CONTAINER + " .close-button-remove").live("click", function () {
-	  var $parent = $(this).parent();
-		$parent.fadeOut(300, function () { $parent.remove(); });
+	$(CONTAINER).delegate(".close-button-remove", "click", function () {
+	  var parent_id = $(this).parent().attr("id");
+	  $("#" + parent_id).remove();
+	});
+	
+	$(CONTAINER).delegate(".timeglider-more-plus", "click", function () {
+	  MED.zoom(-1);
 	});
 	
 	$(CONTAINER + " .timeglider-legend-close").live("click", function () {
@@ -440,13 +442,22 @@ timeglider.TimelineView
 	  
 	  tgcompnt.addEventListener("gesturestart", function (e) {
 	    	  e.preventDefault();
-	        debug.trace("gesture zoom:" + MED.getZoomLevel(), "note");
+	        $("#output").append("<br>gesture zoom:" + MED.getZoomLevel());
 	    }, false);
+	    
+	    tgcompnt.addEventListener("gestureend", function (e) {
+  	    	  e.preventDefault();
+  	        $("#output").append("<br>gesture end:" + MED.getZoomLevel());
+  	    }, false);
 	  
 	  
 	  tgcompnt.addEventListener("gesturechange", function (e) {
     	    	  e.preventDefault();
-    	        debug.trace("gesture change!!!!", "note");
+    	    	  //var gLeft = e.touches.item(0).pageX;
+    	    	  //var gRight = e.touches.item(1).pageX;
+    	    	  var gLeft = "l", gRight = "r";
+    	        $("#output").append("[" + gLeft + ":" + gRight + "]");
+    	        
     	 }, false);
 	    
 	}
@@ -463,16 +474,16 @@ tg.TG_TimelineView.prototype = {
 				w = c.width(),
 				wc = Math.floor(w / 2) + 1,
 				h = c.height(),
-				hc = Math.floor(h/2);
-					
-				var lft = c.position().left,
-				offset = c.offset();
-		  
-		  var f_height = (options.show_footer == true) ? $(this._views.FOOTER).height() : 0;
-	
-			var container = {"width":w, "height":h, "centerx":wc, "centery":hc, "left": lft, "offset": offset};
-			var footer = {"height":f_height};
-			var tick = {"top":h - f_height - 30};
+				hc = Math.floor(h/2),
+				t_height = 30,
+				lft = c.position().left,
+				offset = c.offset(),
+				f_height = (options.show_footer == true) ? $(this._views.FOOTER).height() : 0,
+				t_top = h - f_height - t_height,
+				// objects to return
+				container = {"width":w, "height":h, "centerx":wc, "centery":hc, "left": lft, "offset": offset},
+				footer = {"height":f_height},
+				tick = {"top":t_top};
 			
 			return {container:container, tick:tick, footer:footer}
 		  
@@ -704,7 +715,7 @@ tg.TG_TimelineView.prototype = {
 	    at: "left top",
 	    of: $ev,
 	    offset: "1, -10",
-	    collision: "flip flip"}).text(ev_obj.startdateObj.format("D"));
+	    collision: "flip flip"}).text(ev_obj.startdateObj.format("D", true));
 	  	   
 	  $ev.addClass("tg-event-hovered");
 	   
@@ -716,9 +727,6 @@ tg.TG_TimelineView.prototype = {
 	   $ev.removeClass("tg-event-hovered");
   },
   
-  tg_format : function (dobj) {
-    return dobj.ye + "-" + dobj.mo + "-" + dobj.da;
-  },
   
   
   /* FILTER BOX SETUP */
@@ -1136,10 +1144,16 @@ tg.TG_TimelineView.prototype = {
 		}
 	},
 	
-	/* WOAH! MOVE THIS TO MEDIATOR/TIMELINE MODEL!!!! */
+	/* TODO! MOVE THIS TO MEDIATOR/TIMELINE MODEL!!!! */
 	setTimelineProp : function (id, prop, value) {
 		var tl = MED.timelinePool[id];
 		tl[prop] = value;	
+	},
+	
+	/* TODO! MOVE THIS TO MEDIATOR/TIMELINE MODEL!!!! */
+	getTimelineProp : function (id, prop) {
+		var tl = MED.timelinePool[id];
+		return tl[prop];	
 	},
 	
 	
@@ -1193,7 +1207,7 @@ tg.TG_TimelineView.prototype = {
 	*/
 	freshTimelines : function () {
 
-		var t, i, tl, tu, ts, tick, tE, ht, t_f, t_l,
+		var t, i, tl, tu, ts, tick, tE, tl_ht, t_f, t_l,
 			active = MED.activeTimelines,
 			ticks = MED.ticksArray,
 			borg = '',
@@ -1215,9 +1229,9 @@ tg.TG_TimelineView.prototype = {
 			spanin,
 			legend_label = "",
 			spanins = [],
-			expCol, tlTop=0,
-			cht = me.dimensions.container.height;
-			
+			expCol, tl_top=0,
+			cht = me.dimensions.container.height,
+			ceil = me.dimensions.tick.top;
 		//////////////////////////////////////////
 		for (var a=0; a<active.length; a++) {
 
@@ -1225,7 +1239,8 @@ tg.TG_TimelineView.prototype = {
 			tl = MED.timelinePool[active[a]];
 			
 			expCol = tl.display;
-		  tlTop = (tl.top || (cht-120));
+			
+		  tl_top = (tl.top) ? parseInt(tl.top.replace("px", "")) : (cht-120); // sets up default
 			legend_label = tl.legend.length > 0 ? "<span class='tg-timeline-legend-bt'>legend</span>" : ""; 
 			
 			// TIMELINE CONTAINER
@@ -1234,7 +1249,7 @@ tg.TG_TimelineView.prototype = {
 			 	+ tl.title + "<div class='tg-timeline-env-buttons'>"
 			 	+ "<span class='timeline-info'>info</span>"
 			 	+ legend_label
-			 	// + "<span class='expand-collapse'>expand/collapse</span>"
+			 	// + "<span class='expand-collapse'>expand/collapse</span>" 
 			 	+ "</div></div></div></div>")
 			 	.appendTo(TICKS);
 			
@@ -1242,12 +1257,13 @@ tg.TG_TimelineView.prototype = {
 				axis:"y",
 				handle:".titleBar", 
 				stop: function () {
-					me.setTimelineProp(tl.id,"top", $(this).css("top"));	
+					me.setTimelineProp(tl.id,"top", $(this).css("top"));
+					MED.refresh();	
 				}
 			})
-				.css("top", tlTop);
+				.css("top", tl_top);
 				
-			ht = $tl.height();
+			tl_ht = $tl.height();
 			
 			$(CONTAINER + " .tg-timeline-envelope#" + tl.id + " .titleBar .expand-collapse").click(function () { 
 					me.expandCollapseTimeline(tl.id );
@@ -1264,7 +1280,7 @@ tg.TG_TimelineView.prototype = {
 			$title = $tl.children(".titleBar");
 			t_f = cx + ((tl.bounds.first - foSec) / spp);
 			t_l = cx + ((tl.bounds.last - foSec) / spp);
-			$title.css({"top":ht, "left":t_f, "width":(t_l-t_f)});
+			$title.css({"top":tl_ht, "left":t_f, "width":(t_l-t_f)});
 
 			/// for initial sweep display, setup fresh borg for organizing events
 			if (expCol == "expanded") { tl.borg = borg = new timeglider.TG_Org(); }
@@ -1290,7 +1306,7 @@ tg.TG_TimelineView.prototype = {
 			stuff = this.compileTickEventsAsHtml(tl, idArr, 0, "sweep");
 			
 			if (expCol == "expanded") {
-				stuff = borg.getHTML("sweep");
+				stuff = borg.getHTML("sweep", tl_top);
 				tl.borg = borg.getBorg();
 			}
 			
@@ -1316,20 +1332,21 @@ tg.TG_TimelineView.prototype = {
 	appendTimelines : function (tick) {
       
 			var active = MED.activeTimelines, 
-			    $tl, tl, stuff = "";
-		    
+			    $tl, tl, tl_top, stuff = "",
+			    me = this;
+			    
 			// FOR EACH TIMELINE...
 			for (var a=0; a<active.length; a++) {
 
 				tl = MED.timelinePool[active[a]];
-
+        
 				// get the events from timeline model hash
 				idArr = this.getTimelineEventsByTick({tick:tick, timeline:tl});
 				stuff = this.compileTickEventsAsHtml(tl, idArr, tick.serial, "append");
 				 
 				// borg it if it's expanded.
 				if (tl.display == "expanded"){ 
-						stuff = tl.borg.getHTML(tick.serial);
+						stuff = tl.borg.getHTML(tick.serial, tl.top);
 				}
 
 				$tl = $(".tg-timeline-envelope#" + tl.id).append(stuff);
@@ -1341,6 +1358,7 @@ tg.TG_TimelineView.prototype = {
 	}, // end appendTimelines()
 	
 	
+  
   // events array, MED, tl, borg, 
   // "sweep" vs tick.serial  (or fresh/append)
   compileTickEventsAsHtml : function (tl, idArr, tick_serial, btype) {
@@ -1473,20 +1491,47 @@ tg.TG_TimelineView.prototype = {
   
   },
   
+  
+  
+	
+  createEventLinksMenu : function (linkage) {
+    if (!linkage) return "";
+    
+    var html = '', l = 0, lUrl = "", lLab="";
+    
+    if (typeof(linkage) == "string") {
+      // single url string for link: use "link"
+      html = "<li><a href='" + linkage + "' target='_blank'>link</a></li>"
+    } else if (typeof(linkage) == "object"){
+      // array of links with labels and urls
+      for (l=0; l<linkage.length; l++) {
+        lUrl = linkage[l].url;
+        lLab = linkage[l].label;
+        html += "<li><a href='" + lUrl + "' target='_blank'>" + lLab + "</a></li>"
+      }
+    }
+    return html;
+  },
+  
+  
+  
 	eventModal : function (eid) {
 		// get position
 		$("#ev_" + eid + "_modal").remove();
+		
 		var me = this,
 		  $par = $("#" + eid),
 		  modalTemplate = me._templates.event_modal;
 		  ev = MED.eventPool[eid],
 		  ev_img = (ev.image && ev.image.src) ? "<img src='" + ev.image.src + "'>" : "",
-		  templ_obj = {
+		  links = this.createEventLinksMenu(ev.link),
+		  
+		  templ_obj = { 
   			  title:ev.title,
   			  description:ev_img + ev.description,
   			  id:eid,
-  			  startdate: ev.startdateObj.format(),
-  			  link: ev.link,
+  			  startdate: ev.startdateObj.format("D", true),
+  			  links: links,
   			  video: ev.video
   		}
 		  
@@ -1505,8 +1550,8 @@ tg.TG_TimelineView.prototype = {
       				offset: "-12, -1", // left, top
       				collision: "flip fit"
       	})
-      	.draggable({stack: ".timeglider-modal"});
-
+      	.draggable()
+      	.hover(function () { $(this).css("z-index", me.ztop++); });
 	},
 	
 	
@@ -1737,7 +1782,7 @@ tg.TG_TimelineView.prototype = {
     		var $ms = $("#timeglider-measure-span").html(str);
     		return $ms.width() + 20;
     };
-    
+  
     
    
 

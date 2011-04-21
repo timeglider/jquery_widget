@@ -1,11 +1,10 @@
-
-
 // initial declaration of timeglider object
 var timeglider = window.timeglider = {version:"0.1.0"};
 
-
 /*
 *  TG_Date
+* 
+*  dependencies: jQuery, jQuery.global
 *
 * You might be wondering why we're not extending JS Date().
 * That might be a good idea eventually. There are some
@@ -18,13 +17,12 @@ var timeglider = window.timeglider = {version:"0.1.0"};
 * This TG_Date object also has functionality which  goes hand-in-hand
 * with the date hashing system: each event on the timeline is hashed
 * according to day, year, decade, century, millenia, etc
+*
 */
-
-
 
 (function(tg){
   
-  var tg = timeglider;
+  var tg = timeglider, $ = jQuery;
   
   // caches speed up costly calculations
   var getRataDieCache = {},
@@ -33,18 +31,20 @@ var timeglider = window.timeglider = {version:"0.1.0"};
       getDateFromRDCache = {},
       getDateFromSecCache = {};
   
-  var $ = jQuery;
-   
       
-  tg.TG_Date = function (strOrNum) {
-    
-      var dateStr, isoStr, gotSec;
+  tg.TG_Date = function (strOrNum, display_limit) {
+
+      var dateStr, isoStr, gotSec, dummyDate;
     
       // Morton, we've got seconds coming in!
       if (typeof(strOrNum) == "number") {
           dateStr = isoStr = TG_Date.getDateFromSec(strOrNum);
           gotSec = strOrNum;
       } else {
+          // string
+          if (strOrNum == "today") {
+            strOrNum = TG_Date.getToday();
+          } 
           dateStr = isoStr = strOrNum;
       }
   
@@ -72,17 +72,27 @@ var timeglider = window.timeglider = {version:"0.1.0"};
       		this.mo = boil(arr[1]);
       		this.mo_num = getMoNum(this.mo, this.ye);
       		this.da = boil(arr[2]);
-      		this.ho = boil(arr[3]);
-      		this.mi = boil(arr[4]);
+      		this.ho = boil(arr[3]) || 0;
+      		this.mi = boil(arr[4]) || 0;
       		// .se second is the clock second -- 0-60
-      		this.se = boil(arr[5]);
+      		this.se = boil(arr[5]) || 0;
       		// rd : serial day from year zero
       		this.rd  = TG_Date.getRataDie(this);
       		// .sec second is the serial second from year 0!
       		this.sec = gotSec || getSec(this);
-    		
+      		
+      		this.display_limit = display_limit;
+    			
+      		// Esp. for formatting, we'll use jQuery.global for dates that
+      		// support the Date() object; before 50,000 bce, we'll need to 
+      		// resort to another formatting system that looks only at years.
+          
+    			this.jsDate = dummyDate = new Date(this.ye, (this.mo-1), this.da, this.ho, this.mi, this.se, 0);
+    			
+      	  var d1 = new Date(1948,11,5,10,0,0,0);
+      	  
       		this.dateStr = isoStr;
-
+      		
   		} 
 		
   		/// INTERNAL FUNCTIONS
@@ -616,18 +626,15 @@ var timeglider = window.timeglider = {version:"0.1.0"};
     
     jQuery.global.culture = jQuery.global.cultures[culture_str];
   	/*
-  	*  Making use of jQuery.glob.js here --- but only for names and some other formatting
+  	*  Making use of jQuery.global.js here --- but only for names and some other formatting
   	*  offerings. 
   	*/
   	// ["","January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-    TG_Date.monthNames = jQuery.global.culture.calendar.months.names;
-    TG_Date.monthNames.unshift("");
+    TG_Date.monthNames = $.merge([""],jQuery.global.culture.calendar.months.names);
     // ["","Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-    TG_Date.monthNamesAbbr = jQuery.global.culture.calendar.months.namesAbbr;
-    TG_Date.monthNamesAbbr.unshift("");
+    TG_Date.monthNamesAbbr = $.merge([""],jQuery.global.culture.calendar.months.namesAbbr);
   
     TG_Date.monthNamesLet = ["","J","F","M","A","M","J","J","A","S","O","N","D"];
-    debug.log("TG_Date.monthNamesAbbr:" + TG_Date.monthNamesAbbr[1]);
 
     TG_Date.monthsDayNums = [0,31,28,31,30,31,30,31,31,30,31,30,31,29];
   
@@ -648,46 +655,59 @@ var timeglider = window.timeglider = {version:"0.1.0"};
   };
 
 
-
+  /*
+  *  INSTANCE METHODS  
+  *
+  */
+  
   TG_Date.prototype = {
       
-      formatFocusDate : function () {
-    	  return this.ye + "-" + this.mo + "-" + this.da + " " + this.ho + ":" + this.mi + ":00";
-      },
-    
+      format : function (sig, useLimit) {
       
-      format : function (sig) {
-        // get universal formats from jquery.global
-        /*
-        d: "dd/MM/yyyy",
-        D: "dddd d MMMM yyyy",
-        t: "HH:mm",
-        T: "HH:mm:ss",
-        f: "dddd d MMMM yyyy HH:mm",
-        F: "dddd d MMMM yyyy HH:mm:ss",
-        M: "d MMMM",
-        Y: "MMMM yyyy"
+        /* "en" formats
+         // short date pattern
+          d: "M/d/yyyy",
+          // long date pattern
+          D: "dddd, MMMM dd, yyyy",
+          // short time pattern
+          t: "h:mm tt",
+          // long time pattern
+          T: "h:mm:ss tt",
+          // long date, short time pattern
+          f: "dddd, MMMM dd, yyyy h:mm tt",
+          // long date, long time pattern
+          F: "dddd, MMMM dd, yyyy h:mm:ss tt",
+          // month/day pattern
+          M: "MMMM dd",
+          // month/year pattern
+          Y: "yyyy MMMM",
+          // S is a sortable format that does not vary by culture
+          S: "yyyy\u0027-\u0027MM\u0027-\u0027dd\u0027T\u0027HH\u0027:\u0027mm\u0027:\u0027ss"
         */
         
-        // SHOULD BE:: return this.parseDate(sig);
-        
-        var ret = "";
-        switch(sig) {
-          case "YYYY-MM-DD": ret = this.ye + "-" + this.mo + "-" + this.da; break;
-          case "YYYY": ret = this.ye; break;
-          
-          // event-hover
-          case "D": ret = this.da + " " + TG_Date.monthNamesAbbr[this.mo] + " " + this.ye; break;
-          
-          default: ret = this.ye + "-" + this.mo + "-" + this.da + " " + this.ho + ":" + this.mi + ":00";
-          
+        // If, for example, an event wants only year-level time being displayed
+        // (and not month, day...) filter out the undesired time levels
+        if (useLimit == true) {
+          switch (this.display_limit) {
+            case "ye": sig = "yyyy"; break;
+            case "mo": sig = "Y"; break;
+            case "da": sig = "D"; break;
+            case "ho": sig = "f"; break;
+            
+            default: sig = "f";
+          }
         }
-      
-        return ret;
-      
+        // If the date is bce, get the bce equivalent for 
+        // the culture and append it or prepend it...
+        return $.global.format(this.jsDate, sig);
+
       }
 
-  }
+
+
+  } // end .prototype
+  
+  
 })(timeglider);
 
 

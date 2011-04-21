@@ -208,6 +208,7 @@
 	-ms-filter: "progid:DXImageTransform.Microsoft.Shadow(Strength=4, Direction=135, Color='#333333')";
 	/* For IE 5.5 - 7 */
 	filter: progid:DXImageTransform.Microsoft.Shadow(Strength=4, Direction=135, Color='#333333');
+	position:absolute;
 }
 
 .close-button-remove, .close-button-filter, .close-button-toggleMenu {
@@ -387,6 +388,7 @@
 	margin-top:-16px;
 	width:30px;
 	height:30px;
+	background-image:url(buttons/close.png);
 }
 	
 
@@ -593,7 +595,6 @@
 	width:1px;
 }
 
-
 .timeglider-ev-modal, .timeglider-timeline-modal {
   -webkit-border-radius:5px;
 	-moz-border-radius:5px;
@@ -664,5 +665,12 @@ ul.timeglider-ev-modal-links li {
 ul.timeglider-ev-modal-links li a {
   color:#374b99;
 }
-	
+
+.timeglider-more-plus {
+  position:absolute;
+  color:#A4DD90;
+  font-weight:bold;
+  font-size:10px;
+  cursor:pointer;
+}
 

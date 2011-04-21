@@ -162,11 +162,9 @@ Globalization.format = function(value, format, culture) {
     }
     return value;
 }
-
 Globalization.parseInt = function(value, radix, culture) {
     return Math.floor( this.parseFloat( value, radix, culture ) );
 }
-
 Globalization.parseFloat = function(value, radix, culture) {
 	// make radix optional
 	if (typeof radix === "string") {
@@ -255,8 +253,6 @@ Globalization.parseFloat = function(value, radix, culture) {
     }
     return ret;
 }
-
-
 Globalization.parseDate = function(value, formats, culture) {
     culture = this.findClosestCulture( culture );
 
@@ -733,7 +729,6 @@ function expandYear(cal, year) {
     return year;
 }
 
-
 function getEra(date, eras) {
     if ( !eras ) return 0;
     var start, ticks = date.getTime();
@@ -745,7 +740,6 @@ function getEra(date, eras) {
     }
     return 0;
 }
-
 
 function toUpper(value) {
     // 'he-IL' has non-breaking space in weekday names.
@@ -912,10 +906,11 @@ function getParseRegExp(cal, format) {
             add;
         switch ( m ) {
             case 'dddd': case 'ddd':
-            case 'MMMM': case 'MMM':
-            case 'gg': case 'g':
+            
+            case 'MMMM': case 'MMM': case 'gg': case 'g':
                 add = "(\\D+)";
                 break;
+                
             case 'tt': case 't':
                 add = "(\\D*)";
                 break;
@@ -1142,7 +1137,6 @@ function parseExact(value, format, culture) {
     return result;
 }
 
-
 function formatDate(value, format, culture) {
     var cal = culture.calendar,
         convert = cal.convert;
@@ -1353,15 +1347,7 @@ function formatDate(value, format, culture) {
         }
     }
     return ret.join( '' );
-    
-}; // end formatDate()
-
-
-
-
-
-
-
+}
 
 // EXPORTS
 jQuery.global = Globalization;
