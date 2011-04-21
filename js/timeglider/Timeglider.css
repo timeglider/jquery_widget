@@ -300,6 +300,7 @@
 }
 
 .timeglider-event-image-layout img {
+  position:absolute;
 }
 
 .tg-timeline-env-buttons {
