@@ -39,6 +39,7 @@
     tdata.startSeconds              = [];
     tdata.endSeconds                = [];
     tdata.spans                     = [];
+    tdata.hasImagesAbove = false;
 
     // TODO: VALIDATE COLOR, centralize default color(options?)
     if (!tdata.color) { tdata.color = "#333333"; }
@@ -60,8 +61,7 @@
         } else { 
           ev.id = id = "anon" + this.anonEventId++; 
         }
-        
-        
+
         ev.date_limit = (ev.date_limit || "da");
         ev.startdateObj = new TG_Date(ev.startdate, ev.date_limit);
         ev.enddateObj = new TG_Date(ev.enddate, ev.date_limit);
@@ -85,7 +85,8 @@
         if (ev.image) {
           // register image with image collection for gathering sizes.
           var display_class = ev.image_class || "layout";
-          
+          if (ev.image_class == "above") { tdata.hasImagesAbove = true; }
+         
           ev.image = {id: ev.id, src:ev.image, display_class:display_class};
           // this will follow up with sizing in separate "thread"
           getEventImageSize(ev.image);

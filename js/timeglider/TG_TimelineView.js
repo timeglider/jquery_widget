@@ -1231,13 +1231,13 @@ tg.TG_TimelineView.prototype = {
 			spanins = [],
 			expCol, tl_top=0,
 			cht = me.dimensions.container.height,
-			ceil = me.dimensions.tick.top;
+			ceiling = 0;
 		//////////////////////////////////////////
 		for (var a=0; a<active.length; a++) {
 
 			// FOR EACH _ACTIVE_ TIMELINE...
 			tl = MED.timelinePool[active[a]];
-			
+		
 			expCol = tl.display;
 			
 		  tl_top = (tl.top) ? parseInt(tl.top.replace("px", "")) : (cht-120); // sets up default
@@ -1304,9 +1304,11 @@ tg.TG_TimelineView.prototype = {
 	    
 			// no need to reference individual tick
 			stuff = this.compileTickEventsAsHtml(tl, idArr, 0, "sweep");
+			// TODO: make 56 below part of layout constants collection
+			ceiling = (tl.hasImagesAbove) ? tl_top - 56 : tl_top;
 			
 			if (expCol == "expanded") {
-				stuff = borg.getHTML("sweep", tl_top);
+				stuff = borg.getHTML("sweep", ceiling);
 				tl.borg = borg.getBorg();
 			}
 			
@@ -1433,7 +1435,14 @@ tg.TG_TimelineView.prototype = {
 
   },
   
-  
+  /*
+  * registerEventImages
+  *  Events can have classes applied to their images; these routines
+  *  take care of doing non-css-driven positioning after the layout
+  *  has finished placing events in the tick sphere.
+  *
+  *
+  */
 	registerEventImages : function ($timeline) {
 	  
 	  $(".timeglider-event-image-bar").each(
@@ -1446,6 +1455,17 @@ tg.TG_TimelineView.prototype = {
 	        }).css("left", 0);
 	      }
       );
+      
+      $(".timeglider-event-image-above").each(
+    		    function () {
+    		      $(this).position({
+    		        		my: "top",
+            				at: "top",
+            				of: $(CONTAINER),
+            				offset: "0, 12"
+    	        }).css("left", 0);
+    	      }
+        );
 	  
   },
   

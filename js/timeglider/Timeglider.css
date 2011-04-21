@@ -252,6 +252,10 @@
 	cursor:pointer;
 }
 
+.timeglider-timeline-event:hover .timeglider-event-image-layout img {
+  border:1px solid #CC0000;
+}
+
 .timeglider-event-hover-info {
   position:absolute;
   left:-1000px;
@@ -289,6 +293,18 @@
 }
 .timeglider-event-image-bar img {
   height:24px;
+  width:auto;
+}
+
+
+.timeglider-event-image-above {
+  /* placed in a div floating just below the "ceiling" */
+   position:absolute;
+   /* top:-28px; */
+   z-index:1;
+}
+.timeglider-event-image-above img {
+  height:48px;
   width:auto;
 }
 

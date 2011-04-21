@@ -136,7 +136,10 @@
             if (b.image) {
               if (b.image.display_class == "layout") {
                 title_adj = b.image.height + 4;
-              }
+              } 
+              // different image classes ("bar", "above") are positioned
+              // in an $.each routine back in TimelineView rather than
+              // being given absolute positioning here.
               img = "<div class='timeglider-event-image-" + b.image.display_class + "'><img src='" + b.image.src + "'></div>";
             } else {
               // no image
