@@ -8,7 +8,7 @@
 (function(tg){
 
   // standard "brick" height for placement grid
-  var lev_ht = tg.levelHeight = 8,
+  var lev_ht = tg.levelHeight = 10,
       // number of available levels for events
       tree_levels = 300,
       $ = jQuery,

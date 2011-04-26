@@ -172,6 +172,17 @@
   left:4px;
   font-weight:bold;
  }
+ 
+.timeglider-tick-hour-label {
+ float:left;
+ color:#F0F0F0;
+ display:inline;
+ /* This padding-left needs to be exactly the same as
+    the value in TG_TimelineView addTick() for setting hour labels
+ */
+ padding-left:4px;
+ margin:0;
+}
   
 .timeglider-handle {
 		position:absolute;

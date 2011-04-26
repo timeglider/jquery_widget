@@ -844,7 +844,8 @@ tg.TG_TimelineView.prototype = {
 			focusDate = MED.getFocusDate(),
 			tick_top = parseInt(this.dimensions.tick.top),
 			me = this,	
-			serial = MED.addToTicksArray({type:info.type, unit:tickUnit}, focusDate);
+			serial = MED.addToTicksArray({type:info.type, unit:tickUnit}, focusDate),
+			hours_html = "", hour_num=0, hour_label="";
 						
 		// adjust tick-width for months (mo)
   		if (tickUnit == "mo") {
@@ -894,29 +895,46 @@ tg.TG_TimelineView.prototype = {
 			
 		dist = tickWidth / tperu;
 
-    // Add tick-lines when they're spaced wider than 5
+    // Add tick-lines or times when divisions are spaced wider than 5
+    
 		if (dist > 5) {
 		
   			/* Raphael CANVAS for tick lines
   			   @param tid {string} dom-id-with-no-hash, width, height 
   			*/
+  			
 			  var lines = Raphael(tid, tickWidth, 30),
 				c, l, xd, stk = '', ht = 10,
 				downset = 20;
+				
+				
 				
 				for (l = 0; l < tperu; ++l) {
 				  // xd is cross distance...
 					xd = l * dist;
 					stk += "M" + xd + " " + downset + " L" + xd + " " + (ht + downset);
+					
+					// gather 24 hours of the day
+					if (tickUnit == "da" && dist > 16) {
+					  hour_label = me.getHourLabelFromHour(hour_num, dist);
+					  // set width below to subtract CSS padding-left
+            hours_html += "<div class='timeglider-tick-hour-label' style='width:" + (dist - 4) + "px'>" + hour_label + "</div>";
+            hour_num++;
+  			  }
+
 				}
-				
-				// var tt = lines.text(12,8, "123");
 		
 				c = lines.path(stk);
 				// !TODO --- add stroke color into options object
 				c.attr({"stroke":"#333", "stroke-width":1});
+	
 			} // end dist > 5  if there's enough space between tickmarks
-		
+			
+		// add hours gathered in loop above
+		if (tickUnit == "da" && dist > 32) {
+		  debug.log("PUT IN THE HOURS!!" + hours_html);
+		  $tickDiv.append("<div style='position:absolute;top:11px;left:0'>" + hours_html + "</div>");
+	  } 
 		
 		pack = {"unit":tickUnit, "width":tickWidth, "serial":serial};
 
@@ -929,6 +947,19 @@ tg.TG_TimelineView.prototype = {
 		return pack;
 		/* end addTick */
 	}, 
+	
+	getHourLabelFromHour : function (h24, width) {
+	  var ampm = "", htxt = "", bagels = "";
+	  
+	  htxt = (h24 > 12) ? h24-12 : h24;
+	  if (htxt == 0) htxt = 12;
+	  
+	  bagels = (width > 60) ? ":00" : "";
+    ampm = (h24 > 11) ? " pm" : " am";
+    
+    return htxt + bagels + ampm;
+	  
+  },
 
 	
 	/* provides addTick() info for marks and for adj width for month or year */
@@ -1796,11 +1827,12 @@ tg.TG_TimelineView.prototype = {
     }(tg.zoomTree);
     
     
-    
     /* a div with id of "hiddenDiv" has to be pre-loaded */
     tg.getStringWidth  = function (str) {
-    		var $ms = $("#timeglider-measure-span").html(str);
-    		return $ms.width() + 20;
+      if (str) {
+    		var ms = $("#timeglider-measure-span").html(str);
+    		return ms.width();
+  		}
     };
   
     

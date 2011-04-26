@@ -52,7 +52,7 @@ var timeglider = window.timeglider = {version:"0.1.0"};
   	    return {error:"Invalid date"};
   	    /// it's valid
       } else {
-	    	    
+	    	  
       		dateStr = dateStr.replace(",", "");
   
       		if (dateStr.substr(0,1) == "-") {
