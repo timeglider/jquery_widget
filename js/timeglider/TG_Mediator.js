@@ -78,18 +78,21 @@ tg.TG_Mediator.prototype = {
   
     /* PUBLIC METHODS MEDIATED BY $.widget front */
     gotoDate : function (fdStr) {
-            
-      this.setFocusDate(new TG_Date(fdStr));
+      var fd = new TG_Date(fdStr);
+      this.setFocusDate(fd);
       // setting date doesn't by itself refresh: do it "manually"
       this.refresh();  
       return true;   
     },
 
     gotoDateZoom : function (fdStr, zoom) {
-        this.setFocusDate(new TG_Date(fdStr));
+        var fd = new TG_Date(fdStr);
+        this.setFocusDate(fd);
         // setting zoom _does_ refresh automatically
-        this.setZoomLevel(zoom);  
-        return true; 
+        var zlc = this.setZoomLevel(zoom);
+        
+        if (zlc == false) { this.refresh(); }
+        
     },
     
     zoom : function (n) {
@@ -278,6 +281,7 @@ tg.TG_Mediator.prototype = {
         }
       }, 
 
+
      refresh : function () {
        this.startSec = this._focusDate.sec;
        $.publish("mediator.refreshSignal");       
@@ -341,6 +345,9 @@ tg.TG_Mediator.prototype = {
             this._zoomLevel = z;
             this._zoomInfo = timeglider.zoomTree[z];
             $.publish("mediator.zoomLevelChange");
+            return true
+          } else {
+            return false;
           }
           // end min/max check
           } else { return false; }

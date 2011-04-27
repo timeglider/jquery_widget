@@ -710,12 +710,15 @@ tg.TG_TimelineView.prototype = {
         $hov = $(".timeglider-event-hover-info");
     
     // This works, but what if it has to sit on the bottom
-    $hov.position({
-	    my: "left bottom",
-	    at: "left top",
-	    of: $ev,
-	    offset: "1, -10",
-	    collision: "flip flip"}).text(ev_obj.startdateObj.format("D", true));
+    debug.log("hover display:" + ev_obj.date_display);
+    if (ev_obj.date_display != "no") {
+      $hov.position({
+  	    my: "left bottom",
+  	    at: "left top",
+  	    of: $ev,
+  	    offset: "1, -10",
+  	    collision: "flip flip"}).text(ev_obj.startdateObj.format("D", true));
+    }
 	  	   
 	  $ev.addClass("tg-event-hovered");
 	   
@@ -932,7 +935,6 @@ tg.TG_TimelineView.prototype = {
 			
 		// add hours gathered in loop above
 		if (tickUnit == "da" && dist > 32) {
-		  debug.log("PUT IN THE HOURS!!" + hours_html);
 		  $tickDiv.append("<div style='position:absolute;top:14px;left:0'>" + hours_html + "</div>");
 	  } 
 		

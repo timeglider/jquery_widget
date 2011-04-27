@@ -32,7 +32,7 @@ var timeglider = window.timeglider = {version:"0.1.0"};
       getDateFromSecCache = {};
   
       
-  tg.TG_Date = function (strOrNum, display_limit) {
+  tg.TG_Date = function (strOrNum, date_display) {
 
       var dateStr, isoStr, gotSec, dummyDate;
     
@@ -81,7 +81,7 @@ var timeglider = window.timeglider = {version:"0.1.0"};
       		// .sec second is the serial second from year 0!
       		this.sec = gotSec || getSec(this);
       		
-      		this.display_limit = display_limit;
+      		this.date_display = (date_display) ? (date_display.toLowerCase()).substr(0,2) : "";
     			
       		// Esp. for formatting, we'll use jQuery.global for dates that
       		// support the Date() object; before 50,000 bce, we'll need to 
@@ -663,7 +663,7 @@ var timeglider = window.timeglider = {version:"0.1.0"};
   TG_Date.prototype = {
       
       format : function (sig, useLimit) {
-      
+        
         /* "en" formats
          // short date pattern
           d: "M/d/yyyy",
@@ -688,7 +688,10 @@ var timeglider = window.timeglider = {version:"0.1.0"};
         // If, for example, an event wants only year-level time being displayed
         // (and not month, day...) filter out the undesired time levels
         if (useLimit == true) {
-          switch (this.display_limit) {
+          // reduce to 2 chars for consistency
+          var ddlim = this.date_display.substr(0,2);
+          switch (ddlim) {
+            case "no": return ""; break;
             case "ye": sig = "yyyy"; break;
             case "mo": sig = "Y"; break;
             case "da": sig = "D"; break;
@@ -699,6 +702,7 @@ var timeglider = window.timeglider = {version:"0.1.0"};
         }
         // If the date is bce, get the bce equivalent for 
         // the culture and append it or prepend it...
+        
         return $.global.format(this.jsDate, sig);
 
       }

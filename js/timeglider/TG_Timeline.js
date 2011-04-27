@@ -46,7 +46,7 @@
 
     if (tdata.events) {
 
-      var date, ev, id, unit, ser, tWidth;
+      var date, ddisp, ev, id, unit, ser, tWidth;
       var l = tdata.events.length;
      
       
@@ -61,10 +61,14 @@
         } else { 
           ev.id = id = "anon" + this.anonEventId++; 
         }
-
-        ev.date_limit = (ev.date_limit || "da");
-        ev.startdateObj = new TG_Date(ev.startdate, ev.date_limit);
-        ev.enddateObj = new TG_Date(ev.enddate, ev.date_limit);
+        
+        // April 2011 
+        // date_limit is old JSON prop name, replaced by date_display
+        ddisp = (ev.date_display || ev.date_limit || "da");
+        ev.date_display = ddisp.toLowerCase().substr(0,2);
+        
+        ev.startdateObj = new TG_Date(ev.startdate, ev.date_display);
+        ev.enddateObj = new TG_Date(ev.enddate, ev.date_display);
        
         // CHECK VALIDITY OF EACH DATE & MAKE SURE end > start
         //if (TG_Date.isValidDate(ev.startdateObj) != "") {
@@ -135,15 +139,14 @@
     
     
     
-    /* necessary to parse this now, or just leave as is? */
+    /* TODO: necessary to parse this now, or just leave as is? */
     if (tdata.legend.length > 0) {
       var legend = tdata.legend;
       for (var i=0; i<legend.length; i++) {
         var legend_item = legend[i];
-        debug.log("leg. title:" + legend_item['title'])
+        // debug.log("leg. title:" + legend_item['title'])
       }
     }
-    
     
 
     /// i.e. expanded or compressed...
