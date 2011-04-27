@@ -371,7 +371,7 @@ var timeglider = window.timeglider = {version:"0.1.0"};
 
   TG_Date.getToday = function () {
       var d = new Date(); 
-      return d.getFullYear() + "-" + d.getMonth() + "-" + d.getDate() + " " + d.getHours() + ":" + d.getMinutes() + ":00";
+      return d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate() + " " + d.getHours() + ":" + d.getMinutes() + ":00";
   }
 
 

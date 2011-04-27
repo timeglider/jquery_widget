@@ -933,7 +933,7 @@ tg.TG_TimelineView.prototype = {
 		// add hours gathered in loop above
 		if (tickUnit == "da" && dist > 32) {
 		  debug.log("PUT IN THE HOURS!!" + hours_html);
-		  $tickDiv.append("<div style='position:absolute;top:11px;left:0'>" + hours_html + "</div>");
+		  $tickDiv.append("<div style='position:absolute;top:14px;left:0'>" + hours_html + "</div>");
 	  } 
 		
 		pack = {"unit":tickUnit, "width":tickWidth, "serial":serial};
