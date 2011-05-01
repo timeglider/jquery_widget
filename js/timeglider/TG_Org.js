@@ -1,9 +1,13 @@
 /*
-* TG_Org
-* @constructor
-*
-*
-*/
+ * Timeglider for Javascript / jQuery 
+ * http://timeglider.com/jquery
+ *
+ * Copyright 2011, Mnemograph LLC
+ * Licensed under the MIT open source license
+ * http://timeglider.com/jquery/?p=license
+ *
+ */
+ 
 
 (function(tg){
 

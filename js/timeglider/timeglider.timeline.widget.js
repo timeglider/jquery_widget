@@ -1,12 +1,14 @@
 /*
-*         Timeglider jQuery plugin Timeglider
-*         jquery.timeglider.js
-*         http://timeglider.com/jquery
-*
-*         © 2010 Timeglider / Mnemograph LLC
-*         Author: Michael Richardson
-*         Licences are still to be determined : )
-*
+ * Timeglider for Javascript / jQuery 
+ * http://timeglider.com/jquery
+ *
+ * Copyright 2011, Mnemograph LLC
+ * Licensed under the MIT open source license
+ * http://timeglider.com/jquery/?p=license
+ *
+ */
+ 
+/*
 *         DEPENDENCIES: timeglider/*
                         rafael.js
                         ba-tinyPubSub

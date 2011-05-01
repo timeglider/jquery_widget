@@ -1,3 +1,15 @@
+/*!
+ * @license 
+ * copyright 2011, Mnemograph LLC
+ * Timeglider for Javascript / jQuery 
+ * http://timeglider.com/jquery
+ *
+ * Licensed under the MIT open source license
+ * http://timeglider.com/jquery/?p=license
+ *
+ */
+
+
 // initial declaration of timeglider object
 var timeglider = window.timeglider = {version:"0.1.0"};
 
