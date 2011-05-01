@@ -1,4 +1,4 @@
-/*!
+/**
  * @license 
  * copyright 2011, Mnemograph LLC
  * Timeglider for Javascript / jQuery 

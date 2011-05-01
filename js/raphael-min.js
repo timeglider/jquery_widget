@@ -1,4 +1,4 @@
-/*!
+/**
  * @license
  * Raphael 1.5.2 - JavaScript Vector Library
  *

@@ -1,4 +1,4 @@
-/*!
+/**
  * @license
  * Underscore.js 1.1.4
  * (c) 2011 Jeremy Ashkenas, DocumentCloud Inc.

@@ -1,4 +1,4 @@
-/*!
+/**
 * @license
 * jQuery Tiny Pub/Sub - v0.3pre - 11/4/2010
 * http://benalman.com/
