@@ -157,7 +157,7 @@
             if (b.y_position > 0) {
               b.top = -1 * b.y_position;
             }
-            
+    
             b.fontsize < 10 ? b.opacity = b.fontsize / 10 : b.opacity=1;
             if (b.span == true) {
               span_selector_class = "timeglider-event-spanning";

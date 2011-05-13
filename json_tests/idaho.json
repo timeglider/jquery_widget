@@ -2,11 +2,25 @@
 {
     "id": "idahoTimeline",
     "title": "A Really Long, But Incomplete History of Idaho",
-    "focus_date": "1965-02-29 2:00:00",
+    "focus_date": "-1000-02-29 2:00:00",
     "initial_zoom": "47",
 	"color": "#82530d",
     "events":
     [
+
+  {
+        "id": "1391bce",
+        "title": "TEST BCE EVENT",
+        "startdate": "-1000-07-01 12:00",
+
+        "description": "TEST BCE EVENT.",
+        "icon": "triangle_green.png",
+        "low_threshold": "1",
+        "high_threshold": "100",
+        "importance": "80"
+    },
+
+
     {
         "id": "1391",
         "title": "Smallpox Strikes the Shoshone",

@@ -79,6 +79,7 @@
         
         ev.startdateObj = new TG_Date(ev.startdate, ev.date_display);
         ev.enddateObj = new TG_Date(ev.enddate, ev.date_display);
+        
        
         // CHECK VALIDITY OF EACH DATE & MAKE SURE end > start
         //if (TG_Date.isValidDate(ev.startdateObj) != "") {
@@ -108,6 +109,7 @@
           app_mediator.imagesToSize++;
         }
       
+         
         // for collapsed view and other metrics
         tdata.startSeconds.push(ev.startdateObj.sec);
         tdata.endSeconds.push(ev.enddateObj.sec);
@@ -119,6 +121,7 @@
         } else {
           ev.span = false;
         }
+        
         
         //// !! TODO VALIDATE DATE respecting startdate, too
         var uxl=units.length;

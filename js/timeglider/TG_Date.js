@@ -53,14 +53,14 @@ var timeglider = window.timeglider = {version:"0.1.0"};
           dateStr = isoStr = TG_Date.getDateFromSec(strOrNum);
           gotSec = strOrNum;
       } else {
-          // string
+          // string -- floating dates like "today"
           if (strOrNum == "today") {
             strOrNum = TG_Date.getToday();
           } 
           dateStr = isoStr = strOrNum;
       }
   
-  	  if (isValidDateString(dateStr) === "shit") {
+  	  if (isValidDateString(dateStr) === false) {
   	    return {error:"Invalid date"};
   	    /// it's valid
       } else {
@@ -80,7 +80,7 @@ var timeglider = window.timeglider = {version:"0.1.0"};
 
       		var arr = dateStr.split("-");
 
-      		this.ye = boil(arr[0]);
+      		this.ye = (this.bce === 0) ? boil(arr[0]) : -1 * boil(arr[0]);
       		this.mo = boil(arr[1]);
       		this.mo_num = getMoNum(this.mo, this.ye);
       		this.da = boil(arr[2]);
@@ -90,6 +90,9 @@ var timeglider = window.timeglider = {version:"0.1.0"};
       		this.se = boil(arr[5]) || 0;
       		// rd : serial day from year zero
       		this.rd  = TG_Date.getRataDie(this);
+      		
+      		// if (this.ye < 0) debug.log("negative rd:" + this.rd);
+      		
       		// .sec second is the serial second from year 0!
       		this.sec = gotSec || getSec(this);
       		
@@ -116,7 +119,7 @@ var timeglider = window.timeglider = {version:"0.1.0"};
       		if (reg.test(aStr)) {
       		  return aStr;
       	  } else {
-      	    return "shit";
+      	    return false;
           }
         };
   
@@ -211,21 +214,25 @@ var timeglider = window.timeglider = {version:"0.1.0"};
   *  @return {number} a non-zero serial for the specified time unit
   */
   TG_Date.getTimeUnitSerial = function (fd, unit) {
+      var ret = 0;
+      
   		switch (unit) {
-  			case "ye": return fd.ye; break;
+  			case "ye": ret = fd.ye; break;
   			// set up mo_num inside TG_Date constructor
-  			case "mo": return fd.mo_num; break;
-  			case "da": return fd.rd;
-  			case "de": return Math.ceil(fd.ye / 10); break;
-  			case "ce": return Math.ceil(fd.ye / 100); break;
-  			case "thou": return Math.ceil(fd.ye / 1000); break;
-  			case "tenthou": return Math.ceil(fd.ye / 10000); break;
-  			case "hundredthou": return Math.ceil(fd.ye / 100000); break;
-  			case "mill": return Math.ceil(fd.ye / 1000000); break;
-  			case "tenmill": return Math.ceil(fd.ye / 10000000); break;
-  			case "hundredmill": return Math.ceil(fd.ye / 100000000); break;
-  			case "bill": return Math.ceil(fd.ye / 1000000000); break;
+  			case "mo": ret =  fd.mo_num; break;
+  			case "da": ret =  fd.rd;
+  			case "de": ret =  Math.ceil(fd.ye / 10); break;
+  			case "ce": ret =  Math.ceil(fd.ye / 100); break;
+  			case "thou": ret =  Math.ceil(fd.ye / 1000); break;
+  			case "tenthou": ret =  Math.ceil(fd.ye / 10000); break;
+  			case "hundredthou": ret =  Math.ceil(fd.ye / 100000); break;
+  			case "mill": ret =  Math.ceil(fd.ye / 1000000); break;
+  			case "tenmill": ret =  Math.ceil(fd.ye / 10000000); break;
+  			case "hundredmill": ret =  Math.ceil(fd.ye / 100000000); break;
+  			case "bill": ret =  Math.ceil(fd.ye / 1000000000); break;
   		}
+  	
+  		return ret;
   };
 
 
