@@ -99,7 +99,6 @@
       var positioned = [], 
         blHeight, 
         lastPos, 
-        padding = 6,
         span_selector_class, 
         span_div, 
         img = '', icon = ''
@@ -177,12 +176,16 @@
             
           // note: divs that are higher have lower "top" values
            if (Math.abs(b.top) > (ceiling - ceiling_padding)) {
+             // + + + symbols in place of events just under ceiling
              // if things are higher than the ceiling, show plus signs instead,
              // and we'll zoom in with these.
               html += "<div class='timeglider-more-plus' style='left:" + b.left  + 
                     "px; top:-" + (ceiling - (Math.floor(ceiling_padding/3))) + "px'>+</div>";
+                    
+                    
            } else {
-            
+             
+             // TODO: function for getting "standard" event shit
               html += "<div class='timeglider-timeline-event " + span_selector_class + "' id='ev_" + b.id + "' "
               + "style='width:" + b.width  + "px;"
               + "height:" + b.height + "px;"
@@ -194,6 +197,8 @@
               + "<div class='timeglider-event-title' style='top:" + title_adj + "px'>" 
               + b.title
               + "</div></div>";
+              
+              
             
            }// end if/else :: height > ceiling
             
@@ -213,7 +218,7 @@
 
   /// PRIVATE STUFF ///
   
-  /*
+  /**
   * freshTree
   * Wipes out the old placement tree and sets up 300 empty levels
   */
@@ -225,7 +230,8 @@
      }
    };
    
-   /*
+   /**
+   * sortBlocksByImportance
    * Sorter helper for sorting events by importance
    * @param a {Number} 1st sort number
    * @param b {Number} 2nd sort number
@@ -236,8 +242,8 @@
       return ((x < y) ? -1 : ((x > y) ? 1 : 0));
   };
 
-  /*
-   * 
+  /**
+   * isOverlapping
    * Takes two objects and sees if the prospect overlaps with
    * an existing object [part of loop in checkAgainstLevel()]
    *

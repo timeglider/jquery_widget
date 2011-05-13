@@ -1275,6 +1275,9 @@ tg.TG_TimelineView.prototype = {
 		
 			expCol = tl.display;
 			
+			// TODO establish the 120 below in some kind of constant!
+			// meanwhile: tl_top is the starting height of a loaded timeline 
+			// set to 120 unless it's already been dragged
 		  tl_top = (tl.top) ? parseInt(tl.top.replace("px", "")) : (cht-120); // sets up default
 			legend_label = tl.legend.length > 0 ? "<span class='tg-timeline-legend-bt'>legend</span>" : ""; 
 			

@@ -35,9 +35,6 @@
    
     $.widget( "timeglider.timeline", {
       
-	    _tg: this,
-      _element: this.element,
-      
       // defaults!
       options : { 
         initial_focus:tg.TG_Date.getToday(), 
@@ -83,7 +80,6 @@
                               "<div class='timeglider-truck' id='tg-truck'>"+
                                 "<div class='timeglider-ticks'>"+
                                   "<div class='timeglider-handle'></div>"+
-                                  
                                 "</div>"+
                               "</div>"+
                                   "<div class='timeglider-slider-container'>"+
@@ -134,25 +130,57 @@
 	    },
 	    
 	    
-      /* PUBLIC METHODS */
-  
+      /** 
+      *********  PUBLIC METHODS ***************
+      
+      These are called on the data property of the widget instance.
+      So, if "tg1" is the original var created by like this:
+        var tg1 = $("#placement").timeline({...}) 
+      
+      then the public methods would need a reference like this:
+      	var tg1_data = tg1.data("timeline");
+      
+      and a method set on a dom element would look like this:
+    		$("#sun").click(function () {
+    			tg1_data.gotoDateZoom("2011-05-01 12:00:00", 4);
+    		});
+      
+      Capiche?
+      
+      */
+      
       gotoDate : function (d) {
-        debug.log("d:" + d);
         timelineMediator.gotoDate(d);
       },
       
+      
       gotoDateZoom : function (d, z) {
-        debug.log("d:" + z);
         timelineMediator.gotoDateZoom(d,z);
       },
       
+      /**
+      * zoom
+      * zooms the timeline in or out a specified amount, often 1 or -1
+      *
+      * @param n {number|string}
+      *          numerical: -1 (or less) for zooming in, 1 (or more) for zooming out
+      *          string:    "in" is the same as -1, "out" the same as 1
+      */
       zoom : function (n) {
+        
+        switch(n) {
+          case "in": n = -1; break;
+          case "out": n = 1; break;
+        }
+        
+        if (n > 99 || n < -99) { return false; }
+        
         timelineMediator.zoom(n);
       },
 
       destroy : function () {
         // anything else?
-        $.Widget.prototype.destroy.apply(this, arguments); // default destroy
+        $.Widget.prototype.destroy.apply(this, arguments);
         $(this.element).html("");
       }
 			
