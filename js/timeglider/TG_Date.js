@@ -115,7 +115,7 @@ var timeglider = window.timeglider = {version:"0.1.0"};
   	    function isValidDateString(str) {
       	  // VALIDATE STRING
       	  var aStr = jQuery.trim(str);
-      		reg = new RegExp(/[0-9-: ]/);
+      		reg = new RegExp(/[T0-9-: ]/);
       		if (reg.test(aStr)) {
       		  return aStr;
       	  } else {
