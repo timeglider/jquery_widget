@@ -839,7 +839,7 @@ tg.TG_TimelineView.prototype = {
 	* @param info {object} --object--> type: init|l|r focusDate: date object for init type
 	*/											
 	addTick : function (info) {
-		  
+
 			var mDays = 0, dist = 0, pos = 0, ctr = 0, 
 			tperu = 0, serial = 0, shiftLeft = 0,
 			tid = "", tickHtml = "", idRef = "", 
@@ -941,7 +941,7 @@ tg.TG_TimelineView.prototype = {
 	  } 
 		
 		pack = {"unit":tickUnit, "width":tickWidth, "serial":serial};
-
+  
 		label = this.getDateLabelForTick(pack);
 	
 		// DO OTHER STUFF TO THE TICK, MAKE THE LABEL AN ACTIONABLE ELEMENT
@@ -1035,6 +1035,7 @@ tg.TG_TimelineView.prototype = {
 			case "ye": 
 				return ser; 
 			case "mo": 
+			  
 			   i = TG_Date.getDateFromMonthNum(ser);
 			   if (tw < 120) {
 			     return TG_Date.monthNamesAbbr[i.mo] + " " + i.ye; 
@@ -1045,6 +1046,7 @@ tg.TG_TimelineView.prototype = {
 				
 			case "da": 
 			  // COSTLY: test performance here on dragging
+			  debug.log("get day label!" + ser);
 			  i = new TG_Date(TG_Date.getDateFromRD(ser));
 			  if (tw < 120) {
 				  return TG_Date.monthNamesAbbr[i.mo] + " " + i.da + ", " + i.ye;

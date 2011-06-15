@@ -114,7 +114,7 @@ tg.TG_Mediator.prototype = {
     
     if (src) {
       
-        debug.log("HELLO??");
+        debug.log("HELLO?????");
         if (typeof src === "object") {
           // local/pre-loaded JSON
           M.parseData(src);
@@ -273,7 +273,7 @@ tg.TG_Mediator.prototype = {
     setInitialTimelines : function () {
       var me = this;
       var tid = this.initial_timeline_id || this.sole_timeline_id;
-      debug.log("TID:" + tid);
+      debug.log(".......TID:" + tid);
       if (tid) {
         setTimeout(function () { 
           MED.toggleTimeline(tid);

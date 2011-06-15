@@ -220,7 +220,7 @@ var timeglider = window.timeglider = {version:"0.1.0"};
   			case "ye": ret = fd.ye; break;
   			// set up mo_num inside TG_Date constructor
   			case "mo": ret =  fd.mo_num; break;
-  			case "da": ret =  fd.rd;
+  			case "da": ret =  fd.rd; break;
   			case "de": ret =  Math.ceil(fd.ye / 10); break;
   			case "ce": ret =  Math.ceil(fd.ye / 100); break;
   			case "thou": ret =  Math.ceil(fd.ye / 1000); break;
@@ -231,7 +231,7 @@ var timeglider = window.timeglider = {version:"0.1.0"};
   			case "hundredmill": ret =  Math.ceil(fd.ye / 100000000); break;
   			case "bill": ret =  Math.ceil(fd.ye / 1000000000); break;
   		}
-  	
+  	  debug.log("getTimeUnitSerial:" + ret);
   		return ret;
   };
 
@@ -432,7 +432,7 @@ var timeglider = window.timeglider = {version:"0.1.0"};
   */
   TG_Date.getDateFromRD = function (snum) {
     // in case it arrives as an RD-decimal
-    
+    debug.log("date from RD:" + snum);
     if (getDateFromRDCache[snum]) {
       return getDateFromRDCache[snum]
     }
