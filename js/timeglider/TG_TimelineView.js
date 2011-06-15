@@ -712,7 +712,7 @@ tg.TG_TimelineView.prototype = {
         $hov = $(".timeglider-event-hover-info");
     
     // This works, but what if it has to sit on the bottom
-    debug.log("hover display:" + ev_obj.date_display);
+    // debug.log("hover display:" + ev_obj.date_display);
     if (ev_obj.date_display != "no") {
       $hov.position({
   	    my: "left bottom",
@@ -999,39 +999,73 @@ tg.TG_TimelineView.prototype = {
 		switch(obj.unit) {
 
       case "bill":
-      	if (ser == 1) return "1";
-        return (ser -1) + " bya";
+      	if (ser == 0) {
+		      return "1";
+	      } else if (ser > 0) {
+	         return (ser) + " billion";
+        } else {
+	         return (ser) + " b.y. bce";
+        }
         
       case "hundredmill":
-      	if (ser == 1) return "1";
-        return ((ser -1) * 100) + " mya";
+      	if (ser == 0) {
+		      return "1";
+	      } else if (ser > 0) {
+	         return (ser) + "00 million";
+        } else {
+	         return (ser) + "00 m.y. bce";
+        }
         
       case "tenmill":
-      	if (ser == 1) return "1";
-        return ((ser -1) * 10) + " mya";
+      		if (ser == 0) {
+  		      return "1";
+  	      } else if (ser > 0) {
+  	         return (ser) + "0 million";
+          } else {
+  	         return (ser) + "0 m.y. bce";
+          }
         		    
       case "mill":
-    		if (ser == 1) return "1";
-      	return (ser -1) + " mya";
+    		if (ser == 0) {
+		      return "1";
+	      } else if (ser > 0) {
+	         return (ser) + " million";
+        } else {
+	         return (ser) + " m.y. bce";
+        }
       		    
       case "hundredthou":
-  		  if (ser == 1) return "1";
-    		return (ser -1) + "00,000";    
+  		  if (ser == 0) {
+		      return "1";
+	      } else if (ser > 0) {
+	        return (ser) + "00,000";
+        } else {
+	         return (ser) + "00,000 bce";
+        }   
     		    
 		  case "tenthou":
-		    if (ser == 1) return "1";
-  		  return (ser -1) + "0000";
+		    if (ser == 0) {
+		      return "1";
+	      }else {
+	         return (ser) + "0,000";
+        }
  
 		  case "thou": 
-		    if (ser == 1) return "1";
-		    return (ser -1) + "000";
+		    if (ser == 0) {
+		      return "1";
+	      }else {
+	         return (ser) + "000";
+        } 
 
 		  case "ce": 
-		    if (ser == 1) return "1";
-		    return (ser -1) + "00";
+		    if (ser == 0) {
+ 		      return "1";
+ 	      }else {
+ 	         return (ser) + "00";
+         }
 		    
 			case "de": 
-				return ((ser -1) * 10) + "s";
+				return ser * 10; // return ((ser -1) * 10) + "s";
 			case "ye": 
 				return ser; 
 			case "mo": 
@@ -1046,7 +1080,6 @@ tg.TG_TimelineView.prototype = {
 				
 			case "da": 
 			  // COSTLY: test performance here on dragging
-			  debug.log("get day label!" + ser);
 			  i = new TG_Date(TG_Date.getDateFromRD(ser));
 			  if (tw < 120) {
 				  return TG_Date.monthNamesAbbr[i.mo] + " " + i.da + ", " + i.ye;

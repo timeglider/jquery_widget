@@ -231,7 +231,6 @@ var timeglider = window.timeglider = {version:"0.1.0"};
   			case "hundredmill": ret =  Math.ceil(fd.ye / 100000000); break;
   			case "bill": ret =  Math.ceil(fd.ye / 1000000000); break;
   		}
-  	  debug.log("getTimeUnitSerial:" + ret);
   		return ret;
   };
 
@@ -432,7 +431,6 @@ var timeglider = window.timeglider = {version:"0.1.0"};
   */
   TG_Date.getDateFromRD = function (snum) {
     // in case it arrives as an RD-decimal
-    debug.log("date from RD:" + snum);
     if (getDateFromRDCache[snum]) {
       return getDateFromRDCache[snum]
     }
@@ -540,6 +538,7 @@ var timeglider = window.timeglider = {version:"0.1.0"};
   	ret = (fat + moreDays + daysSoFar + da) - 366;
 	
   } else if (ye < 0) {
+    
   	ret = TG_Date.getBCRataDie({ye:ye, mo:mo, da:da});
   } 
 
@@ -603,9 +602,6 @@ var timeglider = window.timeglider = {version:"0.1.0"};
 
 
   };
-
-
-
 
   /*
   Counts serial days starting with -1 in year -1. Visualize a number counting 

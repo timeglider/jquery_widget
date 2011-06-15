@@ -97,7 +97,6 @@ tg.TG_Mediator.prototype = {
     
     zoom : function (n) {
       var new_zoom = this.getZoomLevel() + parseInt(n);
-      debug.log("mediator zoom:" + new_zoom);
       this.setZoomLevel(new_zoom);
     },
   
@@ -114,13 +113,11 @@ tg.TG_Mediator.prototype = {
     
     if (src) {
       
-        debug.log("HELLO?????");
         if (typeof src === "object") {
           // local/pre-loaded JSON
           M.parseData(src);
         } else if (src.substr(0,1) == "#") {
-          
-          debug.log("IT'S A TABLE!");
+       
           var tableData = [M.getTableTimelineData(src)];
           // debug.log(JSON.stringify(tableData));
           M.parseData(tableData);
@@ -273,7 +270,6 @@ tg.TG_Mediator.prototype = {
     setInitialTimelines : function () {
       var me = this;
       var tid = this.initial_timeline_id || this.sole_timeline_id;
-      debug.log(".......TID:" + tid);
       if (tid) {
         setTimeout(function () { 
           MED.toggleTimeline(tid);
@@ -310,7 +306,6 @@ tg.TG_Mediator.prototype = {
          
         if (fd != this._focusDate) {
           this._focusDate = fd; 
-          debug.trace("setting fd:" + fd.dateStr, "note");
         }
     },
     
