@@ -77,22 +77,18 @@ reflects state back to view
 tg.TG_Mediator.prototype = {
   
     /* PUBLIC METHODS MEDIATED BY $.widget front */
-    gotoDate : function (fdStr) {
-      var fd = new TG_Date(fdStr);
-      this.setFocusDate(fd);
-      // setting date doesn't by itself refresh: do it "manually"
-      this.refresh();  
-      return true;   
-    },
-
-    gotoDateZoom : function (fdStr, zoom) {
-        var fd = new TG_Date(fdStr);
+ 
+    gotoDateZoom: function (fdStr, zoom) {
+        var fd = new TG_Date(fdStr),
+            zl = false;
         this.setFocusDate(fd);
+        
         // setting zoom _does_ refresh automatically
-        var zlc = this.setZoomLevel(zoom);
+        if (zoom) { 
+            var zl = this.setZoomLevel(zoom);
+        };
         
-        if (zlc == false) { this.refresh(); }
-        
+        if (!zoom || zl == false) { this.refresh(); }
     },
     
     zoom : function (n) {

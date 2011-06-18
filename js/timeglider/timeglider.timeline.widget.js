@@ -132,31 +132,12 @@
 	    
       /** 
       *********  PUBLIC METHODS ***************
-      
-      These are called on the data property of the widget instance.
-      So, if "tg1" is the original var created by like this:
-        var tg1 = $("#placement").timeline({...}) 
-      
-      then the public methods would need a reference like this:
-      	var tg1_data = tg1.data("timeline");
-      
-      and a method set on a dom element would look like this:
-    		$("#sun").click(function () {
-    			tg1_data.gotoDateZoom("2011-05-01 12:00:00", 4);
-    		});
-      
-      Capiche?
-      
       */
       
-      gotoDate : function (d) {
-        timelineMediator.gotoDate(d);
-      },
-      
-      
-      gotoDateZoom : function (d, z) {
+      goto: function (d, z) {
         timelineMediator.gotoDateZoom(d,z);
       },
+      
       
       /**
       * zoom
@@ -177,6 +158,8 @@
         
         timelineMediator.zoom(n);
       },
+
+
 
       destroy : function () {
         // anything else?
