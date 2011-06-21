@@ -1,0 +1,154 @@
+/* FULL WINDOW EVENT MODAL:  
+ * overrides timeglider-ev-modal in Timeglider.css
+ * to make full-window (timeglider container) modal
+*/
+.full_modal {
+	
+	width:100%;
+	height:100%;
+	padding:8px;
+	position:absolute;
+	box-shadow:none;
+	/* gets positioned by $.position() in TimelineView.js */
+}
+
+
+.full_modal_scrim {
+    position:absolute;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background-color:#000;
+    -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=50)";
+    filter: alpha(opacity=80);
+    -moz-opacity:0.80;
+    -khtml-opacity: 0.80;
+    opacity: 0.80;
+    z-index:0;
+}
+
+.full_modal_panel {
+  position:absolute;
+  top:56px;
+  left:64px;
+  width:800px;
+  height:400px;
+  background-color:#FFF;
+  border:2px solid #000;
+	border-radius:8px;
+	-moz-border-radius:8px;
+	-webkit-border-radius:8px;
+  
+	-ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=50)";
+  filter: alpha(opacity=90);
+  -moz-opacity:0.90;
+  -khtml-opacity: 0.90;
+  opacity: 0.90;
+	z-index:2;
+	
+	-moz-box-shadow: 5px 5px 5px #000;
+  -webkit-box-shadow: 5px 5px 5px #000;
+  box-shadow: 5px 5px 5px #000;
+  
+}
+
+.full_modal_close {
+  float:right;
+	cursor:pointer;
+	margin-right:-16px;
+	margin-top:-16px;
+	width:30px;
+	height:30px;
+	background-image:url(../buttons/close.png);
+	
+  cursor:pointer;
+  z-index:6;
+}
+
+.full_modal_content {
+  float:left;
+  margin-top:0;
+  margin-left:16px;
+	z-index:5;
+}
+
+
+.full_modal .description {
+	font-size:12px;
+	color:#444;
+	margin:8px;
+	width:380px;
+	overflow-y:auto;
+	height:285px;
+	padding:8px 16px 8px 8px;
+	border:2px solid #DDD;
+	border-radius:8px;
+	-moz-border-radius:8px;
+	-webkit-border-radius:8px;
+	background-color:#EEE;
+}
+
+.full_modal .description p {
+  margin-top:2px;
+}
+
+.full_modal .description img {
+  width:100px;
+  height:auto;
+  float:left;
+  margin-right:8px;
+  margin-bottom:8px;
+}
+
+.full_modal h4 {
+	margin:8px 8px 0px 8px;
+	padding:0;
+	color:#333;
+	font-size:14px;
+}
+
+.full_modal .startdate {
+	font-size:14px;
+	color:#69A847;
+	margin:12px 8px 0px 8px;
+	font-weight:bold;
+}
+
+.full_modal h5 {
+  font-size:13px;
+  margin-bottom:2px;
+  border-bottom:1px dashed #FFF;
+}
+
+.full_modal_links {
+  margin:56px 8px 2px 16px;
+	padding:0;
+	width:320px;
+	float:right;
+	z-index:5;
+}
+
+.full_modal_links img {
+  max-height:200px;
+  width:auto;
+}
+.full_modal_links h4 {
+  color:#888;
+  font-size:12px;
+  margin:0;
+}
+
+.full_modal_links ul {
+	list-style:none;
+	margin:4px 0 0 0;
+	padding:0;
+}
+.full_modal_links ul li {
+	font-size:12px;
+	display:block;
+	padding:4px;
+}
+.full_modal_links ul li a {
+  color:#374b99;
+}

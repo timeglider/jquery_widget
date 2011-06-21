@@ -49,7 +49,8 @@
         initial_timeline_id:'',
         icon_folder:'js/timeglider/icons/',
         show_footer:true,
-        display_zoom_level:true
+        display_zoom_level:true,
+        event_modal:{href:'', type:'default'}
       },
 
       _create : function () {

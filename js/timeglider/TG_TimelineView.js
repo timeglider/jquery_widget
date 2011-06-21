@@ -79,17 +79,15 @@ timeglider.TimelineView
   *
   *
   */
+ 
+  // in case custom event_modal fails, we need this object to exist
+  this._templates = {}
   
 	this._templates = {
-	    // generated, appended on the fly, then removed
-      event_modal: $.template( null, "<div class='tg-modal timeglider-ev-modal ui-widget-content' id='ev_${id}_modal'>" 
-    	  + "<div class='close-button-remove'></div>" 
-    	  + "<div class='startdate'>${startdate}</div>"
-    	  + "<h4 id='title'>${title}</h4>"
-    	  + "<p>{{html description}}</p>"
-    	  + "<ul class='timeglider-ev-modal-links'>{{html links}}</ul>"
-    	  + "</div>"),
-    	  // <li><a target='_blank' href=''>link</a></li> removed from links ul above
+	    // allows for customized templates imported
+	    test : "testola",
+	    
+      event_modal: this.getEventModalTemplate(),
     	  
     	// generated, appended on the fly, then removed
     	event_modal_video : $.template( null,
@@ -258,7 +256,7 @@ timeglider.TimelineView
 	$(".timeglider-pan-buttons div").mousedown(function () {
 	  var lr = $(this).attr("class"),
 	      dir = (lr == "timeglider-pan-right") ? -30 : 30; 
-	      me.intervalMachine("pan", {type:"set", fn: me.pan, args:[dir], intvl:30});
+	    me.intervalMachine("pan", {type:"set", fn: me.pan, args:[dir], intvl:30});
   }).mouseup(function () {
 	    me.intervalMachine("pan", {type:"clear", fn: me.pan, callback: "resetTicksHandle"});
   }).mouseout(function () {
@@ -360,6 +358,17 @@ timeglider.TimelineView
 	  $("#" + parent_id).remove();
 	});
 	
+	
+	// FULL MODAL
+	$(CONTAINER).delegate(".full_modal_close", "click", function () {
+	  $(".full_modal").remove();
+	});
+	
+	$(CONTAINER).delegate(".full_modal_scrim", "click", function () {
+	  $(".full_modal").remove();
+	});
+	
+	
 	$(CONTAINER).delegate(".timeglider-more-plus", "click", function () {
 	  MED.zoom(-1);
 	});
@@ -376,7 +385,11 @@ timeglider.TimelineView
 	  MED.setFilters({origin:"legend", icon: "all"});
   });
 
- 
+/*
+ $(".full_modal").live("click",  function (e) {
+   $(TICKS).draggable({disabled:true});
+ });
+*/
 
  $.tmpl(me._templates.timeline_list_modal,{}).appendTo(CONTAINER);
  $(me._views.TIMELINE_LIST_BT).click(function () {
@@ -416,7 +429,7 @@ timeglider.TimelineView
 	   When actually doing something, Safari seems to 
 	   ignore attempts at preventing default... 
 	   
-	   SCOPED IN CLOSURE, THESE ARE UNTESTABLE
+	   PRIVATE/SCOPED IN CLOSURE, THESE ARE UNTESTABLE
 	*/
 	function gestureChange (e) {
 		e.preventDefault ();
@@ -490,6 +503,46 @@ tg.TG_TimelineView.prototype = {
 			return {container:container, tick:tick, footer:footer}
 		  
 	},
+	
+	
+	getEventModalTemplate : function() {
+	    
+	   var me = this,
+	       template = false,
+	       stripped = '',
+	       default_template = $.template( null, "<div class='tg-modal timeglider-ev-modal ui-widget-content' id='ev_${id}_modal'>" 
+      	   + "<div class='close-button-remove'></div>" 
+      	   + "<div class='startdate'>${startdate}</div>"
+      	   + "<h4 id='title'>${title}</h4>"
+      	   + "<p>{{html description}}</p>"
+      	   + "<ul class='timeglider-ev-modal-links'>{{html links}}</ul>"
+      	   + "</div>");
+	       
+	   // DEFAULT TEMPLATE
+	   if (!options.event_modal.href) {
+       template = default_template
+   	 
+ 	   } else {
+ 	     // we have a custom event modal waiting in a file === get it
+       var tget = $.ajax({
+         url: options.event_modal.href,
+         success: function (html) { 
+           // sets template to template in case it returns before the get happens
+           stripped = html.removeWhitespace();
+           debug.log("stripped:" + stripped);
+           me._templates.event_modal = template = $.template(null, stripped);
+         },
+         error : function () {
+           me._templates.event_modal = template = default_template;
+           alert("Custom event modal HTML file could not be found/loaded! Will revert to default.");
+         }
+       });
+       
+     }
+   	 return template;
+   	  
+   },
+  
 	
   scaleToImportance : function(imp, zoo) {
 		    return imp / zoo;
@@ -1587,10 +1640,11 @@ tg.TG_TimelineView.prototype = {
   
   
 	
-  createEventLinksMenu : function (linkage) {
+  createEventLinksMenu : function (linkage, modal_type) {
     if (!linkage) return "";
-    
+
     var html = '', l = 0, lUrl = "", lLab="";
+    if (modal_type == "full") { html += "<li><h4>links</h4></li>"; }
     
     if (typeof(linkage) == "string") {
       // single url string for link: use "link"
@@ -1608,23 +1662,29 @@ tg.TG_TimelineView.prototype = {
   
   
   
+  
+  
 	eventModal : function (eid) {
-		// get position
+		// remove if same event already has modal opened
 		$("#ev_" + eid + "_modal").remove();
 		
 		var me = this,
+		  modal_type = options.event_modal.type,
 		  $par = $("#" + eid),
 		  modalTemplate = me._templates.event_modal;
 		  ev = MED.eventPool[eid],
 		  ev_img = (ev.image && ev.image.src) ? "<img src='" + ev.image.src + "'>" : "",
-		  links = this.createEventLinksMenu(ev.link),
+		  ev_img_src = (ev.image && ev.image.src) ? ev.image.src : "",
+		  links = this.createEventLinksMenu(ev.link, modal_type),
+		  ev_descr = (modal_type == "default") ? ev_img + ev.description: ev.description;
 		  
 		  templ_obj = { 
   			  title:ev.title,
-  			  description:ev_img + ev.description,
+  			  description:ev_descr,
   			  id:eid,
   			  startdate: ev.startdateObj.format("D", true),
-  			  links: links,
+  			  links:links,
+  			  image:ev_img_src,
   			  video: ev.video
   		}
 		  
@@ -1632,11 +1692,32 @@ tg.TG_TimelineView.prototype = {
        modalTemplate = me._templates.event_modal_video;
        templ_obj.video = ev.video;
 			}
-	
-		  $.tmpl(modalTemplate,templ_obj)
-  			.appendTo(TICKS)
-			  .css("z-index", me.ztop++)
-	      .position({
+			
+	    var $modal = $.tmpl(modalTemplate,templ_obj);
+	    
+			switch (modal_type) {
+			
+			case "full":
+		  // full modal with scrim, etc
+       $modal
+    			.appendTo(CONTAINER)
+  			  .css("z-index", me.ztop++)
+  			  .position({
+      				my: "left top",
+      				at: "left top",
+      				of: (CONTAINER),
+      				offset:"0, 0",
+      				collision: "none none"
+      	});
+			
+			break;
+		
+		  // normal small, draggable modal
+			default:
+			  $modal
+    			.appendTo(TICKS)
+  			  .css("z-index", me.ztop++)
+			    .position({
       				my: "right center",
       				at: "left center",
       				of: $par,
@@ -1645,6 +1726,8 @@ tg.TG_TimelineView.prototype = {
       	})
       	.draggable()
       	.hover(function () { $(this).css("z-index", me.ztop++); });
+      
+      }// end switch
 	},
 	
 	
@@ -1876,6 +1959,11 @@ tg.TG_TimelineView.prototype = {
     		return ms.width();
   		}
     };
+    
+    String.prototype.removeWhitespace = function () {
+      var rg = new RegExp( "\\n", "g" )
+      return this.replace(rg, "");
+    }
   
     
    

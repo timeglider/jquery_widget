@@ -244,8 +244,6 @@ tg.TG_Mediator.prototype = {
        
         $.publish("mediator.timelineDataLoaded");
     }
-    
-    
   },
 
 
@@ -572,7 +570,8 @@ tg.TG_Mediator.prototype = {
             	initial_timeline_id:{type:"string"},
             	icon_folder:{type:"string"},
             	show_footer:{type:"boolean"},
-            	display_zoom_level:{type:"boolean"}
+            	display_zoom_level:{type:"boolean"},
+            	event_modal:{type:"object"}
           	}
           	
         		// msg: will be return value: validates when empty 

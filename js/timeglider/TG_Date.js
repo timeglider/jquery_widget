@@ -729,5 +729,3 @@ var timeglider = window.timeglider = {version:"0.1.0"};
   
 })(timeglider);
 
-
-
