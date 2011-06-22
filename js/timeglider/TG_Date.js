@@ -1,3 +1,15 @@
+/**
+ * @license 
+ * copyright 2011, Mnemograph LLC
+ * Timeglider for Javascript / jQuery 
+ * http://timeglider.com/jquery
+ *
+ * Licensed under the MIT open source license
+ * http://timeglider.com/jquery/?p=license
+ *
+ */
+
+
 // initial declaration of timeglider object
 var timeglider = window.timeglider = {version:"0.1.0"};
 
@@ -32,7 +44,7 @@ var timeglider = window.timeglider = {version:"0.1.0"};
       getDateFromSecCache = {};
   
       
-  tg.TG_Date = function (strOrNum, display_limit) {
+  tg.TG_Date = function (strOrNum, date_display) {
 
       var dateStr, isoStr, gotSec, dummyDate;
     
@@ -41,18 +53,18 @@ var timeglider = window.timeglider = {version:"0.1.0"};
           dateStr = isoStr = TG_Date.getDateFromSec(strOrNum);
           gotSec = strOrNum;
       } else {
-          // string
+          // string -- floating dates like "today"
           if (strOrNum == "today") {
             strOrNum = TG_Date.getToday();
           } 
           dateStr = isoStr = strOrNum;
       }
   
-  	  if (isValidDateString(dateStr) === "shit") {
+  	  if (isValidDateString(dateStr) === false) {
   	    return {error:"Invalid date"};
   	    /// it's valid
       } else {
-	    	    
+	    	  
       		dateStr = dateStr.replace(",", "");
   
       		if (dateStr.substr(0,1) == "-") {
@@ -68,7 +80,7 @@ var timeglider = window.timeglider = {version:"0.1.0"};
 
       		var arr = dateStr.split("-");
 
-      		this.ye = boil(arr[0]);
+      		this.ye = (this.bce === 0) ? boil(arr[0]) : -1 * boil(arr[0]);
       		this.mo = boil(arr[1]);
       		this.mo_num = getMoNum(this.mo, this.ye);
       		this.da = boil(arr[2]);
@@ -78,10 +90,13 @@ var timeglider = window.timeglider = {version:"0.1.0"};
       		this.se = boil(arr[5]) || 0;
       		// rd : serial day from year zero
       		this.rd  = TG_Date.getRataDie(this);
+      		
+      		// if (this.ye < 0) debug.log("negative rd:" + this.rd);
+      		
       		// .sec second is the serial second from year 0!
       		this.sec = gotSec || getSec(this);
       		
-      		this.display_limit = display_limit;
+      		this.date_display = (date_display) ? (date_display.toLowerCase()).substr(0,2) : "";
     			
       		// Esp. for formatting, we'll use jQuery.global for dates that
       		// support the Date() object; before 50,000 bce, we'll need to 
@@ -100,11 +115,11 @@ var timeglider = window.timeglider = {version:"0.1.0"};
   	    function isValidDateString(str) {
       	  // VALIDATE STRING
       	  var aStr = jQuery.trim(str);
-      		reg = new RegExp(/[0-9-: ]/);
+      		reg = new RegExp(/[T0-9-: ]/);
       		if (reg.test(aStr)) {
       		  return aStr;
       	  } else {
-      	    return "shit";
+      	    return false;
           }
         };
   
@@ -199,21 +214,24 @@ var timeglider = window.timeglider = {version:"0.1.0"};
   *  @return {number} a non-zero serial for the specified time unit
   */
   TG_Date.getTimeUnitSerial = function (fd, unit) {
+      var ret = 0;
+      
   		switch (unit) {
-  			case "ye": return fd.ye; break;
+  			case "ye": ret = fd.ye; break;
   			// set up mo_num inside TG_Date constructor
-  			case "mo": return fd.mo_num; break;
-  			case "da": return fd.rd;
-  			case "de": return Math.ceil(fd.ye / 10); break;
-  			case "ce": return Math.ceil(fd.ye / 100); break;
-  			case "thou": return Math.ceil(fd.ye / 1000); break;
-  			case "tenthou": return Math.ceil(fd.ye / 10000); break;
-  			case "hundredthou": return Math.ceil(fd.ye / 100000); break;
-  			case "mill": return Math.ceil(fd.ye / 1000000); break;
-  			case "tenmill": return Math.ceil(fd.ye / 10000000); break;
-  			case "hundredmill": return Math.ceil(fd.ye / 100000000); break;
-  			case "bill": return Math.ceil(fd.ye / 1000000000); break;
+  			case "mo": ret =  fd.mo_num; break;
+  			case "da": ret =  fd.rd; break;
+  			case "de": ret =  Math.ceil(fd.ye / 10); break;
+  			case "ce": ret =  Math.ceil(fd.ye / 100); break;
+  			case "thou": ret =  Math.ceil(fd.ye / 1000); break;
+  			case "tenthou": ret =  Math.ceil(fd.ye / 10000); break;
+  			case "hundredthou": ret =  Math.ceil(fd.ye / 100000); break;
+  			case "mill": ret =  Math.ceil(fd.ye / 1000000); break;
+  			case "tenmill": ret =  Math.ceil(fd.ye / 10000000); break;
+  			case "hundredmill": ret =  Math.ceil(fd.ye / 100000000); break;
+  			case "bill": ret =  Math.ceil(fd.ye / 1000000000); break;
   		}
+  		return ret;
   };
 
 
@@ -371,7 +389,7 @@ var timeglider = window.timeglider = {version:"0.1.0"};
 
   TG_Date.getToday = function () {
       var d = new Date(); 
-      return d.getFullYear() + "-" + d.getMonth() + "-" + d.getDate() + " " + d.getHours() + ":" + d.getMinutes() + ":00";
+      return d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate() + " " + d.getHours() + ":" + d.getMinutes() + ":00";
   }
 
 
@@ -413,7 +431,6 @@ var timeglider = window.timeglider = {version:"0.1.0"};
   */
   TG_Date.getDateFromRD = function (snum) {
     // in case it arrives as an RD-decimal
-    
     if (getDateFromRDCache[snum]) {
       return getDateFromRDCache[snum]
     }
@@ -521,6 +538,7 @@ var timeglider = window.timeglider = {version:"0.1.0"};
   	ret = (fat + moreDays + daysSoFar + da) - 366;
 	
   } else if (ye < 0) {
+    
   	ret = TG_Date.getBCRataDie({ye:ye, mo:mo, da:da});
   } 
 
@@ -584,9 +602,6 @@ var timeglider = window.timeglider = {version:"0.1.0"};
 
 
   };
-
-
-
 
   /*
   Counts serial days starting with -1 in year -1. Visualize a number counting 
@@ -663,7 +678,7 @@ var timeglider = window.timeglider = {version:"0.1.0"};
   TG_Date.prototype = {
       
       format : function (sig, useLimit) {
-      
+        
         /* "en" formats
          // short date pattern
           d: "M/d/yyyy",
@@ -688,7 +703,10 @@ var timeglider = window.timeglider = {version:"0.1.0"};
         // If, for example, an event wants only year-level time being displayed
         // (and not month, day...) filter out the undesired time levels
         if (useLimit == true) {
-          switch (this.display_limit) {
+          // reduce to 2 chars for consistency
+          var ddlim = this.date_display.substr(0,2);
+          switch (ddlim) {
+            case "no": return ""; break;
             case "ye": sig = "yyyy"; break;
             case "mo": sig = "Y"; break;
             case "da": sig = "D"; break;
@@ -699,6 +717,7 @@ var timeglider = window.timeglider = {version:"0.1.0"};
         }
         // If the date is bce, get the bce equivalent for 
         // the culture and append it or prepend it...
+        
         return $.global.format(this.jsDate, sig);
 
       }
@@ -709,6 +728,4 @@ var timeglider = window.timeglider = {version:"0.1.0"};
   
   
 })(timeglider);
-
-
 

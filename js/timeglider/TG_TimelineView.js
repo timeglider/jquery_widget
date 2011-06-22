@@ -1,13 +1,15 @@
 /*
-* Timeglider jQuery plugin Timeglider
-* jquery.timeglider.js
-* http://timeglider.com/jquery
-*
-* © 2010 Timeglider / Mnemograph LLC
-* Author: Michael Richardson
-* Licences are still to be determined : )
-*
-*/
+ * Timeglider for Javascript / jQuery 
+ * http://timeglider.com/jquery
+ *
+ * Copyright 2011, Mnemograph LLC
+ * Licensed under the MIT open source license
+ * http://timeglider.com/jquery/?p=license
+ *
+ */
+ 
+
+
 /*
 ****************************************
 timeglider.TimelineView
@@ -77,17 +79,15 @@ timeglider.TimelineView
   *
   *
   */
+ 
+  // in case custom event_modal fails, we need this object to exist
+  this._templates = {}
   
 	this._templates = {
-	    // generated, appended on the fly, then removed
-      event_modal: $.template( null, "<div class='tg-modal timeglider-ev-modal ui-widget-content' id='ev_${id}_modal'>" 
-    	  + "<div class='close-button-remove'></div>" 
-    	  + "<div class='startdate'>${startdate}</div>"
-    	  + "<h4 id='title'>${title}</h4>"
-    	  + "<p>{{html description}}</p>"
-    	  + "<ul class='timeglider-ev-modal-links'>{{html links}}</ul>"
-    	  + "</div>"),
-    	  // <li><a target='_blank' href=''>link</a></li> removed from links ul above
+	    // allows for customized templates imported
+	    test : "testola",
+	    
+      event_modal: this.getEventModalTemplate(),
     	  
     	// generated, appended on the fly, then removed
     	event_modal_video : $.template( null,
@@ -252,17 +252,20 @@ timeglider.TimelineView
 	});
   /* END PUB-SUB SUBSCRIBERS */
 
-
-	$(".timeglider-pan-buttons div").mousedown(function () {
+  this.setPanButton($(".timeglider-pan-right"),-30);
+  this.setPanButton($(".timeglider-pan-left"),30);
+  /*
+	$(".timeglider-pan-buttons div")
+	  .mousedown(function () {
 	  var lr = $(this).attr("class"),
+	      // if it's not pan-right, it's pan-left
 	      dir = (lr == "timeglider-pan-right") ? -30 : 30; 
-	      me.intervalMachine("pan", {type:"set", fn: me.pan, args:[dir], intvl:30});
-  }).mouseup(function () {
-	    me.intervalMachine("pan", {type:"clear", fn: me.pan, callback: "resetTicksHandle"});
-  }).mouseout(function () {
-    	me.intervalMachine("pan", {type:"clear", fn: me.pan, callback: "resetTicksHandle"});
-  });
-
+	    me.intervalMachine("pan", {type:"set", fn: me.pan, args:[dir], intvl:30});  })
+    .mouseup(function () {
+	    me.intervalMachine("pan", {type:"clear", fn: me.pan, callback: "resetTicksHandle"});  })
+    .mouseout(function () {
+    	me.intervalMachine("pan", {type:"clear", fn: me.pan, callback: "resetTicksHandle"});  });
+  */
 
   
 	$(this._views.TRUCK)
@@ -358,6 +361,17 @@ timeglider.TimelineView
 	  $("#" + parent_id).remove();
 	});
 	
+	
+	// FULL MODAL
+	$(CONTAINER).delegate(".full_modal_close", "click", function () {
+	  $(".full_modal").remove();
+	});
+	
+	$(CONTAINER).delegate(".full_modal_scrim", "click", function () {
+	  $(".full_modal").remove();
+	});
+	
+	
 	$(CONTAINER).delegate(".timeglider-more-plus", "click", function () {
 	  MED.zoom(-1);
 	});
@@ -374,7 +388,11 @@ timeglider.TimelineView
 	  MED.setFilters({origin:"legend", icon: "all"});
   });
 
- 
+/*
+ $(".full_modal").live("click",  function (e) {
+   $(TICKS).draggable({disabled:true});
+ });
+*/
 
  $.tmpl(me._templates.timeline_list_modal,{}).appendTo(CONTAINER);
  $(me._views.TIMELINE_LIST_BT).click(function () {
@@ -414,7 +432,7 @@ timeglider.TimelineView
 	   When actually doing something, Safari seems to 
 	   ignore attempts at preventing default... 
 	   
-	   SCOPED IN CLOSURE, THESE ARE UNTESTABLE
+	   PRIVATE/SCOPED IN CLOSURE, THESE ARE UNTESTABLE
 	*/
 	function gestureChange (e) {
 		e.preventDefault ();
@@ -489,6 +507,46 @@ tg.TG_TimelineView.prototype = {
 		  
 	},
 	
+	
+	getEventModalTemplate : function() {
+	    
+	   var me = this,
+	       template = false,
+	       stripped = '',
+	       default_template = $.template( null, "<div class='tg-modal timeglider-ev-modal ui-widget-content' id='ev_${id}_modal'>" 
+      	   + "<div class='close-button-remove'></div>" 
+      	   + "<div class='startdate'>${startdate}</div>"
+      	   + "<h4 id='title'>${title}</h4>"
+      	   + "<p>{{html description}}</p>"
+      	   + "<ul class='timeglider-ev-modal-links'>{{html links}}</ul>"
+      	   + "</div>");
+	       
+	   // DEFAULT TEMPLATE
+	   if (!options.event_modal.href) {
+       template = default_template
+   	 
+ 	   } else {
+ 	     // we have a custom event modal waiting in a file === get it
+       var tget = $.ajax({
+         url: options.event_modal.href,
+         success: function (html) { 
+           // sets template to template in case it returns before the get happens
+           stripped = html.removeWhitespace();
+           debug.log("stripped:" + stripped);
+           me._templates.event_modal = template = $.template(null, stripped);
+         },
+         error : function () {
+           me._templates.event_modal = template = default_template;
+           alert("Custom event modal HTML file could not be found/loaded! Will revert to default.");
+         }
+       });
+       
+     }
+   	 return template;
+   	  
+   },
+  
+	
   scaleToImportance : function(imp, zoo) {
 		    return imp / zoo;
 	},
@@ -509,9 +567,38 @@ tg.TG_TimelineView.prototype = {
  	},
  	
  	
+  /**
+  * setPanButton
+  * @param $sel {jquery dom selector} the button to be assigned
+  * @parm vel {Number} positive for moving to the right, negative for moving left
+  *
+  *
+  */
+ 	setPanButton : function ($sel, vel) {
+ 	     var me = this,
+ 	         _int = 33; // 33/1000 second interval
+ 	     $($sel).live("mousedown", function () {
+    	    me.intervalMachine("pan", {type:"set", fn: me.pan, args:[vel], intvl:_int});  })
+        .live("mouseup", function () {
+    	    me.intervalMachine("pan", {type:"clear", fn: me.pan, callback: "resetTicksHandle"});  })
+        .live("mouseout", function () {
+        	me.intervalMachine("pan", {type:"clear", fn: me.pan, callback: "resetTicksHandle"});  });
+  },
+ 	
+ 	
  	
 	/* 
-	PLUGIN!!
+	* intervalMachine
+	* param name {String} JS interval ref. name
+	* @param info {Object} 
+	*     type: clear | set
+	*     fn: function to call on interval
+	*     callback: function to invoke upon clearing
+	*     eg: {type:"clear", fn: me.pan, callback: "resetTicksHandle"}
+	*
+	*
+	*  PLUGIN CANDIDATE!
+	
 	*/
 	intervalMachine : function (name, info) {
 	  var me=this;
@@ -535,11 +622,16 @@ tg.TG_TimelineView.prototype = {
   	return Math.abs(v - 101);
   },
   
-  
+  /*
+  * pan
+  * @param dir {Number}
+  * simply moves the ticks one way or another
+  * To work properly, it needs a resetTicksHandle() callback;
+  * Using this in conjunction with intervalMachine()
+  */
   pan : function (dir) {
-    
+
     var d = dir || 20;
-    
     $t = $(TICKS),
     newPos = $t.position().left + d;
         
@@ -710,12 +802,15 @@ tg.TG_TimelineView.prototype = {
         $hov = $(".timeglider-event-hover-info");
     
     // This works, but what if it has to sit on the bottom
-    $hov.position({
-	    my: "left bottom",
-	    at: "left top",
-	    of: $ev,
-	    offset: "1, -10",
-	    collision: "flip flip"}).text(ev_obj.startdateObj.format("D", true));
+    // debug.log("hover display:" + ev_obj.date_display);
+    if (ev_obj.date_display != "no") {
+      $hov.position({
+  	    my: "left bottom",
+  	    at: "left top",
+  	    of: $ev,
+  	    offset: "1, -10",
+  	    collision: "flip flip"}).text(ev_obj.startdateObj.format("D", true));
+    }
 	  	   
 	  $ev.addClass("tg-event-hovered");
 	   
@@ -834,7 +929,7 @@ tg.TG_TimelineView.prototype = {
 	* @param info {object} --object--> type: init|l|r focusDate: date object for init type
 	*/											
 	addTick : function (info) {
-		  
+
 			var mDays = 0, dist = 0, pos = 0, ctr = 0, 
 			tperu = 0, serial = 0, shiftLeft = 0,
 			tid = "", tickHtml = "", idRef = "", 
@@ -844,7 +939,8 @@ tg.TG_TimelineView.prototype = {
 			focusDate = MED.getFocusDate(),
 			tick_top = parseInt(this.dimensions.tick.top),
 			me = this,	
-			serial = MED.addToTicksArray({type:info.type, unit:tickUnit}, focusDate);
+			serial = MED.addToTicksArray({type:info.type, unit:tickUnit}, focusDate),
+			hours_html = "", hour_num=0, hour_label="";
 						
 		// adjust tick-width for months (mo)
   		if (tickUnit == "mo") {
@@ -894,32 +990,48 @@ tg.TG_TimelineView.prototype = {
 			
 		dist = tickWidth / tperu;
 
-    // Add tick-lines when they're spaced wider than 5
+    // Add tick-lines or times when divisions are spaced wider than 5
+    
 		if (dist > 5) {
 		
   			/* Raphael CANVAS for tick lines
   			   @param tid {string} dom-id-with-no-hash, width, height 
   			*/
+  			
 			  var lines = Raphael(tid, tickWidth, 30),
 				c, l, xd, stk = '', ht = 10,
 				downset = 20;
+				
+				
 				
 				for (l = 0; l < tperu; ++l) {
 				  // xd is cross distance...
 					xd = l * dist;
 					stk += "M" + xd + " " + downset + " L" + xd + " " + (ht + downset);
+					
+					// gather 24 hours of the day
+					if (tickUnit == "da" && dist > 16) {
+					  hour_label = me.getHourLabelFromHour(hour_num, dist);
+					  // set width below to subtract CSS padding-left
+            hours_html += "<div class='timeglider-tick-hour-label' style='width:" + (dist - 4) + "px'>" + hour_label + "</div>";
+            hour_num++;
+  			  }
+
 				}
-				
-				// var tt = lines.text(12,8, "123");
 		
 				c = lines.path(stk);
 				// !TODO --- add stroke color into options object
 				c.attr({"stroke":"#333", "stroke-width":1});
+	
 			} // end dist > 5  if there's enough space between tickmarks
-		
+			
+		// add hours gathered in loop above
+		if (tickUnit == "da" && dist > 32) {
+		  $tickDiv.append("<div style='position:absolute;top:14px;left:0'>" + hours_html + "</div>");
+	  } 
 		
 		pack = {"unit":tickUnit, "width":tickWidth, "serial":serial};
-
+  
 		label = this.getDateLabelForTick(pack);
 	
 		// DO OTHER STUFF TO THE TICK, MAKE THE LABEL AN ACTIONABLE ELEMENT
@@ -929,6 +1041,19 @@ tg.TG_TimelineView.prototype = {
 		return pack;
 		/* end addTick */
 	}, 
+	
+	getHourLabelFromHour : function (h24, width) {
+	  var ampm = "", htxt = "", bagels = "";
+	  
+	  htxt = (h24 > 12) ? h24-12 : h24;
+	  if (htxt == 0) htxt = 12;
+	  
+	  bagels = (width > 60) ? ":00" : "";
+    ampm = (h24 > 11) ? " pm" : " am";
+    
+    return htxt + bagels + ampm;
+	  
+  },
 
 	
 	/* provides addTick() info for marks and for adj width for month or year */
@@ -964,42 +1089,77 @@ tg.TG_TimelineView.prototype = {
 		switch(obj.unit) {
 
       case "bill":
-      	if (ser == 1) return "1";
-        return (ser -1) + " bya";
+      	if (ser == 0) {
+		      return "1";
+	      } else if (ser > 0) {
+	         return (ser) + " billion";
+        } else {
+	         return (ser) + " b.y. bce";
+        }
         
       case "hundredmill":
-      	if (ser == 1) return "1";
-        return ((ser -1) * 100) + " mya";
+      	if (ser == 0) {
+		      return "1";
+	      } else if (ser > 0) {
+	         return (ser) + "00 million";
+        } else {
+	         return (ser) + "00 m.y. bce";
+        }
         
       case "tenmill":
-      	if (ser == 1) return "1";
-        return ((ser -1) * 10) + " mya";
+      		if (ser == 0) {
+  		      return "1";
+  	      } else if (ser > 0) {
+  	         return (ser) + "0 million";
+          } else {
+  	         return (ser) + "0 m.y. bce";
+          }
         		    
       case "mill":
-    		if (ser == 1) return "1";
-      	return (ser -1) + " mya";
+    		if (ser == 0) {
+		      return "1";
+	      } else if (ser > 0) {
+	         return (ser) + " million";
+        } else {
+	         return (ser) + " m.y. bce";
+        }
       		    
       case "hundredthou":
-  		  if (ser == 1) return "1";
-    		return (ser -1) + "00,000";    
+  		  if (ser == 0) {
+		      return "1";
+	      } else if (ser > 0) {
+	        return (ser) + "00,000";
+        } else {
+	         return (ser) + "00,000 bce";
+        }   
     		    
 		  case "tenthou":
-		    if (ser == 1) return "1";
-  		  return (ser -1) + "0000";
+		    if (ser == 0) {
+		      return "1";
+	      }else {
+	         return (ser) + "0,000";
+        }
  
 		  case "thou": 
-		    if (ser == 1) return "1";
-		    return (ser -1) + "000";
+		    if (ser == 0) {
+		      return "1";
+	      }else {
+	         return (ser) + "000";
+        } 
 
 		  case "ce": 
-		    if (ser == 1) return "1";
-		    return (ser -1) + "00";
+		    if (ser == 0) {
+ 		      return "1";
+ 	      }else {
+ 	         return (ser) + "00";
+         }
 		    
 			case "de": 
-				return ((ser -1) * 10) + "s";
+				return ser * 10; // return ((ser -1) * 10) + "s";
 			case "ye": 
 				return ser; 
 			case "mo": 
+			  
 			   i = TG_Date.getDateFromMonthNum(ser);
 			   if (tw < 120) {
 			     return TG_Date.monthNamesAbbr[i.mo] + " " + i.ye; 
@@ -1231,15 +1391,18 @@ tg.TG_TimelineView.prototype = {
 			spanins = [],
 			expCol, tl_top=0,
 			cht = me.dimensions.container.height,
-			ceil = me.dimensions.tick.top;
+			ceiling = 0;
 		//////////////////////////////////////////
 		for (var a=0; a<active.length; a++) {
 
 			// FOR EACH _ACTIVE_ TIMELINE...
 			tl = MED.timelinePool[active[a]];
-			
+		
 			expCol = tl.display;
 			
+			// TODO establish the 120 below in some kind of constant!
+			// meanwhile: tl_top is the starting height of a loaded timeline 
+			// set to 120 unless it's already been dragged
 		  tl_top = (tl.top) ? parseInt(tl.top.replace("px", "")) : (cht-120); // sets up default
 			legend_label = tl.legend.length > 0 ? "<span class='tg-timeline-legend-bt'>legend</span>" : ""; 
 			
@@ -1304,9 +1467,11 @@ tg.TG_TimelineView.prototype = {
 	    
 			// no need to reference individual tick
 			stuff = this.compileTickEventsAsHtml(tl, idArr, 0, "sweep");
+			// TODO: make 56 below part of layout constants collection
+			ceiling = (tl.hasImagesAbove) ? tl_top - 56 : tl_top;
 			
 			if (expCol == "expanded") {
-				stuff = borg.getHTML("sweep", tl_top);
+				stuff = borg.getHTML("sweep", ceiling);
 				tl.borg = borg.getBorg();
 			}
 			
@@ -1433,7 +1598,14 @@ tg.TG_TimelineView.prototype = {
 
   },
   
-  
+  /*
+  * registerEventImages
+  *  Events can have classes applied to their images; these routines
+  *  take care of doing non-css-driven positioning after the layout
+  *  has finished placing events in the tick sphere.
+  *
+  *
+  */
 	registerEventImages : function ($timeline) {
 	  
 	  $(".timeglider-event-image-bar").each(
@@ -1446,6 +1618,17 @@ tg.TG_TimelineView.prototype = {
 	        }).css("left", 0);
 	      }
       );
+      
+      $(".timeglider-event-image-above").each(
+    		    function () {
+    		      $(this).position({
+    		        		my: "top",
+            				at: "top",
+            				of: $(CONTAINER),
+            				offset: "0, 12"
+    	        }).css("left", 0);
+    	      }
+        );
 	  
   },
   
@@ -1494,10 +1677,11 @@ tg.TG_TimelineView.prototype = {
   
   
 	
-  createEventLinksMenu : function (linkage) {
+  createEventLinksMenu : function (linkage, modal_type) {
     if (!linkage) return "";
-    
+
     var html = '', l = 0, lUrl = "", lLab="";
+    if (modal_type == "full") { html += "<li><h4>links</h4></li>"; }
     
     if (typeof(linkage) == "string") {
       // single url string for link: use "link"
@@ -1515,23 +1699,29 @@ tg.TG_TimelineView.prototype = {
   
   
   
+  
+  
 	eventModal : function (eid) {
-		// get position
+		// remove if same event already has modal opened
 		$("#ev_" + eid + "_modal").remove();
 		
 		var me = this,
+		  modal_type = options.event_modal.type,
 		  $par = $("#" + eid),
 		  modalTemplate = me._templates.event_modal;
 		  ev = MED.eventPool[eid],
 		  ev_img = (ev.image && ev.image.src) ? "<img src='" + ev.image.src + "'>" : "",
-		  links = this.createEventLinksMenu(ev.link),
+		  ev_img_src = (ev.image && ev.image.src) ? ev.image.src : "",
+		  links = this.createEventLinksMenu(ev.link, modal_type),
+		  ev_descr = (modal_type == "default") ? ev_img + ev.description: ev.description;
 		  
 		  templ_obj = { 
   			  title:ev.title,
-  			  description:ev_img + ev.description,
+  			  description:ev_descr,
   			  id:eid,
   			  startdate: ev.startdateObj.format("D", true),
-  			  links: links,
+  			  links:links,
+  			  image:ev_img_src,
   			  video: ev.video
   		}
 		  
@@ -1539,11 +1729,32 @@ tg.TG_TimelineView.prototype = {
        modalTemplate = me._templates.event_modal_video;
        templ_obj.video = ev.video;
 			}
-	
-		  $.tmpl(modalTemplate,templ_obj)
-  			.appendTo(TICKS)
-			  .css("z-index", me.ztop++)
-	      .position({
+			
+	    var $modal = $.tmpl(modalTemplate,templ_obj);
+	    
+			switch (modal_type) {
+			
+			case "full":
+		  // full modal with scrim, etc
+       $modal
+    			.appendTo(CONTAINER)
+  			  .css("z-index", me.ztop++)
+  			  .position({
+      				my: "left top",
+      				at: "left top",
+      				of: (CONTAINER),
+      				offset:"0, 0",
+      				collision: "none none"
+      	});
+			
+			break;
+		
+		  // normal small, draggable modal
+			default:
+			  $modal
+    			.appendTo(TICKS)
+  			  .css("z-index", me.ztop++)
+			    .position({
       				my: "right center",
       				at: "left center",
       				of: $par,
@@ -1552,6 +1763,8 @@ tg.TG_TimelineView.prototype = {
       	})
       	.draggable()
       	.hover(function () { $(this).css("z-index", me.ztop++); });
+      
+      }// end switch
 	},
 	
 	
@@ -1776,12 +1989,18 @@ tg.TG_TimelineView.prototype = {
     }(tg.zoomTree);
     
     
-    
     /* a div with id of "hiddenDiv" has to be pre-loaded */
     tg.getStringWidth  = function (str) {
-    		var $ms = $("#timeglider-measure-span").html(str);
-    		return $ms.width() + 20;
+      if (str) {
+    		var ms = $("#timeglider-measure-span").html(str);
+    		return ms.width();
+  		}
     };
+    
+    String.prototype.removeWhitespace = function () {
+      var rg = new RegExp( "\\n", "g" )
+      return this.replace(rg, "");
+    }
   
     
    

@@ -2,11 +2,25 @@
 {
     "id": "idahoTimeline",
     "title": "A Really Long, But Incomplete History of Idaho",
-    "focus_date": "1965-02-29 2:00:00",
+    "focus_date": "1863-07-01 12:00",
     "initial_zoom": "47",
 	"color": "#82530d",
     "events":
     [
+
+  {
+        "id": "1391bce",
+        "title": "TEST BCE EVENT",
+        "startdate": "-1000-07-01 12:00",
+
+        "description": "TEST BCE EVENT.",
+        "icon": "triangle_green.png",
+        "low_threshold": "1",
+        "high_threshold": "100",
+        "importance": "80"
+    },
+
+
     {
         "id": "1391",
         "title": "Smallpox Strikes the Shoshone",
@@ -428,12 +442,15 @@
         "startdate": "1862-07-01 12:00",
         "enddate": "1862-07-01 12:00",
         "date_limit": "ye",
-        "description": "Lewiston's Golden Age is Idaho's first newspaper.",
+        "description": "On August 2, 1862, the Golden Age newspaper released its inaugural issue in Lewiston, Washington Territory. The Age thus has the honor of being the first newspaper published in what would become, seven months later, Idaho Territory. The publisher was a man named A. S. Gould, about whom we know very little.<br><br>Lewiston, 1862. Nez Perce County Historical Society.<br><br>Today&lsquo;s Lewiston Tribune traces its roots back to 1892.<br><br>On August 2, 1862, the Golden Age newspaper released its inaugural issue in Lewiston, Washington Territory. The Age thus has the honor of being the first newspaper published in what would become, seven months later, Idaho Territory. The publisher was a man named A. S. Gould, about whom we know very little.<br><br>Lewiston, 1862. Nez Perce County Historical Society.<br><br>Today&lsquo;s Lewiston Tribune traces its roots back to 1892.<br><br>On August 2, 1862, the Golden Age newspaper released its inaugural issue in Lewiston, Washington Territory. The Age thus has the honor of being the first newspaper published in what would become, seven months later, Idaho Territory. The publisher was a man named A. S. Gould, about whom we know very little.<br><br>Lewiston, 1862. Nez Perce County Historical Society.<br><br>Today&lsquo;s Lewiston Tribune traces its roots back to 1892.<br><br>On August 2, 1862, the Golden Age newspaper released its inaugural issue in Lewiston, Washington Territory. The Age thus has the honor of being the first newspaper published in what would become, seven months later, Idaho Territory. The publisher was a man named A. S. Gould, about whom we know very little.<br><br>Lewiston, 1862. Nez Perce County Historical Society.<br><br>Today&lsquo;s Lewiston Tribune traces its roots back to 1892.<br><br>",
         "event_type": "event",
         "icon": "triangle_green.png",
         "low_threshold": "1",
         "high_threshold": "60",
         "importance": "30",
+		"image":"http://imnh.isu.edu/digitalatlas/geog/explore/images/1863.jpg",
+		"image_class":"bar",
+		"link":[{"url":"http://en.wikipedia.org/wiki/JScript", "label":"wikipedia"}, {"url":"http://nytimes.com", "label":"NYT"}],
         "ypix": "0",
         "slug":""
     }

@@ -1,4 +1,5 @@
-/*!
+/*@
+ * @license
  * jQuery Globalization Plugin v1.0.0pre
 
  * http://github.com/jquery/jquery-global

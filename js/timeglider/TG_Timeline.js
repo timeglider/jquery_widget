@@ -1,4 +1,14 @@
 /*
+ * Timeglider for Javascript / jQuery 
+ * http://timeglider.com/jquery
+ *
+ * Copyright 2011, Mnemograph LLC
+ * Licensed under the MIT open source license
+ * http://timeglider.com/jquery/?p=license
+ *
+ */
+ 
+/*
 *
 * Timeline (Backbone Model)
 *
@@ -39,13 +49,14 @@
     tdata.startSeconds              = [];
     tdata.endSeconds                = [];
     tdata.spans                     = [];
+    tdata.hasImagesAbove = false;
 
     // TODO: VALIDATE COLOR, centralize default color(options?)
     if (!tdata.color) { tdata.color = "#333333"; }
 
     if (tdata.events) {
 
-      var date, ev, id, unit, ser, tWidth;
+      var date, ddisp, ev, id, unit, ser, tWidth;
       var l = tdata.events.length;
      
       
@@ -61,10 +72,14 @@
           ev.id = id = "anon" + this.anonEventId++; 
         }
         
+        // April 2011 
+        // date_limit is old JSON prop name, replaced by date_display
+        ddisp = (ev.date_display || ev.date_limit || "da");
+        ev.date_display = ddisp.toLowerCase().substr(0,2);
         
-        ev.date_limit = (ev.date_limit || "da");
-        ev.startdateObj = new TG_Date(ev.startdate, ev.date_limit);
-        ev.enddateObj = new TG_Date(ev.enddate, ev.date_limit);
+        ev.startdateObj = new TG_Date(ev.startdate, ev.date_display);
+        ev.enddateObj = new TG_Date(ev.enddate, ev.date_display);
+        
        
         // CHECK VALIDITY OF EACH DATE & MAKE SURE end > start
         //if (TG_Date.isValidDate(ev.startdateObj) != "") {
@@ -85,7 +100,8 @@
         if (ev.image) {
           // register image with image collection for gathering sizes.
           var display_class = ev.image_class || "layout";
-          
+          if (ev.image_class == "above") { tdata.hasImagesAbove = true; }
+         
           ev.image = {id: ev.id, src:ev.image, display_class:display_class};
           // this will follow up with sizing in separate "thread"
           getEventImageSize(ev.image);
@@ -93,6 +109,7 @@
           app_mediator.imagesToSize++;
         }
       
+         
         // for collapsed view and other metrics
         tdata.startSeconds.push(ev.startdateObj.sec);
         tdata.endSeconds.push(ev.enddateObj.sec);
@@ -104,6 +121,7 @@
         } else {
           ev.span = false;
         }
+        
         
         //// !! TODO VALIDATE DATE respecting startdate, too
         var uxl=units.length;
@@ -134,15 +152,14 @@
     
     
     
-    /* necessary to parse this now, or just leave as is? */
+    /* TODO: necessary to parse this now, or just leave as is? */
     if (tdata.legend.length > 0) {
       var legend = tdata.legend;
       for (var i=0; i<legend.length; i++) {
         var legend_item = legend[i];
-        debug.log("leg. title:" + legend_item['title'])
+        // debug.log("leg. title:" + legend_item['title'])
       }
     }
-    
     
 
     /// i.e. expanded or compressed...

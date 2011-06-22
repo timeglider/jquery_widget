@@ -1,4 +1,5 @@
 /**
+* @preserve
 * jQuery.UI.iPad plugin
 * Copyright (c) 2010 Stephen von Takach
 * licensed under MIT.

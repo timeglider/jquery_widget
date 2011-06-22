@@ -14,6 +14,7 @@
 "description":"Self, one of the inspirations for Javascript's simplicity, is created at Xerox PARC ",
 "startdate": "1986-01-01 12:00:00",
 "importance":"40",
+"date_display":"none",
 "link":"http://selflanguage.org/",
 "icon":"flag_green.png"
 },

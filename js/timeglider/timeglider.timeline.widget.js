@@ -1,12 +1,14 @@
 /*
-*         Timeglider jQuery plugin Timeglider
-*         jquery.timeglider.js
-*         http://timeglider.com/jquery
-*
-*         © 2010 Timeglider / Mnemograph LLC
-*         Author: Michael Richardson
-*         Licences are still to be determined : )
-*
+ * Timeglider for Javascript / jQuery 
+ * http://timeglider.com/jquery
+ *
+ * Copyright 2011, Mnemograph LLC
+ * Licensed under the MIT open source license
+ * http://timeglider.com/jquery/?p=license
+ *
+ */
+ 
+/*
 *         DEPENDENCIES: timeglider/*
                         rafael.js
                         ba-tinyPubSub
@@ -33,9 +35,6 @@
    
     $.widget( "timeglider.timeline", {
       
-	    _tg: this,
-      _element: this.element,
-      
       // defaults!
       options : { 
         initial_focus:tg.TG_Date.getToday(), 
@@ -50,7 +49,8 @@
         initial_timeline_id:'',
         icon_folder:'js/timeglider/icons/',
         show_footer:true,
-        display_zoom_level:true
+        display_zoom_level:true,
+        event_modal:{href:'', type:'default'}
       },
 
       _create : function () {
@@ -81,7 +81,6 @@
                               "<div class='timeglider-truck' id='tg-truck'>"+
                                 "<div class='timeglider-ticks'>"+
                                   "<div class='timeglider-handle'></div>"+
-                                  
                                 "</div>"+
                               "</div>"+
                                   "<div class='timeglider-slider-container'>"+
@@ -132,25 +131,54 @@
 	    },
 	    
 	    
-      /* PUBLIC METHODS */
-  
-      gotoDate : function (d) {
-        debug.log("d:" + d);
-        timelineMediator.gotoDate(d);
-      },
+      /** 
+      *********  PUBLIC METHODS ***************
+      */
       
-      gotoDateZoom : function (d, z) {
-        debug.log("d:" + z);
+      goTo : function (d, z) {
         timelineMediator.gotoDateZoom(d,z);
       },
       
+      
+      /**
+      * zoom
+      * zooms the timeline in or out a specified amount, often 1 or -1
+      *
+      * @param n {number|string}
+      *          numerical: -1 (or less) for zooming in, 1 (or more) for zooming out
+      *          string:    "in" is the same as -1, "out" the same as 1
+      */
       zoom : function (n) {
+        var n = 0;
+        switch(n) {
+          case "in": n = -1; break;
+          case "out": n = 1; break;
+        }
+        
+        if (n > 99 || n < -99) { return false; }
+        
         timelineMediator.zoom(n);
       },
+      
+      /**
+      *  panButton
+      *  sets a pan action on an element for mousedown and mouseup|mouseover
+      *  
+      *
+      */
+      panButton : function (sel, vel) {
+        var _vel = 0;
+        switch(vel) {
+          case "left": _vel = 30; break;
+          case "right": _vel = -30; break;
+          default: _vel = vel; break;
+        }
+        timelineView.setPanButton(sel, _vel);
+      },
+
 
       destroy : function () {
-        // anything else?
-        $.Widget.prototype.destroy.apply(this, arguments); // default destroy
+        $.Widget.prototype.destroy.apply(this, arguments);
         $(this.element).html("");
       }
 			

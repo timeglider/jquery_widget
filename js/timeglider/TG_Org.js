@@ -1,14 +1,18 @@
 /*
-* TG_Org
-* @constructor
-*
-*
-*/
+ * Timeglider for Javascript / jQuery 
+ * http://timeglider.com/jquery
+ *
+ * Copyright 2011, Mnemograph LLC
+ * Licensed under the MIT open source license
+ * http://timeglider.com/jquery/?p=license
+ *
+ */
+ 
 
 (function(tg){
 
   // standard "brick" height for placement grid
-  var lev_ht = tg.levelHeight = 8,
+  var lev_ht = tg.levelHeight = 10,
       // number of available levels for events
       tree_levels = 300,
       $ = jQuery,
@@ -95,7 +99,6 @@
       var positioned = [], 
         blHeight, 
         lastPos, 
-        padding = 6,
         span_selector_class, 
         span_div, 
         img = '', icon = ''
@@ -136,7 +139,10 @@
             if (b.image) {
               if (b.image.display_class == "layout") {
                 title_adj = b.image.height + 4;
-              }
+              } 
+              // different image classes ("bar", "above") are positioned
+              // in an $.each routine back in TimelineView rather than
+              // being given absolute positioning here.
               img = "<div class='timeglider-event-image-" + b.image.display_class + "'><img src='" + b.image.src + "'></div>";
             } else {
               // no image
@@ -151,11 +157,11 @@
             if (b.y_position > 0) {
               b.top = -1 * b.y_position;
             }
-            
+    
             b.fontsize < 10 ? b.opacity = b.fontsize / 10 : b.opacity=1;
             if (b.span == true) {
               span_selector_class = "timeglider-event-spanning";
-              span_div = "<div class='timeglider-event-spanner' style='height:" + b.fontsize + "px;width:" + b.spanwidth + "px'></div>"
+              span_div = "<div class='timeglider-event-spanner' style='top:" + title_adj + "px;height:" + b.fontsize + "px;width:" + b.spanwidth + "px'></div>"
             } else {
               span_selector_class = ""; 
               span_div = "";
@@ -170,12 +176,16 @@
             
           // note: divs that are higher have lower "top" values
            if (Math.abs(b.top) > (ceiling - ceiling_padding)) {
+             // + + + symbols in place of events just under ceiling
              // if things are higher than the ceiling, show plus signs instead,
              // and we'll zoom in with these.
               html += "<div class='timeglider-more-plus' style='left:" + b.left  + 
                     "px; top:-" + (ceiling - (Math.floor(ceiling_padding/3))) + "px'>+</div>";
+                    
+                    
            } else {
-            
+             
+             // TODO: function for getting "standard" event shit
               html += "<div class='timeglider-timeline-event " + span_selector_class + "' id='ev_" + b.id + "' "
               + "style='width:" + b.width  + "px;"
               + "height:" + b.height + "px;"
@@ -187,6 +197,8 @@
               + "<div class='timeglider-event-title' style='top:" + title_adj + "px'>" 
               + b.title
               + "</div></div>";
+              
+              
             
            }// end if/else :: height > ceiling
             
@@ -206,7 +218,7 @@
 
   /// PRIVATE STUFF ///
   
-  /*
+  /**
   * freshTree
   * Wipes out the old placement tree and sets up 300 empty levels
   */
@@ -218,7 +230,8 @@
      }
    };
    
-   /*
+   /**
+   * sortBlocksByImportance
    * Sorter helper for sorting events by importance
    * @param a {Number} 1st sort number
    * @param b {Number} 2nd sort number
@@ -229,8 +242,8 @@
       return ((x < y) ? -1 : ((x > y) ? 1 : 0));
   };
 
-  /*
-   * 
+  /**
+   * isOverlapping
    * Takes two objects and sees if the prospect overlaps with
    * an existing object [part of loop in checkAgainstLevel()]
    *

@@ -1,12 +1,12 @@
-/*
-* Timeglider jQuery plugin Timeglider
-* jquery.timeglider.js
-* http://timeglider.com/jquery
-*
-* © 2010 Timeglider / Mnemograph LLC
-* Author: Michael Richardson
-*
-*/
+/*!
+ * Timeglider for Javascript / jQuery 
+ * http://timeglider.com/jquery
+ *
+ * Copyright 2011, Mnemograph LLC
+ * Licensed under the MIT open source license
+ * http://timeglider.com/jquery/?p=license
+ *
+ */
 
 /*******************************
 TIMELINE MEDIATOR
@@ -77,24 +77,22 @@ reflects state back to view
 tg.TG_Mediator.prototype = {
   
     /* PUBLIC METHODS MEDIATED BY $.widget front */
-    gotoDate : function (fdStr) {
-            
-      this.setFocusDate(new TG_Date(fdStr));
-      // setting date doesn't by itself refresh: do it "manually"
-      this.refresh();  
-      return true;   
-    },
-
-    gotoDateZoom : function (fdStr, zoom) {
-        this.setFocusDate(new TG_Date(fdStr));
+ 
+    gotoDateZoom: function (fdStr, zoom) {
+        var fd = new TG_Date(fdStr),
+            zl = false;
+        this.setFocusDate(fd);
+        
         // setting zoom _does_ refresh automatically
-        this.setZoomLevel(zoom);  
-        return true; 
+        if (zoom) { 
+            var zl = this.setZoomLevel(zoom);
+        };
+        
+        if (!zoom || zl == false) { this.refresh(); }
     },
     
     zoom : function (n) {
       var new_zoom = this.getZoomLevel() + parseInt(n);
-      debug.log("mediator zoom:" + new_zoom);
       this.setZoomLevel(new_zoom);
     },
   
@@ -111,13 +109,11 @@ tg.TG_Mediator.prototype = {
     
     if (src) {
       
-        debug.log("HELLO??");
         if (typeof src === "object") {
           // local/pre-loaded JSON
           M.parseData(src);
         } else if (src.substr(0,1) == "#") {
-          
-          debug.log("IT'S A TABLE!");
+       
           var tableData = [M.getTableTimelineData(src)];
           // debug.log(JSON.stringify(tableData));
           M.parseData(tableData);
@@ -248,8 +244,6 @@ tg.TG_Mediator.prototype = {
        
         $.publish("mediator.timelineDataLoaded");
     }
-    
-    
   },
 
 
@@ -270,13 +264,13 @@ tg.TG_Mediator.prototype = {
     setInitialTimelines : function () {
       var me = this;
       var tid = this.initial_timeline_id || this.sole_timeline_id;
-      debug.log("TID:" + tid);
       if (tid) {
         setTimeout(function () { 
           MED.toggleTimeline(tid);
           }, 1000);
         }
       }, 
+
 
      refresh : function () {
        this.startSec = this._focusDate.sec;
@@ -306,7 +300,6 @@ tg.TG_Mediator.prototype = {
          
         if (fd != this._focusDate) {
           this._focusDate = fd; 
-          debug.trace("setting fd:" + fd.dateStr, "note");
         }
     },
     
@@ -341,6 +334,9 @@ tg.TG_Mediator.prototype = {
             this._zoomLevel = z;
             this._zoomInfo = timeglider.zoomTree[z];
             $.publish("mediator.zoomLevelChange");
+            return true
+          } else {
+            return false;
           }
           // end min/max check
           } else { return false; }
@@ -574,7 +570,8 @@ tg.TG_Mediator.prototype = {
             	initial_timeline_id:{type:"string"},
             	icon_folder:{type:"string"},
             	show_footer:{type:"boolean"},
-            	display_zoom_level:{type:"boolean"}
+            	display_zoom_level:{type:"boolean"},
+            	event_modal:{type:"object"}
           	}
           	
         		// msg: will be return value: validates when empty 
