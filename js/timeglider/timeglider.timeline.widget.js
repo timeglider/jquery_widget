@@ -135,7 +135,7 @@
       *********  PUBLIC METHODS ***************
       */
       
-      goto: function (d, z) {
+      goTo : function (d, z) {
         timelineMediator.gotoDateZoom(d,z);
       },
       
@@ -149,7 +149,7 @@
       *          string:    "in" is the same as -1, "out" the same as 1
       */
       zoom : function (n) {
-        
+        var n = 0;
         switch(n) {
           case "in": n = -1; break;
           case "out": n = 1; break;
@@ -171,7 +171,7 @@
         switch(vel) {
           case "left": _vel = 30; break;
           case "right": _vel = -30; break;
-          default: _vel = Number(vel);
+          default: _vel = vel; break;
         }
         timelineView.setPanButton(sel, _vel);
       },
@@ -180,7 +180,7 @@
       destroy : function () {
         $.Widget.prototype.destroy.apply(this, arguments);
         $(this.element).html("");
-      } // no comma
+      }
 			
 }); // end widget process
 
