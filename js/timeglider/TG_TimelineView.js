@@ -252,17 +252,20 @@ timeglider.TimelineView
 	});
   /* END PUB-SUB SUBSCRIBERS */
 
-
-	$(".timeglider-pan-buttons div").mousedown(function () {
+  this.setPanButton($(".timeglider-pan-right"),-30);
+  this.setPanButton($(".timeglider-pan-left"),30);
+  /*
+	$(".timeglider-pan-buttons div")
+	  .mousedown(function () {
 	  var lr = $(this).attr("class"),
+	      // if it's not pan-right, it's pan-left
 	      dir = (lr == "timeglider-pan-right") ? -30 : 30; 
-	    me.intervalMachine("pan", {type:"set", fn: me.pan, args:[dir], intvl:30});
-  }).mouseup(function () {
-	    me.intervalMachine("pan", {type:"clear", fn: me.pan, callback: "resetTicksHandle"});
-  }).mouseout(function () {
-    	me.intervalMachine("pan", {type:"clear", fn: me.pan, callback: "resetTicksHandle"});
-  });
-
+	    me.intervalMachine("pan", {type:"set", fn: me.pan, args:[dir], intvl:30});  })
+    .mouseup(function () {
+	    me.intervalMachine("pan", {type:"clear", fn: me.pan, callback: "resetTicksHandle"});  })
+    .mouseout(function () {
+    	me.intervalMachine("pan", {type:"clear", fn: me.pan, callback: "resetTicksHandle"});  });
+  */
 
   
 	$(this._views.TRUCK)
@@ -564,9 +567,38 @@ tg.TG_TimelineView.prototype = {
  	},
  	
  	
+  /**
+  * setPanButton
+  * @param $sel {jquery dom selector} the button to be assigned
+  * @parm vel {Number} positive for moving to the right, negative for moving left
+  *
+  *
+  */
+ 	setPanButton : function ($sel, vel) {
+ 	     var me = this,
+ 	         _int = 33; // 33/1000 second interval
+ 	     $($sel).live("mousedown", function () {
+    	    me.intervalMachine("pan", {type:"set", fn: me.pan, args:[vel], intvl:_int});  })
+        .live("mouseup", function () {
+    	    me.intervalMachine("pan", {type:"clear", fn: me.pan, callback: "resetTicksHandle"});  })
+        .live("mouseout", function () {
+        	me.intervalMachine("pan", {type:"clear", fn: me.pan, callback: "resetTicksHandle"});  });
+  },
+ 	
+ 	
  	
 	/* 
-	PLUGIN!!
+	* intervalMachine
+	* param name {String} JS interval ref. name
+	* @param info {Object} 
+	*     type: clear | set
+	*     fn: function to call on interval
+	*     callback: function to invoke upon clearing
+	*     eg: {type:"clear", fn: me.pan, callback: "resetTicksHandle"}
+	*
+	*
+	*  PLUGIN CANDIDATE!
+	
 	*/
 	intervalMachine : function (name, info) {
 	  var me=this;
@@ -590,11 +622,16 @@ tg.TG_TimelineView.prototype = {
   	return Math.abs(v - 101);
   },
   
-  
+  /*
+  * pan
+  * @param dir {Number}
+  * simply moves the ticks one way or another
+  * To work properly, it needs a resetTicksHandle() callback;
+  * Using this in conjunction with intervalMachine()
+  */
   pan : function (dir) {
-    
+
     var d = dir || 20;
-    
     $t = $(TICKS),
     newPos = $t.position().left + d;
         

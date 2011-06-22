@@ -48,10 +48,10 @@
 
 <div class='methods'>
 
-<h4>goto...</h4>
+<h4>goto date and zoom</h4>
 <ul>
 <li class='goto' date='2001-09-11 08:24:00' zoom='22'>Sept 11, 2001</li>
-<li class='goto' date='today' zoom='40'>Today</li>
+<li class='goto' date='today'>Today</li>
 </ul>
 
 
@@ -59,6 +59,8 @@
 <ul>
 <li class='zoom' z='-1'>zoom in</li>
 <li class='zoom' z='1'>zoom out</li>
+<li class='pan-left'>pan to left</li>
+<li class='pan-right'>pan to right</li>
 </ul>
 </div>
 
@@ -123,6 +125,9 @@
 			var z = Number($(this).attr("z"));
 			tg_actor.zoom(z);
 		});
+		
+		tg_actor.panButton($(".pan-left"), "left");
+		tg_actor.panButton($(".pan-right"), "right");
 		
 		
 		

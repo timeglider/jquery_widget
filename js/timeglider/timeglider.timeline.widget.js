@@ -159,14 +159,28 @@
         
         timelineMediator.zoom(n);
       },
-
+      
+      /**
+      *  panButton
+      *  sets a pan action on an element for mousedown and mouseup|mouseover
+      *  
+      *
+      */
+      panButton : function (sel, vel) {
+        var _vel = 0;
+        switch(vel) {
+          case "left": _vel = 30; break;
+          case "right": _vel = -30; break;
+          default: _vel = Number(vel);
+        }
+        timelineView.setPanButton(sel, _vel);
+      },
 
 
       destroy : function () {
-        // anything else?
         $.Widget.prototype.destroy.apply(this, arguments);
         $(this.element).html("");
-      }
+      } // no comma
 			
 }); // end widget process
 
