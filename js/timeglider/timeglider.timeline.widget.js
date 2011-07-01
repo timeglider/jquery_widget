@@ -133,8 +133,16 @@
 	    
       /** 
       *********  PUBLIC METHODS ***************
+      *
       */
       
+      
+      /* 
+       * goTo
+       * sends timeline to a specific date and, optionally, zoom
+       * @param d {String} ISO8601 date: 'YYYY-MM-DD HH:MM:SS'
+       * @param z {Number} zoom level to change to; optional
+       */
       goTo : function (d, z) {
         timelineMediator.gotoDateZoom(d,z);
       },
@@ -149,7 +157,7 @@
       *          string:    "in" is the same as -1, "out" the same as 1
       */
       zoom : function (n) {
-        var n = 0;
+
         switch(n) {
           case "in": n = -1; break;
           case "out": n = 1; break;
@@ -159,6 +167,7 @@
         
         timelineMediator.zoom(n);
       },
+      
       
       /**
       *  panButton
@@ -176,7 +185,11 @@
         timelineView.setPanButton(sel, _vel);
       },
 
-
+      
+      /**
+       * destroy 
+       * wipes out everything
+       */
       destroy : function () {
         $.Widget.prototype.destroy.apply(this, arguments);
         $(this.element).html("");

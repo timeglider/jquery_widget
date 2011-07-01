@@ -1136,26 +1136,37 @@ tg.TG_TimelineView.prototype = {
 		  case "tenthou":
 		    if (ser == 0) {
 		      return "1";
-	      }else {
-	         return (ser) + "0,000";
+	      } else if (ser > 0) {
+     	      return (ser) + "0,000";
+        } else {
+     	      return (ser) + "0,000 bce";
         }
  
 		  case "thou": 
 		    if (ser == 0) {
-		      return "1";
-	      }else {
-	         return (ser) + "000";
-        } 
+		      return "1" + "(" + ser + ")";
+	      } else if (ser > 0) {
+     	    return (ser) + "000";
+        } else {
+     	    return (ser) + "000 bce";
+        }
 
 		  case "ce": 
 		    if (ser == 0) {
- 		      return "1";
- 	      }else {
- 	         return (ser) + "00";
-         }
+ 		       return "1" + "(" + ser + ")";
+ 	      } else if (ser > 0) {
+   	       return (ser) + "00";
+        } else {
+   	       return (ser) + "00 bce";
+        }
+ 	      
+ 	      
+ 	      ///else {
+ 	      //   return (ser) + "00";
+        // }
 		    
 			case "de": 
-				return ser * 10; // return ((ser -1) * 10) + "s";
+				return ((ser -1) * 10) + "s";
 			case "ye": 
 				return ser; 
 			case "mo": 
