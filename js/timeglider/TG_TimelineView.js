@@ -537,7 +537,7 @@ tg.TG_TimelineView.prototype = {
          },
          error : function () {
            me._templates.event_modal = template = default_template;
-           alert("Custom event modal HTML file could not be found/loaded! Will revert to default.");
+           debug.log("Custom event modal HTML file could not be found/loaded! Reverting to default.");
          }
        });
        
@@ -1747,18 +1747,28 @@ tg.TG_TimelineView.prototype = {
 			
 			case "full":
 		  // full modal with scrim, etc
+		  var pad = 32;
        $modal
     			.appendTo(CONTAINER)
-  			  .css("z-index", me.ztop++)
+  			  .css({
+  			    "z-index": me.ztop++
+  			  })
   			  .position({
       				my: "left top",
       				at: "left top",
       				of: (CONTAINER),
       				offset:"0, 0",
       				collision: "none none"
-      	});
+      	  });
+      	$modal.children(".full_modal_panel").css({
+      	    "width":(me.dimensions.container.width - (pad*2)) + "px",
+    			  "height":(me.dimensions.container.height - (pad*2)) + "px"
+    	  });
 			
 			break;
+			
+			// You could add your own modal types here
+			// and position, etc accordingly
 		
 		  // normal small, draggable modal
 			default:
