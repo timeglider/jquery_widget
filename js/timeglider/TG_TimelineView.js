@@ -1719,8 +1719,9 @@ tg.TG_TimelineView.prototype = {
 		var me = this,
 		  modal_type = options.event_modal.type,
 		  $par = $("#" + eid),
-		  modalTemplate = me._templates.event_modal;
+		  modalTemplate =  me._templates.event_modal;
 		  ev = MED.eventPool[eid],
+		  
 		  ev_img = (ev.image && ev.image.src) ? "<img src='" + ev.image.src + "'>" : "",
 		  ev_img_src = (ev.image && ev.image.src) ? ev.image.src : "",
 		  links = this.createEventLinksMenu(ev.link, modal_type),

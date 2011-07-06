@@ -92,7 +92,7 @@
                               "<div class='timeglider-footer'>"+
                               "<div class='timeglider-logo'></div>"+                      
                               "<img class='timeglider-filter-bt' title='filter' src='js/timeglider/buttons/filter.png'>"+
-                              "<img class='timeglider-tools-bt' title='settings' src='js/timeglider/buttons/tools.png'>"+
+                              // "<img class='timeglider-tools-bt' title='settings' src='js/timeglider/buttons/tools.png'>"+
                               "<img class='timeglider-list-bt' title='timelines' src='js/timeglider/buttons/list.png'>"+  
                               "</div>"+
                               "<div class='timeglider-event-hover-info'></div>"+
