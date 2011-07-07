@@ -91,7 +91,7 @@
                               "</div>"+
                               "<div class='timeglider-footer'>"+
                               "<div class='timeglider-logo'></div>"+                      
-                              "<div class='timeglider-footer-button timeglider-filter-bt'></div>"+
+                              "<div class='timeglider-footer-button timeglider-fi-bt'></div>"+
                               // "<div class='timeglider-footer-button timeglider-tools-bt'></div>"+
                               "<div class='timeglider-footer-button timeglider-list-bt'></div>"+  
                               "</div>"+
