@@ -537,7 +537,7 @@ tg.TG_TimelineView.prototype = {
          },
          error : function () {
            me._templates.event_modal = template = default_template;
-           alert("Custom event modal HTML file could not be found/loaded! Will revert to default.");
+           debug.log("Custom event modal HTML file could not be found/loaded! Reverting to default.");
          }
        });
        
@@ -1136,26 +1136,37 @@ tg.TG_TimelineView.prototype = {
 		  case "tenthou":
 		    if (ser == 0) {
 		      return "1";
-	      }else {
-	         return (ser) + "0,000";
+	      } else if (ser > 0) {
+     	      return (ser) + "0,000";
+        } else {
+     	      return (ser) + "0,000 bce";
         }
  
 		  case "thou": 
 		    if (ser == 0) {
-		      return "1";
-	      }else {
-	         return (ser) + "000";
-        } 
+		      return "1" + "(" + ser + ")";
+	      } else if (ser > 0) {
+     	    return (ser) + "000";
+        } else {
+     	    return (ser) + "000 bce";
+        }
 
 		  case "ce": 
 		    if (ser == 0) {
- 		      return "1";
- 	      }else {
- 	         return (ser) + "00";
-         }
+ 		       return "1" + "(" + ser + ")";
+ 	      } else if (ser > 0) {
+   	       return (ser) + "00";
+        } else {
+   	       return (ser) + "00 bce";
+        }
+ 	      
+ 	      
+ 	      ///else {
+ 	      //   return (ser) + "00";
+        // }
 		    
 			case "de": 
-				return ser * 10; // return ((ser -1) * 10) + "s";
+				return ((ser -1) * 10) + "s";
 			case "ye": 
 				return ser; 
 			case "mo": 
@@ -1708,8 +1719,9 @@ tg.TG_TimelineView.prototype = {
 		var me = this,
 		  modal_type = options.event_modal.type,
 		  $par = $("#" + eid),
-		  modalTemplate = me._templates.event_modal;
+		  modalTemplate =  me._templates.event_modal;
 		  ev = MED.eventPool[eid],
+		  
 		  ev_img = (ev.image && ev.image.src) ? "<img src='" + ev.image.src + "'>" : "",
 		  ev_img_src = (ev.image && ev.image.src) ? ev.image.src : "",
 		  links = this.createEventLinksMenu(ev.link, modal_type),
@@ -1736,18 +1748,28 @@ tg.TG_TimelineView.prototype = {
 			
 			case "full":
 		  // full modal with scrim, etc
+		  var pad = 32;
        $modal
     			.appendTo(CONTAINER)
-  			  .css("z-index", me.ztop++)
+  			  .css({
+  			    "z-index": me.ztop++
+  			  })
   			  .position({
       				my: "left top",
       				at: "left top",
       				of: (CONTAINER),
       				offset:"0, 0",
       				collision: "none none"
-      	});
+      	  });
+      	$modal.children(".full_modal_panel").css({
+      	    "width":(me.dimensions.container.width - (pad*2)) + "px",
+    			  "height":(me.dimensions.container.height - (pad*2)) + "px"
+    	  });
 			
 			break;
+			
+			// You could add your own modal types here
+			// and position, etc accordingly
 		
 		  // normal small, draggable modal
 			default:

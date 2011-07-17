@@ -91,9 +91,9 @@
                               "</div>"+
                               "<div class='timeglider-footer'>"+
                               "<div class='timeglider-logo'></div>"+                      
-                              "<img class='timeglider-filter-bt' title='filter' src='js/timeglider/buttons/filter.png'>"+
-                              "<img class='timeglider-tools-bt' title='settings' src='js/timeglider/buttons/tools.png'>"+
-                              "<img class='timeglider-list-bt' title='timelines' src='js/timeglider/buttons/list.png'>"+  
+                              "<div class='timeglider-footer-button timeglider-filter-bt'></div>"+
+                              // "<div class='timeglider-footer-button timeglider-tools-bt'></div>"+
+                              "<div class='timeglider-footer-button timeglider-list-bt'></div>"+  
                               "</div>"+
                               "<div class='timeglider-event-hover-info'></div>"+
                             "</div><span id='timeglider-measure-span'></span>";
@@ -133,8 +133,16 @@
 	    
       /** 
       *********  PUBLIC METHODS ***************
+      *
       */
       
+      
+      /* 
+       * goTo
+       * sends timeline to a specific date and, optionally, zoom
+       * @param d {String} ISO8601 date: 'YYYY-MM-DD HH:MM:SS'
+       * @param z {Number} zoom level to change to; optional
+       */
       goTo : function (d, z) {
         timelineMediator.gotoDateZoom(d,z);
       },
@@ -149,7 +157,7 @@
       *          string:    "in" is the same as -1, "out" the same as 1
       */
       zoom : function (n) {
-        var n = 0;
+
         switch(n) {
           case "in": n = -1; break;
           case "out": n = 1; break;
@@ -159,6 +167,7 @@
         
         timelineMediator.zoom(n);
       },
+      
       
       /**
       *  panButton
@@ -176,7 +185,11 @@
         timelineView.setPanButton(sel, _vel);
       },
 
-
+      
+      /**
+       * destroy 
+       * wipes out everything
+       */
       destroy : function () {
         $.Widget.prototype.destroy.apply(this, arguments);
         $(this.element).html("");

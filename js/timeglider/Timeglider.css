@@ -224,13 +224,13 @@
 }
 
 .close-button-remove, .close-button-filter, .close-button-toggleMenu {
-	float:right;
 	cursor:pointer;
-	margin-right:-16px;
-	margin-top:-16px;
 	width:30px;
 	height:30px;
 	background-image:url(buttons/close.png);
+	position:absolute;
+	top:-16px;
+	right:-16px;
 }
 
 .timeglider-close-button-small {
@@ -363,21 +363,23 @@
 	position:absolute;
 }
 
+.timeglider-footer-button {
+  	float:right;
+  	width:26px;
+  	height:26px;
+  	cursor:pointer;
+  	margin-right:12px;
+}
 
 .timeglider-filter-bt {
-	float:right;
-	cursor:pointer;
 	margin-right:6px;
+	background-image:url(buttons/filter.png);
 }
 .timeglider-list-bt {
-  cursor:pointer;
-	margin-right:12px;
-	float:right;
+	background-image:url(buttons/list.png);
 }
 .timeglider-tools-bt {
-	cursor:pointer;
-	margin-right:18px;
-	float:right;
+ 	background-image:url(buttons/tools.png);
 }
 
 /* MENU MODALS */

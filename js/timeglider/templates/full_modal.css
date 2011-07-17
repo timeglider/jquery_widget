@@ -30,8 +30,8 @@
 
 .full_modal_panel {
   position:absolute;
-  top:56px;
-  left:64px;
+  top:32px;
+  left:32px;
   width:800px;
   height:400px;
   background-color:#FFF;
@@ -71,6 +71,7 @@
   margin-top:0;
   margin-left:16px;
 	z-index:5;
+	width:50%;
 }
 
 
@@ -78,7 +79,6 @@
 	font-size:12px;
 	color:#444;
 	margin:8px;
-	width:380px;
 	overflow-y:auto;
 	height:285px;
 	padding:8px 16px 8px 8px;
@@ -124,9 +124,9 @@
 .full_modal_links {
   margin:56px 8px 2px 16px;
 	padding:0;
-	width:320px;
-	float:right;
+	float:left;
 	z-index:5;
+	width:40%;
 }
 
 .full_modal_links img {
