@@ -178,7 +178,8 @@ tg.TG_Mediator.prototype = {
 
 				children.each(function(i){
 					field = keys[i],
-					value = $(this).text();
+					if( field == "description" ) value = $(this).html();
+					else value = $(this).text();
 					// TODO: VALIDATE EVENT STUFF HERE
 
 					row_obj[ field ] = value;
