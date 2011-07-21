@@ -14,7 +14,7 @@
   // standard "brick" height for placement grid
   var lev_ht = tg.levelHeight = 10,
       // number of available levels for events
-      tree_levels = 300,
+      tree_levels = 500,
       $ = jQuery,
       ceiling_padding = 16;
   
@@ -331,7 +331,13 @@
             
             for (k=1; k<=bricks_high; k++) {
               levToAddTo = level_num + k;
-              tree[levToAddTo].push(block);
+              // There is a max of 500 levels. Anything over will break the render.
+              if (typeof tree[levToAddTo] != 'undefined') {
+                tree[levToAddTo].push(block);
+              }
+              else {
+                debug.log('Too many blocks on tree.')
+              }
             }
    
           } // end if collision if false
