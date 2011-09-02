@@ -7,8 +7,7 @@ Welcome to the nascent Timeglider jQuery widget project. Timeglider is a web-bas
 Our goal here is to create a lightweight, extensible time-viewer-explorer which can zoom/pan and otherwise explore future/past events easily. Timeglider.com provides an authoring environment for creating hosted timelines; this plug in is meant for enterprise media, medical software, private legal workspaces, etc. all of which may have APIs of their own.
 
 LICENSE
-The Timeglider jQuery widget is free & open-source, per the MIT license:
-http://www.opensource.org/licenses/mit-license.php
+IMPORTANT :: PLEASE NOTE :: As of Sept. 1, 2011, the Timeglider javascript plugin is no longer available under or according to the MIT License. Please read about our license arrangements at http://timeglider.com/jquery?p=license
 
 TIMEGLIDER DATA FORMAT
 See a sample json file @ json_tests/idaho.json.
