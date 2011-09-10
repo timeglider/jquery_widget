@@ -94,7 +94,8 @@
 "link":"http://en.wikipedia.org/wiki/JavaScript",
 "importance":"55",
 "icon":"star_green.png",
-"image":"img/tests/js_thumb.jpg"
+"image":"img/tests/js_thumb.jpg",
+"image_class":"above"
 },
 
 {

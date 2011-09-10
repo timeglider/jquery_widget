@@ -37,8 +37,7 @@ timeglider.TimelineView
     
     
     var me = this;
-    
-    
+
       // vars declared in closure above
 	    MED = mediator;
 	    options = MED.options;
@@ -192,7 +191,7 @@ timeglider.TimelineView
 	/// ticks, as when zooming; panning will load
 	/// events of active timelines per tick	
 	$.subscribe("mediator.ticksReadySignal", function (b) {
-		  if (MED.ticksReady === true) {
+		if (MED.ticksReady === true) {
 			me.freshTimelines();
 		} 
 	});
@@ -205,8 +204,8 @@ timeglider.TimelineView
 	*/
 	$.subscribe("mediator.refreshSignal", function () {
 	  
-  	me.tickNum = 0;
-  	me.leftside = 0;
+  		me.tickNum = 0;
+  		me.leftside = 0;
   	
 		me.castTicks("refreshSignal");
 	});
@@ -230,7 +229,7 @@ timeglider.TimelineView
 	
 	// UPDATE TIMELINES MENU
 	$.subscribe("mediator.timelineListChangeSignal", function (arg) {
-    me.buildTimelineMenu();
+    	me.buildTimelineMenu();
 	});
 	
 
@@ -247,25 +246,25 @@ timeglider.TimelineView
 	});
 	
 	
-  $.subscribe("mediator.filterChange", function () {
+	$.subscribe("mediator.filterChange", function () {
     // refresh is done inside MED -- no need to refresh here
 	});
-  /* END PUB-SUB SUBSCRIBERS */
+	/* END PUB-SUB SUBSCRIBERS */
 
-  this.setPanButton($(".timeglider-pan-right"),-30);
-  this.setPanButton($(".timeglider-pan-left"),30);
-  /*
+	this.setPanButton($(".timeglider-pan-right"),-30);
+	this.setPanButton($(".timeglider-pan-left"),30);
+	/*
 	$(".timeglider-pan-buttons div")
 	  .mousedown(function () {
 	  var lr = $(this).attr("class"),
 	      // if it's not pan-right, it's pan-left
 	      dir = (lr == "timeglider-pan-right") ? -30 : 30; 
 	    me.intervalMachine("pan", {type:"set", fn: me.pan, args:[dir], intvl:30});  })
-    .mouseup(function () {
+	.mouseup(function () {
 	    me.intervalMachine("pan", {type:"clear", fn: me.pan, callback: "resetTicksHandle"});  })
-    .mouseout(function () {
-    	me.intervalMachine("pan", {type:"clear", fn: me.pan, callback: "resetTicksHandle"});  });
-  */
+	.mouseout(function () {
+		me.intervalMachine("pan", {type:"clear", fn: me.pan, callback: "resetTicksHandle"});  });
+	*/
 
   
 	$(this._views.TRUCK)
@@ -428,11 +427,8 @@ timeglider.TimelineView
 
 	
 	//// GESTURES  ////
-	/* !!TODO    Still a FAIL in iPad ---- 
-	   When actually doing something, Safari seems to 
-	   ignore attempts at preventing default... 
-	   
-	   PRIVATE/SCOPED IN CLOSURE, THESE ARE UNTESTABLE
+	/* !!TODO    Still a FAIL in iPad ---- 	   
+	   PRIVATE/SCOPED IN CLOSURE, THESE ARE UN-TESTABLE
 	*/
 	function gestureChange (e) {
 		e.preventDefault ();
@@ -442,9 +438,14 @@ timeglider.TimelineView
 		}
 	    var target = e.target;
 		// constant spatial converter value
-	    var g = (e.scale / 5)* MED.gestureStartZoom;
-		  debug.trace("gesture zoom:" + g, "note");
-		  MED.setZoomLevel(g);
+		//$("#output").append("<br>start zoom:" + MED.gestureStartZoom);
+		
+		// This basically works, but it's funky still....
+	    var g = Math.ceil(MED.gestureStartZoom / (e.scale));
+		
+		//$("#output").append("<br>new gest zoom:" + g);
+		
+		MED.setZoomLevel(g);
 	}
 
 
@@ -469,16 +470,20 @@ timeglider.TimelineView
   	    }, false);
 	  
 	  
-	  tgcompnt.addEventListener("gesturechange", function (e) {
-    	    	  e.preventDefault();
-    	    	  //var gLeft = e.touches.item(0).pageX;
-    	    	  //var gRight = e.touches.item(1).pageX;
-    	    	  var gLeft = "l", gRight = "r";
-    	        $("#output").append("[" + gLeft + ":" + gRight + "]");
+	  	tgcompnt.addEventListener("gesturechange", function (e) {
+			e.preventDefault();
+			
+			gestureChange(e);
+			//var gLeft = e.touches.item(0).pageX;
+			//var gRight = e.touches.item(1).pageX;
+			// debug.log("scale of e:" + e.scale)
+			
+			// var gLeft = "l", gRight = "r";
+			// $("#output").append("[" + gLeft + ":" + gRight + "]");
     	        
-    	 }, false);
+		}, false);
 	    
-	}
+	} // end if ($.support.touch)
 
 	
 } 
@@ -547,23 +552,23 @@ tg.TG_TimelineView.prototype = {
    },
   
 	
-  scaleToImportance : function(imp, zoo) {
-		    return imp / zoo;
+	scaleToImportance : function(imp, zoo) {
+		return imp / zoo;
 	},
 	
 	displayZoomLevel : function(zl) {
 
-	  if (zl > 0) {
-	  var me=this;
-	  if (options.display_zoom_level == true) {
- 		    $(me._views.ZOOM_DISPLAY).text(zl);
-	    }
-    }
+		if (zl > 0) {
+			var me=this;
+			if (options.display_zoom_level == true) {
+				$(me._views.ZOOM_DISPLAY).text(zl);
+			}
+    	}
  	},
  	
  	
  	doSomething : function() {
- 		    alert("FOO DO, viewer");
+ 		alert("FOO DO, viewer");
  	},
  	
  	
@@ -627,13 +632,13 @@ tg.TG_TimelineView.prototype = {
   * @param dir {Number}
   * simply moves the ticks one way or another
   * To work properly, it needs a resetTicksHandle() callback;
-  * Using this in conjunction with intervalMachine()
+  * Using this with intervalMachine()
   */
   pan : function (dir) {
 
     var d = dir || 20;
-    $t = $(TICKS),
-    newPos = $t.position().left + d;
+    	$t = $(TICKS),
+    	newPos = $t.position().left + d;
         
     $t.css({left:newPos});
     
@@ -691,7 +696,7 @@ tg.TG_TimelineView.prototype = {
 	
 	
 	registerDragging : function () {
-	  /* 
+	  	/* 
 			startSec --> the seconds-value of the
 	    initial focus date on landing @ zoom level
 		*/
@@ -883,9 +888,18 @@ tg.TG_TimelineView.prototype = {
 	clearTicks : function () {
 	  this.leftside = 0;
 		this.tickNum = 0;
+		
 		$(TICKS)
-		  .css("left", 0)
-			.html("<div class='timeglider-handle'></div>");
+			.css("left", 0);
+			// .html("<div class='timeglider-handle'></div>");
+		
+		// Here we need to remove everything but the handle, which
+		// needs to be in-tact so that gesturing (pinching to zoom)
+		// doesn't lose it's target
+		$(".tg-timeline-envelope").remove();
+		$(".timeglider-tick").remove();
+		
+		
 	},
 
 
@@ -954,7 +968,7 @@ tg.TG_TimelineView.prototype = {
 		this.tickNum ++;
 		if (info.type == "init") {
 			
-		  shiftLeft = this.tickOffsetFromDate(MED.getZoomInfo(), MED.getFocusDate(), tickWidth);
+			shiftLeft = this.tickOffsetFromDate(MED.getZoomInfo(), MED.getFocusDate(), tickWidth);
 
 			pos = Math.ceil(this.dimensions.container.centerx + shiftLeft);
 						
@@ -1279,7 +1293,7 @@ tg.TG_TimelineView.prototype = {
 	},
 	
 	
-  resetTicksHandle : function () {
+  	resetTicksHandle : function () {
 		$(this._views.HANDLE).offset({"left":$(CONTAINER).offset().left});
 	},
 	
