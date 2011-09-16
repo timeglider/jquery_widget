@@ -97,9 +97,17 @@
 		
 	<script src="js/timeglider/timeglider.timeline.widget.js" type="text/javascript" charset="utf-8"></script>
 
-  <script>
+  <script type='text/javascript'>
+  
+  	window.namespacer = {
+		clickCallback:function(obj) {
+			alert("hello");
+		}
+	}
 
 	$(document).ready(function () { 
+	
+	   
 		
 		var tg1 = $("#placement").timeline({
 				"min_zoom":5, 
