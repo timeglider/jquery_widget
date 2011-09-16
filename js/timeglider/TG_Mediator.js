@@ -25,12 +25,8 @@ reflects state back to view
         
         
       }
-      
-  /* In progress... */
-  tg.TimelineCollection = Backbone.Collection.extend({
-    model: timeglider.TG_Timeline
-  });
-  
+
+
 
   tg.TG_Mediator = function (wopts) {
   
@@ -194,57 +190,58 @@ tg.TG_Mediator.prototype = {
         return tl;
   },
  
-  /*
-  * parseData
-  * @param data {object} Multiple (1+) timelines object derived from data in loadTimelineData
-  */
-  parseData : function (data) {
-   
-    var M = this; // model ref
-    var ct = 0;
-    var dl = data.length, ti = {}, ondeck = {};
-    
-    for (var i=0; i<dl;i++) {
-      
-      ondeck = data[i];
-      ondeck.mediator = M;
-      ti = new timeglider.TG_Timeline(ondeck).toJSON(); // the timeline
-
-        if (ti.id.length > 0) {
-         
-          ct++;
-          M.swallowTimeline(ti);
-        }
-   
-    }
-
-    if (ct === 0) {
-      alert("ERROR loading data: Check JSON with jsonLint");
-    } else {
-      
-      this.timelineDataLoaded = true;
-      // might as well try!
-      this.tryLoading();
-    }
-  },
+	/*
+	* parseData
+	* @param data {object} Multiple (1+) timelines object derived from data in loadTimelineData
+	*/
+	parseData : function (data) {
+	
+		var M = this,
+			ct = 0,
+			dl = data.length, 
+			ti = {}, 
+			ondeck = {};
+	
+		for (var i=0; i<dl;i++) {
+	  
+			ondeck = data[i];
+			ondeck.mediator = M;
+			ti = new timeglider.TG_Timeline(ondeck).toJSON(); // the timeline
+		
+			if (ti.id.length > 0) {
+				ct++;
+				M.swallowTimeline(ti);
+			}
+	
+		}
+	
+		if (ct === 0) {
+			alert("ERROR loading data: Check JSON with jsonLint");
+		} else {
+		  
+			this.timelineDataLoaded = true;
+			// might as well try!
+			this.tryLoading();
+		}
+	},
   
-  /*
-  *  tryLoading
-  *  Sees if all criteria for proceeding to display the loaded data
-  *  are complete: data, image sizeing and others
-  *
-  */
-  tryLoading : function () {
-    
-    var a = (this.imagesSized == this.imagesToSize),
-        b = (this.timelineDataLoaded == true);
-    
-    if (a && b) {
-        this.setInitialTimelines();
-       
-        $.publish("mediator.timelineDataLoaded");
-    }
-  },
+	/*
+	*  tryLoading
+	*  Sees if all criteria for proceeding to display the loaded data
+	*  are complete: data, image sizeing and others
+	*
+	*/
+	tryLoading : function () {
+	
+		var a = (this.imagesSized == this.imagesToSize),
+	    	b = (this.timelineDataLoaded == true);
+	
+		if (a && b) {
+	    	this.setInitialTimelines();
+	   
+	    	$.publish("mediator.timelineDataLoaded");
+		}
+	},
 
 
     /* Makes an indexed array of timelines */
@@ -323,36 +320,36 @@ tg.TG_Mediator.prototype = {
       *  @param z ==> integer from 1-100
       *  
       */
-      setZoomLevel : function (z) {
-           
-        if (z <= this.max_zoom && z >= this.min_zoom) {
-       
-          // focusdate has to come first for combined zoom+focusdate switch
-          this.startSec = this._focusDate.sec;
-          
-          if (z != this._zoomLevel) {
-            this._zoomLevel = z;
-            this._zoomInfo = timeglider.zoomTree[z];
-            $.publish("mediator.zoomLevelChange");
-            return true
-          } else {
-            return false;
-          }
-          // end min/max check
-          } else { return false; }
+	setZoomLevel : function (z) {
+	   
+		if (z <= this.max_zoom && z >= this.min_zoom) {
+		
+		  // focusdate has to come first for combined zoom+focusdate switch
+		  this.startSec = this._focusDate.sec;
+		  
+		  if (z != this._zoomLevel) {
+		    this._zoomLevel = z;
+		    this._zoomInfo = timeglider.zoomTree[z];
+		    $.publish("mediator.zoomLevelChange");
+		    return true
+		  } else {
+		    return false;
+		  }
+		  // end min/max check
+		} else { return false; }
+	
+	}, 
 
-        }, 
 
-
-       /*
-        *  getZoomInfo
-        *  @return obj {Object} with 
-        *          zoomLevel (Number), label (String), tickWidth (Number), unit (String)
-        *
-        */
-        getZoomInfo : function () {
-          return this._zoomInfo;
-        },
+	/*
+	*  getZoomInfo
+	*  @return obj {Object} with 
+	*          zoomLevel (Number), label (String), tickWidth (Number), unit (String)
+	*
+	*/
+	getZoomInfo : function () {
+		return this._zoomInfo;
+	},
         
         
         
@@ -362,170 +359,169 @@ tg.TG_Mediator.prototype = {
         *         origin ("clude", "legend"), include (Str), exclude (Str), legend (Obj)
         *
         */
-        setFilters : function (obj) {
-          
-          switch (obj.origin) {
-          
-            case "clude":
-              this.filters.include = obj.include;
-              this.filters.exclude = obj.exclude;
-            break;
-          
-            case "legend":
-          
-                var icon = obj.icon;
-            
-                if (icon == "all") {
-                  this.filters.legend = [];
-                  $.publish("mediator.legendAll");  
-                } else {
-            
-                  if ($.inArray(icon, this.filters.legend) == -1) {
-                    this.filters.legend.push(icon);
-                  } else {
-                    // remove it
-                    var fol = this.filters.legend;
-                    var fr = [];
-                    fr = $.grep(fol, function (a) { return a != icon; });
-                    this.filters.legend = fr;
-                  }
-            
-                 } // end if/else for "clear"
-               
-            break;
-            
-          } // end switch
-       
-            $.publish("mediator.filtersChange");   
-            this.refresh();      
-        },
+    setFilters : function (obj) {
+      
+		switch (obj.origin) {
+		
+			case "clude":
+				this.filters.include = obj.include;
+				this.filters.exclude = obj.exclude;
+			break;
+			
+			case "legend":
+			
+				var icon = obj.icon;
+				
+				if (icon == "all") {
+					this.filters.legend = [];
+					$.publish("mediator.legendAll");  
+				} else {
+				
+					if ($.inArray(icon, this.filters.legend) == -1) {
+						this.filters.legend.push(icon);
+					} else {
+						// remove it
+						var fol = this.filters.legend;
+						var fr = [];
+						fr = $.grep(fol, function (a) { return a != icon; });
+						this.filters.legend = fr;
+					}
+				
+				 } // end if/else for "clear"
+			   
+			break;
+		
+		} // end switch
+   
+        $.publish("mediator.filtersChange");   
+        this.refresh();
+	},
          
 
-        getTicksOffset : function () {
-          return this._ticksOffset;
-        },
+	getTicksOffset : function () {
+		return this._ticksOffset;
+	},
 
 
-        setTicksOffset : function (newOffset) {
-          // This triggers changing the focus date
-          // main listener hub for date focus and tick-appending
-          this._ticksOffset = newOffset;
-          /* In other words, ticks are being dragged! */
-          $.publish( "mediator.ticksOffsetChange" );
-        },
+	setTicksOffset : function (newOffset) {
+		// This triggers changing the focus date
+		// main listener hub for date focus and tick-appending
+		this._ticksOffset = newOffset;
+		/* In other words, ticks are being dragged! */
+		$.publish( "mediator.ticksOffsetChange" );
+	},
 
-        /*
-        *  getTickBySerial
-        *  @param serial {Number} serial date unit number (rata die, monthnum, year, etc)
-        *
-        *  @return {Object} info about _existing_ displayed tick
-        *
-        */
-        getTickBySerial : function (serial) {
-          var ta = this.ticksArray,
-          tal = ta.length;
-          for (var t=0; t<tal; t++) {
-            var tick = ta[t];
-            if (tick.serial == serial) { return tick; }
-          }
-          return false;
-        },
+	/*
+	*  getTickBySerial
+	*  @param serial {Number} serial date unit number (rata die, monthnum, year, etc)
+	*
+	*  @return {Object} info about _existing_ displayed tick
+	*
+	*/
+	getTickBySerial : function (serial) {
+		var ta = this.ticksArray,
+		tal = ta.length;
+		for (var t=0; t<tal; t++) {
+			var tick = ta[t];
+			if (tick.serial == serial) { return tick; }
+		}
+		return false;
+	},
 
-        /*
-        *  addToTicksArray
-        *	 @param obj {Object} 
-        *		  serial: #initial tick
-        *		  type:init|l|r
-        *		  unit:ye | mo | da | etc
-        *		  width: #px
-        *		  left: #px
-        *	 @param focusDate {TG_Date}
-        *		 used for initial tick; others set off init
-        */
-        addToTicksArray : function (obj, focusDate) {
+	/*
+	*  addToTicksArray
+	*	 @param obj {Object} 
+	*		  serial: #initial tick
+	*		  type:init|l|r
+	*		  unit:ye | mo | da | etc
+	*		  width: #px
+	*		  left: #px
+	*	 @param focusDate {TG_Date}
+	*		 used for initial tick; others set off init
+	*/
+	addToTicksArray : function (obj, focusDate) {
+	
+		if (obj.type == "init") {
+			// CENTER
+			obj.serial = TG_Date.getTimeUnitSerial(focusDate, obj.unit);
+			this.ticksArray = [obj];
+		} else if (obj.type == "l") {
+			// LEFT
+			obj.serial = this.ticksArray[0].serial - 1;
+			this.ticksArray.unshift(obj);
+		} else {
+			// RIGHT SIDE
+			obj.serial = this.ticksArray[this.ticksArray.length -1].serial + 1;
+			this.ticksArray.push(obj);
+		}
+		
+		// this.ticksArrayChange.broadcast();
+		$.publish( "mediator.ticksArrayChange" );
+		
+		return obj.serial;
+	},
 
-          if (obj.type == "init") {
-            // CENTER
-            obj.serial = TG_Date.getTimeUnitSerial(focusDate, obj.unit);
-            this.ticksArray = [obj];
-          } else if (obj.type == "l") {
-            // LEFT
-            obj.serial = this.ticksArray[0].serial - 1;
-            this.ticksArray.unshift(obj);
-          } else {
-            // RIGHT SIDE
-            obj.serial = this.ticksArray[this.ticksArray.length -1].serial + 1;
-            this.ticksArray.push(obj);
-          }
 
-
-          // this.ticksArrayChange.broadcast();
-          $.publish( "mediator.ticksArrayChange" );
-          
-          return obj.serial;
-        },
-
-
-        toggleTimeline : function (id) {
-          
-          var lt = this.timelinePool[id];
-          var ia = $.inArray(id, this.activeTimelines);
-
-          if (ia == -1) {
-            // The timeline is 
-            // not active ---- bring it on
-            this.activeTimelines.push(id);
-            // setting FD does NOT refresh
-            
-            // timeline focus_date is ISO-8601 basic
-            // ==== new TG_Date()
-            var tl_fd = new TG_Date(lt.focus_date);
-            
-            this.setFocusDate(tl_fd);
-           
-            // resetting zoomLevel DOES refresh
-            this.setZoomLevel(lt.initial_zoom);
-            
-          } else {
-            // it's active, remove it
-            this.activeTimelines.splice(ia,1);
-          }
-          
-          this.refresh();
-          // this will change the menu list/appearance
-          $.publish( "mediator.activeTimelinesChange" );
-
-        },
+	toggleTimeline : function (id) {
+	
+		var lt = this.timelinePool[id];
+		var ia = $.inArray(id, this.activeTimelines);
+		
+		if (ia == -1) {
+			// The timeline is 
+			// not active ---- bring it on
+			this.activeTimelines.push(id);
+			// setting FD does NOT refresh
+			
+			// timeline focus_date is ISO-8601 basic
+			// ==== new TG_Date()
+			var tl_fd = new TG_Date(lt.focus_date);
+			
+			this.setFocusDate(tl_fd);
+			
+			// resetting zoomLevel DOES refresh
+			this.setZoomLevel(lt.initial_zoom);
+		
+		} else {
+			// it's active, remove it
+			this.activeTimelines.splice(ia,1);
+		}
+		
+		this.refresh();
+		// this will change the menu list/appearance
+		$.publish( "mediator.activeTimelinesChange" );
+	
+	},
        
-       /*
-       *  reportImageSize
-       *  @param img {Object} has "id" of event, "src", "width" and "height" at least
-       *  
-       *  This information is reported from TG_Timeline as data is loading. Since image
-       *  size gathering sidetracks from data loading, there's a 
-       *
-       
-       */
-        reportImageSize : function (img) {
-         
-          var ev = MED.eventPool["ev_" + img.id];
-          
-          if (!img.error) {
-          	ev.image.width = img.width;
-          	ev.image.height = img.height;
-       	  } else {
-          	ev.image = {}
-          	debug.log("WHOOPS: MISSING IMAGE: " + img.src);
-     	    }
-
-        	this.imagesSized++;
-          
-        	if (this.imagesSized == this.imagesToSize) {
-        	  // if there are images, this would usually be
-        	  // the last step before proceeding
-        		this.tryLoading();
-        	}
-        }
+	/*
+	*  reportImageSize
+	*  @param img {Object} has "id" of event, "src", "width" and "height" at least
+	*  
+	*  This information is reported from TG_Timeline as data is loading. Since image
+	*  size gathering sidetracks from data loading, there's a 
+	*
+	
+	*/
+	reportImageSize : function (img) {
+	 
+		var ev = MED.eventPool["ev_" + img.id];
+		
+		if (!img.error) {
+			ev.image.width = img.width;
+			ev.image.height = img.height;
+		} else {
+			ev.image = {}
+			debug.log("WHOOPS: MISSING IMAGE: " + img.src);
+		}
+		
+		this.imagesSized++;
+		
+		if (this.imagesSized == this.imagesToSize) {
+			// if there are images, this would usually be
+			// the last step before proceeding
+			this.tryLoading();
+		}
+	}
 
 
 
@@ -533,103 +529,104 @@ tg.TG_Mediator.prototype = {
 }; 
         
         
-        tg.getLowHigh = function (arr) {
+tg.getLowHigh = function (arr) {
 
-        	var i, n, 
-        		high = parseFloat(arr[0]), 
-        		low = high;
+	var i, n, 
+		high = parseFloat(arr[0]), 
+		low = high;
 
-        	for (i=0; i<arr.length; i++) {
-        		n = parseFloat(arr[i]);
-        		if (n<low) low = n;
-        		if (n>high) high = n;
-        	}
+	for (i=0; i<arr.length; i++) {
+		n = parseFloat(arr[i]);
+		if (n<low) low = n;
+		if (n>high) high = n;
+	}
 
-        	return {"high":high, "low":low}
+	return {"high":high, "low":low}
 
-        };
+};
         
   
     	  
         
         
-        tg.validateOptions = function (widget_settings) {	
-          
-            this.optionsMaster = { initial_focus:{type:"date"}, 
-            	editor:{type:"string"}, 
-            	backgroundColor:{type:"color"}, 
-            	backgroundImage:{type:"color"}, 
-            	min_zoom:{type:"number", min:1, max:100}, 
-            	max_zoom:{type:"number", min:1, max:100}, 
-            	initial_zoom:{type:"number", min:1, max:100}, 
-            	show_centerline:{type:"boolean"}, 
-            	display_zoom_level:{type:"boolean"}, 
-            	data_source:{type:"url"}, 
-            	basic_fontsize:{type:"number", min:9, max:100}, 
-            	mouse_wheel:{type:"string", possible:["zoom","pan"]}, 
-            	initial_timeline_id:{type:"string"},
-            	icon_folder:{type:"string"},
-            	show_footer:{type:"boolean"},
-            	display_zoom_level:{type:"boolean"},
-            	event_modal:{type:"object"}
-          	}
-          	
-        		// msg: will be return value: validates when empty 
-        		// change lb to <br> if the error is returned in HTML (vs alert())
-        		var me = this, msg = "", lb = "\n";
+tg.validateOptions = function (widget_settings) {	
+  
+	this.optionsMaster = { 
+		initial_focus:{type:"date"}, 
+    	editor:{type:"string"}, 
+    	backgroundColor:{type:"color"}, 
+    	backgroundImage:{type:"color"}, 
+    	min_zoom:{type:"number", min:1, max:100}, 
+    	max_zoom:{type:"number", min:1, max:100}, 
+    	initial_zoom:{type:"number", min:1, max:100}, 
+    	show_centerline:{type:"boolean"}, 
+    	display_zoom_level:{type:"boolean"}, 
+    	data_source:{type:"url"}, 
+    	basic_fontsize:{type:"number", min:9, max:100}, 
+    	mouse_wheel:{type:"string", possible:["zoom","pan"]}, 
+    	initial_timeline_id:{type:"string"},
+    	icon_folder:{type:"string"},
+    	show_footer:{type:"boolean"},
+    	display_zoom_level:{type:"boolean"},
+    	event_modal:{type:"object"}
+  	}
+  	
+	// msg: will be return value: validates when empty 
+	// change lb to <br> if the error is returned in HTML (vs alert())
+	var me = this, msg = "", lb = "\n";
 
-        		$.each(widget_settings, function(key, value) { 
+	$.each(widget_settings, function(key, value) { 
 
-        			if (me.optionsMaster[key]) {
+		if (me.optionsMaster[key]) {
 
-        				switch (me.optionsMaster[key].type) {
-        					case "string": 
-        						if (typeof value != "string") { msg += (key + " needs to be a string." + lb); }
-        						if (me.optionsMaster[key].possible) {
-        							if ($.inArray(value, me.optionsMaster[key].possible) == -1) {
-        								msg += (key + " must be: " + me.optionsMaster[key].possible.join(" or "));
-        							}
-        						}
-        					break;
+			switch (me.optionsMaster[key].type) {
+				case "string": 
+					if (typeof value != "string") { msg += (key + " needs to be a string." + lb); }
+					if (me.optionsMaster[key].possible) {
+						if ($.inArray(value, me.optionsMaster[key].possible) == -1) {
+							msg += (key + " must be: " + me.optionsMaster[key].possible.join(" or "));
+						}
+					}
+				break;
 
-        					case "number":
-        						if (typeof value != "number") { msg += (value + " needs to be a number." + lb); }
-        						if (me.optionsMaster[key].min) {
-        							if (value < me.optionsMaster[key].min) {
-        								msg += (key + " must be greater than or equal to " + me.optionsMaster[key].min + lb);
-        							}
-        						}
+				case "number":
+					if (typeof value != "number") { msg += (value + " needs to be a number." + lb); }
+					if (me.optionsMaster[key].min) {
+						if (value < me.optionsMaster[key].min) {
+							msg += (key + " must be greater than or equal to " + me.optionsMaster[key].min + lb);
+						}
+					}
 
-        						if (me.optionsMaster[key].max) {
-        							if (value > me.optionsMaster[key].max) {
-        								msg += (key + " must be less than or equal to " + me.optionsMaster[key].max + lb);
-        							}
-        						}
-        					break;
+					if (me.optionsMaster[key].max) {
+						if (value > me.optionsMaster[key].max) {
+							msg += (key + " must be less than or equal to " + me.optionsMaster[key].max + lb);
+						}
+					}
+				break;
 
-        					case "date":
-        						// TODO validate a date string using TG_Date...
-        					break;
+				case "date":
+					// TODO validate a date string using TG_Date...
+				break;
 
-        					case "boolean":
-        						if (typeof value != "boolean") msg += (value + " needs to be a number." + lb);
-        					break;
+				case "boolean":
+					if (typeof value != "boolean") msg += (value + " needs to be a number." + lb);
+				break;
 
-        					case "url":
-        						// TODO test for pattern for url....
-        					break;
+				case "url":
+					// TODO test for pattern for url....
+				break;
 
-        					case "color":
-        						/// TODO test for pattern for color, including "red", "orange", etc
-        					break;
+				case "color":
+					/// TODO test for pattern for color, including "red", "orange", etc
+				break;
 
-        				}
-        			}
-        		}); // end each
+			}
+		}
+	}); // end each
 
-        		return msg;
+	return msg;
 
-        };
+};
         
        
 })(timeglider);
