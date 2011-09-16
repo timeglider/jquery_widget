@@ -28,6 +28,9 @@ timeglider.TimelineView
   }
 
 
+
+
+
   /*
   *  timeglider.TG_TimelineView
   *  
@@ -90,16 +93,17 @@ timeglider.TimelineView
     	  
     	// generated, appended on the fly, then removed
     	event_modal_video : $.template( null,
-    	  "<div class='tg-modal timeglider-ev-video-modal ui-widget-content' id='${id}_modal'>"
-    	  + "<div class='close-button-remove'></div>"
-        + "<iframe width = '100%' height='300' src='${video}'></iframe></div>"),
+			"<div class='tg-modal timeglider-ev-video-modal ui-widget-content' id='${id}_modal'>"
+			+ "<div class='close-button-remove'></div>"
+			+ "<iframe width = '100%' height='300' src='${video}'></iframe></div>"),
         
-      // generated, appended on the fly, then removed
-      timeline_modal : $.template( null, "<div class='tg-modal timeglider-timeline-modal ui-widget-content' id='tl_${id}_modal'>" 
-      	  + "<div class='close-button-remove'></div>"
-      	  + "<h4 id='title'>${title}</h4>"
-      	  + "<p>{{html description}}</p>"
-      	  + "</div>"),
+		// generated, appended on the fly, then removed
+		timeline_modal : $.template( null, 
+			"<div class='tg-modal timeglider-timeline-modal ui-widget-content' id='tl_${id}_modal'>" 
+			+ "<div class='close-button-remove'></div>"
+			+ "<h4 id='title'>${title}</h4>"
+			+ "<p>{{html description}}</p>"
+			+ "</div>"),
      
      // generated, appended on the fly, then removed
      filter_modal : $.template( null,
@@ -253,6 +257,7 @@ timeglider.TimelineView
 
 	this.setPanButton($(".timeglider-pan-right"),-30);
 	this.setPanButton($(".timeglider-pan-left"),30);
+	
 	/*
 	$(".timeglider-pan-buttons div")
 	  .mousedown(function () {
@@ -269,20 +274,19 @@ timeglider.TimelineView
   
 	$(this._views.TRUCK)
 		.dblclick(function(e) {
-			 	var Cw = me.dimensions.container.width,
+			var Cw = me.dimensions.container.width,
 			    Cx = e.pageX - (me.dimensions.container.offset.left),
-				  offMid = Cx - Cw/2,
+				offMid = Cx - Cw/2,
 			    secPerPx = MED.getZoomInfo().spp,
 				  // don't need mouse_y yet :
 				  //	var Cy = e.pageY - $(PLACEMENT).offset().top;
 			    fdSec = MED.getFocusDate().sec,
-				  dcSec = Math.floor(fdSec + (offMid * secPerPx)),
+				dcSec = Math.floor(fdSec + (offMid * secPerPx)),
 				  
-				  clk = new TG_Date(dcSec),
-				  foc = new TG_Date(fdSec);
-				  
+				clk = new TG_Date(dcSec),
+				foc = new TG_Date(fdSec);
 				
-				debug.trace("DBLCLICK:" + foc.mo + "-" + foc.ye + " DBLCLICK:" + clk.mo + "-" + clk.ye, "note");	
+				// debug.trace("DBLCLICK:" + foc.mo + "-" + foc.ye + " DBLCLICK:" + clk.mo + "-" + clk.ye, "note");	
 				
 		})			
 		.bind('mousewheel', function(event, delta) {
@@ -298,94 +302,97 @@ timeglider.TimelineView
 
 	
 	$(TICKS)
-	  	.draggable({ axis: 'x',
-			//start: function(event, ui) {
-				/// 
-			//},
-			drag: function(event, ui) {
-				// just report movement to model...
-				MED.setTicksOffset($(this).position().left);
-			},
+  	.draggable({ axis: 'x',
+		//start: function(event, ui) {
+			/// 
+		//},
+		drag: function(event, ui) {
+			// just report movement to model...
+			MED.setTicksOffset($(this).position().left);
+		},
+	
+		stop: function(event, ui) {
+			me.resetTicksHandle();
+			me.registerDragging();
 		
-			stop: function(event, ui) {
-				me.resetTicksHandle();
-				me.registerDragging();
-    		
-				// me.easeOutTicks();  
+			// me.easeOutTicks();  
+		}
+		
+	}) // end draggable
+	.delegate(CONTAINER + " .timeglider-timeline-event", "click", function () { 
+		// EVENT ON-CLICK !!!!!!
+		var eid = $(this).attr("id"); 
+		var ev = MED.eventPool[eid];
+		 
+	  	if (ev.click_callback) {
+	    
+		    var broken = ev.click_callback.split(".");
+		    var ns = broken[0];
+	    
+		    if (broken.length == 2) {
+		    	var fn = broken[1];
+		    	window[ns][fn](ev);
+			} else {
+				window[ns](ev);
 			}
-			
-		}) // end draggable
-		.delegate(CONTAINER + " .timeglider-timeline-event", "click", function () { 
-			// EVENT ON-CLICK !!!!!!
-			var eid = $(this).attr("id"); 
-			var ev = MED.eventPool[eid];
-			 
-		  if (ev.click_callback) {
-		    
-    		    var broken = ev.click_callback.split(".");
-    		    var ns = broken[0];
-		    
-    		    if (broken.length == 2) {
-    		      var fn = broken[1];
-    		      window[ns][fn](ev);
-    	      } else {
-    	        window[ns](ev);
-            }
-		    
-	    } else {
-	          me.eventModal(eid);
-      }
-		  
-		})	
-		.delegate(".timeglider-timeline-event", "mouseover", function () { 
-			var eid = $(this).attr("id"); 
-			var ev = MED.eventPool[eid];
-			debug.trace("hover, title:" + ev.title, "note"); 
-			me.eventHover($(this), ev)
-		})
-		.delegate(".timeglider-timeline-event", "mouseout", function () { 
-			var eid = $(this).attr("id"); 
-			var ev = MED.eventPool[eid];
-			debug.trace("hover, title:" + ev.title, "note"); 
-			me.eventUnHover($(this), ev)
-		})
-		.delegate(".timeglider-event-collapsed", "hover", function () { 
-			var eid = $(this).attr("id"); 
-			var title = MED.eventPool[eid].title;
-			debug.trace("collapsed, title:" + title, "note"); 
-		});
+	    
+		} else {
+      		me.eventModal(eid);
+			}
+	  
+	})	
+	.delegate(".timeglider-timeline-event", "mouseover", function () { 
+		var eid = $(this).attr("id"); 
+		var ev = MED.eventPool[eid];
+		debug.trace("hover, title:" + ev.title, "note"); 
+		me.eventHover($(this), ev)
+	})
+	.delegate(".timeglider-timeline-event", "mouseout", function () { 
+		var eid = $(this).attr("id"); 
+		var ev = MED.eventPool[eid];
+		debug.trace("hover, title:" + ev.title, "note"); 
+		me.eventUnHover($(this), ev)
+	})
+	.delegate(".timeglider-event-collapsed", "hover", function () { 
+		var eid = $(this).attr("id"); 
+		var title = MED.eventPool[eid].title;
+		debug.trace("collapsed, title:" + title, "note"); 
+	});
+	// END TICKS CHAIN!!
+		
 		
 	$(CONTAINER).delegate(".close-button-remove", "click", function () {
-	  var parent_id = $(this).parent().attr("id");
-	  $("#" + parent_id).remove();
+		var parent_id = $(this).parent().attr("id");
+		$("#" + parent_id).remove();
 	});
 	
 	
 	// FULL MODAL
 	$(CONTAINER).delegate(".full_modal_close", "click", function () {
-	  $(".full_modal").remove();
+		$(".full_modal").remove();
 	});
 	
 	$(CONTAINER).delegate(".full_modal_scrim", "click", function () {
-	  $(".full_modal").remove();
+		$(".full_modal").remove();
 	});
 	
 	
 	$(CONTAINER).delegate(".timeglider-more-plus", "click", function () {
-	  MED.zoom(-1);
+		MED.zoom(-1);
 	});
 	
 	$(CONTAINER + " .timeglider-legend-close").live("click", function () {
-	  var $legend = $(CONTAINER + " .timeglider-legend");
-	   $legend.fadeOut(300, function () { $legend.remove(); });
-  });
-  
-  $(CONTAINER + " .timeglider-legend-all").live("click", function () {
-    $(CONTAINER + " .timeglider-legend li").each(function () {
-      $(this).removeClass("tg-legend-icon-selected");
-    });
-	  MED.setFilters({origin:"legend", icon: "all"});
-  });
+		var $legend = $(CONTAINER + " .timeglider-legend");
+		$legend.fadeOut(300, function () { $legend.remove(); });
+	});
+	
+	$(CONTAINER + " .timeglider-legend-all").live("click", function () {
+		$(CONTAINER + " .timeglider-legend li").each(function () {
+			$(this).removeClass("tg-legend-icon-selected");
+		});
+		
+		MED.setFilters({origin:"legend", icon: "all"});
+	});
 
 /*
  $(".full_modal").live("click",  function (e) {
@@ -486,7 +493,8 @@ timeglider.TimelineView
 	} // end if ($.support.touch)
 
 	
-} 
+}
+
 
 
 tg.TG_TimelineView.prototype = {
@@ -1180,7 +1188,11 @@ tg.TG_TimelineView.prototype = {
         // }
 		    
 			case "de": 
-				return ((ser -1) * 10) + "s";
+				if (ser > 120){
+					return (ser * 10) + "s";
+				} else {
+					return (ser * 10);
+				}
 			case "ye": 
 				return ser; 
 			case "mo": 
@@ -1428,7 +1440,7 @@ tg.TG_TimelineView.prototype = {
 			// TODO establish the 120 below in some kind of constant!
 			// meanwhile: tl_top is the starting height of a loaded timeline 
 			// set to 120 unless it's already been dragged
-		  tl_top = (tl.top) ? parseInt(tl.top.replace("px", "")) : (cht-120); // sets up default
+		  tl_top = (tl.top) ? parseInt(tl.top.replace("px", "")) : (cht-100); // sets up default
 			legend_label = tl.legend.length > 0 ? "<span class='tg-timeline-legend-bt'>legend</span>" : ""; 
 			
 			// TIMELINE CONTAINER
