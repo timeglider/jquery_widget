@@ -20,13 +20,8 @@ reflects state back to view
   var MED = {},
       TG_Date = tg.TG_Date,
       options = {},
-      $ = jQuery,
-      contants = {
-        
-        
-      }
-
-
+      $ = jQuery;
+      
 
   tg.TG_Mediator = function (wopts) {
   
@@ -48,10 +43,16 @@ reflects state back to view
     this.gestureStartZoom = 0;
     this.gestureStartScale = 0; // .999 etc reduced to 1 to 100
     this.filters = {include:"", exclude:"", legend:[]};
-    this.eventPool = [];
-    // this.eventPool['ev_000'] = "hello!";
     
-    this.timelinePool = {};
+    
+    this.eventCollection = new tg.TG_EventCollection;
+
+	this.eventCollection.bind("add", function(ev) {
+  		// debug.log("Ahoy: added: " + ev.get("title"));
+	});
+
+    this.timelineCollection = new tg.TG_TimelineCollection;
+    
     this.imagesSized = 0;
     this.imagesToSize = 0;
     this.timelineDataLoaded = false,
@@ -247,7 +248,10 @@ tg.TG_Mediator.prototype = {
     /* Makes an indexed array of timelines */
     swallowTimeline : function (obj) {
       this.sole_timeline_id = obj.id;
-      this.timelinePool[obj.id] = obj;
+      debug.log("MED adding timeline... id:" + obj.id)
+      this.timelineCollection.add(obj);
+      
+      // MAY NOT NEED THIS WITH BB COLLECTION
       $.publish("mediator.timelineListChangeSignal");
     },
 
@@ -464,7 +468,8 @@ tg.TG_Mediator.prototype = {
 
 	toggleTimeline : function (id) {
 	
-		var lt = this.timelinePool[id];
+		var lt = this.timelineCollection.get(id).attributes;
+		
 		var ia = $.inArray(id, this.activeTimelines);
 		
 		if (ia == -1) {
@@ -504,22 +509,25 @@ tg.TG_Mediator.prototype = {
 	*/
 	reportImageSize : function (img) {
 	 
-		var ev = MED.eventPool["ev_" + img.id];
+	 	debug.log("reporting image size...", img)
+		var ev = MED.eventCollection.get(img.id);
 		
-		if (!img.error) {
-			ev.image.width = img.width;
-			ev.image.height = img.height;
-		} else {
-			ev.image = {}
-			debug.log("WHOOPS: MISSING IMAGE: " + img.src);
-		}
+		if (ev.has("image")) {
+			if (!img.error) {
+				ev.set(image.width) = img.width;
+				ev.set(image.height) = img.height;
+			} else {
+				ev.set(image) = {}
+				debug.log("WHOOPS: MISSING IMAGE: " + img.src);
+			}
 		
-		this.imagesSized++;
+			this.imagesSized++;
 		
-		if (this.imagesSized == this.imagesToSize) {
-			// if there are images, this would usually be
-			// the last step before proceeding
-			this.tryLoading();
+			if (this.imagesSized == this.imagesToSize) {
+				// if there are images, this would usually be
+				// the last step before proceeding
+				this.tryLoading();
+			}
 		}
 	}
 

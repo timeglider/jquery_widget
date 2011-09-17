@@ -3,7 +3,7 @@
  * http://timeglider.com/jquery
  *
  * Copyright 2011, Mnemograph LLC
- * Licensed under the MIT open source license
+ * Licensed under Timeglider Dual License
  * http://timeglider.com/jquery/?p=license
  *
  */
@@ -127,7 +127,7 @@
               
               b_htm = "<div"+ 
                       " style='left:" + b.left + "px' "+
-                      "id='ev_" + b.id + "'"+
+                      "id='" + b.id + "'"+
                        b.html.substr(4);
               
               html += b_htm;
@@ -186,7 +186,7 @@
            } else {
              
              // TODO: function for getting "standard" event shit
-              html += "<div class='timeglider-timeline-event " + span_selector_class + "' id='ev_" + b.id + "' "
+              html += "<div class='timeglider-timeline-event " + span_selector_class + "' id='" + b.id + "' "
               + "style='width:" + b.width  + "px;"
               + "height:" + b.height + "px;"
               + "left:" + b.left  + "px;" 

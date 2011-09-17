@@ -401,7 +401,8 @@
         "high_threshold": "60",
         "importance": "50",
         "ypix": "0",
-        "slug": ""
+        "slug": "",
+        "click_callback":"namespacer.clickCallback"
     }
     ,
     {
