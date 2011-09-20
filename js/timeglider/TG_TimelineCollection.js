@@ -13,7 +13,7 @@
 
 	tg.TG_TimelineCollection = Backbone.Collection.extend({
 
-		model: tg.TG_Timeline,
+		model: tg.TG_Timeline
 
 
 	});

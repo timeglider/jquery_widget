@@ -55,8 +55,7 @@
 			}
 			
 			ev.titleWidth = tg.getStringWidth(ev.title);	
-			debug.log("ev.titleWidth" + ev.titleWidth)
-
+			
 			this.set(ev);
 			
 		},
@@ -64,11 +63,7 @@
 		
 		// TODO: validate event attributes
 		validate: function (attrs) {
-			
-			
-			 	debug.log("validate EVENT MODEL!!");
-
-		
+			// TODO		
 		},
 		
 		

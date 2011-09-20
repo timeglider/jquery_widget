@@ -9,9 +9,10 @@
  */
 
 /*******************************
-TIMELINE MEDIATOR
-handles timeline behavior, 
-reflects state back to view
+	TIMELINE MEDIATOR
+	¥ handles timeline behavior, 
+	¥ reflects state back to view
+	¥ owns the timeline and event data models
 
 ********************************/
 (function(tg){
@@ -27,7 +28,7 @@ reflects state back to view
   
     this.options = options = wopts;
     
-    // quasi-private vars
+    // these relate to the display ------ not individual timeline attributes
     this._focusDate = {};
     this._zoomInfo = {};
     this._zoomLevel = 1;
@@ -45,18 +46,13 @@ reflects state back to view
     this.filters = {include:"", exclude:"", legend:[]};
     
     
+    this.timelineCollection = new tg.TG_TimelineCollection;
     this.eventCollection = new tg.TG_EventCollection;
 
-	this.eventCollection.bind("add", function(ev) {
-  		// debug.log("Ahoy: added: " + ev.get("title"));
-	});
-
-    this.timelineCollection = new tg.TG_TimelineCollection;
     
     this.imagesSized = 0;
     this.imagesToSize = 0;
     this.timelineDataLoaded = false,
-    this.foo = "bark";
     
     // this.setZoomLevel(options.initial_zoom);
     this.initial_timeline_id = options.initial_timeline_id || "";
@@ -88,66 +84,66 @@ tg.TG_Mediator.prototype = {
         if (!zoom || zl == false) { this.refresh(); }
     },
     
+    
     zoom : function (n) {
       var new_zoom = this.getZoomLevel() + parseInt(n);
       this.setZoomLevel(new_zoom);
     },
   
   
+	/*
+	* loadTimelineData
+	* @param src {object} object OR json data to be parsed for loading
+	* TODO: create option for XML input
+	*/
+	loadTimelineData : function (src) {
+	var M = this; // model ref
+	// Allow to pass in either the url for the data or the data itself.
+	
+	if (src) {
+	  
+	    if (typeof src === "object") {
+	      // local/pre-loaded JSON
+	      M.parseData(src);
+	    } else if (src.substr(0,1) == "#") {
+	   
+	      var tableData = [M.getTableTimelineData(src)];
+	      // debug.log(JSON.stringify(tableData));
+	      M.parseData(tableData);
+	    } else {
+	
+	        $.getJSON(src, function (data) {
+	              M.parseData(data);
+	           }
+	        );
+	
+	    }// end [obj vs remote]
+	
+	} else {
+	  // NO INITIAL DATA: That's cool, still build the timeline
+	  // focusdate has been set to today
+	  this.timelineDataLoaded = true;
+	  this.setZoomLevel(Math.floor((this.max_zoom + this.min_zoom) / 2));
+	  this.tryLoading();
+	  
+	}
+	
+	},
   
-  /*
-  * loadTimelineData
-  * @param src {object} object OR json data to be parsed for loading
-  * TODO: create option for XML input
-  */
-  loadTimelineData : function (src) {
-    var M = this; // model ref
-    // Allow to pass in either the url for the data or the data itself.
-    
-    if (src) {
-      
-        if (typeof src === "object") {
-          // local/pre-loaded JSON
-          M.parseData(src);
-        } else if (src.substr(0,1) == "#") {
-       
-          var tableData = [M.getTableTimelineData(src)];
-          // debug.log(JSON.stringify(tableData));
-          M.parseData(tableData);
-        } else {
-
-            $.getJSON(src, function (data) {
-                  M.parseData(data);
-               }
-            );
-
-        }// end [obj vs remote]
-    
-    } else {
-      // NO INITIAL DATA: That's cool, still build the timeline
-      // focusdate has been set to today
-      this.timelineDataLoaded = true;
-      this.setZoomLevel(Math.floor((this.max_zoom + this.min_zoom) / 2));
-      this.tryLoading();
-      
-    }
-    
-  },
-  
-  /*
-  *  getTableTimelineData
-  *  @param table_id {string} the html/DOM id of the table
-  *  @return timeline data object ready for parsing
-  *
-  */
-  getTableTimelineData : function (table_id) {
-
-      var tl = {},
-          now = 0,
-          keys = [], field, value,
+	/*
+	*  getTableTimelineData
+	*  @param table_id {string} the html/DOM id of the table
+	*  @return timeline data object ready for parsing
+	*
+	*/
+	getTableTimelineData : function (table_id) {
+	
+	  var tl = {},
+	      now = 0,
+	      keys = [], field, value,
 		      event_id = '',
 		      $table = $(table_id);
-
+	
 		  // timeline head
 		  tl.id = table_id.substr(1);		 
 		  tl.title = $table.attr("title") || "untitled";
@@ -155,41 +151,41 @@ tg.TG_Mediator.prototype = {
 		  tl.focus_date = $table.attr("focus_date") || TG_Date.getToday;
 		  tl.initial_zoom = $table.attr("initial_zoom") || 20;
 		  tl.events = [];
-
-      $table.find('tr').each(function(i){
-
-          	var children = $(this).children(),
-              row_obj;
-
-          	// first row -- <th> or <td>, gather the field names
-           	if ( i === 0 ) {
-
-            	keys = children.map(function(){
+	
+	  $table.find('tr').each(function(i){
+	
+	      	var children = $(this).children(),
+	          row_obj;
+	
+	      	// first row -- <th> or <td>, gather the field names
+	       	if ( i === 0 ) {
+	
+	        	keys = children.map(function(){
 	            	// using "tg-*" map each column to the corresponding data
-              		return $(this).attr( 'class' ).replace( /^.*?\btg-(\S+)\b.*?$/, '$1' );
-            	}).get();
-
-          	} else {
+	          		return $(this).attr( 'class' ).replace( /^.*?\btg-(\S+)\b.*?$/, '$1' );
+	        	}).get();
+	
+	      	} else {
 				// i.e. an event
-           		row_obj = {};
-
+	       		row_obj = {};
+	
 				children.each(function(i){
 					field = keys[i],
 					value = $(this).text();
 					// TODO: VALIDATE EVENT STUFF HERE
-
+	
 					row_obj[ field ] = value;
 				});
 				event_id = 'ev_' + now++;
 				row_obj.id = event_id;
-            	tl.events.push(row_obj);
-
-          	} // end if-else i===0
-    }); // end .each()
-    
-        $table.css("display", "none");
-        return tl;
-  },
+	        	tl.events.push(row_obj);
+	
+	      	} // end if-else i===0
+	}); // end .each()
+	
+	    $table.css("display", "none");
+	    return tl;
+	},
  
 	/*
 	* parseData
@@ -248,7 +244,7 @@ tg.TG_Mediator.prototype = {
     /* Makes an indexed array of timelines */
     swallowTimeline : function (obj) {
       this.sole_timeline_id = obj.id;
-      debug.log("MED adding timeline... id:" + obj.id)
+   
       this.timelineCollection.add(obj);
       
       // MAY NOT NEED THIS WITH BB COLLECTION
@@ -317,13 +313,13 @@ tg.TG_Mediator.prototype = {
     
 
 
-      /* 
-      *  setZoomLevel
-      *  This in turn sets other zoomInfo attributes : width, label, tickWidth
-      *  Other zoom info comes from the zoomTree array
-      *  @param z ==> integer from 1-100
-      *  
-      */
+	/* 
+	*  setZoomLevel
+	*  This in turn sets other zoomInfo attributes : width, label, tickWidth
+	*  Other zoom info comes from the zoomTree array
+	*  @param z ==> integer from 1-100
+	*  
+	*/
 	setZoomLevel : function (z) {
 	   
 		if (z <= this.max_zoom && z >= this.min_zoom) {
@@ -357,12 +353,12 @@ tg.TG_Mediator.prototype = {
         
         
         
-        /*
-        *  setFilters
-        *  @param obj {Object} containing: 
-        *         origin ("clude", "legend"), include (Str), exclude (Str), legend (Obj)
-        *
-        */
+	/*
+	*  setFilters
+	*  @param obj {Object} containing: 
+	*         origin ("clude", "legend"), include (Str), exclude (Str), legend (Obj)
+	*
+	*/
     setFilters : function (obj) {
       
 		switch (obj.origin) {
@@ -415,6 +411,8 @@ tg.TG_Mediator.prototype = {
 		$.publish( "mediator.ticksOffsetChange" );
 	},
 
+
+
 	/*
 	*  getTickBySerial
 	*  @param serial {Number} serial date unit number (rata die, monthnum, year, etc)
@@ -431,6 +429,8 @@ tg.TG_Mediator.prototype = {
 		}
 		return false;
 	},
+
+
 
 	/*
 	*  addToTicksArray
@@ -466,6 +466,8 @@ tg.TG_Mediator.prototype = {
 	},
 
 
+
+
 	toggleTimeline : function (id) {
 	
 		var lt = this.timelineCollection.get(id).attributes;
@@ -497,6 +499,8 @@ tg.TG_Mediator.prototype = {
 		$.publish( "mediator.activeTimelinesChange" );
 	
 	},
+     
+     
        
 	/*
 	*  reportImageSize
@@ -504,8 +508,6 @@ tg.TG_Mediator.prototype = {
 	*  
 	*  This information is reported from TG_Timeline as data is loading. Since image
 	*  size gathering sidetracks from data loading, there's a 
-	*
-	
 	*/
 	reportImageSize : function (img) {
 	 

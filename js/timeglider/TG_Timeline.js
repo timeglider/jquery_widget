@@ -12,8 +12,8 @@
 
 /*
 *
-* Timeline (Backbone Model)
-*
+* Timeline
+* Backbone Model
 *
 */
 
@@ -24,8 +24,7 @@
 		$ = jQuery,
 		widget_options = {},
 		app_mediator;
-	
-	
+
 	
 	// map model onto larger timeglider namespace
 	/////////////////////////////////////////////
@@ -43,10 +42,7 @@
 		},
 		
 		
-		/*
-		processes init model data, adds certain calculated values
-		
-		*/
+		// processes init model data, adds certain calculated values
 		_chewTimeline : function (tdata) {
 		
 			// TODO ==> add additional units
@@ -101,8 +97,7 @@
 					} else { 
 						ev.id = id = "anon" + this.anonEventId++; 
 					}
-	
-					
+
 			
 					ev.startdateObj = new TG_Date(ev.startdate, ev.date_display);
 					ev.enddateObj = new TG_Date(ev.enddate, ev.date_display);
@@ -174,9 +169,9 @@
 			if (tdata.legend.length > 0) {
 				var legend = tdata.legend;
 				for (var i=0; i<legend.length; i++) {
-				var legend_item = legend[i];
-			// debug.log("leg. title:" + legend_item['title'])
-			}
+					var legend_item = legend[i];
+					// debug.log("leg. title:" + legend_item['title'])
+				} 
 			}
 			
 			
@@ -185,7 +180,8 @@
 			/// TODO: create a $.merge for defaults for a timeline
 			tdata.display = "expanded";
 			tdata.dateHash = dhash;
-			// keeping events in the eventCollection [collection]
+			
+			// keeping events in the eventCollection
 			// hashing references to evnet IDs inside the date hash
 			delete tdata.events;
 			

@@ -78,6 +78,9 @@ tg.TG_PlayerView = function (widget, mediator) {
 	CONTAINER = this._views.CONTAINER;
 	TICKS = this._views.TICKS;
 	
+	
+  	/////////////////////////////
+	
 	/*  TEMPLATES FOR THINGS LIKE MODAL WINDOWS
 	*   events themselves are non-templated and rendered in TG_Org.js
 	*   as there are too many on-the-fly style attributes etc, and 
@@ -85,32 +88,30 @@ tg.TG_PlayerView = function (widget, mediator) {
 	*
 	*
 	*/
- 
+ 	this.initTimelineVOffset = 100;
+ 	
+ 	
+ 	
+	
+ 	
 	// in case custom event_modal fails, we need this object to exist
 	this._templates = {}
   
 	this._templates = {
 	    // allows for customized templates imported
-	    test : "testola",
-	    
-      event_modal: this.getEventModalTemplate(),
-    	  
-    	// generated, appended on the fly, then removed
-    	event_modal_video : $.template( null,
+		test : "testola",
+		
+		event_modal: this.getEventModalTemplate(),
+		  
+		// generated, appended on the fly, then removed
+		event_modal_video : $.template( null,
 			"<div class='tg-modal timeglider-ev-video-modal ui-widget-content' id='${id}_modal'>"
 			+ "<div class='close-button-remove'></div>"
 			+ "<iframe width = '100%' height='300' src='${video}'></iframe></div>"),
-        
-		// generated, appended on the fly, then removed
-		timeline_modal : $.template( null, 
-			"<div class='tg-modal timeglider-timeline-modal ui-widget-content' id='tl_${id}_modal'>" 
-			+ "<div class='close-button-remove'></div>"
-			+ "<h4 id='title'>${title}</h4>"
-			+ "<p>{{html description}}</p>"
-			+ "</div>"),
+		
      
-     // generated, appended on the fly, then removed
-     filter_modal : $.template( null,
+     	// generated, appended on the fly, then removed
+     	filter_modal : $.template( null,
           "<div class='tg-modal timeglider-menu-modal timeglider-filter-box timeglider-menu-hidden'>"+
           "<div class='close-button'></div>"+
           "<h3>filter</h3>"+
@@ -124,7 +125,7 @@ tg.TG_PlayerView = function (widget, mediator) {
            "<div class='timeglider-menu-modal-point-right'>"+
            "</div>"),
           
-      timeline_list_modal : $.template( null,
+      	timeline_list_modal : $.template( null,
           "<div class='timeglider-menu-modal timeglider-timeline-menu timeglider-menu-hidden'>"+
           "<div class='close-button'></div>"+
           "<h3>timelines</h3>"+
@@ -132,7 +133,7 @@ tg.TG_PlayerView = function (widget, mediator) {
           "<div class='timeglider-menu-modal-point-right'>"+
           "</div>"),
         
-      legend_modal : $.template( null,
+      	legend_modal : $.template( null,
           "<div class='timeglider-menu-modal timeglider-legend timeglider-menu-hidden'  id='${id}_legend'>"+
           "<div class='timeglider-menu-modal-content'><ul id='${id}'>{{html legend_list}}</ul>"+
           "<div class='timeglider-close-button-small timeglider-legend-close'></div>"+
@@ -140,10 +141,86 @@ tg.TG_PlayerView = function (widget, mediator) {
           "</div>"+
           "</div>")
 
-    }
+    };
+    
+    
+    ///////////////////////////////
+  	this.timelineModal = tg.TG_TimelineView.extend({
+  	
+		parent:this,
+		
+		tagName: "div",
+		
+		model:tg.TG_Timeline,
+		
+		className: 'tg-modal timeglider-timeline-modal ui-widget-content',
+		
+		events: {
+			"click .close-button-remove": "remove",
+		},
+		
+		template: "<div class='close-button-remove'></div>"
+			+ "<h4 id='title'>${title}</h4>"
+			+ "<p>{{html description}}</p>",
+
+		initialize: function() {
+			this.model.bind('change', this.render, this);
+		},
+		
+		render: function() {
+		$(this.el).html($.tmpl(this.template, this.model.attributes)).attr("id", this.model.get("id") + "_timelineModal");
+		return this;
+		},
+		
+		remove: function() {
+			$(this.el).fadeOut();
+		}
+
+	});
+	
 
 
-	$(CONTAINER).css("height", $(PL).height());
+	$(CONTAINER)
+		.delegate(".tg-timeline-envelope .timeline-info", "click", function () {
+		var id = $(this).data("timeline_id");
+		me.openTimelineModal(id);
+	})
+		.delegate(".tg-timeline-envelope .expand-collapse", "click", function () {
+		var id = $(this).data("timeline_id");
+		me.expandCollapseTimeline(id);
+	})
+		.delegate(".tg-timeline-envelope .tg-timeline-legend-bt", "click", function () {
+		var id = $(this).data("timeline_id");
+		me.legendModal(id);
+	})
+		.delegate(".close-button-remove", "click", function () {
+			var parent_id = $(this).parent().attr("id");
+			$("#" + parent_id).remove();
+	})
+		.delegate(".full_modal_close", "click", function () {
+			$(".full_modal").remove();
+	})
+		.delegate(".full_modal_scrim", "click", function () {
+			$(".full_modal").remove();
+	})
+		.delegate(".timeglider-more-plus", "click", function () {
+			MED.zoom(-1);
+	})
+		.delegate(".timeglider-legend-close", "click", function () {
+			var $legend = $(CONTAINER + " .timeglider-legend");
+			$legend.fadeOut(300, function () { $legend.remove(); });
+	})
+		.delegate(".timeglider-legend-all", "click", function () {
+			$(CONTAINER + " .timeglider-legend li").each(function () {
+				$(this).removeClass("tg-legend-icon-selected");
+			});
+		
+			MED.setFilters({origin:"legend", icon: "all"});
+	})
+		.css("height", $(PL).height());
+
+	
+	
 	
 	this.basicFontSize = options.basic_fontsize;
 	
@@ -367,48 +444,12 @@ tg.TG_PlayerView = function (widget, mediator) {
 	});
 	// END TICKS CHAIN!!
 		
-		
-	$(CONTAINER).delegate(".close-button-remove", "click", function () {
-		var parent_id = $(this).parent().attr("id");
-		$("#" + parent_id).remove();
-	});
-	
-	
-	// FULL MODAL
-	$(CONTAINER).delegate(".full_modal_close", "click", function () {
-		$(".full_modal").remove();
-	});
-	
-	$(CONTAINER).delegate(".full_modal_scrim", "click", function () {
-		$(".full_modal").remove();
-	});
-	
-	
-	$(CONTAINER).delegate(".timeglider-more-plus", "click", function () {
-		MED.zoom(-1);
-	});
-	
-	$(CONTAINER + " .timeglider-legend-close").live("click", function () {
-		var $legend = $(CONTAINER + " .timeglider-legend");
-		$legend.fadeOut(300, function () { $legend.remove(); });
-	});
-	
-	$(CONTAINER + " .timeglider-legend-all").live("click", function () {
-		$(CONTAINER + " .timeglider-legend li").each(function () {
-			$(this).removeClass("tg-legend-icon-selected");
-		});
-		
-		MED.setFilters({origin:"legend", icon: "all"});
-	});
 
-/*
- $(".full_modal").live("click",  function (e) {
-   $(TICKS).draggable({disabled:true});
- });
-*/
 
- $.tmpl(me._templates.timeline_list_modal,{}).appendTo(CONTAINER);
- $(me._views.TIMELINE_LIST_BT).click(function () {
+
+ 	$.tmpl(me._templates.timeline_list_modal,{}).appendTo(CONTAINER);
+ 
+ 	$(me._views.TIMELINE_LIST_BT).click(function () {
 		  $(me._views.TIMELINE_MENU).toggleClass("timeglider-menu-hidden")
 		    .position({
         		my: "right bottom",
@@ -584,7 +625,7 @@ tg.TG_PlayerView.prototype = {
  	
  	
  	doSomething : function() {
- 		alert("FOO DO, viewer");
+ 		alert("DO SOMETHING, viewer");
  	},
  	
  	
@@ -643,6 +684,8 @@ tg.TG_PlayerView.prototype = {
   	return Math.abs(v - 101);
   },
   
+  
+  
   /*
   * pan
   * @param dir {Number}
@@ -682,10 +725,9 @@ tg.TG_PlayerView.prototype = {
           if ((toff < 0) && (Math.abs(toff) < (w-tw))) {
             $elem.css({marginLeft:(-1 * toff)+5});
           } 
-			  }
-				
+		}
 				// is offscreen == false: $(this).removeClass('timeglider-event-offscreen')
-			 }
+			}
 		);
 
 		$(".tg-timeline-envelope").each(
@@ -728,24 +770,31 @@ tg.TG_PlayerView.prototype = {
 		  MED.setFocusDate(newD);
 	},
 	
-  
-  buildTimelineMenu : function () {
-    
-    var id, ta = MED.timelineCollection, ta_ct = 0, me=this;
-		
-		    // cycle through menu
-        $(me._views.TIMELINE_MENU_UL + " li").remove();
-      	for (id in ta) {
-      			if (ta.hasOwnProperty(id)) {
-        			var t = ta[id];
-        			$(me._views.TIMELINE_MENU_UL).append("<li class = 'timelineList' id='" + id + "'>" + t.title + "</li>");
-        			$("li#" + id).click( function() { 
-        			    MED.toggleTimeline($(this).attr("id"));
-        			    });
-      			} // end filter
-      			ta_ct ++;
-      	}
-  },
+	
+	  
+	buildTimelineMenu : function () {
+	    
+	    var me=this,
+	    	id, 
+	    	tcmodels = MED.timelineCollection.models;
+	    
+	    
+	    _.each(tcmodels, function(model){ 
+	    
+	    	var title = model.get("title");
+	    	var id = model.get("id");
+	    	
+	    	$(me._views.TIMELINE_MENU_UL).append("<li class='timelineList' id='" + id + "'>" + title + "</li>");
+        	
+        		
+			$("li#" + id).click( function() { 
+			    MED.toggleTimeline($(this).attr("id"));
+			});
+			
+
+	    	
+	    });
+	},
   
 	
 	/* 
@@ -753,63 +802,63 @@ tg.TG_PlayerView.prototype = {
 	  so we need to feed in and take out inverse values with invSliderVal()            
 	*/
 	buildSlider : function () {
-	  var iz = MED.getZoomLevel();
+		var iz = MED.getZoomLevel();
 	  
 		if (options.min_zoom == options.max_zoom) {
-		  // With a single zoom level, hide the zoom controller
-  	  $(this._views.SLIDER_CONTAINER).css("display", "none");
-  	  
-    } else {
+			// With a single zoom level, hide the zoom controller
+			$(this._views.SLIDER_CONTAINER).css("display", "none");
+  	  		
+		} else {
       
-      if (options.display_zoom_level == true) {
-    		var $zl = $("<div>").appendTo(this._views.SLIDER_CONTAINER).addClass("timeglider-zoomlevel-display");
+			if (options.display_zoom_level == true) {
+    			var $zl = $("<div>").appendTo(this._views.SLIDER_CONTAINER).addClass("timeglider-zoomlevel-display");
     		$zl.html('&nbsp;');
-    	}
+    		}
       
-		  var me = this,
-		  init_zoom = me.invSliderVal(iz),
-      hZoom = MED.max_zoom,
-      lZoom = MED.min_zoom,
-      sHeight = (1 + hZoom - lZoom) * 3;
+			var me = this,
+				init_zoom = me.invSliderVal(iz),
+      			hZoom = MED.max_zoom,
+				lZoom = MED.min_zoom,
+				sHeight = (1 + hZoom - lZoom) * 3;
 	
 		 	$(this._views.SLIDER)
-			  .css("height", sHeight)
-			  .slider({ 
-  				steps: 100,
-  				handle: $('.knob'),
-  				animate:300,
-				orientation: 'vertical',
-
-				/* "min" here is really the _highest_ zoom value @ upside down */
-  				min:me.invSliderVal(hZoom),
-
-				/* "max" actually takes (i  nverse value of) low zoom level */
-  				max:me.invSliderVal(lZoom),
-
-  				value:init_zoom,
-
-				start: function (e, ui) {
+				.css("height", sHeight)
+				.slider({ 
+					steps: 100,
+					handle: $('.knob'),
+					animate:300,
+					orientation: 'vertical',
+					
+					/* "min" here is really the _highest_ zoom value @ upside down */
+					min:me.invSliderVal(hZoom),
+					
+					/* "max" actually takes (i  nverse value of) low zoom level */
+					max:me.invSliderVal(lZoom),
+					
+					value:init_zoom,
+					
+					start: function (e, ui) {
 					// show zoom level legend
 					me.sliderActive = true;
-				},
-
-				stop: function (e, ui) {
+					},
+					
+					stop: function (e, ui) {
 					// hide zoom level legend
 					me.sliderActive = false;
-				},
-
-				change: function(e,ui){
-      				// i.e. on-release handler
+					},
+					
+					change: function(e,ui){
+						// i.e. on-release handler
 					    // possibly load throttled back events
-  			}, 
+  					}, 
 
-				slide: function(e, ui) {
-					// sets model zoom level to INVERSE of slider value
-					MED.setZoomLevel(me.invSliderVal(ui.value));
-				}
-			});
+					slide: function(e, ui) {
+						// sets model zoom level to INVERSE of slider value
+						MED.setZoomLevel(me.invSliderVal(ui.value));
+					}
+				}); // end .slider()
 			
-		} // end--if min_zoom == max_zoom 
+			} // end--if min_zoom == max_zoom 
 	},
 	
 	/*
@@ -819,38 +868,43 @@ tg.TG_PlayerView.prototype = {
 	
 	eventHover : function ($ev, ev_obj) {
 
-    var me = this, 
-        $hov = $(".timeglider-event-hover-info");
+    	var me = this, 
+        	$hov = $(".timeglider-event-hover-info");
     
-    // This works, but what if it has to sit on the bottom
-    // debug.log("hover display:" + ev_obj.date_display);
-    if (ev_obj.date_display != "no") {
-      $hov.position({
-  	    my: "left bottom",
-  	    at: "left top",
-  	    of: $ev,
-  	    offset: "1, -10",
-  	    collision: "flip flip"}).text(ev_obj.startdateObj.format("D", true));
-    }
+    	// This works, but what if it has to sit on the bottom
+    	// debug.log("hover display:" + ev_obj.date_display);
+    	if (ev_obj.date_display != "no") {
+			$hov
+			.position({
+				my: "left bottom",
+		  	    at: "left top",
+		  	    of: $ev,
+		  	    offset: "1, -10",
+		  	    collision: "flip flip"}
+			)
+		  	.text(ev_obj.startdateObj.format("D", true));
+		  	
+    	}
 	  	   
-	  $ev.addClass("tg-event-hovered");
+	  		$ev.addClass("tg-event-hovered");
 	   
 	   
-  },
+	},
 	
 	eventUnHover : function ($ev, ev_obj) {
-	   $(".timeglider-event-hover-info").css("left", "-1000px");
-	   $ev.removeClass("tg-event-hovered");
-  },
+		$(".timeglider-event-hover-info").css("left", "-1000px");
+		$ev.removeClass("tg-event-hovered");
+	},
   
   
   
-  /* FILTER BOX SETUP */
-  setupFilter : function () {
-      var me=this;
-      $.tmpl(me._templates.filter_modal,{}).appendTo(me._views.CONTAINER);
+	/* FILTER BOX SETUP */
+	setupFilter : function () {
+	
+		var me=this;
+		$.tmpl(me._templates.filter_modal,{}).appendTo(me._views.CONTAINER);
       
-  	  $(me._views.FILTER_BT).click(function() {  
+		$(me._views.FILTER_BT).click(function() {  
 
   	      var $bt = $(this), fbox = me._views.FILTER_BOX;
 
@@ -898,7 +952,7 @@ tg.TG_PlayerView.prototype = {
 
         }); // end FILTER_BT click
 
- }, // end setupFilter
+ 	}, // end setupFilter
   
   
 	clearTicks : function () {
@@ -1406,12 +1460,12 @@ tg.TG_PlayerView.prototype = {
 	*/
 	freshTimelines : function () {
 
-		var t, i, tl, tlModel, tu, ts, tick, tE, tl_ht, t_f, t_l,
+		var me = this,
+			t, i, tl, tlView, tlModel, tu, ts, tick, tE, tl_ht, t_f, t_l,
 			active = MED.activeTimelines,
 			ticks = MED.ticksArray,
 			borg = '',
 			$title, $ev, 
-			me = this,
 			evid, ev,
 			stuff = '', 
 			cx = me.dimensions.container.centerx,
@@ -1442,33 +1496,28 @@ tg.TG_PlayerView.prototype = {
 			
 			// TODO establish the 120 below in some kind of constant!
 			// meanwhile: tl_top is the starting height of a loaded timeline 
-			// set to 120 unless it's already been dragged
-			tl_top = (tl.top) ? parseInt(tl.top.replace("px", "")) : (cht-100); // sets up default
+			tl_top = (tl.top) ? parseInt(tl.top.replace("px", "")) : (cht-me.initTimelineVOffset); 
 			
-			//legend_label = tl.legend.length > 0 ? "<span class='tg-timeline-legend-bt'>legend</span>" : "";
+					
+			tlView = new tg.TG_TimelineView({model:tlModel});
+	
 			
-			/// !!! WHICH TIMELINE???
-			console.log("tlModel", tlModel);
+      		$tl = $(tlView.render().el).appendTo(TICKS);
+
+			$tl.find(".tg-timeline-legend-bt").click(function() {
+				
+				tlModel.set({"title":"**NT**" + (+new Date())})
 			
-			var view = new tg.TG_TimelineView({model:tlModel});
+			});
 			
 			
-      		$tl = $(view.render().el).appendTo(TICKS);
+			tlModel.bind('change:title', function () {
+       			// change title across all instances here??
+       			
+      		});
       		
-      		// appendTo(TICKS);		
-			// TIMELINE CONTAINER
-			/*
-			$tl = $("<div class='tg-timeline-envelope' id='" + tl.id
-				+ "'><div class='titleBar'><div class='timeline-title'>"
-			 	+ tl.title + "<div class='tg-timeline-env-buttons'>"
-			 	+ "<span class='timeline-info'>info</span>"
-			 	+ "<span class='tg-timeline-legend-bt'>legend</span>"
-			 	// + "<span class='expand-collapse'>expand/collapse</span>" 
-			 	+ "</div></div></div></div>")
-			 	.appendTo(TICKS);
-			*/
-
-
+      		
+      
 			$tl.draggable({
 					axis:"y",
 					handle:".titleBar", 
@@ -1480,22 +1529,6 @@ tg.TG_PlayerView.prototype = {
 				.css("top", tl_top);
 				
 			tl_ht = $tl.height();
-			
-			
-			$(CONTAINER + " .tg-timeline-envelope#" + tl.id + " .titleBar .expand-collapse")
-			.click(function () { 
-				me.expandCollapseTimeline(tl.id );
-			});
-			
-			$(CONTAINER + " .tg-timeline-envelope#" + tl.id + " .titleBar .timeline-info")
-			.click(function () { 
-  				me.timelineModal(tl.id);
-  			});
-  		
-			$(CONTAINER + " .tg-timeline-envelope#" + tl.id + " .titleBar .tg-timeline-legend-bt")
-			.click(function () { 
-				me.legendModal(tl.id);
-			});
 
 			$title = $tl.children(".titleBar");
 			t_f = cx + ((tl.bounds.first - foSec) / spp);
@@ -1546,12 +1579,10 @@ tg.TG_PlayerView.prototype = {
 
   
   
-  /*
-  * appendTimelines
-  * @param tick {Object} contains serial, time-unit, and more info
-  *
-  *
-  */
+	/*
+	* appendTimelines
+	* @param tick {Object} contains serial, time-unit, and more info
+	*/
 	appendTimelines : function (tick) {
       
 			var active = MED.activeTimelines, 
@@ -1651,21 +1682,21 @@ tg.TG_PlayerView.prototype = {
       if (expCol == "collapsed") {
         return stuff;
       } else {
-        // if expanded, "stuff" is actually 
-        // being built into the borg already
+        // if expanded, "stuff" is
+        // being built into the borg
         return "";
       }
 
-  },
+	},
   
-  /*
-  * registerEventImages
-  *  Events can have classes applied to their images; these routines
-  *  take care of doing non-css-driven positioning after the layout
-  *  has finished placing events in the tick sphere.
-  *
-  *
-  */
+	/*
+	* registerEventImages
+	*  Events can have classes applied to their images; these routines
+	*  take care of doing non-css-driven positioning after the layout
+	*  has finished placing events in the tick sphere.
+	*
+	*
+	*/
 	registerEventImages : function ($timeline) {
 	  
 	  $(CONTAINER + " .timeglider-event-image-bar").each(
@@ -1704,39 +1735,29 @@ tg.TG_PlayerView.prototype = {
 		MED.refresh();
 	},
   
-
-  //////// MODALS 
   
-  timelineModal : function (id) {
-    
-    $(CONTAINER + " #tl_" + id + "_modal").remove();
+    //////// MODALS 
   
-    var tl = MED.timelineCollection.get(id).attributes, 
-    me = this,
-    templ_obj = {
-  			  title:tl.title,
-  			  description:tl.description,
-  			  id:id
-  		};
-  		
-  		
-		 $.tmpl(me._templates.timeline_modal,templ_obj)
-  			.appendTo(CONTAINER)
-  			.css("z-index", me.ztop++)
-	      .position({
-      				my: "left top",
-      				at: "left top",
-      				of: (me._views.CONTAINER),
-      				offset: "32, 32", // left, top
-      				collision: "fit fit"
-      	})
-      	.draggable({stack: ".timeglider-modal"});
+  openTimelineModal : function (id) {
   
+  	var me=this,
+  		tl = MED.timelineCollection.get(id),
+  		item = new this.timelineModal({model:tl}),
+  		$modal = $(item.render().el)
+  		.appendTo("body")
+		.position({
+			my: "left top",
+			at: "left top",
+			of: (me._views.CONTAINER),
+			offset: "32, 32", // left, top
+			collision: "fit fit"
+		})
+		.css("z-index", me.ztop++)
+		.draggable({stack: ".timeglider-modal"})	
+	  
   },
   
   
-  
-	
 	createEventLinksMenu : function (linkage, modal_type) {
 		if (!linkage) return "";
 		
@@ -1752,121 +1773,122 @@ tg.TG_PlayerView.prototype = {
 				lUrl = linkage[l].url;
 				lLab = linkage[l].label;
 				html += "<li><a href='" + lUrl + "' target='_blank'>" + lLab + "</a></li>"
-		  }
+		  	}
 		}
 		return html;
 	},
   
   
-  
-  
-  
+    
 	eventModal : function (eid) {
 		// remove if same event already has modal opened
 		$(CONTAINER + " #" + eid + "_modal").remove();
 		
 		var me = this,
-		  modal_type = options.event_modal.type,
-		  $par = $("#" + eid),
-		  modalTemplate =  me._templates.event_modal;
-		  ev = MED.eventCollection.get(eid).attributes,
+			modal_type = options.event_modal.type,
+			$par = $("#" + eid),
+			modalTemplate =  me._templates.event_modal;
+			ev = MED.eventCollection.get(eid).attributes,
+			
+			ev_img = (ev.image && ev.image.src) ? "<img src='" + ev.image.src + "'>" : "",
+			ev_img_src = (ev.image && ev.image.src) ? ev.image.src : "",
+			links = this.createEventLinksMenu(ev.link, modal_type),
+			ev_descr = (modal_type == "default") ? ev_img + ev.description: ev.description;
 		  
-		  ev_img = (ev.image && ev.image.src) ? "<img src='" + ev.image.src + "'>" : "",
-		  ev_img_src = (ev.image && ev.image.src) ? ev.image.src : "",
-		  links = this.createEventLinksMenu(ev.link, modal_type),
-		  ev_descr = (modal_type == "default") ? ev_img + ev.description: ev.description;
-		  
-		  templ_obj = { 
-  			  title:ev.title,
-  			  description:ev_descr,
-  			  id:eid,
-  			  startdate: ev.startdateObj.format("D", true),
-  			  links:links,
-  			  image:ev_img_src,
-  			  video: ev.video
-  		}
+			templ_obj = { 
+				title:ev.title,
+				description:ev_descr,
+				id:eid,
+				startdate: ev.startdateObj.format("D", true),
+				links:links,
+				image:ev_img_src,
+				video: ev.video
+			}
 		  
 			if (ev.video) { 
-       modalTemplate = me._templates.event_modal_video;
-       templ_obj.video = ev.video;
+				modalTemplate = me._templates.event_modal_video;
+				templ_obj.video = ev.video;
 			}
 			
-	    var $modal = $.tmpl(modalTemplate,templ_obj);
+	    	var $modal = $.tmpl(modalTemplate,templ_obj);
 	    
 			switch (modal_type) {
 			
-			case "full":
-		  // full modal with scrim, etc
-		  var pad = 32;
-       $modal
-    			.appendTo(CONTAINER)
-  			  .css({
-  			    "z-index": me.ztop++
-  			  })
-  			  .position({
-      				my: "left top",
-      				at: "left top",
-      				of: (CONTAINER),
-      				offset:"0, 0",
-      				collision: "none none"
-      	  });
-      	$modal.children(".full_modal_panel").css({
-      	    "width":(me.dimensions.container.width - (pad*2)) + "px",
-    			  "height":(me.dimensions.container.height - (pad*2)) + "px"
-    	  });
+				case "full":
+		  			// full modal with scrim, etc
+		  			var pad = 32;
+       				$modal
+    					.appendTo(CONTAINER)
+  			  			.css({
+  			    			"z-index": me.ztop++
+  			  			})
+  			  			.position({
+      						my: "left top",
+      						at: "left top",
+      						of: (CONTAINER),
+      						offset:"0, 0",
+      						collision: "none none"
+      	  			});
+      	  			
+      				$modal.children(".full_modal_panel").css({
+      	    			"width":(me.dimensions.container.width - (pad*2)) + "px",
+    			  		"height":(me.dimensions.container.height - (pad*2)) + "px"
+    	  			});
 			
-			break;
+				break;
 			
-			// You could add your own modal types here
-			// and position, etc accordingly
+				// Add custom modal type here
+				// and position, etc accordingly
 		
-		  // normal small, draggable modal
-			default:
-			  $modal
-    			.appendTo(TICKS)
-  			  .css("z-index", me.ztop++)
-			    .position({
-      				my: "right center",
-      				at: "left center",
-      				of: $par,
-      				offset: "-12, -1", // left, top
-      				collision: "flip fit"
-      	})
-      	.draggable()
-      	.hover(function () { $(this).css("z-index", me.ztop++); });
+		  		// normal small, draggable modal
+				default:
+					$modal
+						.appendTo(TICKS)
+						.css("z-index", me.ztop++)
+						.position({
+							my: "right center",
+							at: "left center",
+							of: $par,
+							offset: "-12, -1", // left, top
+							collision: "flip fit"
+					})
+      				.draggable()
+      				.hover(function () { $(this).css("z-index", me.ztop++); });
       
-      }// end switch
-	},
+      		} // eof switch
+	}, // eof eventModal
+	
 	
 	
 	legendModal : function (id) {
-  /* only one legend at a time ?? */
-  
-    var tl = MED.timelineCollection.get(id).attributes,
-        leg = tl.legend,
-        me = this, l, icon, title, html = "";
-    
-    for (l = 0; l < leg.length; l++) {
-      icon = options.icon_folder + leg[l].icon;
-      title = leg[l].title;
-      html += "<li><img src='" + icon + "'>" + title + "</li>";
-    }
-   
-    var templ_obj = {id:id, legend_list:html};
-  
-    $(CONTAINER + " .timeglider-legend").remove();
-  		
-  	$.tmpl(me._templates.legend_modal,templ_obj)
+	  	/* only one legend at a time ?? */
+	  
+	    var me=this,
+	    	leg = MED.timelineCollection.get(id).attributes.legend,
+	        l, icon, title, html = "";
+	    
+	    for (l = 0; l < leg.length; l++) {
+			icon = options.icon_folder + leg[l].icon;
+			title = leg[l].title;
+			html += "<li><img src='" + icon + "'>" + title + "</li>";
+	    }
+	   
+	    var templ_obj = {id:id, legend_list:html};
+	  	
+	  	// remove existing legend
+	    $(CONTAINER + " .timeglider-legend").remove();
+	  		
+	  	$.tmpl(me._templates.legend_modal,templ_obj)
   			.appendTo(CONTAINER)
   			.css("z-index", me.ztop++)
-      	.toggleClass("timeglider-menu-hidden")
-      	.position({
+      		.toggleClass("timeglider-menu-hidden")
+      		.position({
       				my: "left top",
       				at: "left top",
       				of: (CONTAINER),
       				offset: "16, -4", // left, top
       				collision: "none none"
-      	});
+      		});
 
   		$(CONTAINER + " .timeglider-legend li").click(function() { 
   		    var legend_item_id = $(this).parent().attr("id");
@@ -1875,7 +1897,8 @@ tg.TG_PlayerView.prototype = {
   		    MED.setFilters({origin:"legend", icon: icon});
   		});
 
-  },
+	},
+  
   
   
 	
