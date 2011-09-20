@@ -4,12 +4,9 @@
 .timeglider-container {
 	
 	position:relative;
-  overflow:hidden;
+	overflow:hidden;
 	border:2px solid black;
 	font-family:Helvetica, Arial, sans-serif;
-	-moz-border-radius:7px;
-	-webkit-border-radius:7px;
-	border-radius:7px;
 	background-color:#F4F4F4;
   }
   
@@ -141,6 +138,16 @@
 	  position:absolute;
 	  margin:0px auto 0px auto;
 }
+
+.timeglider-date-display {
+	position:absolute;
+	right:100px;
+	top:40px;
+	font-size:32px;
+	color:#ffffff;
+	font-weight:bold;
+	text-shadow: 1px 1px 1px #333;
+}
   
   
 .timeglider-truck {
@@ -157,12 +164,14 @@
 .timeglider-tick {
   /* defaults on arrival in ticks */
 	position:absolute;
-	height:30px;
+	height:34px;
 	font-size:11px;
-	background-color:#75a3c7; 
+	background-color:#BBB;
 	/* A line as bg doesn't alter the width of the div!*/
 	background-image:url("img/dotted.png");
 	background-repeat:no-repeat;
+	border-top:1px solid #FFF;
+	overflow:hidden;
 }
 
 .timeglider-tick-label {
@@ -174,9 +183,9 @@
   font-weight:bold;
  }
  
-.timeglider-tick-hour-label {
+.timeglider-tick-sub-label {
  float:left;
- color:#F0F0F0;
+ color:#FAFAFA;
  display:inline;
  /* This padding-left needs to be exactly the same as
     the value in TG_TimelineView addTick() for setting hour labels
@@ -199,16 +208,15 @@
 		
 		cursor:move;
 		
-	}
+}
 	
 
 
-.timeglider-menu-shown {
-      display:block;
-  }
-
-.timeglider-menu-hidden {
-    display:none;
+.timeglider-display-block {
+	display:block;
+}
+.timeglider-display-none {
+	display:none;
 }
 
  
@@ -387,8 +395,8 @@
 
 
 .timeglider-menu-modal {
-  position:absolute;
-  background-color:#111;
+	position:absolute;
+	background-color:#111;
 	border-radius:6px;
 	-moz-border-radius:6px;
 	-webkit-border-radius:6px;
@@ -402,8 +410,8 @@
 }
 
 .timeglider-menu-modal  h3 {
-  float:left;
-  width:100px;
+	float:left;
+	width:100px;
 	font-size:14px;
 	margin:6px 0px 3px 4px;
 	font-weight:bold;

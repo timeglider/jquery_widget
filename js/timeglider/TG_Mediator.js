@@ -49,7 +49,6 @@
     this.timelineCollection = new tg.TG_TimelineCollection;
     this.eventCollection = new tg.TG_EventCollection;
 
-    
     this.imagesSized = 0;
     this.imagesToSize = 0;
     this.timelineDataLoaded = false,
@@ -203,8 +202,8 @@ tg.TG_Mediator.prototype = {
 	  
 			ondeck = data[i];
 			ondeck.mediator = M;
-			ti = new timeglider.TG_Timeline(ondeck).toJSON(); // the timeline
-		
+			ti = new tg.TG_Timeline(ondeck).toJSON(); // the timeline
+					
 			if (ti.id.length > 0) {
 				ct++;
 				M.swallowTimeline(ti);
@@ -329,7 +328,7 @@ tg.TG_Mediator.prototype = {
 		  
 		  if (z != this._zoomLevel) {
 		    this._zoomLevel = z;
-		    this._zoomInfo = timeglider.zoomTree[z];
+		    this._zoomInfo = tg.zoomTree[z];
 		    $.publish("mediator.zoomLevelChange");
 		    return true
 		  } else {
@@ -469,6 +468,10 @@ tg.TG_Mediator.prototype = {
 
 
 	toggleTimeline : function (id) {
+	
+		// patch until we have better multi-timeline support
+		this.activeTimelines = [];
+		
 	
 		var lt = this.timelineCollection.get(id).attributes;
 		

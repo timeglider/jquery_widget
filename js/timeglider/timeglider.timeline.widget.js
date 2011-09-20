@@ -75,6 +75,7 @@
 			var MAIN_TEMPLATE = "<div class='timeglider-container'>"
 				+ "<div class='timeglider-loading'>loading</div>"
 				+ "<div class='timeglider-centerline'></div>"
+				+ "<div class='timeglider-date-display'></div>"
 				+ "<div class='timeglider-truck' id='tg-truck'>"
 				+ "<div class='timeglider-ticks'>"
 				+ "<div class='timeglider-handle'></div>"

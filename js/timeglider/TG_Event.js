@@ -6,7 +6,7 @@
  * Licensed under Timeglider Dual License
  * http://timeglider.com/jquery/?p=license
  *
- */
+*/
  
  /*
 *

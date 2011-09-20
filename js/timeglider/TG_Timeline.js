@@ -24,7 +24,17 @@
 		$ = jQuery,
 		widget_options = {},
 		app_mediator;
+		
+		
 
+	tg.TG_TimelineCollection = Backbone.Collection.extend({
+
+		model: tg.TG_Timeline
+
+
+	});
+	
+	
 	
 	// map model onto larger timeglider namespace
 	/////////////////////////////////////////////
@@ -40,7 +50,6 @@
 			"events": [],
 			"legend": []
 		},
-		
 		
 		// processes init model data, adds certain calculated values
 		_chewTimeline : function (tdata) {
@@ -194,6 +203,10 @@
 		initialize: function(attrs) { 
 			var processed = this._chewTimeline(attrs);
 			this.set(processed);
+			
+			this.bind("change", function() {
+  				debug.log("changola");
+			});
 		},
 		
 		

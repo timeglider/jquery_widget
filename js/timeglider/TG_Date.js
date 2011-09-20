@@ -646,6 +646,7 @@ var timeglider = window.timeglider = {version:"0.1.0"};
   	*/
   	// ["","January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
     TG_Date.monthNames = $.merge([""],jQuery.global.culture.calendar.months.names);
+    
     // ["","Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
     TG_Date.monthNamesAbbr = $.merge([""],jQuery.global.culture.calendar.months.namesAbbr);
   
