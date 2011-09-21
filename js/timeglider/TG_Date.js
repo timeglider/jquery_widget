@@ -1,10 +1,9 @@
-/**
- * @license 
- * copyright 2011, Mnemograph LLC
+/*
  * Timeglider for Javascript / jQuery 
  * http://timeglider.com/jquery
  *
- * Licensed under the MIT open source license
+ * Copyright 2011, Mnemograph LLC
+ * Licensed under Timeglider Dual License
  * http://timeglider.com/jquery/?p=license
  *
  */

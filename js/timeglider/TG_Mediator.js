@@ -1,9 +1,9 @@
-/*!
+/*
  * Timeglider for Javascript / jQuery 
  * http://timeglider.com/jquery
  *
  * Copyright 2011, Mnemograph LLC
- * Licensed under the MIT open source license
+ * Licensed under Timeglider Dual License
  * http://timeglider.com/jquery/?p=license
  *
  */
@@ -268,23 +268,21 @@ tg.TG_Mediator.prototype = {
       }, 
 
 
-     refresh : function () {
-       this.startSec = this._focusDate.sec;
-       $.publish("mediator.refreshSignal");       
+	refresh : function () {
+		this.startSec = this._focusDate.sec;
+		$.publish("mediator.refreshSignal");       
     },
 
-      // !!!TODO ---- get these back to normal setTicksReady, etc.
+    
     setTicksReady : function (bool) {
         this.ticksReady = bool;
         
         if (bool === true) { 
           $.publish("mediator.ticksReadySignal");
-          }
+        }
     },
 
-    getFocusDate : function () {
-        return this._focusDate;
-    },
+    
       
     /*
     *  setFocusDate
@@ -294,10 +292,16 @@ tg.TG_Mediator.prototype = {
     setFocusDate : function (fd) {
         // !TODO :: VALIDATE FOCUS DATE
          
-        if (fd != this._focusDate) {
-          this._focusDate = fd; 
+		if (fd != this._focusDate) {
+			this._focusDate = fd; 
         }
     },
+    
+    getFocusDate : function () {
+        return this._focusDate;
+    },
+      
+      
     
     /*
     * getZoomLevel
@@ -323,17 +327,17 @@ tg.TG_Mediator.prototype = {
 	   
 		if (z <= this.max_zoom && z >= this.min_zoom) {
 		
-		  // focusdate has to come first for combined zoom+focusdate switch
-		  this.startSec = this._focusDate.sec;
-		  
-		  if (z != this._zoomLevel) {
-		    this._zoomLevel = z;
-		    this._zoomInfo = tg.zoomTree[z];
-		    $.publish("mediator.zoomLevelChange");
-		    return true
-		  } else {
-		    return false;
-		  }
+			// focusdate has to come first for combined zoom+focusdate switch
+			this.startSec = this._focusDate.sec;
+			  
+			if (z != this._zoomLevel) {
+			    this._zoomLevel = z;
+			    this._zoomInfo = tg.zoomTree[z];
+			    $.publish("mediator.zoomLevelChange");
+			    return true
+			} else {
+		    	return false;
+			}
 		  // end min/max check
 		} else { return false; }
 	
@@ -406,7 +410,8 @@ tg.TG_Mediator.prototype = {
 		// This triggers changing the focus date
 		// main listener hub for date focus and tick-appending
 		this._ticksOffset = newOffset;
-		/* In other words, ticks are being dragged! */
+		
+		// In other words, ticks are being dragged!
 		$.publish( "mediator.ticksOffsetChange" );
 	},
 

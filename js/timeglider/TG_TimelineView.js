@@ -12,7 +12,7 @@
 
 /*
 ****************************************
-timeglider.PlayerView
+timeglider.TimelineView
 ****************************************
 */
 (function(tg){
@@ -27,16 +27,12 @@ var TG_Date = tg.TG_Date,
 	intervals ={}, 
 	WIDGET_ID = "", 
 	CONTAINER, TICKS, DATE;
-      
-
-// adding a screen display for anything needed
-debug.trace = function (stuff, goes) {
-	$("#" + goes).text(stuff);
-}
-
-
+    
+    
 /*
 *  timeglider.TG_PlayerView
+*  For a few reasons, this is _not_ a backbone view, though
+*  other elements inside of it are.
 *  
 *
 */
@@ -48,7 +44,7 @@ tg.TG_PlayerView = function (widget, mediator) {
 		// vars declared in closure above
 		MED = mediator;
 		options = MED.options;
-		// core identifier to "uniquify"
+		// core identifier to "uniquify" the container
 		PL = "#" + widget._id;
 		WIDGET_ID = widget._id;
       	    
@@ -2035,18 +2031,18 @@ tg.TG_TimelineView = Backbone.View.extend({
 
 
 
-    /*
-          zoomTree
-          ****************
-          there's no zoom level of 0, so we create an empty element @ 0
+/*
+      zoomTree
+      ****************
+      there's no zoom level of 0, so we create an empty element @ 0
 
-          This could eventually be a more flexible system so that a 1-100 
-          value-scale could apply not to "5 hours to 10 billion years", but 
-          rather to 1 month to 10 years. For now, it's static according to 
-          a "universal" system.
-    */
+      This could eventually be a more flexible system so that a 1-100 
+      value-scale could apply not to "5 hours to 10 billion years", but 
+      rather to 1 month to 10 years. For now, it's static according to 
+      a "universal" system.
+*/
   
-    tg.zoomTree = [
+tg.zoomTree = [
     {},
     {unit:"da", width:35000,level:1, label:"5 hours"},
     {unit:"da", width:17600,level:2, label:"7 hours"},
@@ -2179,27 +2175,30 @@ tg.TG_TimelineView = Backbone.View.extend({
     		}
 
     // call it right away to establish values
-    }(tg.zoomTree);
+}(tg.zoomTree); // end of zoomTree
     
     
-    /* a div with id of "hiddenDiv" has to be pre-loaded */
-    tg.getStringWidth  = function (str) {
-      if (str) {
-    		var ms = $("#timeglider-measure-span").html(str);
-    		return ms.width();
-  		}
-    };
+/* a div with id of "hiddenDiv" has to be pre-loaded */
+tg.getStringWidth  = function (str) {
+  if (str) {
+		var ms = $("#timeglider-measure-span").html(str);
+		return ms.width();
+		}
+};
     
-    
-    
-    
-    
-    
-    
-      String.prototype.removeWhitespace = function () {
-      var rg = new RegExp( "\\n", "g" )
-      return this.replace(rg, "");
-    }
+        
+String.prototype.removeWhitespace = function () {
+	var rg = new RegExp( "\\n", "g" )
+	return this.replace(rg, "");
+}
+
+if (debug) {
+	// adding a screen display for anything needed
+	debug.trace = function (stuff, goes) {
+		$("#" + goes).text(stuff);
+	}
+}
+
   
     
    

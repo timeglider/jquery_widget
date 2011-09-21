@@ -23,6 +23,11 @@
 		app_mediator;
 	
 	
+	tg.TG_EventCollection = Backbone.Collection.extend({
+		model: tg.TG_Event,
+	});
+  
+	
 	// map model onto larger timeglider namespace
 	/////////////////////////////////////////////
 	tg.TG_Event = Backbone.Model.extend({
