@@ -4,6 +4,7 @@
 "title":"A little history of JavaScript",
 "description":"Mainly, showing the emergence of different JS libraries.",
 "focus_date":"1996-07-01 12:00:00",
+"time_offset":"-05:00",
 "initial_zoom":"37",
 "events":[
 
@@ -68,7 +69,7 @@
 "enddate": "2005-02-01 12:00:00",
 "importance":"40",
 "image":"img/prototype.jpg",
-"image_class":"layout",
+"image_class":"above",
 "icon":"triangle_green.png"
 },
 
@@ -77,9 +78,9 @@
 "id":"jshist-01",
 "title": "Mocha - Live Script",
 "description": "<img src='img/eich.jpg' style='float:left;margin-right:8px;margin-bottom:8px'>JavaScript was originally developed by Brendan Eich of Netscape under the name Mocha. LiveScript was the official name for the language when it first shipped in beta releases of Netscape Navigator 2.0 in September 1995",
-"startdate": "1995-04-01 12:00:00",
-"enddate": "1995-04-01 12:00:00",
-"date_limit":"mo",
+"startdate": "1995-05-01 12:00:00",
+"enddate": "1995-05-01 12:00:00",
+"date_limit":"ho",
 "link":"http://en.wikipedia.org/wiki/JavaScript",
 "importance":"40",
 "icon":"flag_green.png"
@@ -88,8 +89,8 @@
 "id":"jshist-02",
 "title": "JavaScript",
 "description": "LiveScript is Renamed JavaScript in a joint announcement with Netscape and Sun Microsystems",
-"startdate": "1996-08-04 12:00:00",
-"enddate": "1996-08-04 12:00:00",
+"startdate": "1995-12-4 12:00:00",
+"enddate": "1995-12-4 12:00:00",
 "date_limit":"mo",
 "link":"http://en.wikipedia.org/wiki/JavaScript",
 "importance":"55",
@@ -183,7 +184,7 @@
 "enddate": "2004-06-01 12:00:00",
 "link":"http://dojotoolkit.org/",
 "image":"img/dojo.jpg",
-"image_class":"layout",
+"image_class":"above",
 "importance":"35",
 "icon":"triangle_green.png"
 },
@@ -205,9 +206,9 @@
 "startdate": "2005-12-01 12:00:00",
 "enddate": "2005-12-01 12:00:00",
 "link":"http://jquery.com/",
-"importance":"35",
+"importance":"40",
 "image":"img/jquery.jpg",
-"image_class":"layout",
+"image_class":"above",
 "icon":"triangle_green.png"
 },
 {

@@ -280,10 +280,9 @@
 .timeglider-event-hover-info {
   position:absolute;
   left:-1000px;
-  border:1px solid #FFF;
-  background-color:white;
+  background-color:#fff;
   padding:3px 6px 3px 6px;
-  min-width:120px;
+  min-width:50px;
   font-size:.7em;
   z-index:100;
   -webkit-border-top-right-radius: 6px;
@@ -299,6 +298,13 @@
 
 .tg-event-hovered .timeglider-event-title {
   color:#CC0000;
+}
+
+.timeglider-dateline-startdate {
+	color:green;
+}
+.timeglider-dateline-enddate {
+	color:#CC0000;
 }
 
 
@@ -646,7 +652,7 @@
 	border-radius:7px;
 	background:#FFF;
 	border:1px solid #333;
-	width:250px;
+	width:280px;
 	padding:2px;
 }
 
@@ -708,6 +714,12 @@ ul.timeglider-ev-modal-links li {
 }
 ul.timeglider-ev-modal-links li a {
   color:#374b99;
+}
+
+.timeglider-ev-modal .dateline {
+	margin:8px;
+	border-bottom:1px dotted #CCC;
+	font-size:11px;
 }
 
 /* END timeglider-ev-modal */

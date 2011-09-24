@@ -27,7 +27,7 @@
   tg.TG_Mediator = function (wopts) {
   
     this.options = options = wopts;
-    
+
     // these relate to the display ------ not individual timeline attributes
     this._focusDate = {};
     this._zoomInfo = {};
@@ -39,13 +39,16 @@
     this.activeTimelines = [];
     this.max_zoom = options.max_zoom;
     this.min_zoom = options.min_zoom;
+    
+    this.timeOffset = TG_Date.getTimeOffset(options.timezone);
+    debug.log("time offset object:", this.timeOffset);
+  
     this.fixed_zoom = (this.max_zoom == this.min_zoom) ? true : false;
     this.gesturing = false;
     this.gestureStartZoom = 0;
     this.gestureStartScale = 0; // .999 etc reduced to 1 to 100
     this.filters = {include:"", exclude:"", legend:[]};
-    
-    
+
     this.timelineCollection = new tg.TG_TimelineCollection;
     this.eventCollection = new tg.TG_EventCollection;
 

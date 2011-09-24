@@ -31,47 +31,81 @@ var timeglider = window.timeglider = {version:"0.1.0"};
 *
 */
 
+/*
+
+IMPORTED DATE STANDARD
+
+http://www.w3.org/TR/NOTE-datetime
+"a profile of" ISO 8601 date format
+
+Complete date plus hours, minutes and seconds:
+YYYY-MM-DDThh:mm:ssTZD (eg 1997-07-16T19:20:30+01:00)
+
+Acceptable:
+YYYY
+YYYY-MM
+YYYY-MM-DD
+YYYY-MM-DD 13
+YYYY-MM-DD 08:15
+YYYY-MM-DD 08:15:30
+(above would assume either a timeline-level timezone, or UTC)
+
+containing its own timezone, this would ignore timeline timezone
+YYYY-MM-DD 08:15:30-07:00
+   
+
+*/
+
 (function(tg){
   
-  var tg = timeglider, $ = jQuery;
+	var tg = timeglider, $ = jQuery;
   
-  // caches speed up costly calculations
-  var getRataDieCache = {},
-      getDaysInYearSpanCache = {},
-      getBCRataDieCache = {},
-      getDateFromRDCache = {},
-      getDateFromSecCache = {};
+	// caches speed up costly calculations
+	var getRataDieCache = {},
+		getDaysInYearSpanCache = {},
+		getBCRataDieCache = {},
+		getDateFromRDCache = {},
+		getDateFromSecCache = {};
   
       
-  tg.TG_Date = function (strOrNum, date_display) {
+	tg.TG_Date = function (strOrNum, date_display, offSec) {
 
-      var dateStr, isoStr, gotSec, dummyDate;
+		var dateStr, isoStr, gotSec,
+    		offsetSeconds = offSec || 0;
+    		
     
-      // Morton, we've got seconds coming in!
-      if (typeof(strOrNum) == "number") {
-          dateStr = isoStr = TG_Date.getDateFromSec(strOrNum);
-          gotSec = strOrNum;
-      } else {
-          // string -- floating dates like "today"
-          if (strOrNum == "today") {
-            strOrNum = TG_Date.getToday();
-          } 
-          dateStr = isoStr = strOrNum;
-      }
+		// Morton, we've got seconds coming in!
+		if (typeof(strOrNum) == "number") {
+      	  
+			dateStr = isoStr = TG_Date.getDateFromSec(strOrNum);
+			gotSec = (strOrNum + offsetSeconds);
+			
+		} else {
+			// string -- floating dates like "today"
+			if (strOrNum == "today") {
+				strOrNum = TG_Date.getToday();
+			} 
+			dateStr = isoStr = strOrNum;
+		}
   
-  	  if (isValidDateString(dateStr) === false) {
-  	    return {error:"Invalid date"};
-  	    /// it's valid
-      } else {
-	    	  
-      		dateStr = dateStr.replace(",", "");
   
+		if (isValidDateString(dateStr) === false) {
+			return {error:"Invalid date"};
+			/// it's valid
+		} else {
+	    	
+	    	// var dobj = parse8601 (dateStr);
+	    	
+	    	// return year------second as object here
+	    	    
       		if (dateStr.substr(0,1) == "-") {
       		  this.bce=1;
       		  dateStr = dateStr.substr(1);
       		} else {
       		  this.bce=0;
-    		  }
+    		}
+    		
+    		
 
       		// remove anything not a number like "bce", etc, and
       		// make for an easy split!
@@ -81,120 +115,40 @@ var timeglider = window.timeglider = {version:"0.1.0"};
 
       		this.ye = (this.bce === 0) ? boil(arr[0]) : -1 * boil(arr[0]);
       		this.mo = boil(arr[1]);
-      		this.mo_num = getMoNum(this.mo, this.ye);
+      		
       		this.da = boil(arr[2]);
       		this.ho = boil(arr[3]) || 0;
       		this.mi = boil(arr[4]) || 0;
-      		// .se second is the clock second -- 0-60
+      		// .se clock second -- 0-60
       		this.se = boil(arr[5]) || 0;
-      		// rd : serial day from year zero
+      		
+      		
+      		// serial day from year zero
       		this.rd  = TG_Date.getRataDie(this);
+    
+      		// serial month from year 0
+      		this.mo_num = getMoNum(this.mo, this.ye);
       		
-      		// if (this.ye < 0) debug.log("negative rd:" + this.rd);
-      		
-      		// .sec second is the serial second from year 0!
+      		// serial second from year 0
       		this.sec = gotSec || getSec(this);
       		
-      		this.date_display = (date_display) ? (date_display.toLowerCase()).substr(0,2) : "";
+      		
+      		this.date_display = (date_display) ? (date_display.toLowerCase()).substr(0,2) : "da";
     			
       		// Esp. for formatting, we'll use jQuery.global for dates that
-      		// support the Date() object; before 50,000 bce, we'll need to 
+      		// support the Date() object; before 270,000 bce, we'll need to 
       		// resort to another formatting system that looks only at years.
           
-    			this.jsDate = dummyDate = new Date(this.ye, (this.mo-1), this.da, this.ho, this.mi, this.se, 0);
-    			
-      	  var d1 = new Date(1948,11,5,10,0,0,0);
-      	  
+          	if (this.ye > -270000){
+    			this.jsDate = new Date(this.ye, (this.mo-1), this.da, this.ho, this.mi, this.se, 0);
+    		} else {
+    			this.jsDate = {};
+    		}
+    			      	  
       		this.dateStr = isoStr;
-      		
   		} 
-		
-  		/// INTERNAL FUNCTIONS
-
-  	    function isValidDateString(str) {
-      	  // VALIDATE STRING
-      	  var aStr = jQuery.trim(str);
-      		reg = new RegExp(/[T0-9-: ]/);
-      		if (reg.test(aStr)) {
-      		  return aStr;
-      	  } else {
-      	    return false;
-          }
-        };
-  
-  
-      	/*
-      	* isValidDate
-      	* Rejects dates like "2001-13-32" and such
-      	* TODO: make sure no non leap years have Feb 29
-      	*
-      	*/
-      	function isValidDate (ye, mo, da) {
-	  
-      		var ld = TG_Date.getMonthDays(mo, ye);
-      		// day isn't appropriate for month
-      		if ((da > ld) || (da <= 0)) { return false; } 
-      		// invalid month numbers
-      		if ((mo > 12) || (mo < 0)) { return false; }
-      		// there's no year "0"
-      		if (ye == 0) { return false; }
-      	  // Is it a hex number? We need to make sure it's only got 0-9
-      		if ((typeof ye != "number") || (String(ye).match(/([0-9]+)/) == false)) { return false; }
-	
-      		return true;
-      	};
-	
-        /*
-        * boil
-        * basic wrapper for parseInt to clean leading zeros,
-        * as in dates
-        */
-      	function boil (n) {
-      		return parseInt(n, 10);
-      	};
-
-
-      	function getSec (fd) {
-      		// 
-      		var daSec = Math.abs(fd.rd) * 86400;
-      		var hoSec = (fd.ho) * 3600;
-      		var miSec = (fd.mi - 1) * 60;
-      		var bc = 1;
-      		if (fd.rd < 0) bc = -1;
-      		return bc * (daSec + hoSec + miSec);
-      	};
-
-
-  
-        /* getMoNum
-        *
-        * @param mo {Number} month from 1 to 12
-        * @param ye {Number} straight year
-        *
-        */ 
-        function getMoNum (mo, ye) {
-        	    if (ye > 0) {
-        			return  ((ye -1) * 12) + mo;
-        		} else {
-        			return getMoNumBC(mo, ye);
-        		}
-        };
-  
-        /*
-        * getMoNumBC
-        * In BC time, serial numbers for months are going backward
-        * starting with December of 1 bce. So, a month that is actually
-        * "month 12 of year -1" is actually just -1, and November of 
-        * year 1 bce is -2. Capiche!?
-        *
-        * @param {object} ob ---> .ye (year)  .mo (month)
-        * @return {number} serial month number (negative in this case)
-        */
-        function getMoNumBC (mo, ye) {
-        	var absYe = Math.abs(ye);
-        	var n = ((absYe - 1) * 12) + (12-(mo -1));
-        	return -1 * n;
-        };
+		        
+        return this;
 
   } // end TG_Date Function
 
@@ -244,44 +198,39 @@ var timeglider = window.timeglider = {version:"0.1.0"};
   };
 
 
-  TG_Date.twentyFourToTwelve = function (e) {
+	TG_Date.twentyFourToTwelve = function (e) {
 	
-  	var dob = {};
-  	dob.ye = e.ye;
-  	dob.mo = e.mo;
-  	dob.da = e.da;
-  	dob.ho = e.ho;
-  	dob.mi = e.mi;
-  	dob.ampm = "am";
-
-  	if (e.ho) {
-  		if (e.ho >= 12) {
-  			dob.ampm = "pm";
-  			if (e.ho > 12) {
-  				dob.ho = e.ho - 12;
-  			} else {
-  				dob.ho = 12;
-  			}
-  		} else if (e.ho == 0) {
-  			dob.ho = 12;
-  			dob.ampm = "am";
-  		} else {
-  			dob.ho = e.ho;
-  		}
-  	} else {
-  		dob.ho = 12;
-  		dob.mi = 0;
-  		dob.ampm = "am";
-  	}
+		var dob = {};
+		dob.ye = e.ye;
+		dob.mo = e.mo;
+		dob.da = e.da;
+		dob.ho = e.ho;
+		dob.mi = e.mi;
+		dob.ampm = "am";
 	
-  	return dob;
-  };
-
-
-
+		if (e.ho) {
+			if (e.ho >= 12) {
+				dob.ampm = "pm";
+				if (e.ho > 12) {
+					dob.ho = e.ho - 12;
+				} else {
+					dob.ho = 12;
+				}
+			} else if (e.ho == 0) {
+				dob.ho = 12;
+				dob.ampm = "am";
+			} else {
+				dob.ho = e.ho;
+			}
+		} else {
+			dob.ho = 12;
+			dob.mi = 0;
+			dob.ampm = "am";
+		}
 	
-
-
+		return dob;
+	};
+	
 	
   /*
   * RELATES TO TICK WIDTH: SPECIFIC TO TIMELINE VIEW
@@ -502,9 +451,6 @@ var timeglider = window.timeglider = {version:"0.1.0"};
   };
 
 
-
-	
-	
   /*
   * getRataDie
   * Core "normalizing" function for dates, the serial number day for
@@ -639,10 +585,7 @@ var timeglider = window.timeglider = {version:"0.1.0"};
   TG_Date.setCulture = function(culture_str) {
     
     jQuery.global.culture = jQuery.global.cultures[culture_str];
-  	/*
-  	*  Making use of jQuery.global.js here --- but only for names and some other formatting
-  	*  offerings. 
-  	*/
+ 
   	// ["","January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
     TG_Date.monthNames = $.merge([""],jQuery.global.culture.calendar.months.names);
     
@@ -677,54 +620,228 @@ var timeglider = window.timeglider = {version:"0.1.0"};
   
   TG_Date.prototype = {
       
-      format : function (sig, useLimit) {
-        
-        /* "en" formats
-         // short date pattern
-          d: "M/d/yyyy",
-          // long date pattern
-          D: "dddd, MMMM dd, yyyy",
-          // short time pattern
-          t: "h:mm tt",
-          // long time pattern
-          T: "h:mm:ss tt",
-          // long date, short time pattern
-          f: "dddd, MMMM dd, yyyy h:mm tt",
-          // long date, long time pattern
-          F: "dddd, MMMM dd, yyyy h:mm:ss tt",
-          // month/day pattern
-          M: "MMMM dd",
-          // month/year pattern
-          Y: "yyyy MMMM",
-          // S is a sortable format that does not vary by culture
-          S: "yyyy\u0027-\u0027MM\u0027-\u0027dd\u0027T\u0027HH\u0027:\u0027mm\u0027:\u0027ss"
-        */
-        
-        // If, for example, an event wants only year-level time being displayed
-        // (and not month, day...) filter out the undesired time levels
-        if (useLimit == true) {
-          // reduce to 2 chars for consistency
-          var ddlim = this.date_display.substr(0,2);
-          switch (ddlim) {
-            case "no": return ""; break;
-            case "ye": sig = "yyyy"; break;
-            case "mo": sig = "Y"; break;
-            case "da": sig = "D"; break;
-            case "ho": sig = "f"; break;
-            
-            default: sig = "f";
+		format : function (sig, useLimit) {
+		
+			/* "en" formats
+			 // short date pattern
+			  d: "M/d/yyyy",
+			  // long date pattern
+			  D: "dddd, MMMM dd, yyyy",
+			  // short time pattern
+			  t: "h:mm tt",
+			  // long time pattern
+			  T: "h:mm:ss tt",
+			  // long date, short time pattern
+			  f: "dddd, MMMM dd, yyyy h:mm tt",
+			  // long date, long time pattern
+			  F: "dddd, MMMM dd, yyyy h:mm:ss tt",
+			  // month/day pattern
+			  M: "MMMM dd",
+			  // month/year pattern
+			  Y: "yyyy MMMM",
+			  // S is a sortable format that does not vary by culture
+			  S: "yyyy\u0027-\u0027MM\u0027-\u0027dd\u0027T\u0027HH\u0027:\u0027mm\u0027:\u0027ss"
+			*/
+			
+			// If, for example, an event wants only year-level time being displayed
+			// (and not month, day...) filter out the undesired time levels
+			if (useLimit == true) {
+			  // reduce to 2 chars for consistency
+			  var ddlim = this.date_display.substr(0,2);
+			  switch (ddlim) {
+			    case "no": return ""; break;
+			    case "ye": sig = "yyyy"; break;
+			    case "mo": sig = "MMM yyyy"; break;
+			    case "da": sig = "MMM d, yyyy"; break;
+			    case "ho": sig = "MMM d, yyyy h:mm tt"; break;
+			    
+			    default: sig = "f";
+			  }
+			}
+			// If the date is bce, get the bce equivalent for 
+			// the culture and append it or prepend it...
+			
+			return $.global.format(this.jsDate, sig);
+		
+		}
+
+  	} // end .prototype
+  	
+  	
+  
+	TG_Date.getTimeOffset = function(offsetString) {
+		
+			// parse out plus
+			// remove all but numbers, minus, colon
+		var oss = offsetString.replace(/[^-\d:]/gi, ""),
+			osA = oss.split(":"),
+			ho = parseInt(osA[0], 10),
+			mi = parseInt(osA[1], 10),
+		
+			// minutes negative if hours are 
+			sw = (ho < 0) ? -1 : 1,
+		
+			miDec = sw * ( mi / 60 ),
+			hours = (ho + miDec),
+			seconds = hours * 3600;
+		
+		return {"hours":hours, "minutes":minutes, "seconds":seconds, "string":oss}
+		
+	};	
+
+
+	
+	TG_Date.getTimezones = function() {
+		
+		$.ajax({ 	
+			url: "js/timezones.json",
+			type:"GET",
+			success: function (data) { 
+				timeglider.timezones = data;
+			}
+		});
+	}()
+	
+	
+	
+  		/// INTERNAL HOISTED FUNCTIONS
+
+  	    function isValidDateString (str) {
+      	  // VALIDATE STRING
+      	  var aStr = jQuery.trim(str);
+      		reg = new RegExp(/[T0-9-: ]/);
+      		if (reg.test(aStr)) {
+      		  return aStr;
+      	  } else {
+      	    return false;
           }
-        }
-        // If the date is bce, get the bce equivalent for 
-        // the culture and append it or prepend it...
+        };
+  
+  
+      	/*
+      	* isValidDate
+      	* Rejects dates like "2001-13-32" and such
+      	* TODO: make sure no non leap years have Feb 29
+      	*
+      	*/
+      	function isValidDate (ye, mo, da) {
+	  
+      		var ld = TG_Date.getMonthDays(mo, ye);
+      		// day isn't appropriate for month
+      		if ((da > ld) || (da <= 0)) { return false; } 
+      		// invalid month numbers
+      		if ((mo > 12) || (mo < 0)) { return false; }
+      		// there's no year "0"
+      		if (ye == 0) { return false; }
+      	  // Is it a hex number? We need to make sure it's only got 0-9
+      		if ((typeof ye != "number") || (String(ye).match(/([0-9]+)/) == false)) { return false; }
+	
+      		return true;
+      	};
+	
+        /*
+        * boil
+        * basic wrapper for parseInt to clean leading zeros,
+        * as in dates
+        */
+      	function boil (n) {
+      		return parseInt(n, 10);
+      	};
+
+
+      	function getSec (fd) {
+      		// 
+      		var daSec = Math.abs(fd.rd) * 86400;
+      		var hoSec = (fd.ho) * 3600;
+      		var miSec = (fd.mi - 1) * 60;
+      		var bc = 1;
+      		if (fd.rd < 0) bc = -1;
+      		return bc * (daSec + hoSec + miSec);
+      	};
+
+
+  
+        /* getMoNum
+        *
+        * @param mo {Number} month from 1 to 12
+        * @param ye {Number} straight year
+        *
+        */ 
+        function getMoNum (mo, ye) {
+        	    if (ye > 0) {
+        			return  ((ye -1) * 12) + mo;
+        		} else {
+        			return getMoNumBC(mo, ye);
+        		}
+        };
+  
+        /*
+        * getMoNumBC
+        * In BC time, serial numbers for months are going backward
+        * starting with December of 1 bce. So, a month that is actually
+        * "month 12 of year -1" is actually just -1, and November of 
+        * year 1 bce is -2. Capiche!?
+        *
+        * @param {object} ob ---> .ye (year)  .mo (month)
+        * @return {number} serial month number (negative in this case)
+        */
+        function getMoNumBC (mo, ye) {
+        	var absYe = Math.abs(ye);
+        	var n = ((absYe - 1) * 12) + (12-(mo -1));
+        	return -1 * n;
+        };
         
-        return $.global.format(this.jsDate, sig);
+        
+        function parse8601 (str) {
+        	/*
+        	4   YYYY
+			7   YYYY-MM
+			10  YYYY-MM-DD
+			13  YYYY-MM-DD 13
+			16  YYYY-MM-DD 08:15
+			19  YYYY-MM-DD 08:15:30
+			25  YYYY-MM-DD 08:15:30-07:00
+			*/
+			
+			
+			var len=0, bce=false, arr = [], 
+				// defaults for unfound units
+				ye=0, mo=1, da=1, ho=0, mi=0, se=0;
+			
+			if (dateStr.substr(0,1) == "-") {
+      		  bce=1;
+      		  str = str.substr(1);
+      		} else {
+      		  bce=0;
+    		}
+    		
+    		// if it contains a "-", there's more than the year
+    		// break it down, yo
+    		if (str.indexOf("-") != -1)  {
+    		
+    			// regex
+    			//          year    month     day
+    			var reg = /^(\d+)-?(\d{1,2})?(-\d{1,2})/;
+				arr = str.split("-");
+				
+				ye = arr[0];
+		
+    		} else {
+    		// if it doesn't contain a "-", there's only the year
+    		// add defaults for month, day, etc
+    			ye = str;
+    		} 
+    		     		
+    		
+    		// var len = str.lenth;
+    		return false;
+        };
 
-      }
 
 
+  
 
-  } // end .prototype
+	
   
   
 })(timeglider);

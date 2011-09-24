@@ -34,6 +34,7 @@
 		
 		// defaults!
 		options : { 
+			timezone:"00:00",
 			initial_focus:tg.TG_Date.getToday(), 
 			editor:'none', 
 			min_zoom : 1, 

@@ -144,6 +144,7 @@ tg.TG_PlayerView = function (widget, mediator) {
     
     
     
+    
   	this.timelineModal = tg.TG_TimelineView.extend({
   	
   		tagName: "div",
@@ -172,7 +173,6 @@ tg.TG_PlayerView = function (widget, mediator) {
 		remove: function() {
 			$(this.el).fadeOut();
 		}
-
 	});
 	
 	
@@ -317,22 +317,20 @@ tg.TG_PlayerView = function (widget, mediator) {
 	  
 	})	
 	.delegate(".timeglider-timeline-event", "mouseover", function () { 
-		var eid = $(this).attr("id"); 
-		debug.log("MOUSEOVER ID:" + eid);
-		var ev = MED.eventCollection.get(eid).attributes;
-		debug.trace("hover, title:" + ev.title, "note"); 
+
+		var ev = MED.eventCollection.get($(this).attr("id")).attributes;
 		me.eventHover($(this), ev)
 	})
 	.delegate(".timeglider-timeline-event", "mouseout", function () { 
-		var eid = $(this).attr("id"); 
-		var ev = MED.eventCollection.get(eid).attributes;
-		debug.trace("hover, title:" + ev.title, "note"); 
+
+		var ev = MED.eventCollection.get($(this).attr("id")).attributes;
 		me.eventUnHover($(this), ev)
 	})
 	.delegate(".timeglider-event-collapsed", "hover", function () { 
-		var eid = $(this).attr("id"); 
-		var title = MED.eventCollection.get(eid).attributes.title;
-		debug.trace("collapsed, title:" + title, "note"); 
+
+		var title = MED.eventCollection.get($(this).attr("id")).attributes.title;
+		debug.trace("collapsed, title:" + title, "note");
+		 
 	});
 	// END TICKS CHAIN!!
 		
@@ -553,7 +551,7 @@ tg.TG_PlayerView.prototype = {
 	       stripped = '',
 	       default_template = $.template( null, "<div class='tg-modal timeglider-ev-modal ui-widget-content' id='${id}_modal'>" 
       	   + "<div class='close-button-remove'></div>" 
-      	   + "<div class='startdate'>${startdate}</div>"
+      	   + "<div class='dateline'>{{html dateline}}</div>"
       	   + "<h4 id='title'>${title}</h4>"
       	   + "<p>{{html description}}</p>"
       	   + "<ul class='timeglider-ev-modal-links'>{{html links}}</ul>"
@@ -891,14 +889,29 @@ tg.TG_PlayerView.prototype = {
 	*
 	*/
 	
-	eventHover : function ($ev, ev_obj) {
+	getEventDateLine: function(ev) {
+		var startDateF = "<span class='timeglider-dateline-startdate'>" + ev.startdateObj.format('', true) + "</span>";
+    		endDateF = "";
+    	
+    	if (ev.span == true) {
+    		 endDateF = " &ndash; <span class='timeglider-dateline-enddate'>" + ev.enddateObj.format('', true) + "</span>";
+    	}
+    	
+    	return startDateF + endDateF;
+
+	},
+
+
+	eventHover : function ($ev, ev) {
 
     	var me = this, 
         	$hov = $(".timeglider-event-hover-info");
-    
+        	// using true in format() sets up display limit
+        	        	
+        	    
     	// This works, but what if it has to sit on the bottom
     	// debug.log("hover display:" + ev_obj.date_display);
-    	if (ev_obj.date_display != "no") {
+    	if (ev.date_display != "no") {
 			$hov
 			.position({
 				my: "left bottom",
@@ -907,11 +920,11 @@ tg.TG_PlayerView.prototype = {
 		  	    offset: "1, -10",
 		  	    collision: "flip flip"}
 			)
-		  	.text(ev_obj.startdateObj.format("D", true));
+		  	.html(me.getEventDateLine(ev));
 		  	
     	}
 	  	   
-	  		$ev.addClass("tg-event-hovered");
+	  	$ev.addClass("tg-event-hovered");
 	   
 	   
 	},
@@ -988,11 +1001,11 @@ tg.TG_PlayerView.prototype = {
 			.css("left", 0);
 			// .html("<div class='timeglider-handle'></div>");
 		
-		// Here we need to remove everything but the handle, which
-		// needs to be in-tact so that gesturing (pinching to zoom)
-		// doesn't lose it's target
-		$(".tg-timeline-envelope").remove();
-		$(".timeglider-tick").remove();
+		// remove everything but HANDLE, which
+		// needs to stay so that gesturing (pinching to zoom)
+		// doesn't lose its target
+		$(CONTAINER + " .tg-timeline-envelope").remove();
+		$(CONTAINER + " .timeglider-tick").remove();
 		
 		
 	},
@@ -1515,6 +1528,7 @@ tg.TG_PlayerView.prototype = {
 			half = Math.floor(spp * (cw/2)),
 			lsec = foSec - half,
 			rsec = foSec + half,
+			tz_offset = 0,
 			spanin,
 			legend_label = "",
 			spanins = [],
@@ -1536,11 +1550,13 @@ tg.TG_PlayerView.prototype = {
 			
 					
 			tlView = new tg.TG_TimelineView({model:tlModel});
-	
 			
-      		$tl = $(tlView.render().el).appendTo(TICKS);      		
-      
-			$tl.draggable({
+	
+			tz_offset = MED.timeOffset.seconds / spp;
+			
+      		$tl = $(tlView.render().el).appendTo(TICKS);
+   
+   			$tl.draggable({
 					axis:"y",
 					handle:".titleBar", 
 					stop: function () {
@@ -1548,9 +1564,7 @@ tg.TG_PlayerView.prototype = {
 						MED.refresh();	
 					}
 				})
-				.css("top", tl_top);
-				
-			tl_ht = $tl.height();
+				.css({"top":tl_top, "left": tz_offset});
 
 			$title = $tl.children(".titleBar");
 			t_f = cx + ((tl.bounds.first - foSec) / spp);
@@ -1563,7 +1577,7 @@ tg.TG_PlayerView.prototype = {
 			//cycle through ticks for hashed events
 			for (var tx=0; tx<ticks.length; tx++) {
 				tArr = this.getTimelineEventsByTick({tick:ticks[tx], timeline:tl});
-		    $.merge(idArr, tArr);	
+		    	$.merge(idArr, tArr);	
 			}
 			
 			
@@ -1821,7 +1835,7 @@ tg.TG_PlayerView.prototype = {
 				title:ev.title,
 				description:ev_descr,
 				id:eid,
-				startdate: ev.startdateObj.format("D", true),
+				dateline: me.getEventDateLine(ev),
 				links:links,
 				image:ev_img_src,
 				video: ev.video
@@ -1985,7 +1999,7 @@ tg.TG_TimelineView = Backbone.View.extend({
 	template: "<div class='titleBar'><div class='timeline-title'>"
       			+ "<span class='timeline-title-span'>"
       			+ "${title}</span><div class='tg-timeline-env-buttons'>"
-			 	+ "<span class='timeline-info' data-timeline_id='${id}'>infoxx</span>"
+			 	+ "<span class='timeline-info' data-timeline_id='${id}'>info</span>"
 			 	+ "<span class='tg-timeline-legend-bt' data-timeline_id='${id}'>legend</span>"
 			 	// + "<span class='expand-collapse'>expand/collapse</span>" 
 			 	+ "</div></div></div></div>",
