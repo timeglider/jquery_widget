@@ -28,8 +28,8 @@
 		
 
 
-		tg.TG_EventCollection = Backbone.Collection.extend({
-		model: tg.TG_Event,
+	tg.TG_EventCollection = Backbone.Collection.extend({
+		model: tg.TG_Event
 	});
   
 	
