@@ -714,7 +714,11 @@ YYYY-MM-DD 08:15:30-07:00
 			ho_default = 12,
 			mi_default = 0,
 			dedash = function (n){
-			 return parseInt(n.replace("-", ""), 10);
+				if (n) {
+			 		return parseInt(n.replace("-", ""), 10);
+			 	} else {
+			 		return 0;
+			 	}
 			},
 				
 			reg = /^(\-?\d+)?(\-\d{1,2})?(\-\d{1,2})?(?:T| )?(\d{1,2})?(?::)?(\d{1,2})?(?::)?(\d{1,2})?(\+|\-)?(\d{1,2})?(?::)?(\d{1,2})/,
