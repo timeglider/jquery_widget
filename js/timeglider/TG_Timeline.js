@@ -127,7 +127,7 @@
 			// no other defaults?
 			"initial_zoom":25,
 			"focus_date":"today",
-			"timezone_offset":"00:00",
+			"timezone":"00:00",
 			"title":  "Untitled",
 			"events": [],
 			"legend": []
@@ -162,7 +162,7 @@
 			tdata.spans = [];
 			tdata.hasImagesAbove = false;
 			
-			var tzoff = tdata.timezone_offset || "00:00";
+			var tzoff = tdata.timezone || "00:00";
 			tdata.timeOffset = TG_Date.getTimeOffset(tzoff);
 						
 			// TODO: VALIDATE COLOR, centralize default color(options?)

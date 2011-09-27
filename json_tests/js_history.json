@@ -4,7 +4,7 @@
 "title":"A little history of JavaScript",
 "description":"Mainly, showing the emergence of different JS libraries.",
 "focus_date":"1996-07-01 12:00:00",
-"timezone_offset":"-07:00",
+"timezone":"-07:00",
 "initial_zoom":"37",
 "events":[
 
