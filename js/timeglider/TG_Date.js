@@ -770,8 +770,8 @@ YYYY-MM-DD 08:15:30-07:00
 				
 		var nh_dec = 0,
 			lastDays = [0,31,28,31,30,31,30,31,31,30,31,30,31,29],
-			deltaFloatToHM = function (float){
-				var fl = Math.abs(float),
+			deltaFloatToHM = function (flt){
+				var fl = Math.abs(flt),
 					h = Math.floor(fl),
 					dec = fl - h,
 					m = Math.round(dec * 60);
@@ -980,11 +980,7 @@ YYYY-MM-DD 08:15:30-07:00
 			return ob.ye + "-" + ob.mo + "-" + ob.da + " " + ob.ho + ":" + ob.mi;
 		}
 		
-			
-  
 
-	
-  
   
 })(timeglider);
 

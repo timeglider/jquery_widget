@@ -154,7 +154,7 @@ tg.TG_PlayerView = function (widget, mediator) {
 		className: 'tg-modal timeglider-timeline-modal ui-widget-content',
 		
 		events: {
-			"click .close-button-remove": "remove",
+			"click .close-button-remove": "remove"
 		},
 		
 		template: "<div class='close-button-remove'></div>"
@@ -1991,7 +1991,7 @@ tg.TG_TimelineView = Backbone.View.extend({
     template: "",
     
     events: {
-      "click .timeline-title-span" : "titleClick",
+      "click .timeline-title-span" : "titleClick"
     },
     
     className: "tg-timeline-envelope",
@@ -2033,7 +2033,7 @@ tg.TG_TimelineView = Backbone.View.extend({
 
     remove: function() {
       $(this.el).remove();
-    },
+    }
 
 
     //clear: function() {

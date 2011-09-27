@@ -525,10 +525,10 @@ tg.TG_Mediator.prototype = {
 		
 		if (ev.has("image")) {
 			if (!img.error) {
-				ev.set(image.width) = img.width;
-				ev.set(image.height) = img.height;
+				ev.attributes.image.width = img.width;
+				ev.attributes.image.height = img.height;
 			} else {
-				ev.set(image) = {}
+				ev.attributes.image = {};
 				debug.log("WHOOPS: MISSING IMAGE: " + img.src);
 			}
 		
