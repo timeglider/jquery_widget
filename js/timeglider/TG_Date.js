@@ -18,7 +18,7 @@ var timeglider = window.timeglider = {version:"0.1.0"};
 *  dependencies: jQuery, jQuery.global
 *
 * You might be wondering why we're not extending JS Date().
-* That might be a good idea eventually. There are some
+* That might be a good idea some day. There are some
 * major issues with Date(): the "year zero" (or millisecond)
 * in JS and other date APIs is 1970, so timestamps are negative
 * prior to that. JS's Date() can't handle years prior to
@@ -45,9 +45,9 @@ Acceptable:
 YYYY
 YYYY-MM
 YYYY-MM-DD
-YYYY-MM-DD 13
-YYYY-MM-DD 08:15
-YYYY-MM-DD 08:15:30
+YYYY-MM-DDT13
+YYYY-MM-DD 08:15 (strlen 16)
+YYYY-MM-DD 08:15:30 (strlen 19)
 (above would assume either a timeline-level timezone, or UTC)
 
 containing its own timezone, this would ignore timeline timezone
@@ -67,14 +67,14 @@ YYYY-MM-DD 08:15:30-07:00
 		getDateFromRDCache = {},
 		getDateFromSecCache = {};
   
-      
+        
 	tg.TG_Date = function (strOrNum, date_display, offSec) {
 
 		var dateStr, isoStr, gotSec,
     		offsetSeconds = offSec || 0;
-    		
-    
-		// Morton, we've got seconds coming in!
+   
+   
+   		// Jim, we've got seconds coming in!
 		if (typeof(strOrNum) == "number") {
       	  
 			dateStr = isoStr = TG_Date.getDateFromSec(strOrNum);
@@ -89,66 +89,37 @@ YYYY-MM-DD 08:15:30-07:00
 		}
   
   
-		if (isValidDateString(dateStr) === false) {
-			return {error:"Invalid date"};
+  		if (isValidDateString(dateStr) === false) {
+			return {error:"invalid date"};
 			/// it's valid
 		} else {
 	    	
-	    	// var dobj = parse8601 (dateStr);
-	    	
-	    	// return year------second as object here
-	    	    
-      		if (dateStr.substr(0,1) == "-") {
-      		  this.bce=1;
-      		  dateStr = dateStr.substr(1);
-      		} else {
-      		  this.bce=0;
-    		}
-    		
-    		
-
-      		// remove anything not a number like "bce", etc, and
-      		// make for an easy split!
-      		dateStr = dateStr.replace(/[^0-9]/g, "-");
-
-      		var arr = dateStr.split("-");
-
-      		this.ye = (this.bce === 0) ? boil(arr[0]) : -1 * boil(arr[0]);
-      		this.mo = boil(arr[1]);
+	    	      		
+      		var parsed =  TG_Date.parse8601(dateStr);
       		
-      		this.da = boil(arr[2]);
-      		this.ho = boil(arr[3]) || 0;
-      		this.mi = boil(arr[4]) || 0;
-      		// .se clock second -- 0-60
-      		this.se = boil(arr[5]) || 0;
-      		
-      		
-      		// serial day from year zero
+      		if (parsed.tz_ho) {
+      			// this is working ------ timezones in the string translate correctly
+      			parsed = TG_Date.toFromUTC(parsed, {hours:parsed.tz_ho, minutes:parsed.tz_mi}, "to")
+      		}
+      					
+			$.extend(this,parsed);
+
+      		// SERIAL day from year zero
       		this.rd  = TG_Date.getRataDie(this);
     
-      		// serial month from year 0
-      		this.mo_num = getMoNum(this.mo, this.ye);
+      		// SERIAL month from year 0
+      		this.mo_num = getMoNum(this);
       		
-      		// serial second from year 0
+      		// SERIAL second from year 0
       		this.sec = gotSec || getSec(this);
       		
-      		
       		this.date_display = (date_display) ? (date_display.toLowerCase()).substr(0,2) : "da";
-    			
-      		// Esp. for formatting, we'll use jQuery.global for dates that
-      		// support the Date() object; before 270,000 bce, we'll need to 
-      		// resort to another formatting system that looks only at years.
-          
-          	if (this.ye > -270000){
-    			this.jsDate = new Date(this.ye, (this.mo-1), this.da, this.ho, this.mi, this.se, 0);
-    		} else {
-    			this.jsDate = {};
-    		}
-    			      	  
+			
+			// TODO: get good str from parse8601  
       		this.dateStr = isoStr;
   		} 
 		        
-        return this;
+        // return this;
 
   } // end TG_Date Function
 
@@ -620,27 +591,31 @@ YYYY-MM-DD 08:15:30-07:00
   
   TG_Date.prototype = {
       
-		format : function (sig, useLimit) {
+		format : function (sig, useLimit, tz_off) {
+		
+			var offset = tz_off || {"hours":0, "minutes":0};
+		
+			var jsDate, fromUTC; // jsDate
 		
 			/* "en" formats
-			 // short date pattern
-			  d: "M/d/yyyy",
-			  // long date pattern
-			  D: "dddd, MMMM dd, yyyy",
-			  // short time pattern
-			  t: "h:mm tt",
-			  // long time pattern
-			  T: "h:mm:ss tt",
-			  // long date, short time pattern
-			  f: "dddd, MMMM dd, yyyy h:mm tt",
-			  // long date, long time pattern
-			  F: "dddd, MMMM dd, yyyy h:mm:ss tt",
-			  // month/day pattern
-			  M: "MMMM dd",
-			  // month/year pattern
-			  Y: "yyyy MMMM",
-			  // S is a sortable format that does not vary by culture
-			  S: "yyyy\u0027-\u0027MM\u0027-\u0027dd\u0027T\u0027HH\u0027:\u0027mm\u0027:\u0027ss"
+			// short date pattern
+			d: "M/d/yyyy",
+			// long date pattern
+			D: "dddd, MMMM dd, yyyy",
+			// short time pattern
+			t: "h:mm tt",
+			// long time pattern
+			T: "h:mm:ss tt",
+			// long date, short time pattern
+			f: "dddd, MMMM dd, yyyy h:mm tt",
+			// long date, long time pattern
+			F: "dddd, MMMM dd, yyyy h:mm:ss tt",
+			// month/day pattern
+			M: "MMMM dd",
+			// month/year pattern
+			Y: "yyyy MMMM",
+			// S is a sortable format that does not vary by culture
+			S: "yyyy\u0027-\u0027MM\u0027-\u0027dd\u0027T\u0027HH\u0027:\u0027mm\u0027:\u0027ss"
 			*/
 			
 			// If, for example, an event wants only year-level time being displayed
@@ -658,11 +633,24 @@ YYYY-MM-DD 08:15:30-07:00
 			    default: sig = "f";
 			  }
 			}
-			// If the date is bce, get the bce equivalent for 
-			// the culture and append it or prepend it...
 			
-			return $.global.format(this.jsDate, sig);
-		
+			          	
+          	if (this.ye > -270000){
+				
+				fromUTC = TG_Date.toFromUTC(_.clone(this), offset, "from");  
+          		  		
+    			jsDate = new Date(fromUTC.ye, (fromUTC.mo-1), fromUTC.da, fromUTC.ho, fromUTC.mi, fromUTC.se, 0);
+  
+				return $.global.format(jsDate, sig);
+			
+			
+    		} else {
+    			// BIGNUM_PROBLEM
+				// year < -271,000 will fail as js Date
+    			// JUST RETURN YEAR
+    			return this.ye;
+    		}
+			
 		}
 
   	} // end .prototype
@@ -671,8 +659,7 @@ YYYY-MM-DD 08:15:30-07:00
   
 	TG_Date.getTimeOffset = function(offsetString) {
 		
-			// parse out plus
-			// remove all but numbers, minus, colon
+		// remove all but numbers, minus, colon
 		var oss = offsetString.replace(/[^-\d:]/gi, ""),
 			osA = oss.split(":"),
 			ho = parseInt(osA[0], 10),
@@ -682,15 +669,211 @@ YYYY-MM-DD 08:15:30-07:00
 			sw = (ho < 0) ? -1 : 1,
 		
 			miDec = sw * ( mi / 60 ),
-			hours = (ho + miDec),
-			seconds = hours * 3600;
-		
-		return {"hours":hours, "minutes":minutes, "seconds":seconds, "string":oss}
+			dec = (ho + miDec),
+			se = dec * 3600;
+			
+			var ob = {"decimal":dec, "hours":ho, "minutes":mi, "seconds":se, "string":oss};
+	
+			return ob; 
 		
 	};	
+	
+	
+	TG_Date.tzOffsetStr = function (datestr, offsetStr) {
+		if (datestr) {
+		if (datestr.length == 19) {
+			datestr += offsetStr;
+		} else if (datestr.length == 16) {
+			datestr += ":00" + offsetStr;
+		}
+		return datestr;
+		}
+	};
+	
+		
+	/*
+	* TG_parse8601
+	* transforms string into TG Date object
+	*/
+	TG_Date.parse8601 = function(str){
+		
+		/*
+		len   str
+    	4     YyYyYyY
+		7     YyYyYyY-MM
+		10    YyYyYyY-MM-DD
+		13    YyYyYyY-MM-DDTHH (T is optional between day and hour)
+		16    YyYyYyY-MM-DD HH:MM
+		19    YyYyYyY-MM-DDTHH:MM:SS
+		25    YyYyYyY-MM-DD HH:MM:SS-ZH:ZM
+		*/
+		
+		var ye, mo, da, ho, mi, se, bce, bce_ye,
+			mo_default = 1,
+			da_default = 1,
+			ho_default = 12,
+			mi_default = 0,
+			dedash = function (n){
+			 return parseInt(n.replace("-", ""), 10);
+			},
+				
+			reg = /^(\-?\d+)?(\-\d{1,2})?(\-\d{1,2})?(?:T| )?(\d{1,2})?(?::)?(\d{1,2})?(?::)?(\d{1,2})?(\+|\-)?(\d{1,2})?(?::)?(\d{1,2})/,
+			rx = str.match(reg);
+
+    	// picks up positive OR negative (bce)	
+		ye = parseInt(rx[1]);
+		
+		if (!ye) return {"error":"invalid date; no year provided"};
+
+		mo = dedash(rx[2]) || mo_default;
+		da = dedash(rx[3]) || da_default;
+		// rx[4] is the "T" or " "
+		ho = dedash(rx[4]) || da_default;
+		// rx[6] is ":"
+		mi = dedash(rx[5]) || mi_default;
+		// rx[8] is ":"
+		se = dedash(rx[6]) || mi_default;
+		
+		// if year is < 1 or > 9999, override
+		// tz offset, set it to 0/UTC no matter what
+		
+		// If the offset is negative, we want to make
+		// sure that minutes are considered negative along
+		// with the hours"-07:00" > {tz_ho:-7; tz_mi:-30}
+		tz_pm = rx[7] || "+";
+   		tz_ho = parseInt(rx[8], 10) || 0;
+		if (tz_pm == "-") {tz_ho = tz_ho * -1;}
+		tz_mi = parseInt(rx[9], 10) || 0;
+		if (tz_pm == "-") {tz_mi = tz_mi * -1;}
+		
+		// is it a leap year?? get this once
+
+		return {"ye":ye, "mo":mo, "da":da, "ho":ho, "mi":mi, "se":se, "tz_ho":tz_ho, "tz_mi":tz_mi}
+		
+
+	}; // parse8601
+	
+	
+
+	
+	/*
+	* toFromUTC
+	* transforms TG_Date object to be either in UTC or in non-UTC
+	*
+	* @param ob: {Object} date object including ye, mo, da, etc
+	* @param offset: {String} eg: "-07:30"
+	*
+	* with offsets made clear. Used for formatting dates at all times
+	* since all event dates are stored in UTC
+	*/		
+	TG_Date.toFromUTC = function (ob, offset, toFrom) {
+				
+		var nh_dec = 0,
+			lastDays = [0,31,28,31,30,31,30,31,31,30,31,30,31,29],
+			deltaFloatToHM = function (float){
+				var fl = Math.abs(float),
+					h = Math.floor(fl),
+					dec = fl - h,
+					m = Math.round(dec * 60);
+				
+				return {"ho":h, "mi":m};
+			},
+			delta = {};
+			
+		// Offset is the "timezone setting" on the timeline,
+		// or the timezone to which to translate from UTC
+		if (toFrom == "from") {
+			delta.ho = -1 * offset.hours;
+			delta.mi = -1 * offset.minutes;
+		} else if (toFrom == "to"){
+			delta.ho = offset.hours;
+			delta.mi = offset.minutes;
+		} else {
+			delta.ho = -1 * ob.tz_ho;
+			delta.mi = -1 * ob.tz_mi;
+		}
+	
+		
+		// no change, man!
+		if (delta.ho == 0 && delta.mi ==0) {
+			return ob; 
+		}	
+		
+		// decimal overage or underage after adding offset
+		var ho_delta = (ob.ho + (ob.mi / 60)) + ((-1 * delta.ho) + ((delta.mi * -1) / 60));
+				
+		// DO WE GO FWD OR BACK
+		if (ho_delta < 0) {
+			// go back a day
+			nh_dec = 24 + ho_delta;
+		
+			if (ob.da > 1) {
+				ob.da = ob.da - 1;
+			} else { 
+				// day is 1....
+				if (ob.mo == 1) {
+					// & month is JAN, go back to DEC
+					ob.ye = ob.ye - 1; ob.mo = 12; ob.da = 31;
+				} else { 
+					ob.mo = ob.mo-1;
+					// now that we know month, what is the last day number?
+					if (ob.mo == 2 && TG_Date.isLeapYear(ob.ye) == true) {
+						ob.da = 29;
+					} else {
+						ob.da = lastDays[ob.mo];
+					}
+				}
+			}
+			
+		} else if (ho_delta > 24) {
+			// going fwd a day
+			nh_dec = ho_delta - 24;			
+
+			if (TG_Date.isLeapYear(ob.ye) && ob.mo == 2 && ob.da==28){
+				ob.da = 29;
+			} else if (ob.da == lastDays[ob.mo]) {
+				if (ob.mo == 12) {
+					ob.ye = ob.ye + 1;
+					ob.mo = 1;
+				} else {
+					ob.mo = ob.mo + 1;
+				}
+				ob.da = 1;
+			} else {
+				ob.da = ob.da + 1;
+			}
+
+		} else {
+			nh_dec = ho_delta;
+		}
+		// delta did not take us from one day to another
+		// only adjust the hour and minute
+		var hm = deltaFloatToHM(nh_dec);
+			ob.ho = hm.ho;
+			ob.mi = hm.mi;
+			
+		if (!offset) {
+			ob.tz_ho = 0;
+			ob.tz_mi = 0;
+		} else {
+			ob.tz_ho = offset.tz_ho;
+			ob.tz_mi = offset.tz_mi;
+		}
+		
+				
+		////// 
+		return ob;
+		
+	}; // toFromUTC
+	
+	
+
+
 
 
 	
+	
+	// SELF-INVOKING!!
 	TG_Date.getTimezones = function() {
 		
 		$.ajax({ 	
@@ -767,11 +950,11 @@ YYYY-MM-DD 08:15:30-07:00
         * @param ye {Number} straight year
         *
         */ 
-        function getMoNum (mo, ye) {
-        	    if (ye > 0) {
-        			return  ((ye -1) * 12) + mo;
+        function getMoNum (ob) {
+        	    if (ob.ye > 0) {
+        			return  ((ob.ye -1) * 12) + ob.mo;
         		} else {
-        			return getMoNumBC(mo, ye);
+        			return getMoNumBC(ob.mo, ob.ye);
         		}
         };
   
@@ -791,54 +974,13 @@ YYYY-MM-DD 08:15:30-07:00
         	return -1 * n;
         };
         
-        
-        function parse8601 (str) {
-        	/*
-        	4   YYYY
-			7   YYYY-MM
-			10  YYYY-MM-DD
-			13  YYYY-MM-DD 13
-			16  YYYY-MM-DD 08:15
-			19  YYYY-MM-DD 08:15:30
-			25  YYYY-MM-DD 08:15:30-07:00
-			*/
-			
-			
-			var len=0, bce=false, arr = [], 
-				// defaults for unfound units
-				ye=0, mo=1, da=1, ho=0, mi=0, se=0;
-			
-			if (dateStr.substr(0,1) == "-") {
-      		  bce=1;
-      		  str = str.substr(1);
-      		} else {
-      		  bce=0;
-    		}
-    		
-    		// if it contains a "-", there's more than the year
-    		// break it down, yo
-    		if (str.indexOf("-") != -1)  {
-    		
-    			// regex
-    			//          year    month     day
-    			var reg = /^(\d+)-?(\d{1,2})?(-\d{1,2})/;
-				arr = str.split("-");
-				
-				ye = arr[0];
+
+
+		function show(ob){
+			return ob.ye + "-" + ob.mo + "-" + ob.da + " " + ob.ho + ":" + ob.mi;
+		}
 		
-    		} else {
-    		// if it doesn't contain a "-", there's only the year
-    		// add defaults for month, day, etc
-    			ye = str;
-    		} 
-    		     		
-    		
-    		// var len = str.lenth;
-    		return false;
-        };
-
-
-
+			
   
 
 	

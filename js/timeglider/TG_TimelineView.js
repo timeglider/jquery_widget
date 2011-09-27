@@ -884,17 +884,18 @@ tg.TG_PlayerView.prototype = {
 			} // end--if min_zoom == max_zoom 
 	},
 	
+	
 	/*
-	* Occurs when MOUSE-hovering over event
+	* usage: timeline event hovering, modal display
 	*
 	*/
 	
 	getEventDateLine: function(ev) {
-		var startDateF = "<span class='timeglider-dateline-startdate'>" + ev.startdateObj.format('', true) + "</span>";
+		var startDateF = "<span class='timeglider-dateline-startdate'>" + ev.startdateObj.format('', true, MED.timeOffset) + "</span>";
     		endDateF = "";
     	
     	if (ev.span == true) {
-    		 endDateF = " &ndash; <span class='timeglider-dateline-enddate'>" + ev.enddateObj.format('', true) + "</span>";
+    		 endDateF = " &ndash; <span class='timeglider-dateline-enddate'>" + ev.enddateObj.format('', true, MED.timeOffset) + "</span>";
     	}
     	
     	return startDateF + endDateF;
@@ -1592,7 +1593,6 @@ tg.TG_PlayerView.prototype = {
 			    }
 			}
 
-	    
 			stuff = this.compileTickEventsAsHtml(tl, idArr, 0, "sweep");
 			// TODO: make 56 below part of layout constants collection
 			ceiling = (tl.hasImagesAbove) ? tl_top - 56 : tl_top;

@@ -41,7 +41,6 @@
     this.min_zoom = options.min_zoom;
     
     this.timeOffset = TG_Date.getTimeOffset(options.timezone);
-    debug.log("time offset object:", this.timeOffset);
   
     this.fixed_zoom = (this.max_zoom == this.min_zoom) ? true : false;
     this.gesturing = false;
@@ -479,8 +478,7 @@ tg.TG_Mediator.prototype = {
 	
 		// patch until we have better multi-timeline support
 		this.activeTimelines = [];
-		
-	
+
 		var lt = this.timelineCollection.get(id).attributes;
 		
 		var ia = $.inArray(id, this.activeTimelines);
@@ -522,7 +520,7 @@ tg.TG_Mediator.prototype = {
 	*/
 	reportImageSize : function (img) {
 	 
-	 	debug.log("reporting image size...", img)
+	 	// debug.log("reporting image size...", img)
 		var ev = MED.eventCollection.get(img.id);
 		
 		if (ev.has("image")) {
@@ -574,6 +572,7 @@ tg.validateOptions = function (widget_settings) {
   
 	this.optionsMaster = { 
 		initial_focus:{type:"date"}, 
+		timezone:{type:"timezone"},
     	editor:{type:"string"}, 
     	backgroundColor:{type:"color"}, 
     	backgroundImage:{type:"color"}, 
@@ -627,6 +626,16 @@ tg.validateOptions = function (widget_settings) {
 
 				case "date":
 					// TODO validate a date string using TG_Date...
+				break;
+				
+				case "timezone":
+					
+					var cities = ["New York", "Denver", "Chicago", "Los Angeles"];
+					var pattern = /[+|-]?[0-9]+:[0-9]+/;
+						if (($.inArray(value, cities) == -1) && (value.match(pattern) == -1)) { 
+							msg += ("The timezone is not formatted properly");
+						}
+						
 				break;
 
 				case "boolean":

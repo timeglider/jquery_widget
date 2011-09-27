@@ -46,7 +46,7 @@
 			// no other defaults?
 			"initial_zoom":25,
 			"focus_date":"today",
-			"time_offset":"00:00",
+			"timezone_offset":"00:00",
 			"title":  "Untitled",
 			"events": [],
 			"legend": []
@@ -81,15 +81,15 @@
 			tdata.spans = [];
 			tdata.hasImagesAbove = false;
 			
-			var tdoff = tdata.time_offset || "00:00";
-			tdata.timeOffset = TG_Date.getTimeOffset(tdoff);
+			var tzoff = tdata.timezone_offset || "00:00";
+			tdata.timeOffset = TG_Date.getTimeOffset(tzoff);
 						
 			// TODO: VALIDATE COLOR, centralize default color(options?)
 			if (!tdata.color) { tdata.color = "#333333"; }
 			
 			if (tdata.events) {
 			
-				var date, ddisp, ev, id, unit, ser, tWidth, offsetSeconds;
+				var date, ddisp, ev, id, unit, ser, tWidth;
 				var l = tdata.events.length;
 			
 	
@@ -116,25 +116,20 @@
 					ddisp = ev.date_display || ev.date_limit || "da";
 					ev.date_display = ddisp.toLowerCase().substr(0,2);
 			
+								
+					// if a timezone offset is set on the timeline, adjust
+					// any events that do not have the timezone set on them
+					if (tdata.timeOffset.seconds) {
+						ev.startdate = TG_Date.tzOffsetStr(ev.startdate, tdata.timeOffset.string);
+						
+						if (ev.enddate) {
+						ev.enddate = TG_Date.tzOffsetStr(ev.enddate, tdata.timeOffset.string);
+						}
+					}
 					
-					// date comes in...
-					// need to get it to UTC
-					// if it has its own offset,or timeline has an offset...
-					// need to push it forward or back
-					// an offset of "-07:00" means the hour has to advance
-					// 7 hours to get to UTC time
-					
-					// the event might have its own offset, apart from the timeline
-					// timezone...
-					// if the string is at least... XX characters long, it has a timezone
-					// and we can extract it and get seconds to add/subtract to date object...
-					
-					// so, do we need to create JS Date objects here???	
-			
-					ev.startdateObj = new TG_Date(ev.startdate, ev.date_display, tdata.timeOffset.seconds);
-					
-					
-					
+					ev.startdateObj = new TG_Date(ev.startdate, ev.date_display);
+
+
 					// TODO: if they're valid!
 					if ((ev.enddate) && (ev.enddate !== ev.startdate)){
 						ev.enddateObj = new TG_Date(ev.enddate, ev.date_display);
@@ -238,6 +233,8 @@
 			// debug.log("validate data:" + attrs.title); 
 		
 		}
+		
+		
 	
 	});
 
