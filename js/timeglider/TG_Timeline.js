@@ -184,6 +184,10 @@
 			
 					ev=tdata.events[ei];
 					
+					if (ev.map) {
+						tg.googleMapsLoad();
+					}
+					
 					// make sure it has an id!
 					if (ev.id) { 
 						// TODO :: make sure it's unique... append with timeline id?

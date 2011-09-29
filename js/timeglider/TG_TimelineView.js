@@ -1864,7 +1864,9 @@ tg.TG_PlayerView.prototype = {
 		$(CONTAINER + " #" + eid + "_modal").remove();
 		
 		var me = this,
-			map_view = false, video_view=false, map = "", map_options = {}, $modal, llar=[],
+			map_view = false, 
+			video_view=false, 
+			map = "", map_options = {}, $modal, llar=[], mapZoom = 0,
 			
 			// global modal option...
 			modal_type = options.event_modal.type,
@@ -1916,12 +1918,13 @@ tg.TG_PlayerView.prototype = {
 
       	  			if (map_view == true) {
       	  				$modal.find("#insert").append("<div id='map_modal_map'></div>");
-      	  				debug.log("ev.map.latlong", ev.map.latlong)
+      	  				
+      	  				mapZoom = ev.map.zoom || 12;
       	  				llarr = String(ev.map.latlong).split(",");
-      	  				debug.log("llar", llarr)
+      	  				
       	  				map_ll = new google.maps.LatLng(parseFloat(llarr[0]), parseFloat(llarr[1]));
 						map_options = {
-							zoom:13,
+							zoom:mapZoom,
 							center: map_ll,
 							mapTypeId: google.maps.MapTypeId.ROADMAP
 						}
@@ -2330,47 +2333,26 @@ if (debug) {
 }
 
 
-tg.initialize = function () {
-	var myOptions = {
-          zoom: 8,
-          center: new google.maps.LatLng(43.73835987852788, -72.29415893554688),
-          mapTypeId: google.maps.MapTypeId.ROADMAP
-        };
+tg.googleMapsInit = function () {
+	debug.log("initializing google maps...")
+}
 
-    //var map = new google.maps.Map(document.getElementById('map_canvas'),
-    //        myOptions);
+tg.googleMapsLoaded = false;
+tg.googleMapsLoad = function () {
+		
+	if (tg.googleMapsLoaded == false) {
+		debug.log("load google maps...");
+	
+			var script = document.createElement('script');
+	    script.type = 'text/javascript';
+	    script.src = 'http://maps.googleapis.com/maps/api/js?sensor=false&' +
+	        'callback=timeglider.googleMapsInit';
+	    document.body.appendChild(script);
+	    
+	    tg.googleMapsLoaded = true;
+	}
 }
 
 
-  
-    
-   
 
 })(timeglider);
-
-
-/*
-function initialize() {
-        var myOptions = {
-          zoom: 8,
-          center: new google.maps.LatLng(43.73835987852788, -72.29415893554688),
-          mapTypeId: google.maps.MapTypeId.ROADMAP
-        };
-
-        var map = new google.maps.Map(document.getElementById('map_canvas'),
-            myOptions);
-      }
-*/
-function loadScript() {
-        var script = document.createElement('script');
-        script.type = 'text/javascript';
-        script.src = 'http://maps.googleapis.com/maps/api/js?sensor=false&' +
-            'callback=timeglider.initialize';
-        document.body.appendChild(script);
-      }
-
-window.onload = loadScript;
-
-
-
-
