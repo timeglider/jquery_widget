@@ -19,21 +19,6 @@
 "icon":"flag_green.png"
 },
 
-{
-"id":"map-test",
-"title": "Map Test",
-"description":"Map Test with a description. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam suscipit lobortis euismod. Fusce pellentesque massa at sem ornare tempus. Ut luctus, mauris id egestas sollicitudin, augue diam tincidunt enim, a eleifend quam augue non augue. Sed varius imperdiet libero ut ullamcorper. Duis faucibus rutrum risus, sit amet dapibus lacus euismod non. Integer sed orci nisi, sed scelerisque lectus. In vel urna eros, sit amet egestas tellus. Maecenas vel quam sed urna porta condimentum a sed massa. Nulla tellus eros, placerat ullamcorper venenatis non, tincidunt nec risus.",
-"link":[{"label":"selflang", "url":"http://selflanguage.org/"},
-		{"label":"another link", "url":"http://nytimes.com/"}],
-"startdate": "1992-01-01 12:00:00",
-"enddate": "1996-12-01 12:00:00",
-"importance":"40",
-"date_display":"da",
-"icon":"flag_green.png",
-"map":{"label":"Vermont!", "latlong":"43.58635949637694, -72.19390869140625"}
-},
-
-
 
 {
 "id":"jshist-whatwg",
@@ -319,11 +304,58 @@
 "link":"http://www.jquerymobile.com",
 "importance":"30",
 "icon":"triangle_green.png"
-}],
+},
+
+{
+"id":"jsconf2010",
+"title": "JS Conf 2010",
+"description": "The theme for JSConf US 2010 is 'Pirates' and we do intend on taking that to the limit. Already we have buried some treasure(.js) for a few lucky land lubbers. Everything you have seen, heard, or come to know of about JSConf is about to change once again. Prepare to cast away for an amazing time as the JavaScript community comes together once again in Washington, DC.",
+"startdate": "2010-04-17 08:00:00",
+"enddate": "2010-04-18 18:00:00",
+"link":"http://jsconf.us/2010/",
+"importance":"40",
+"icon":"star_green.png",
+"map":{
+	"label":"JSConf 2010", 
+	"latlong":"38.8969007, -77.0724308",
+	"markers":[
+		{
+		"latlong":"38.8969007, -77.0724308",
+		"icon":"http://timeglider.com/jquery/img/jsconf.png",
+		"title":"JS Conf 2010, in Arlington/Washington DC",
+		"zIndex":99
+		 }
+		]
+	}
+},
+{
+"id":"jsconf2011",
+"title": "JS Conf 2011",
+"description": "Portland, Oregon, at the Portland Art Museum. Highlights included Andrew Dupont's talk, 'Everything is Permitted: Extending Built-ins', doughnuts, and more.",
+"startdate": "2011-05-02 08:00:00",
+"enddate": "2011-05-03 18:00:00",
+"link":"http://2011.jsconf.us/",
+"importance":"40",
+"icon":"star_green.png",
+"map":{
+	"label":"JSConf 2011", 
+	"latlong":"45.51655690309638,-122.68299579620361",
+	"markers":[
+		{
+		"latlong":"45.51655690309638, -122.68299579620361",
+		"icon":"http://timeglider.com/jquery/img/jsconf.png",
+		"title":"Portland Art Museum",
+		"zIndex":99
+		 }
+		]
+	}
+}
+],
 "legend": [
    {"title":"libraries", "icon":"triangle_green.png"},
    {"title":"engines", "icon":"square_gray.png"},
-   {"title":"origins", "icon":"flag_green.png"}
+   {"title":"origins", "icon":"flag_green.png"},
+   {"title":"conferences", "icon":"star_green.png"}
 ]
          
 }

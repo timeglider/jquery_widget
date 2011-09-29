@@ -1864,7 +1864,7 @@ tg.TG_PlayerView.prototype = {
 		$(CONTAINER + " #" + eid + "_modal").remove();
 		
 		var me = this,
-			map_view = false, video_view=false, map = "", map_options = {}, $modal,
+			map_view = false, video_view=false, map = "", map_options = {}, $modal, llar=[],
 			
 			// global modal option...
 			modal_type = options.event_modal.type,
@@ -1890,6 +1890,7 @@ tg.TG_PlayerView.prototype = {
 				video_view = true;
 			} else if (ev.map) {
 				if (ev.map.latlong) { 
+					
 					map_view = true;
 					modal_type = "full";
 				}
@@ -1912,19 +1913,46 @@ tg.TG_PlayerView.prototype = {
       						offset:"0, 0",
       						collision: "none none"
       	  			   });
-      	  			   
-      	  			
-      	  			
+
       	  			if (map_view == true) {
-      	  				$modal.find("#insert").append("<div id='map_modal_map'></div>")
-      	  				llarr = ev.map.latlong.split(",");
-      	  				map_ll = new google.maps.LatLng(43.58635949637694, -72.19390869140625);
+      	  				$modal.find("#insert").append("<div id='map_modal_map'></div>");
+      	  				debug.log("ev.map.latlong", ev.map.latlong)
+      	  				llarr = String(ev.map.latlong).split(",");
+      	  				debug.log("llar", llarr)
+      	  				map_ll = new google.maps.LatLng(parseFloat(llarr[0]), parseFloat(llarr[1]));
 						map_options = {
-							zoom: 10,
+							zoom:13,
 							center: map_ll,
 							mapTypeId: google.maps.MapTypeId.ROADMAP
 						}
 						map = new google.maps.Map($("#map_modal_map")[0], map_options);
+						
+						// if there are markers provided in the map:
+						
+						if (ev.map.markers) {
+						
+							for (var i=0; i<ev.map.markers.length; i++) {
+								var marker = ev.map.markers[i];
+							  	var image = new google.maps.MarkerImage(marker.image,
+									new google.maps.Size(24, 32),
+									new google.maps.Point(0,0),
+									new google.maps.Point(0, 32)); // "plant" origin is lower left
+							  
+							  	var loc = marker.latlong.split(",");
+									
+							    var llobj = new google.maps.LatLng(loc[0], loc[1]);
+							
+							    var marker = new google.maps.Marker({
+							        position: llobj,
+							        map: map,
+							        icon: marker.icon,
+							        title: marker.title,
+							        zIndex:marker.zIndex
+							    });
+							}
+						}
+		
+		
       	  			} else if (video_view == true) {
       	  				$modal.find("#insert").append("<iframe width='100%' height='300' src='" + ev.video + "'></iframe></div>");
       	  			}
