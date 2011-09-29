@@ -55,7 +55,7 @@ tg.TG_PlayerView = function (widget, mediator) {
     		PLACE:PL,
     		CONTAINER : PL + " .timeglider-container", 
     		DATE : PL + " .timeglider-date-display",
-    		TIMELINE_MENU : PL + " .timeglider-timeline-menu", 
+    		TIMELINE_MENU : PL + " .timeglider-timeline-menu",
     		TIMELINE_MENU_UL : PL + " .timeglider-timeline-menu ul", 
     		TIMELINE_LIST_BT : PL + " .timeglider-list-bt", 
     		SLIDER_CONTAINER : PL + " .timeglider-slider-container", 
@@ -68,7 +68,7 @@ tg.TG_PlayerView = function (widget, mediator) {
     		FOOTER : PL + " .timeglider-footer",
     		FILTER_BT : PL + " .timeglider-filter-bt",
     		FILTER_BOX : PL + " .timeglider-filter-box",
-    		TOOLS_BT : PL + " .timeglider-tools-bt"
+    		SETTINGS_BT : PL + " .timeglider-settings-bt"
 	    }
 	  
 	// shorthand for common elements
@@ -89,9 +89,7 @@ tg.TG_PlayerView = function (widget, mediator) {
  	// this needs to be less than or equal to
  	//  timeglider.css value for timeglider-tick-height
  	this.tick_height = 34;
- 	
- 	
-	
+
  	
 	// in case custom event_modal fails, we need this object to exist
 	this._templates = {}
@@ -100,15 +98,34 @@ tg.TG_PlayerView = function (widget, mediator) {
 	    // allows for customized templates imported
 		test : "testola",
 		
-		event_modal: this.getEventModalTemplate(),
-		  
+		event_modal_small: "<div class='tg-modal timeglider-ev-modal ui-widget-content' id='${id}_modal'>" 
+      	   + "<div class='close-button-remove'></div>" 
+      	   + "<div class='dateline'>{{html dateline}}</div>"
+      	   + "<h4 id='title'>${title}</h4>"
+      	   + "<p>{{html image}}{{html description}}</p>"
+      	   + "<ul class='timeglider-ev-modal-links'>{{html links}}</ul>"
+      	   + "</div>",
+	
 		// generated, appended on the fly, then removed
-		event_modal_video : $.template( null,
-			"<div class='tg-modal timeglider-ev-video-modal ui-widget-content' id='${id}_modal'>"
-			+ "<div class='close-button-remove'></div>"
-			+ "<iframe width = '100%' height='300' src='${video}'></iframe></div>"),
-		
-     
+		event_modal_full : $.template( null,
+		////////
+		"<div class='tg-modal full_modal' id='ev_${id}_modal'>"
+		+ "<div class='full_modal_scrim'></div>"
+		+ "<div class='full_modal_panel'>"
+		+ "<div class='close-button full_modal_close'>x</div>"
+		+ "<div class='dateline'>{{html dateline}}</div>"
+		+ "<table><tr><td>"
+		+ "<h4>${title}</h4>"
+		+ "<div class='description'>"
+		+ "<p>{{html image}}{{html description}}</p>"
+		+ "</div>"
+		+ "</td><td>"
+		+ "<div id='insert'></div>"
+		+ "</td></tr></table>"
+		+ "<div class='footer'><ul>{{html links}}</ul></div>"
+		+ "</div>"),
+			
+
      	// generated, appended on the fly, then removed
      	filter_modal : $.template( null,
           "<div class='tg-modal timeglider-menu-modal timeglider-filter-box timeglider-display-none'>"+
@@ -129,6 +146,14 @@ tg.TG_PlayerView = function (widget, mediator) {
           "<div class='close-button'></div>"+
           "<h3>timelines</h3>"+
           "<div class='timeglider-menu-modal-content'><ul></ul></div>"+
+          "<div class='timeglider-menu-modal-point-right'>"+
+          "</div>"),
+          
+        settings_modal : $.template( null,
+          "<div class='timeglider-menu-modal timeglider-settings-modal'>"+
+          "<div class='close-button'></div>"+
+          "<h3>settings</h3>"+
+          "<div class='timeglider-menu-modal-content'><div class='timeglider-settings-timezone'></div></div>"+
           "<div class='timeglider-menu-modal-point-right'>"+
           "</div>"),
         
@@ -181,25 +206,22 @@ tg.TG_PlayerView = function (widget, mediator) {
 
 	$(CONTAINER)
 		.delegate(".tg-timeline-envelope .timeline-info", "click", function () {
-		var id = $(this).data("timeline_id");
-		me.openTimelineModal(id);
-	})
+			var id = $(this).data("timeline_id");
+			me.openTimelineModal(id);
+	})	
 		.delegate(".tg-timeline-envelope .expand-collapse", "click", function () {
-		var id = $(this).data("timeline_id");
-		me.expandCollapseTimeline(id);
+			var id = $(this).data("timeline_id");
+			me.expandCollapseTimeline(id);
 	})
 		.delegate(".tg-timeline-envelope .tg-timeline-legend-bt", "click", function () {
-		var id = $(this).data("timeline_id");
-		me.legendModal(id);
+			var id = $(this).data("timeline_id");
+			me.legendModal(id);
 	})
 		.delegate(".close-button-remove", "click", function () {
 			var parent_id = $(this).parent().attr("id");
 			$("#" + parent_id).remove();
 	})
-		.delegate(".full_modal_close", "click", function () {
-			$(".full_modal").remove();
-	})
-		.delegate(".full_modal_scrim", "click", function () {
+		.delegate(".full_modal_scrim, .full_modal_close", "click", function () {
 			$(".full_modal").remove();
 	})
 		.delegate(".timeglider-more-plus", "click", function () {
@@ -218,6 +240,7 @@ tg.TG_PlayerView = function (widget, mediator) {
 	})
 		.css("height", $(PL).height());
 	// END CONTAINER CHAIN
+	
 	
 	
 	
@@ -298,8 +321,8 @@ tg.TG_PlayerView = function (widget, mediator) {
 		// EVENT ON-CLICK !!!!!!
 		var eid = $(this).attr("id"); 
 		var ev = MED.eventCollection.get(eid).attributes;
-		 
-	  	if (ev.click_callback) {
+		
+		if (ev.click_callback) {
 	    
 		    var broken = ev.click_callback.split(".");
 		    var ns = broken[0];
@@ -313,7 +336,7 @@ tg.TG_PlayerView = function (widget, mediator) {
 	    
 		} else {
       		me.eventModal(eid);
-			}
+		}
 	  
 	})	
 	.delegate(".timeglider-timeline-event", "mouseover", function () { 
@@ -333,18 +356,10 @@ tg.TG_PlayerView = function (widget, mediator) {
 		 
 	});
 	// END TICKS CHAIN!!
-		
-		
-
- 	
-  
-  /* SETTINGS BUSINESS */
-  $(this._views.TOOLS_BT).click(function() {
-    alert("I'm just a stand-in for the tools... ");
-  }); 
+	
+	  
  
-	
-	
+
 	// TODO: make function displayCenterline()
 	// TODO: simply append a centerline template rather than .css'ing it!
 	if (MED.options.show_centerline === true) {
@@ -430,6 +445,7 @@ tg.TG_PlayerView = function (widget, mediator) {
 	// CREATE TIMELINES MENU
 	$.subscribe("mediator.timelineDataLoaded", function (arg) {
     	me.buildTimelineMenu();
+    	me.buildSettingsMenu();
 	});
 	
 
@@ -543,46 +559,7 @@ tg.TG_PlayerView.prototype = {
 		  
 	},
 	
-	
-	getEventModalTemplate : function() {
-	    
-	   var me = this,
-	       template = false,
-	       stripped = '',
-	       default_template = $.template( null, "<div class='tg-modal timeglider-ev-modal ui-widget-content' id='${id}_modal'>" 
-      	   + "<div class='close-button-remove'></div>" 
-      	   + "<div class='dateline'>{{html dateline}}</div>"
-      	   + "<h4 id='title'>${title}</h4>"
-      	   + "<p>{{html description}}</p>"
-      	   + "<ul class='timeglider-ev-modal-links'>{{html links}}</ul>"
-      	   + "</div>");
-	       
-	   // DEFAULT TEMPLATE
-	   if (!options.event_modal.href) {
-       template = default_template
-   	 
- 	   } else {
- 	     // we have a custom event modal waiting in a file === get it
-       var tget = $.ajax({
-         url: options.event_modal.href,
-         success: function (html) { 
-           // sets template to template in case it returns before the get happens
-           stripped = html.removeWhitespace();
-           debug.log("stripped:" + stripped);
-           me._templates.event_modal = template = $.template(null, stripped);
-         },
-         error : function () {
-           me._templates.event_modal = template = default_template;
-           debug.log("Custom event modal HTML file could not be found/loaded! Reverting to default.");
-         }
-       });
-       
-     }
-   	 return template;
-   	  
-   },
-  
-	
+		
 	scaleToImportance : function(imp, zoo) {
 		return imp / zoo;
 	},
@@ -614,13 +591,13 @@ tg.TG_PlayerView.prototype = {
  	},
  	
  	
-  /**
-  * setPanButton
-  * @param $sel {jquery dom selector} the button to be assigned
-  * @parm vel {Number} positive for moving to the right, negative for moving left
-  *
-  *
-  */
+	/**
+	* setPanButton
+	* @param $sel {jquery dom selector} the button to be assigned
+	* @parm vel {Number} positive for moving to the right, negative for moving left
+	*
+	*
+	*/
  	setPanButton : function ($sel, vel) {
  	     var me = this,
  	         _int = 33; // 33/1000 second interval
@@ -630,7 +607,11 @@ tg.TG_PlayerView.prototype = {
     	    me.intervalMachine("pan", {type:"clear", fn: me.pan, callback: "resetTicksHandle"});  })
         .live("mouseout", function () {
         	me.intervalMachine("pan", {type:"clear", fn: me.pan, callback: "resetTicksHandle"});  });
-  },
+  	},
+  
+  
+  	
+
  	
  	
  	
@@ -743,7 +724,7 @@ tg.TG_PlayerView.prototype = {
 			startSec --> the seconds-value of the
 	    initial focus date on landing @ zoom level
 		*/
-		// TODO: See if we can throttle this to be only
+		// !TODO: See if we can throttle this to be only
 		// once every 100ms....
 		var startSec = MED.startSec,
 		  tickPos = $(TICKS).position().left,
@@ -817,6 +798,69 @@ tg.TG_PlayerView.prototype = {
 	    });
 	   
 	},
+	
+	getTimezonePulldown: function(id, sel){
+		
+		var html = "<select name='timezone' id='" + id + "'>",
+			seld = false, selstr = "selected";
+		
+		$.map(TG_Date.timezones, function(tz){ 
+		
+			if (sel == tz.offset && seld == false) {
+				selstr = "selected";
+				seld = true;
+				
+			} else {
+				selstr = "";
+			}
+			
+			html += "<option value='" + tz.offset + "' " + selstr + ">" + tz.name + "</option>";
+				
+		});
+		
+		html += "</select>";
+		return html;
+		
+	},
+	
+	buildSettingsMenu: function () {
+	
+		var me = this;
+		
+		var $s = $.tmpl(me._templates.settings_modal,{}).appendTo(me._views.CONTAINER);
+	
+		var tz_menu = this.getTimezonePulldown("timeglider-settings-timezone", MED.timeOffset.string);
+		
+		$s.find(".timeglider-settings-timezone")
+			.append('<p>Make changes below, then click on "save". More settings options to come!</p>')
+			.append('<span class="settings-label">timezone:</span> ' + tz_menu)
+			.append("<p style='clear:both'>&nbsp;</p><div class='btn success' id='timeglider-settings-save'>save</div>");
+			
+
+		$s.position({
+	        		my: "right bottom",
+	      			at: "right top",
+	      			of: $(me._views.SETTINGS_BT),
+	      			offset: "-8, -12"
+	    }).fadeOut(1);
+	    
+	    
+	    $(CONTAINER)
+	    .delegate(".timeglider-settings-modal .close-button", "click", function () {
+			$s.fadeOut();
+		})
+		.delegate(this._views.SETTINGS_BT, "click", function() {
+  			$s.fadeIn();
+  		})
+  		.delegate("#timeglider-settings-save", "click", function() {
+  			// get timezone
+  			var tz_off = $(CONTAINER + " #timeglider-settings-timezone").val();
+  			MED.setTimeoffset(tz_off); 			
+  		});
+	    
+	},
+	
+	
   
   
 	
@@ -1794,11 +1838,10 @@ tg.TG_PlayerView.prototype = {
   },
   
   
-	createEventLinksMenu : function (linkage, modal_type) {
+	createEventLinksMenu : function (linkage) {
 		if (!linkage) return "";
 		
 		var html = '', l = 0, lUrl = "", lLab="";
-		if (modal_type == "full") { html += "<li><h4>links</h4></li>"; }
 		
 		if (typeof(linkage) == "string") {
 			// single url string for link: use "link"
@@ -1821,56 +1864,99 @@ tg.TG_PlayerView.prototype = {
 		$(CONTAINER + " #" + eid + "_modal").remove();
 		
 		var me = this,
+			map_view = false, video_view=false, map = "", map_options = {}, $modal,
+			
+			// global modal option...
 			modal_type = options.event_modal.type,
 			$par = $("#" + eid),
-			modalTemplate =  me._templates.event_modal;
 			ev = MED.eventCollection.get(eid).attributes,
-			
 			ev_img = (ev.image && ev.image.src) ? "<img src='" + ev.image.src + "'>" : "",
-			ev_img_src = (ev.image && ev.image.src) ? ev.image.src : "",
-			links = this.createEventLinksMenu(ev.link, modal_type),
-			ev_descr = (modal_type == "default") ? ev_img + ev.description: ev.description;
-		  
+			links = this.createEventLinksMenu(ev.link),
+		  	
 			templ_obj = { 
 				title:ev.title,
-				description:ev_descr,
+				description:ev.description,
 				id:eid,
 				dateline: me.getEventDateLine(ev),
 				links:links,
-				image:ev_img_src,
+				image:ev_img,
 				video: ev.video
 			}
 		  
+		  	
 			if (ev.video) { 
-				modalTemplate = me._templates.event_modal_video;
 				templ_obj.video = ev.video;
+				modal_type = "full";
+				video_view = true;
+			} else if (ev.map) {
+				if (ev.map.latlong) { 
+					map_view = true;
+					modal_type = "full";
+				}
 			}
-			
-	    	var $modal = $.tmpl(modalTemplate,templ_obj);
+
 	    
 			switch (modal_type) {
 			
 				case "full":
+					$modal = $.tmpl(me._templates.event_modal_full,templ_obj);
 		  			// full modal with scrim, etc
 		  			var pad = 32;
        				$modal
     					.appendTo(CONTAINER)
-  			  			.css({
-  			    			"z-index": me.ztop++
-  			  			})
+  			  			.css({"z-index": me.ztop++})
   			  			.position({
       						my: "left top",
       						at: "left top",
       						of: (CONTAINER),
       						offset:"0, 0",
       						collision: "none none"
-      	  			});
+      	  			   });
+      	  			   
       	  			
-      				$modal.children(".full_modal_panel").css({
-      	    			"width":(me.dimensions.container.width - (pad*2)) + "px",
-    			  		"height":(me.dimensions.container.height - (pad*2)) + "px"
+      	  			
+      	  			if (map_view == true) {
+      	  				$modal.find("#insert").append("<div id='map_modal_map'></div>")
+      	  				llarr = ev.map.latlong.split(",");
+      	  				map_ll = new google.maps.LatLng(43.58635949637694, -72.19390869140625);
+						map_options = {
+							zoom: 10,
+							center: map_ll,
+							mapTypeId: google.maps.MapTypeId.ROADMAP
+						}
+						map = new google.maps.Map($("#map_modal_map")[0], map_options);
+      	  			} else if (video_view == true) {
+      	  				$modal.find("#insert").append("<iframe width='100%' height='300' src='" + ev.video + "'></iframe></div>");
+      	  			}
+      	  			
+      	  			var ch = me.dimensions.container.height;
+      	  			var cw = me.dimensions.container.width;
+      	  			var $panel = $(CONTAINER + " .full_modal_panel");
+      	  			var pw = $panel.width();
+      	  			var ph = $panel.height();
+      	  			
+      				$panel.css({
+      	    			"top":((ch - ph)/2) + "px",
+    			  		"left":((cw - pw)/2) + "px",
     	  			});
+    	  			
 			
+				break;
+				
+				case "video":
+					$modal = $.tmpl(me._templates.event_modal_video,templ_obj);
+					$modal
+						.appendTo(TICKS)
+						.css("z-index", me.ztop++)
+						.position({
+							my: "right center",
+							at: "left center",
+							of: $par,
+							offset: "-12, -1", // left, top
+							collision: "flip fit"
+					})
+      				.hover(function () { $(this).css("z-index", me.ztop++); });
+				
 				break;
 			
 				// Add custom modal type here
@@ -1878,6 +1964,7 @@ tg.TG_PlayerView.prototype = {
 		
 		  		// normal small, draggable modal
 				default:
+					$modal = $.tmpl(me._templates.event_modal_small,templ_obj);
 					$modal
 						.appendTo(TICKS)
 						.css("z-index", me.ztop++)
@@ -1892,6 +1979,7 @@ tg.TG_PlayerView.prototype = {
       				.hover(function () { $(this).css("z-index", me.ztop++); });
       
       		} // eof switch
+      		
 	}, // eof eventModal
 	
 	
@@ -2213,8 +2301,48 @@ if (debug) {
 	}
 }
 
+
+tg.initialize = function () {
+	var myOptions = {
+          zoom: 8,
+          center: new google.maps.LatLng(43.73835987852788, -72.29415893554688),
+          mapTypeId: google.maps.MapTypeId.ROADMAP
+        };
+
+    //var map = new google.maps.Map(document.getElementById('map_canvas'),
+    //        myOptions);
+}
+
+
   
     
    
 
 })(timeglider);
+
+
+/*
+function initialize() {
+        var myOptions = {
+          zoom: 8,
+          center: new google.maps.LatLng(43.73835987852788, -72.29415893554688),
+          mapTypeId: google.maps.MapTypeId.ROADMAP
+        };
+
+        var map = new google.maps.Map(document.getElementById('map_canvas'),
+            myOptions);
+      }
+*/
+function loadScript() {
+        var script = document.createElement('script');
+        script.type = 'text/javascript';
+        script.src = 'http://maps.googleapis.com/maps/api/js?sensor=false&' +
+            'callback=timeglider.initialize';
+        document.body.appendChild(script);
+      }
+
+window.onload = loadScript;
+
+
+
+

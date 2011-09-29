@@ -3,7 +3,6 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
 <title>Timeglider jQuery Plugin</title>
-
 	
 <link rel="stylesheet" href="css/base.css" type="text/css" media="screen" title="no title" charset="utf-8">
 
@@ -11,7 +10,6 @@
 
 <link rel="stylesheet" href="js/timeglider/Timeglider.css" type="text/css" media="screen" charset="utf-8">
 
-<link rel="stylesheet" href="js/timeglider/templates/full_modal.css" type="text/css" media="screen" charset="utf-8">
 
 <style type='text/css'>
 
@@ -49,6 +47,11 @@
 			background-color:pink;
 		}
 		
+		#map_modal_map2 {
+			border:4px solid black;
+			height:400px;
+			width:400px;
+		}
 </style>
 </head>
 <body>
@@ -77,8 +80,11 @@
 </div>
 
 
+
+
 <div id='dropper'></div>
 
+<div id='map_modal_map2'></div>
 	
 	<!-- 3rd party libs -->
 	<script src="js/jquery-1.4.4.min.js" type="text/javascript" charset="utf-8"></script>
@@ -107,6 +113,10 @@
 	<script src="js/timeglider/TG_TimelineView.js" type="text/javascript" charset="utf-8"></script>
 	<script src="js/timeglider/TG_Mediator.js" type="text/javascript" charset="utf-8"></script> 
 	<script src="js/timeglider/timeglider.timeline.widget.js" type="text/javascript" charset="utf-8"></script>
+	
+	
+	<!-- TESTING -->
+	<script src="js/bootstrap-twipsy.js" type="text/javascript" charset="utf-8"></script> 
 
   <script type='text/javascript'>
   
@@ -127,7 +137,7 @@
 				"show_footer":true,
 				"size_importance":true,
 				"display_zoom_level":true,
-				// "event_modal":{href:"js/timeglider/templates/full_modal.html", type:"full"}
+				// "event_modal":{type:"full"}
 		});
 		
 		var tg_actor = tg1.data("timeline");
@@ -148,6 +158,9 @@
 		tg_actor.panButton($(".pan-right"), "right");
 	
     }); // end document-ready
+    
+    
+ 
 	
 </script>
 

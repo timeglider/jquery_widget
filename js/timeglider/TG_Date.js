@@ -854,7 +854,7 @@ YYYY-MM-DD 08:15:30-07:00
 		// only adjust the hour and minute
 		var hm = deltaFloatToHM(nh_dec);
 			ob.ho = hm.ho;
-			ob.mi = hm.mi;
+			ob.mi = hm.mi; 
 			
 		if (!offset) {
 			ob.tz_ho = 0;
@@ -871,25 +871,73 @@ YYYY-MM-DD 08:15:30-07:00
 	}; // toFromUTC
 	
 	
-
-
-
-
+	TG_Date.timezones = [
+	    {"offset": "-12:00", "name": "Int'l Date Line West"},
+	    {"offset": "-11:00", "name": "Bering & Nome"},
+	    {"offset": "-10:00", "name": "Alaska-Hawaii Standard Time"},
+	    {"offset": "-10:00", "name": "U.S. Hawaiian Standard Time"},
+	    {"offset": "-10:00", "name": "U.S. Central Alaska Time"},
+	    {"offset": "-09:00", "name": "U.S. Yukon Standard Time"},
+	    {"offset": "-08:00", "name": "U.S. Pacific Standard Time"},
+	    {"offset": "-07:00", "name": "U.S. Mountain Standard Time"},
+	    {"offset": "-07:00", "name": "U.S. Pacific Daylight Time"},
+	    {"offset": "-06:00", "name": "U.S. Central Standard Time"},
+	    {"offset": "-06:00", "name": "U.S. Mountain Daylight Time"},
+	    {"offset": "-05:00", "name": "U.S. Eastern Standard Time"},
+	    {"offset": "-05:00", "name": "U.S. Central Daylight Time"},
+	    {"offset": "-04:00", "name": "U.S. Atlantic Standard Time"},
+	    {"offset": "-04:00", "name": "U.S. Eastern Daylight Time"},
+	    {"offset": "-03:30", "name": "Newfoundland Standard Time"},
+	    {"offset": "-03:00", "name": "Brazil Standard Time"},
+	    {"offset": "-03:00", "name": "Atlantic Daylight Time"},
+	    {"offset": "-03:00", "name": "Greenland Standard Time"},
+	    {"offset": "-02:00", "name": "Azores Time"},
+	    {"offset": "-01:00", "name": "West Africa Time"},
+	    {"offset": "00:00", "name": "Greenwich Mean Time/UTC"},
+	    {"offset": "00:00", "name": "Western European Time"},
+	    {"offset": "01:00", "name": "Central European Time"},
+	    {"offset": "01:00", "name": "Middle European Time"},
+	    {"offset": "01:00", "name": "British Summer Time"},
+	    {"offset": "01:00", "name": "Middle European Winter Time"},
+	    {"offset": "01:00", "name": "Swedish Winter Time"},
+	    {"offset": "01:00", "name": "French Winter Time"},
+	    {"offset": "02:00", "name": "Eastean EU"},
+	    {"offset": "02:00", "name": "USSR-zone1"},
+	    {"offset": "02:00", "name": "Middle European Summer Time"},
+	    {"offset": "02:00", "name": "French Summer Time"},
+	    {"offset": "03:00", "name": "Baghdad Time"},
+	    {"offset": "03:00", "name": "USSR-zone2"},
+	    {"offset": "03:30", "name": "Iran"},
+	    {"offset": "04:00", "name": "USSR-zone3"},
+	    {"offset": "05:00", "name": "USSR-zone4"},
+	    {"offset": "05:30", "name": "Indian Standard Time"},
+	    {"offset": "06:00", "name": "USSR-zone5"},
+	    {"offset": "06:30", "name": "North Sumatra Time"},
+	    {"offset": "07:00", "name": "USSR-zone6"},
+	    {"offset": "07:00", "name": "West Australian Standard Time"},
+	    {"offset": "07:30", "name": "Java"},
+	    {"offset": "08:00", "name": "China & Hong Kong"},
+	    {"offset": "08:00", "name": "USSR-zone7"},
+	    {"offset": "08:00", "name": "West Australian Daylight Time"},
+	    {"offset": "09:00", "name": "Japan"},
+	    {"offset": "09:00", "name": "Korea"},
+	    {"offset": "09:00", "name": "USSR-zone8"},
+	    {"offset": "09:30", "name": "South Australian Standard Time"},
+	    {"offset": "09:30", "name": "Central Australian Standard Time"},
+	    {"offset": "10:00", "name": "Guam Standard Time"},
+	    {"offset": "10:00", "name": "USSR-zone9"},
+	    {"offset": "10:00", "name": "East Australian Standard Time"},
+	    {"offset": "10:30", "name": "Central Australian Daylight Time"},
+	    {"offset": "10:30", "name": "South Australian Daylight Time"},
+	    {"offset": "11:00", "name": "USSR-zone10"},
+	    {"offset": "11:00", "name": "East Australian Daylight Time"},
+	    {"offset": "12:00", "name": "New Zealand Standard Time"},
+	    {"offset": "12:00", "name": "Int'l Date Line East"},
+	    {"offset": "13:00", "name": "New Zealand Daylight Time"}
+	];
 	
 	
-	// SELF-INVOKING!!
-	TG_Date.getTimezones = function() {
-		
-		$.ajax({ 	
-			url: "js/timezones.json",
-			type:"GET",
-			success: function (data) { 
-				timeglider.timezones = data;
-			}
-		});
-	}()
-	
-	
+
 	
   		/// INTERNAL HOISTED FUNCTIONS
 

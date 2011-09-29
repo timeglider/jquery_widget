@@ -40,6 +40,7 @@
     this.max_zoom = options.max_zoom;
     this.min_zoom = options.min_zoom;
     
+    // setting this without setTimeoffset to avoid refresh();
     this.timeOffset = TG_Date.getTimeOffset(options.timezone);
   
     this.fixed_zoom = (this.max_zoom == this.min_zoom) ? true : false;
@@ -62,7 +63,7 @@
     if (options.max_zoom === options.min_zoom) {
       this.fixed_zoom = options.min_zoom;
     }
-  
+
     MED = this;
 
     } // end mediator head
@@ -285,6 +286,21 @@ tg.TG_Mediator.prototype = {
     },
 
     
+    
+     /*
+    *  setTimeoffset
+    *  @param offset [String] eg: "-07:00"
+    *      
+    */
+    setTimeoffset : function (offsetStr) {
+        this.timeOffset = TG_Date.getTimeOffset(offsetStr);
+        this.refresh();
+    },
+    // might as well
+    getTimeoffset : function () {
+        return this.timeOffset;
+    },
+       
       
     /*
     *  setFocusDate

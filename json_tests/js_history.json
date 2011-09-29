@@ -16,8 +16,21 @@
 "startdate": "1986-01-01 12:00:00",
 "importance":"40",
 "date_display":"none",
-"link":"http://selflanguage.org/",
 "icon":"flag_green.png"
+},
+
+{
+"id":"map-test",
+"title": "Map Test",
+"description":"Map Test with a description. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam suscipit lobortis euismod. Fusce pellentesque massa at sem ornare tempus. Ut luctus, mauris id egestas sollicitudin, augue diam tincidunt enim, a eleifend quam augue non augue. Sed varius imperdiet libero ut ullamcorper. Duis faucibus rutrum risus, sit amet dapibus lacus euismod non. Integer sed orci nisi, sed scelerisque lectus. In vel urna eros, sit amet egestas tellus. Maecenas vel quam sed urna porta condimentum a sed massa. Nulla tellus eros, placerat ullamcorper venenatis non, tincidunt nec risus.",
+"link":[{"label":"selflang", "url":"http://selflanguage.org/"},
+		{"label":"another link", "url":"http://nytimes.com/"}],
+"startdate": "1992-01-01 12:00:00",
+"enddate": "1996-12-01 12:00:00",
+"importance":"40",
+"date_display":"da",
+"icon":"flag_green.png",
+"map":{"label":"Vermont!", "latlong":"43.58635949637694, -72.19390869140625"}
 },
 
 

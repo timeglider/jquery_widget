@@ -53,6 +53,11 @@
   
 }
 
+#map_modal_map {
+	width:300px;
+	height:300px;
+}
+
 .full_modal_close {
   float:right;
 	cursor:pointer;
