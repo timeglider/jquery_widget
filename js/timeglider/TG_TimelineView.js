@@ -1937,7 +1937,7 @@ tg.TG_PlayerView.prototype = {
       	  			
       				$panel.css({
       	    			"top":((ch - ph)/2) + "px",
-    			  		"left":((cw - pw)/2) + "px",
+    			  		"left":((cw - pw)/2) + "px"
     	  			});
     	  			
 			
