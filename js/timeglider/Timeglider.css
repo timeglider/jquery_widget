@@ -1,14 +1,26 @@
 @charset "UTF-8";
 /* CSS Document */
 
+
+
+
+/* only font-family reference here, 
+   including overriding jquery ui css */
+.timeglider-container, #timeglider-measure-span, .ui-widget, .ui-widget input, .ui-widget select, .ui-widget textarea, .ui-widget button {
+	font-family:Helvetica, Arial, sans-serif;
+}
+
+
+
 .timeglider-container {
-	
 	position:relative;
 	overflow:hidden;
 	border:2px solid black;
-	font-family:Helvetica, Arial, sans-serif;
 	background-color:#F4F4F4;
   }
+  
+
+  
   
 
 /* Slightly darker than the larger stage, in .timeglider-container */
@@ -253,14 +265,18 @@
 	margin-right:-7px;
 }
 
+
 #timeglider-measure-span {
 	font-size:12px;
 	width:auto;
-	font-family:Helvetica, Arial;
 	position:absolute;
 	top:-50px;
 	left:0px;
 }
+
+
+
+
 
 
 
@@ -538,6 +554,8 @@
 .timeglider-timeline-menu ul li.activeTimeline {
   	color:#000;
 }
+
+
 
 .timeglider-legend {
   position:absolute;

@@ -3,8 +3,8 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
 <title>Timeglider jQuery Plugin</title>
-	
-<link rel="stylesheet" href="css/base.css" type="text/css" media="screen" title="no title" charset="utf-8">
+
+<link href='http://fonts.googleapis.com/css?family=Droid+Sans:400,700' rel='stylesheet' type='text/css'>
 
 <link rel="stylesheet" href="css/aristo/jquery-ui-1.8.5.custom.css" type="text/css" media="screen" title="no title" charset="utf-8">
 
@@ -12,7 +12,12 @@
 
 
 <style type='text/css'>
-
+		
+		body {
+			font-family:'Lato', Helvetica, Arial, sans-serif;
+		}
+		
+		
 		#placement {
 			margin:32px;
 			height:500px;
@@ -77,14 +82,21 @@
 <li class='pan-left'>pan to left</li>
 <li class='pan-right'>pan to right</li>
 </ul>
+
+
+
+<h4>loading</h4>
+<ul>
+<li class='zoom' z='-1'><span id='loadData'>load:</span> <input size='50' type='text' id='loadDataSrc' value='json_tests/idaho.json'></li>
+
+</ul>
+
 </div>
 
 
+</div>
 
 
-<div id='dropper'></div>
-
-<div id='map_modal_map2'></div>
 	
 	<!-- 3rd party libs -->
 	<script src="js/jquery-1.4.4.min.js" type="text/javascript" charset="utf-8"></script>
@@ -156,6 +168,12 @@
 		
 		tg_actor.panButton($(".pan-left"), "left");
 		tg_actor.panButton($(".pan-right"), "right");
+		
+		
+		$("#loadData").click(function() {
+			var src = $("#loadDataSrc").val();
+			tg_actor.load(src);
+		});
 	
     }); // end document-ready
     

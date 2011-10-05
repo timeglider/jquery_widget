@@ -169,6 +169,20 @@
 		
 		
 		/**
+		* zoom
+		* zooms the timeline in or out, adding an amount, often 1 or -1
+		*
+		* @param n {number|string}
+		*          numerical: -1 (or less) for zooming in, 1 (or more) for zooming out
+		*          string:    "in" is the same as -1, "out" the same as 1
+		*/
+		load : function (src) {
+			timelineMediator.loadTimelineData(src);
+		},
+		
+		
+		
+		/**
 		*  panButton
 		*  sets a pan action on an element for mousedown and mouseup|mouseover
 		*  

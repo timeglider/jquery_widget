@@ -128,7 +128,7 @@ tg.TG_PlayerView = function (widget, mediator) {
 
      	// generated, appended on the fly, then removed
      	filter_modal : $.template( null,
-          "<div class='tg-modal timeglider-menu-modal timeglider-filter-box timeglider-display-none'>"+
+          "<div class='tg-modal timeglider-menu-modal timeglider-filter-box'>"+
           "<div class='close-button'></div>"+
           "<h3>filter</h3>"+
           "<div class='timeglider-menu-modal-content'>"+
@@ -142,7 +142,7 @@ tg.TG_PlayerView = function (widget, mediator) {
            "</div>"),
           
       	timeline_list_modal : $.template( null,
-          "<div class='timeglider-menu-modal timeglider-timeline-menu timeglider-display-none'>"+
+          "<div class='timeglider-menu-modal timeglider-timeline-menu'>"+
           "<div class='close-button'></div>"+
           "<h3>timelines</h3>"+
           "<div class='timeglider-menu-modal-content'><ul></ul></div>"+
@@ -324,15 +324,19 @@ tg.TG_PlayerView = function (widget, mediator) {
 		
 		if (ev.click_callback) {
 	    
-		    var broken = ev.click_callback.split(".");
-		    var ns = broken[0];
-	    
-		    if (broken.length == 2) {
-		    	var fn = broken[1];
-		    	window[ns][fn](ev);
-			} else {
-				window[ns](ev);
-			}
+		    	var ccarr = ev.click_callback.split(".");
+		    	var cclen = ccarr.length;
+		    	if (cclen == 1) {
+		    		// fn
+		    		window[ccarr[0]](ev);
+		    	} else if (cclen == 2) {
+		    		// ns.fn
+		    		window[ccarr[0]][ccarr[1]](ev);
+		    	} else if (cclen == 3) {
+		    		// ns.ns.fn
+		    		window[ccarr[0]][ccarr[1]][ccarr[2]](ev);
+		    	}
+		
 	    
 		} else {
       		me.eventModal(eid);
@@ -383,6 +387,13 @@ tg.TG_PlayerView = function (widget, mediator) {
 		me.registerTitles();
 		me.registerDragging();
 	});
+	
+	$.subscribe("mediator.focusToEvent", function () {
+		// mediator takes care of focusing date
+		var ev = MED.focusedEvent;
+		
+	});
+
 	
 	
 	$.subscribe("mediator.zoomLevelChange", function () {
@@ -444,8 +455,9 @@ tg.TG_PlayerView = function (widget, mediator) {
 	
 	// CREATE TIMELINES MENU
 	$.subscribe("mediator.timelineDataLoaded", function (arg) {
+		me.buildSettingsMenu();
     	me.buildTimelineMenu();
-    	me.buildSettingsMenu();
+    	
 	});
 	
 
@@ -738,32 +750,96 @@ tg.TG_PlayerView.prototype = {
 		  this.displayFocusDate();
 	},
 	
+	
+	
+	
+	
+	/* FILTER BOX SETUP */
+	setupFilter : function () {
+	
+		var me=this, $bt = 
+
+		$filter = $.tmpl(me._templates.filter_modal,{}).appendTo(me._views.CONTAINER);
+		
+		$filter.css("z-index", me.ztop++)
+  	            .position({
+          		    my: "right bottom",
+        			    at: "right top",
+        			    of: $(me._views.FILTER_BT),
+        			    offset: "-8, -12"
+              }).hide();
+              
+        $(CONTAINER)
+	    .delegate(".timeglider-filter-box .close-button", "click", function () {
+			$filter.fadeOut();
+		})              
+              
+      
+		$(me._views.FILTER_BT).click(function() { 
+		
+			$filter.fadeIn();
+
+  	      	var $bt = $(this), fbox = me._views.FILTER_BOX;
+
+			// If it's never been opened, apply actions to the buttons, etc
+			if (me.filterBoxActivated == false) {
+
+				me.filterBoxActivated =true;
+				
+				var $filter_apply = $(fbox + " .timeglider-filter-apply"),
+				$filter_close = $(".timeglider-filter-box .close-button"),
+				$filter_clear = $(fbox + " .timeglider-filter-clear"),
+				incl = "", excl = "";
+				
+				// set up listeners
+				$filter_apply.click(function () {
+				incl = $(fbox + " .timeglider-filter-include").val();
+				excl = $(fbox + " .timeglider-filter-exclude").val();
+				MED.setFilters({origin:"clude", include:incl, exclude:excl});
+				$(fbox).toggleClass("timeglider-display-block");
+				});
+				
+				$filter_close.click(function () {
+				$(fbox).toggleClass("timeglider-display-none");
+				});
+				
+				$filter_clear.click(function () {
+				MED.setFilters({origin:"clude", include:'', exclude:''});
+				$(fbox + " .timeglider-filter-include").val('');
+				$(fbox + " .timeglider-filter-exclude").val('');
+				$(fbox).toggleClass("timeglider-display-block");
+				});
+              
+			} // end if filterBoxActivated
+
+        }); // end FILTER_BT click
+        
+        
+
+
+
+ 	}, // end setupFilter
+  
+
+	
 	  
 	buildTimelineMenu : function () {
-	
+		debug.log("buildTimelineMenu")
 		var me=this;
-		
-		$.tmpl(me._templates.timeline_list_modal,{})
-			.appendTo(CONTAINER);
-				 
-	 	$(me._views.TIMELINE_LIST_BT).click(function () {
-	 		
-			  $(me._views.TIMELINE_MENU)
-			  	.toggleClass("timeglider-display-none")
-			    .position({
-	        		my: "right bottom",
-	      			at: "right top",
-	      			of: $(me._views.TIMELINE_LIST_BT),
-	      			offset: "-8, -12"
-	          });
-		});
-		
-		$(me._views.TIMELINE_MENU + " .close-button").live("click", function () {
-			 $(me._views.TIMELINE_MENU).toggleClass("timeglider-display-none");
-		});
+		var $menu;
+		var $menu_bt = $(me._views.TIMELINE_LIST_BT);
 	
+		
+		if ($(me._views.TIMELINE_MENU)[0]) {
+			debug.log("REBUILDING")
+			$(me._views.TIMELINE_MENU).remove()
+		}	
+		
+		var $menu= $.tmpl(me._templates.timeline_list_modal,{}).appendTo(me._views.CONTAINER);		
+		
+			
 		// each timeline's <li> item in menu
-		menuItem = Backbone.View.extend({
+		var menuItem = Backbone.View.extend({
 		
 			initialize: function (){
 				this.model.bind('change', this.render, this);
@@ -787,17 +863,37 @@ tg.TG_PlayerView.prototype = {
 			}
 	
 		});
-
 		
+			
 		$(me._views.TIMELINE_MENU_UL).html("");
-	    
-	    var me=this;
-	    	    
+	       
 	    _.each(MED.timelineCollection.models, function(model){
+	
 	    	$(me._views.TIMELINE_MENU_UL).append(new menuItem({model:model}).render().el);			
 	    });
-	   
+	   		
+		
+
+	    $menu.position({
+	        		my: "right bottom",
+	      			at: "right top",
+	      			of: $(me._views.TIMELINE_LIST_BT),
+	      			offset: "-8, -12"
+	    }).hide();
+	    
+	    
+	    $(CONTAINER)
+	    .delegate(".timeglider-timeline-menu .close-button", "click", function () {
+			$menu.fadeOut();
+		})
+		.delegate(this._views.TIMELINE_LIST_BT, "click", function() {
+  			$menu.fadeIn();
+  		})
+	    
+
 	},
+	
+	
 	
 	getTimezonePulldown: function(id, sel){
 		
@@ -823,8 +919,13 @@ tg.TG_PlayerView.prototype = {
 		
 	},
 	
+	
+	
+	
 	buildSettingsMenu: function () {
 	
+		debug.log("buildSettingsMenu")
+		
 		var me = this;
 		
 		var $s = $.tmpl(me._templates.settings_modal,{}).appendTo(me._views.CONTAINER);
@@ -842,7 +943,7 @@ tg.TG_PlayerView.prototype = {
 	      			at: "right top",
 	      			of: $(me._views.SETTINGS_BT),
 	      			offset: "-8, -12"
-	    }).fadeOut(1);
+	    }).hide();
 	    
 	    
 	    $(CONTAINER)
@@ -970,9 +1071,8 @@ tg.TG_PlayerView.prototype = {
     	}
 	  	   
 	  	$ev.addClass("tg-event-hovered");
-	   
-	   
 	},
+	
 	
 	eventUnHover : function ($ev, ev_obj) {
 		$(".timeglider-event-hover-info").css("left", "-1000px");
@@ -980,64 +1080,7 @@ tg.TG_PlayerView.prototype = {
 	},
   
   
-  
-	/* FILTER BOX SETUP */
-	setupFilter : function () {
-	
-		var me=this;
-		$.tmpl(me._templates.filter_modal,{}).appendTo(me._views.CONTAINER);
-      
-		$(me._views.FILTER_BT).click(function() {  
-
-  	      var $bt = $(this), fbox = me._views.FILTER_BOX;
-
-  	      // If it's never been opened, apply actions to the buttons, etc
-  	      if (me.filterBoxActivated == false) {
-
-  	        me.filterBoxActivated =true;
-
-  	        var $filter_apply = $(fbox + " .timeglider-filter-apply"),
-              $filter_close = $(".timeglider-filter-box .close-button"),
-              $filter_clear = $(fbox + " .timeglider-filter-clear"),
-              incl = "", excl = "";
-
-  	          // set up listeners
-  	          $filter_apply.click(function () {
-  	            incl = $(fbox + " .timeglider-filter-include").val();
-  	            excl = $(fbox + " .timeglider-filter-exclude").val();
-  	            MED.setFilters({origin:"clude", include:incl, exclude:excl});
-  	            $(fbox).toggleClass("timeglider-display-block");
-              });
-
-              $filter_close.click(function () {
-                $(fbox).toggleClass("timeglider-display-none");
-              });
-
-              $filter_clear.click(function () {
-                MED.setFilters({origin:"clude", include:'', exclude:''});
-                $(fbox + " .timeglider-filter-include").val('');
-  	            $(fbox + " .timeglider-filter-exclude").val('');
-                $(fbox).toggleClass("timeglider-display-block");
-              });
-              
-              } // end if filterBoxActivated
-
-              // open the box
-  	          $(fbox)
-  	            .toggleClass("timeglider-display-none")
-  	            .css("z-index", me.ztop++)
-  	            .position({
-          		    my: "right bottom",
-        			    at: "right top",
-        			    of: $bt,
-        			    offset: "-8, -12"
-              });
-
-        }); // end FILTER_BT click
-
- 	}, // end setupFilter
-  
-  
+    
 	clearTicks : function () {
 	  this.leftside = 0;
 		this.tickNum = 0;
@@ -2339,7 +2382,8 @@ tg.googleMapsInit = function () {
 
 tg.googleMapsLoaded = false;
 tg.googleMapsLoad = function () {
-		
+
+/*	
 	if (tg.googleMapsLoaded == false) {
 		debug.log("load google maps...");
 	
@@ -2351,6 +2395,7 @@ tg.googleMapsLoad = function () {
 	    
 	    tg.googleMapsLoaded = true;
 	}
+	*/
 }
 
 

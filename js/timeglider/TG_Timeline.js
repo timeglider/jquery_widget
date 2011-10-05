@@ -23,7 +23,7 @@
 	var TG_Date = tg.TG_Date,
 		$ = jQuery,
 		widget_options = {},
-		app_mediator;
+		MED;
 		
 		
 
@@ -50,14 +50,14 @@
 			if (ev.image) {
 			// register image with image collection for gathering sizes.
 
-				var display_class = ev.image_class || "layout";
+				var display_class = ev.image_class || "above";
 
 				ev.image = {id: ev.id, src:ev.image, display_class:display_class, width:0, height:0};
 
 				// this will follow up with reporting size in separate "thread"
 				this.getEventImageSize(ev.image);
 			
-				// app_mediator.imagesToSize++;
+				// MED.imagesToSize++;
 				
 	
 			} else {
@@ -137,8 +137,9 @@
 		_chewTimeline : function (tdata) {
 		
 			// TODO ==> add additional units
-			app_mediator = tdata.mediator;
-			widget_options = app_mediator.options;
+			MED = tdata.mediator;
+			
+			widget_options = MED.options;
 			
 			var dhash = {
 				"da":[], 
@@ -185,7 +186,20 @@
 					ev=tdata.events[ei];
 					
 					if (ev.map) {
-						tg.googleMapsLoad();
+						if (MED.main_map) {
+							
+							if (timeglider.mapping.ready){
+								ev.map.marker_instance = timeglider.mapping.addAddMarkerToMap(ev, MED.main_map);
+								debug.log("marker_instance", ev.map.marker_instance);
+								
+							}
+							// requires TG_Mapping.js component
+							
+						} else {
+							debug.log("NO MAIN MAP... BUT LOAD MAPS FOR MODAL");
+							// load instance of maps for modal viewing
+							tg.googleMapsLoad();
+						}
 					}
 					
 					// make sure it has an id!
@@ -262,7 +276,7 @@
 					// we just need to add the raw object here and it
 					// is "vivified"...
 					var newEvent = new tg.TG_Event(ev);
-					app_mediator.eventCollection.add(newEvent);
+					MED.eventCollection.add(newEvent);
 					
 								
 				}// end for: cycling through timeline's events
@@ -314,7 +328,6 @@
 		
 		// TODO: validate event attributes
 		validate: function (attrs) {
-		
 			// debug.log("validate data:" + attrs.title); 
 		
 		}

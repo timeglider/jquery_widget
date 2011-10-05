@@ -60,8 +60,15 @@
     this.initial_timeline_id = options.initial_timeline_id || "";
     this.sole_timeline_id = "";
     
+    this.focusedEvent = '';
+    
     if (options.max_zoom === options.min_zoom) {
       this.fixed_zoom = options.min_zoom;
+    }
+    
+    if (options.main_map) {
+    	this.main_map = options.main_map;
+    	timeglider.mapping.setMap(this.main_map, this);
     }
 
     MED = this;
@@ -70,9 +77,22 @@
     
 
 tg.TG_Mediator.prototype = {
+
+	// click coming from marker on Google map
+	mapMarkerClick: function(ev) {
+		this.focusToEvent(ev);
+	},
+	
+	
+	focusToEvent: function(ev){
+		this.focusedEvent = ev;
+		this.setFocusDate(ev.startdateObj)
+		$.publish("mediator.focusToEvent");
+	},
+	
   
     /* PUBLIC METHODS MEDIATED BY $.widget front */
- 
+ 	
     gotoDateZoom: function (fdStr, zoom) {
         var fd = new TG_Date(fdStr),
             zl = false;
@@ -91,8 +111,9 @@ tg.TG_Mediator.prototype = {
       var new_zoom = this.getZoomLevel() + parseInt(n);
       this.setZoomLevel(new_zoom);
     },
-  
-  
+    
+    
+    
 	/*
 	* loadTimelineData
 	* @param src {object} object OR json data to be parsed for loading
@@ -102,35 +123,41 @@ tg.TG_Mediator.prototype = {
 	var M = this; // model ref
 	// Allow to pass in either the url for the data or the data itself.
 	
-	if (src) {
-	  
-	    if (typeof src === "object") {
-	      // local/pre-loaded JSON
-	      M.parseData(src);
-	    } else if (src.substr(0,1) == "#") {
-	   
-	      var tableData = [M.getTableTimelineData(src)];
-	      // debug.log(JSON.stringify(tableData));
-	      M.parseData(tableData);
-	    } else {
-	
-	        $.getJSON(src, function (data) {
-	              M.parseData(data);
-	           }
-	        );
-	
-	    }// end [obj vs remote]
-	
-	} else {
-	  // NO INITIAL DATA: That's cool, still build the timeline
-	  // focusdate has been set to today
-	  this.timelineDataLoaded = true;
-	  this.setZoomLevel(Math.floor((this.max_zoom + this.min_zoom) / 2));
-	  this.tryLoading();
-	  
-	}
+		if (src) {
+		  
+		    if (typeof src === "object") {
+		      // local/pre-loaded JSON
+		      M.parseData(src);
+		      
+		    } else if (src.substr(0,1) == "#") {
+		   
+		      var tableData = [M.getTableTimelineData(src)];
+		      // debug.log(JSON.stringify(tableData));
+		      M.parseData(tableData);
+		      
+		    } else {
+				// getJSON is shorthand for $.ajax...
+		        $.getJSON(src, function (data) {
+		              M.parseData(data);
+		           }
+		        );
+		
+		    }// end [obj vs remote]
+		
+		
+		} else {
+		
+		  // NO INITIAL DATA: That's cool. We still build the timeline
+		  // focusdate has been set to today
+		  this.timelineDataLoaded = true;
+		  this.setZoomLevel(Math.floor((this.max_zoom + this.min_zoom) / 2));
+		  this.tryLoading();
+		  
+		}
 	
 	},
+  
+  
   
 	/*
 	*  getTableTimelineData
@@ -188,10 +215,14 @@ tg.TG_Mediator.prototype = {
 	    $table.css("display", "none");
 	    return tl;
 	},
+	
+	
+	
  
 	/*
 	* parseData
-	* @param data {object} Multiple (1+) timelines object derived from data in loadTimelineData
+	* @param data {object} Multiple (1+) timelines object 
+	* derived from data in loadTimelineData
 	*/
 	parseData : function (data) {
 	
@@ -219,10 +250,12 @@ tg.TG_Mediator.prototype = {
 		} else {
 		  
 			this.timelineDataLoaded = true;
-			// might as well try!
 			this.tryLoading();
 		}
 	},
+	
+	
+	
   
 	/*
 	*  tryLoading
@@ -232,6 +265,7 @@ tg.TG_Mediator.prototype = {
 	*/
 	tryLoading : function () {
 	
+		
 		var a = (this.imagesSized == this.imagesToSize),
 	    	b = (this.timelineDataLoaded == true);
 	
