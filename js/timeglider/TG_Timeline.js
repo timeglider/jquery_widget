@@ -24,8 +24,6 @@
 		$ = jQuery,
 		widget_options = {},
 		MED;
-		
-		
 
 
 	tg.TG_EventCollection = Backbone.Collection.extend({
@@ -40,8 +38,7 @@
 		urlRoot : '/event',
 	
 		defaults: {
-			"title":  "Untitled",
-			"modalOpen":false
+			"title":  "Untitled"
 		},
 		
 	
@@ -167,9 +164,9 @@
 			tdata.timeOffset = TG_Date.getTimeOffset(tzoff);
 						
 			// TODO: VALIDATE COLOR, centralize default color(options?)
-			if (!tdata.color) { tdata.color = "#333333"; }
+			if (!tdata.color) { tdata.color = "#333333"; }			
 			
-			if (tdata.events) {
+			if (tdata.events.length>0) {
 			
 				var date, ddisp, ev, id, unit, ser, tWidth;
 				var l = tdata.events.length;
@@ -318,6 +315,7 @@
 		
 		initialize: function(attrs) { 
 			var processed = this._chewTimeline(attrs);
+			
 			this.set(processed);
 			
 			this.bind("change", function() {

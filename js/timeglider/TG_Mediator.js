@@ -23,6 +23,7 @@
       options = {},
       $ = jQuery;
       
+      
 
   tg.TG_Mediator = function (wopts) {
   
@@ -51,7 +52,7 @@
 
     this.timelineCollection = new tg.TG_TimelineCollection;
     this.eventCollection = new tg.TG_EventCollection;
-
+    
     this.imagesSized = 0;
     this.imagesToSize = 0;
     this.timelineDataLoaded = false,
@@ -77,14 +78,9 @@
     
 
 tg.TG_Mediator.prototype = {
-
-	// click coming from marker on Google map
-	mapMarkerClick: function(ev) {
-		this.focusToEvent(ev);
-	},
-	
 	
 	focusToEvent: function(ev){
+		// !TODO open event, bring to zoom
 		this.focusedEvent = ev;
 		this.setFocusDate(ev.startdateObj)
 		$.publish("mediator.focusToEvent");
@@ -117,7 +113,7 @@ tg.TG_Mediator.prototype = {
 	/*
 	* loadTimelineData
 	* @param src {object} object OR json data to be parsed for loading
-	* TODO: create option for XML input
+	* !TODO: create option for XML
 	*/
 	loadTimelineData : function (src) {
 	var M = this; // model ref
@@ -126,16 +122,17 @@ tg.TG_Mediator.prototype = {
 		if (src) {
 		  
 		    if (typeof src === "object") {
-		      // local/pre-loaded JSON
+		      // OBJECT (already loaded, created)
 		      M.parseData(src);
 		      
 		    } else if (src.substr(0,1) == "#") {
-		   
-		      var tableData = [M.getTableTimelineData(src)];
-		      // debug.log(JSON.stringify(tableData));
-		      M.parseData(tableData);
+				// TABLE
+				var tableData = [M.getTableTimelineData(src)];
+				// debug.log(JSON.stringify(tableData));
+				M.parseData(tableData);
 		      
 		    } else {
+		    	// FROM NEW JSON
 				// getJSON is shorthand for $.ajax...
 		        $.getJSON(src, function (data) {
 		              M.parseData(data);
@@ -147,8 +144,10 @@ tg.TG_Mediator.prototype = {
 		
 		} else {
 		
-		  // NO INITIAL DATA: That's cool. We still build the timeline
+		  // NO INITIAL DATA:
+		  // That's cool. We still build the timeline
 		  // focusdate has been set to today
+		  // !AUTH: USED IN AUTHORING MODE
 		  this.timelineDataLoaded = true;
 		  this.setZoomLevel(Math.floor((this.max_zoom + this.min_zoom) / 2));
 		  this.tryLoading();
@@ -156,9 +155,19 @@ tg.TG_Mediator.prototype = {
 		}
 	
 	},
-  
-  
-  
+	
+	
+	// click coming from marker on Google map
+	mapMarkerClick: function(ev) {
+		this.focusToEvent(ev);
+	},
+	
+	getTimelineCollection: function() {
+		return this.timelineCollection;
+	},
+	
+	
+	  
 	/*
 	*  getTableTimelineData
 	*  @param table_id {string} the html/DOM id of the table
@@ -295,13 +304,22 @@ tg.TG_Mediator.prototype = {
     i.e. could be more than one 
     */
     setInitialTimelines : function () {
-      var me = this;
-      var tid = this.initial_timeline_id || this.sole_timeline_id;
-      if (tid) {
-        setTimeout(function () { 
-          MED.toggleTimeline(tid);
-          }, 1000);
-        }
+        	
+		var me = this;
+      
+		var tid = this.initial_timeline_id || this.sole_timeline_id;
+      
+      	// !AUTH
+      	if (timeglider.mode == "authoring") {
+      		this.setZoomLevel(40);
+      	} else if (tid) {
+      		// we need to wait just a bit...
+      		// !TODO What is timeout for?? 
+			setTimeout(function () { MED.toggleTimeline(tid); }, 1000);
+		} else {
+			this.setZoomLevel(40);
+		}
+      
       }, 
 
 

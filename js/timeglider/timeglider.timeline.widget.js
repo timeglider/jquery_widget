@@ -26,7 +26,7 @@
 	*/
 	
 	var timelinePlayer, 
-		timelineMediator, 
+		MED, 
 		tg = timeglider, 
 		TG_Date = timeglider.TG_Date;
 	
@@ -116,12 +116,14 @@
 			
 				tg.TG_Date.setCulture(this.options.culture);
 			
-				timelineMediator = new tg.TG_Mediator(this.options);
-				timelinePlayer = new tg.TG_PlayerView(this, timelineMediator);
+				MED = new tg.TG_Mediator(this.options);
+				timelinePlayer = new tg.TG_PlayerView(this, MED);
 			
 				// after timelinePlayer is created this stuff can be done
-				timelineMediator.setFocusDate(new TG_Date(this.options.initial_focus));
-				timelineMediator.loadTimelineData(this.options.data_source);
+				MED.setFocusDate(new TG_Date(this.options.initial_focus));
+				
+				
+				MED.loadTimelineData(this.options.data_source);
 			
 			} else {
 				alert("Rats. There's a problem with your widget settings:" + optionsCheck);
@@ -143,7 +145,12 @@
 		* @param z {Number} zoom level to change to; optional
 		*/
 		goTo : function (d, z) {
-			timelineMediator.gotoDateZoom(d,z);
+			MED.gotoDateZoom(d,z);
+		},
+		
+		
+		getMediator : function () {
+			return MED;
 		},
 		
 		
@@ -164,7 +171,7 @@
 			// non-valid zoom levels
 			if (n > 99 || n < -99) { return false; }
 			
-			timelineMediator.zoom(n);
+			MED.zoom(n);
 		},
 		
 		
@@ -177,7 +184,7 @@
 		*          string:    "in" is the same as -1, "out" the same as 1
 		*/
 		load : function (src) {
-			timelineMediator.loadTimelineData(src);
+			MED.loadTimelineData(src);
 		},
 		
 		

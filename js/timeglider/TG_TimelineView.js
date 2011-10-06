@@ -284,7 +284,7 @@ tg.TG_PlayerView = function (widget, mediator) {
 				clk = new TG_Date(dcSec),
 				foc = new TG_Date(fdSec);
 				
-				// debug.trace("DBLCLICK:" + foc.mo + "-" + foc.ye + " DBLCLICK:" + clk.mo + "-" + clk.ye, "note");	
+				debug.log("DOUBLECLICK:: FOCUS date:" + foc.mo + "-" + foc.ye + ".......CLICK date:" + clk.mo + "-" + clk.ye);	
 				
 		})			
 		.bind('mousewheel', function(event, delta) {
@@ -376,11 +376,7 @@ tg.TG_PlayerView = function (widget, mediator) {
 	
 	
 	/* PUB-SUB "LISTENERS" SUBSCRIBERS */
-  
-	$.subscribe("mediator.timelineDataLoaded", function () {
-		$(".timeglider-loading").fadeOut(500);     
-	});
-  
+ 
    	
 	$.subscribe("mediator.ticksOffsetChange", function () {
 		me.tickHangies();
@@ -455,6 +451,8 @@ tg.TG_PlayerView = function (widget, mediator) {
 	
 	// CREATE TIMELINES MENU
 	$.subscribe("mediator.timelineDataLoaded", function (arg) {
+	
+		$(".timeglider-loading").fadeOut(500);  
 		me.buildSettingsMenu();
     	me.buildTimelineMenu();
     	
@@ -923,9 +921,7 @@ tg.TG_PlayerView.prototype = {
 	
 	
 	buildSettingsMenu: function () {
-	
-		debug.log("buildSettingsMenu")
-		
+			
 		var me = this;
 		
 		var $s = $.tmpl(me._templates.settings_modal,{}).appendTo(me._views.CONTAINER);
