@@ -4,6 +4,11 @@
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
 <title>Timeglider jQuery Plugin</title>
 
+
+
+
+
+
 <link href='http://fonts.googleapis.com/css?family=Droid+Sans:400,700' rel='stylesheet' type='text/css'>
 
 <link rel="stylesheet" href="css/aristo/jquery-ui-1.8.5.custom.css" type="text/css" media="screen" title="no title" charset="utf-8">
@@ -130,13 +135,13 @@
 
   <script type='text/javascript'>
   
-  
+  /*
   	window.namespacer = {
 		clickCallback:function(obj) {
 			alert("hello");
 		}
 	}
-
+	*/
 	$(document).ready(function () { 
 		
 		var tg1 = $("#placement").timeline({
@@ -147,7 +152,7 @@
 				"data_source":"json_tests/js_history.json",
 				"show_footer":true,
 				"size_importance":true,
-				"display_zoom_level":true,
+				"display_zoom_level":true
 				// "event_modal":{type:"full"}
 		});
 		

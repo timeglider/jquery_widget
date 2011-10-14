@@ -8,15 +8,23 @@
  *
 /*
 
-*         DEPENDENCIES: timeglider/*
+*         DEPENDENCIES: 
                         rafael.js
                         ba-tinyPubSub
                         jquery
-                        jquery ui 
+                        jquery ui (and css)
                         jquery.mousewheel
                         jquery.ui.ipad
+                        
+                        TG_Date.js
+                        TG_Timeline.js
+                        TG_TimelineView.js
+                        TG_Mediator.js
+                        TG_Org.js
+                        Timeglider.css
 *
 */
+
 
 
 
@@ -147,6 +155,8 @@
 		goTo : function (d, z) {
 			MED.gotoDateZoom(d,z);
 		},
+		
+		
 		
 		
 		getMediator : function () {

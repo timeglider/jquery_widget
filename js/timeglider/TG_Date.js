@@ -8,9 +8,13 @@
  *
  */
 
-
-// initial declaration of timeglider object
+// initial declaration of timeglider object for widget
+// authoring app will declare a different object, so
+// this will defer to window.timeglider
 timeglider = window.timeglider || {version:"0.1.0"};
+
+
+
 
 /*
 *  TG_Date
@@ -21,7 +25,7 @@ timeglider = window.timeglider || {version:"0.1.0"};
 * That might be a good idea some day. There are some
 * major issues with Date(): the "year zero" (or millisecond)
 * in JS and other date APIs is 1970, so timestamps are negative
-* prior to that. JS's Date() can't handle years prior to
+* prior to that; JS's Date() can't handle years prior to
 * -271820, so some extension needs to be created to deal with
 * times (on the order of billions of years) existing before that.
 *
@@ -93,6 +97,9 @@ YYYY-MM-DD 08:15:30-07:00
 			return {error:"invalid date"};
 			/// it's valid
 		} else {
+
+			// !TODO: translate strings like "today" and "now"
+			// "next week", "a week from thursday", "christmas"
 	    	
 	    	      		
       		var parsed =  TG_Date.parse8601(dateStr);
@@ -519,6 +526,14 @@ YYYY-MM-DD 08:15:30-07:00
 
   };
 
+	TG_Date.monthNamesLet = ["","J","F","M","A","M","J","J","A","S","O","N","D"];
+
+    TG_Date.monthsDayNums = [0,31,28,31,30,31,30,31,31,30,31,30,31,29];
+  
+    // NON-CULTURE
+    TG_Date.units = ["da", "mo", "ye", "de", "ce", "thou", "tenthou", "hundredthou", "mill", "tenmill", "hundredmill", "bill"];
+    
+    
   /*
   Counts serial days starting with -1 in year -1. Visualize a number counting 
   from "right to left" on top of the other calendrical pieces chunking away
@@ -542,6 +557,7 @@ YYYY-MM-DD 08:15:30-07:00
 
   	var absYe = Math.abs(ye);
   	var chunks = [0,335,306,275,245,214,184,153,122,92,61,31,0];
+  	debug.log("mo for neg date:", mo)
   	var mdays = TG_Date.monthsDayNums[mo];
   	var rawYeDays = (absYe - 1) * 366;
   	var rawMoDays = chunks[mo];
@@ -563,9 +579,7 @@ YYYY-MM-DD 08:15:30-07:00
     // ["","Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
     TG_Date.monthNamesAbbr = $.merge([""],jQuery.global.culture.calendar.months.namesAbbr);
   
-    TG_Date.monthNamesLet = ["","J","F","M","A","M","J","J","A","S","O","N","D"];
-
-    TG_Date.monthsDayNums = [0,31,28,31,30,31,30,31,31,30,31,30,31,29];
+    
   
     // ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
     TG_Date.dayNames = jQuery.global.culture.calendar.days.names;
@@ -575,10 +589,6 @@ YYYY-MM-DD 08:15:30-07:00
   
     TG_Date.dayNamesShort = jQuery.global.culture.calendar.days.namesShort;
   
-  
-    // NON-CULTURE
-    TG_Date.units = ["da", "mo", "ye", "de", "ce", "thou", "tenthou", "hundredthou", "mill", "tenmill", "hundredmill", "bill"];
-    
     TG_Date.patterns = jQuery.global.culture.calendar.patterns;
     
   };
@@ -720,8 +730,8 @@ YYYY-MM-DD 08:15:30-07:00
 			 		return 0;
 			 	}
 			},
-				
-			reg = /^(\-?\d+)?(\-\d{1,2})?(\-\d{1,2})?(?:T| )?(\d{1,2})?(?::)?(\d{1,2})?(?::)?(\d{1,2})?(\+|\-)?(\d{1,2})?(?::)?(\d{1,2})/,
+			//       YyYyYyY    MM          DD
+			reg = /^(\-?\d+)?(\-\d{1,2})?(\-\d{1,2})?(?:T| )?(\d{1,2})?(?::)?(\d{1,2})?(?::)?(\d{1,2})?(\+|\-)?(\d{1,2})?(?::)?(\d{1,2})?/,
 			rx = str.match(reg);
 
     	// picks up positive OR negative (bce)	
@@ -757,6 +767,65 @@ YYYY-MM-DD 08:15:30-07:00
 
 	}; // parse8601
 	
+	
+	TG_Date.getLastDayOfMonth = function(ye, mo) {
+		var lastDays = [0,31,28,31,30,31,30,31,31,30,31,30,31],
+			da = 0;
+		if (mo == 2 && TG_Date.isLeapYear(ye) == true) {
+			da = 29;
+		} else {
+			da = lastDays[mo];
+		}
+		return da;
+		
+	}; 
+	
+	TG_Date.getDateTimeStrings = function (str) {
+	
+		var obj = TG_Date.parse8601(str);
+	
+		// DATE IS EASY:
+		var date_val = obj.ye + "-" + obj.mo + "-" + obj.da;
+		
+		var ampm = "pm";
+		
+		if (obj.ho > 12) {
+			obj.ho -= 12;
+			ampm = "pm";
+		} else {
+			if (obj.ho == 0) { obj.ho = "12"; }
+			ampm = "am";
+		}
+	
+		var time_val = (parseInt(obj.ho, 10)) + ":" + obj.mi + " " + ampm;
+		
+		return {"date": date_val, "time":time_val}
+	};
+	
+	
+	TG_Date.validateInputDateString = function (date_str) {
+		if (!date_str) return false; // date needs some value
+		var reg = /^(\-?\d+|today|now)-?(\d{1,2})?-?(\d{1,2})?/;
+		var valid = date_str.match(reg);
+		if (valid) {
+			return valid;
+		} else {
+			return false;
+		}
+	};
+	
+	
+	TG_Date.validateInputTimeString = function (time_str) {
+		if (!time_str) return true; // time can be set at null
+		var reg = /^(\d{1,2}|noon):?(\d{1,2})? ?(am|pm)?/;
+		var valid = time_str.match(reg);
+		if (valid[1]) {
+			if (!valid[3]) { valid[3] = "am"; }
+			return valid;
+		} else {
+			return false;
+		}
+	};
 	
 
 	
@@ -821,11 +890,7 @@ YYYY-MM-DD 08:15:30-07:00
 				} else { 
 					ob.mo = ob.mo-1;
 					// now that we know month, what is the last day number?
-					if (ob.mo == 2 && TG_Date.isLeapYear(ob.ye) == true) {
-						ob.da = 29;
-					} else {
-						ob.da = lastDays[ob.mo];
-					}
+					ob.da = TG_Date.getLastDayOfMonth(ob.ye, ob.mo)
 				}
 			}
 			

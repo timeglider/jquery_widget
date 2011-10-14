@@ -90,7 +90,6 @@ tg.TG_PlayerView = function (widget, mediator) {
  	//  timeglider.css value for timeglider-tick-height
  	this.tick_height = 34;
 
- 	
 	// in case custom event_modal fails, we need this object to exist
 	this._templates = {}
   
@@ -117,9 +116,10 @@ tg.TG_PlayerView = function (widget, mediator) {
 		+ "<table><tr><td>"
 		+ "<h4>${title}</h4>"
 		+ "<div class='description'>"
-		+ "<p>{{html image}}{{html description}}</p>"
+		+ "<p>{{html description}}</p>"
 		+ "</div>"
 		+ "</td><td>"
+		+ "<div>{{html image}}</div>"
 		+ "<div id='insert'></div>"
 		+ "</td></tr></table>"
 		+ "<div class='footer'><ul>{{html links}}</ul></div>"
@@ -712,7 +712,10 @@ tg.TG_PlayerView.prototype = {
 					env = $(this).offset().left - mo;
 					tb = $(".titleBar", this);
 					ti = $(".titleBar .timeline-title", this);
+					var tbpos =    
 					pos = tb.position().left;
+					// debug.log("pos-left", pos);
+					
 				 	relPos = pos + env;
 					tbWidth = tb.outerWidth();
 					

@@ -26,10 +26,14 @@
 		MED;
 
 
+
+
 	tg.TG_EventCollection = Backbone.Collection.extend({
 		model: tg.TG_Event
 	});
   
+	
+	
 	
 	// map model onto larger timeglider namespace
 	/////////////////////////////////////////////
@@ -106,10 +110,7 @@
 
 
 	tg.TG_TimelineCollection = Backbone.Collection.extend({
-
 		model: tg.TG_Timeline
-
-
 	});
 	
 	
@@ -321,16 +322,7 @@
 			this.bind("change", function() {
   				debug.log("changola");
 			});
-		},
-		
-		
-		// TODO: validate event attributes
-		validate: function (attrs) {
-			// debug.log("validate data:" + attrs.title); 
-		
-		}
-		
-		
+		}		
 	
 	});
 	
