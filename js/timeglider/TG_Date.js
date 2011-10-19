@@ -60,8 +60,12 @@ YYYY-MM-DD 08:15:30-07:00
 
 */
 
+timeglider.TG_Date = {};
+
+
 (function(tg){
   
+  	
 	var tg = timeglider, $ = jQuery;
   
 	// caches speed up costly calculations
@@ -70,6 +74,8 @@ YYYY-MM-DD 08:15:30-07:00
 		getBCRataDieCache = {},
 		getDateFromRDCache = {},
 		getDateFromSecCache = {};
+		
+	var VALID_DATE_PATTERN = /^(\-?\d+)?(\-\d{1,2})?(\-\d{1,2})?(?:T| )?(\d{1,2})?(?::)?(\d{1,2})?(?::)?(\d{1,2})?(\+|\-)?(\d{1,2})?(?::)?(\d{1,2})?/;
   
         
 	tg.TG_Date = function (strOrNum, date_display, offSec) {
@@ -93,10 +99,7 @@ YYYY-MM-DD 08:15:30-07:00
 		}
   
   
-  		if (isValidDateString(dateStr) === false) {
-			return {error:"invalid date"};
-			/// it's valid
-		} else {
+  		if (VALID_DATE_PATTERN.test(dateStr)) {
 
 			// !TODO: translate strings like "today" and "now"
 			// "next week", "a week from thursday", "christmas"
@@ -124,7 +127,10 @@ YYYY-MM-DD 08:15:30-07:00
 			
 			// TODO: get good str from parse8601  
       		this.dateStr = isoStr;
-  		} 
+  		
+  		} else {
+  			return {error:"invalid date"};
+  		}
 		        
         // return this;
 
@@ -731,7 +737,7 @@ YYYY-MM-DD 08:15:30-07:00
 			 	}
 			},
 			//       YyYyYyY    MM          DD
-			reg = /^(\-?\d+)?(\-\d{1,2})?(\-\d{1,2})?(?:T| )?(\d{1,2})?(?::)?(\d{1,2})?(?::)?(\d{1,2})?(\+|\-)?(\d{1,2})?(?::)?(\d{1,2})?/,
+			reg = VALID_DATE_PATTERN,
 			rx = str.match(reg);
 
     	// picks up positive OR negative (bce)	
@@ -803,35 +809,119 @@ YYYY-MM-DD 08:15:30-07:00
 	};
 	
 	
-	TG_Date.validateInputDateString = function (date_str) {
+	// This is for a separate date input field --- YYYY-MM-DD (DATE ONLY)
+	// field needs to be restricted by the $.alphanumeric plugin
+	TG_Date.transValidateDateString = function (date_str) {
+		
 		if (!date_str) return false; // date needs some value
-		var reg = /^(\-?\d+|today|now)-?(\d{1,2})?-?(\d{1,2})?/;
-		var valid = date_str.match(reg);
-		if (valid) {
-			return valid;
+		var reg = /^(\-?\d+|today|now) ?(bce?)?-?(\d{1,2})?-?(\d{1,2})?/,
+			valid = "",
+			match = date_str.match(reg);
+			zb = TG_Date.zeroButt;
+			
+		if (match) {
+			// now: 9999-09-09
+			// today: get today
+			
+			// translate
+			var ye = match[1],
+				bc = match[2] || "",
+				mo = match[3] || "07",
+				da = match[4] || "1";
+			
+			debug.log("bc:", bc)
+			if (parseInt(ye, 10) < 0 || bc.substr(0,1) == "b") {
+				ye = -1 * (Math.abs(ye));
+			}
+			
+			if (TG_Date.validateDate(ye, mo, da)) {
+				return ye + "-" + zb(mo) + "-" + zb(da);
+			} else {
+				return false;
+			}
+		
+			
 		} else {
 			return false;
 		}
 	};
 	
-	
-	TG_Date.validateInputTimeString = function (time_str) {
-		if (!time_str) return true; // time can be set at null
-		var reg = /^(\d{1,2}|noon):?(\d{1,2})? ?(am|pm)?/;
-		var valid = time_str.match(reg);
-		if (valid[1]) {
-			if (!valid[3]) { valid[3] = "am"; }
-			return valid;
-		} else {
-			return false;
-		}
-	};
-	
+	// This is for a separate TIME input field: 12:30 pm
+	// field needs to be restricted by the $.alphanumeric plugin
+	TG_Date.transValidateTimeString = function (time_str) {
+		if (!time_str) return "12:00:00";
+		
+		var reg = /^(\d{1,2}|noon):?(\d{1,2})?:?(\d{1,2})? ?(am|pm)?/i,
+			match = time_str.toLowerCase().match(reg),
+			valid = "",
+			zb = TG_Date.zeroButt;
+		
+		if (match[1]) {
 
+			// translate
+			if (match[0] == "noon") {
+				valid = "12:00:00"
+			} else {
+				// HH MM
+				var ho = parseInt(match[1], 10) || 12;
+				var mi = parseInt(match[2], 10) || 0;
+				var se = parseInt(match[3], 10) || 0;
+				var ampm = match[4] || "am";
+				
+				if (TG_Date.validateTime(ho, mi, se) == false) return false;
+				if (ampm == "pm" && ho < 12) ho += 12;
+				valid = zb(ho) + ":" + zb(mi) + ":" + zb(se);
+			}
+		} else {
+			valid = false;
+		}
+		
+		return valid;
+	};
 	
+	
+	// make sure hours and minutes are valid numbers
+	TG_Date.validateTime = function (ho, mi, se) {
+		if ((ho < 0 || ho > 23) || (mi < 0 || mi > 59) || (se < 0 || se > 59)) { return false; }
+		return true;
+	};
+	
+	
+  	/*
+  	* validateDate
+  	* Rejects dates like "2001-13-32" and such
+  	*
+  	*/
+  	TG_Date.validateDate = function (ye, mo, da) {
+  		
+  		// this takes care of leap year
+  		var ld = TG_Date.getMonthDays(mo, ye);
+
+  		if ((da > ld) || (da <= 0)) { return false; } 
+  		// invalid month numbers
+  		if ((mo > 12) || (mo < 0)) { return false; }
+  		// there's no year "0"
+  		if (ye == 0) { return false; }
+  		
+  		return true;
+  	};
+      	
+      	
+	// make sure hours and minutes are valid numbers
+	TG_Date.zeroButt = function (n) {
+		
+		var num = parseInt(n, 10);
+		if (num > 9) {
+			return String(num);
+		} else {
+			return "0" + num;
+		}
+	}
+		
+
 	/*
 	* toFromUTC
-	* transforms TG_Date object to be either in UTC or in non-UTC
+	* transforms TG_Date object to be either in UTC (GMT!) or in non-UTC
 	*
 	* @param ob: {Object} date object including ye, mo, da, etc
 	* @param offset: {String} eg: "-07:30"
@@ -1002,42 +1092,7 @@ YYYY-MM-DD 08:15:30-07:00
 	];
 	
 	
-
-	
-  		/// INTERNAL HOISTED FUNCTIONS
-
-  	    function isValidDateString (str) {
-      	  // VALIDATE STRING
-      	  var aStr = jQuery.trim(str);
-      		reg = new RegExp(/[T0-9-: ]/);
-      		if (reg.test(aStr)) {
-      		  return aStr;
-      	  } else {
-      	    return false;
-          }
-        };
   
-  
-      	/*
-      	* isValidDate
-      	* Rejects dates like "2001-13-32" and such
-      	* TODO: make sure no non leap years have Feb 29
-      	*
-      	*/
-      	function isValidDate (ye, mo, da) {
-	  
-      		var ld = TG_Date.getMonthDays(mo, ye);
-      		// day isn't appropriate for month
-      		if ((da > ld) || (da <= 0)) { return false; } 
-      		// invalid month numbers
-      		if ((mo > 12) || (mo < 0)) { return false; }
-      		// there's no year "0"
-      		if (ye == 0) { return false; }
-      	  // Is it a hex number? We need to make sure it's only got 0-9
-      		if ((typeof ye != "number") || (String(ye).match(/([0-9]+)/) == false)) { return false; }
-	
-      		return true;
-      	};
 	
         /*
         * boil
