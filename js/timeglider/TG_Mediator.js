@@ -441,13 +441,11 @@ tg.TG_Mediator.prototype = {
 				// Cy = event.pageY - $(PLACEMENT).offset().top,
 			    fdSec = me.getFocusDate().sec,
 				dcSec = Math.floor(fdSec + (offMid * secPerPx)),
-				clk = new TG_Date(dcSec);
+				clickDate = new TG_Date(dcSec);
 				// foc = new TG_Date(fdSec);
-				
-				debug.log("dblclick date:" + clk.ye + "-" + clk.mo + "-" + clk.da);	
 				////////////////////////////
 				
-				$.publish("mediator.dblclick", {"foo":"bar"})
+				$.publish("mediator.dblclick", {date:clickDate});
 				
 			break;
 		}
