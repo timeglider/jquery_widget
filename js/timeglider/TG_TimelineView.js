@@ -271,22 +271,15 @@ tg.TG_PlayerView = function (widget, mediator) {
 	
   
 	$(this._views.TRUCK)
-		.dblclick(function(e) {
-			var Cw = me.dimensions.container.width,
-			    Cx = e.pageX - (me.dimensions.container.offset.left),
-				offMid = Cx - Cw/2,
-			    secPerPx = MED.getZoomInfo().spp,
-				  // don't need mouse_y yet :
-				  //	var Cy = e.pageY - $(PLACEMENT).offset().top;
-			    fdSec = MED.getFocusDate().sec,
-				dcSec = Math.floor(fdSec + (offMid * secPerPx)),
-				  
-				clk = new TG_Date(dcSec),
-				foc = new TG_Date(fdSec);
+	
+		// doubleclicking will be used by authoring mode
+		.bind('dblclick', function(e) {
+		
+			MED.registerUIEvent({name:"dblclick", event:e, dimensions:me.dimensions});
 				
-				debug.log("DOUBLECLICK:: FOCUS date:" + foc.mo + "-" + foc.ye + ".......CLICK date:" + clk.mo + "-" + clk.ye);	
-				
-		})			
+		})
+		
+			
 		.bind('mousewheel', function(event, delta) {
 						
 			      var dir = Math.ceil(-1 * (delta * 3));
@@ -318,29 +311,36 @@ tg.TG_PlayerView = function (widget, mediator) {
 		
 	}) // end draggable
 	.delegate(CONTAINER + " .timeglider-timeline-event", "click", function () { 
+		
 		// EVENT ON-CLICK !!!!!!
 		var eid = $(this).attr("id"); 
 		var ev = MED.eventCollection.get(eid).attributes;
 		
-		if (ev.click_callback) {
-	    
-		    	var ccarr = ev.click_callback.split(".");
-		    	var cclen = ccarr.length;
-		    	if (cclen == 1) {
-		    		// fn
-		    		window[ccarr[0]](ev);
-		    	} else if (cclen == 2) {
-		    		// ns.fn
-		    		window[ccarr[0]][ccarr[1]](ev);
-		    	} else if (cclen == 3) {
-		    		// ns.ns.fn
-		    		window[ccarr[0]][ccarr[1]][ccarr[2]](ev);
-		    	}
-		
-	    
+		if (timeglider.mode == "authoring") {
+			// no need to do anything here
 		} else {
-      		me.eventModal(eid);
-		}
+		
+			if (ev.click_callback) {
+		    
+			    	var ccarr = ev.click_callback.split(".");
+			    	var cclen = ccarr.length;
+			    	if (cclen == 1) {
+			    		// fn
+			    		window[ccarr[0]](ev);
+			    	} else if (cclen == 2) {
+			    		// ns.fn
+			    		window[ccarr[0]][ccarr[1]](ev);
+			    	} else if (cclen == 3) {
+			    		// ns.ns.fn
+			    		window[ccarr[0]][ccarr[1]][ccarr[2]](ev);
+			    	}
+			
+		    
+			} else {
+	      		me.eventModal(eid);
+			}
+			
+		} // end if/else for authoring
 	  
 	})	
 	.delegate(".timeglider-timeline-event", "mouseover", function () { 
@@ -825,14 +825,13 @@ tg.TG_PlayerView.prototype = {
 	
 	  
 	buildTimelineMenu : function () {
-		debug.log("buildTimelineMenu")
+
 		var me=this;
 		var $menu;
 		var $menu_bt = $(me._views.TIMELINE_LIST_BT);
 	
 		
 		if ($(me._views.TIMELINE_MENU)[0]) {
-			debug.log("REBUILDING")
 			$(me._views.TIMELINE_MENU).remove()
 		}	
 		

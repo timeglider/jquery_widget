@@ -137,6 +137,8 @@
 			// TODO ==> add additional units
 			MED = tdata.mediator;
 			
+			tdata.timeline_id = tdata.id;
+			
 			widget_options = MED.options;
 			
 			var dhash = {
@@ -168,7 +170,8 @@
 			if (!tdata.color) { tdata.color = "#333333"; }			
 			
 			if (tdata.events.length>0) {
-			
+				
+				
 				var date, ddisp, ev, id, unit, ser, tWidth;
 				var l = tdata.events.length;
 			
@@ -188,13 +191,13 @@
 							
 							if (timeglider.mapping.ready){
 								ev.map.marker_instance = timeglider.mapping.addAddMarkerToMap(ev, MED.main_map);
-								debug.log("marker_instance", ev.map.marker_instance);
+								// debug.log("marker_instance", ev.map.marker_instance);
 								
 							}
 							// requires TG_Mapping.js component
 							
 						} else {
-							debug.log("NO MAIN MAP... BUT LOAD MAPS FOR MODAL");
+							// debug.log("NO MAIN MAP... BUT LOAD MAPS FOR MODAL");
 							// load instance of maps for modal viewing
 							tg.googleMapsLoad();
 						}
@@ -225,7 +228,7 @@
 					}
 					
 					ev.startdateObj = new TG_Date(ev.startdate, ev.date_display);
-
+					
 
 					// TODO: if they're valid!
 					if ((ev.enddate) && (ev.enddate !== ev.startdate)){
@@ -248,7 +251,7 @@
 					}  else {
 						ev.icon = widget_options.icon_folder + ev.icon;
 					}
-			
+						
 					// for collapsed view and other metrics
 					tdata.startSeconds.push(ev.startdateObj.sec);
 					tdata.endSeconds.push(ev.enddateObj.sec);
@@ -307,7 +310,7 @@
 			// keeping events in the eventCollection
 			// hashing references to evnet IDs inside the date hash
 			delete tdata.events;
-			
+
 			return tdata;
 		
 		},
@@ -320,7 +323,7 @@
 			this.set(processed);
 			
 			this.bind("change", function() {
-  				debug.log("changola");
+  				// debug.log("changola");
 			});
 		}		
 	

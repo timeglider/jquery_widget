@@ -79,6 +79,7 @@
 
 tg.TG_Mediator.prototype = {
 	
+	
 	focusToEvent: function(ev){
 		// !TODO open event, bring to zoom
 		this.focusedEvent = ev;
@@ -86,9 +87,9 @@ tg.TG_Mediator.prototype = {
 		$.publish("mediator.focusToEvent");
 	},
 	
-  
+
+
     /* PUBLIC METHODS MEDIATED BY $.widget front */
- 	
     gotoDateZoom: function (fdStr, zoom) {
         var fd = new TG_Date(fdStr),
             zl = false;
@@ -122,8 +123,8 @@ tg.TG_Mediator.prototype = {
 		if (src) {
 		  
 		    if (typeof src === "object") {
-		      // OBJECT (already loaded, created)
-		      M.parseData(src);
+				// OBJECT (already loaded, created)
+				M.parseData(src);
 		      
 		    } else if (src.substr(0,1) == "#") {
 				// TABLE
@@ -422,6 +423,34 @@ tg.TG_Mediator.prototype = {
 	*/
 	getZoomInfo : function () {
 		return this._zoomInfo;
+	},
+	
+	
+	registerUIEvent: function (info) {
+		var me = this;
+		
+		switch(info.name) {
+			case "dblclick": 
+			// info comes with 
+				
+				/////////////
+				var Cw = info.dimensions.container.width,
+		    	Cx = info.event.pageX - (info.dimensions.container.offset.left),
+		    	offMid = Cx - Cw/2,
+			    secPerPx = me.getZoomInfo().spp,
+				// Cy = event.pageY - $(PLACEMENT).offset().top,
+			    fdSec = me.getFocusDate().sec,
+				dcSec = Math.floor(fdSec + (offMid * secPerPx)),
+				clk = new TG_Date(dcSec);
+				// foc = new TG_Date(fdSec);
+				
+				debug.log("dblclick date:" + clk.ye + "-" + clk.mo + "-" + clk.da);	
+				////////////////////////////
+				
+				$.publish("mediator.dblclick", {"foo":"bar"})
+				
+			break;
+		}
 	},
         
         
