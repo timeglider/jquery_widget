@@ -803,7 +803,7 @@ timeglider.TG_Date = {};
 			ampm = "am";
 		}
 	
-		var time_val = (parseInt(obj.ho, 10)) + ":" + obj.mi + " " + ampm;
+		var time_val = unboil(obj.ho) + ":" + unboil(obj.mi) + " " + ampm;
 		
 		return {"date": date_val, "time":time_val}
 	};
@@ -1101,6 +1101,15 @@ timeglider.TG_Date = {};
         */
       	function boil (n) {
       		return parseInt(n, 10);
+      	};
+      	
+      	function unboil (n) {
+      		var no = parseInt(n, 10);
+      		if (no > 9 && no < 0) {
+      			return String(n);
+      		} else {
+      			return "0" + no;
+      		}
       	};
 
 

@@ -2381,11 +2381,10 @@ tg.googleMapsInit = function () {
 tg.googleMapsLoaded = false;
 tg.googleMapsLoad = function () {
 
-/*	
-	if (tg.googleMapsLoaded == false) {
-		debug.log("load google maps...");
 	
-			var script = document.createElement('script');
+	if (tg.googleMapsLoaded == false) {
+	
+		var script = document.createElement('script');
 	    script.type = 'text/javascript';
 	    script.src = 'http://maps.googleapis.com/maps/api/js?sensor=false&' +
 	        'callback=timeglider.googleMapsInit';
@@ -2393,7 +2392,7 @@ tg.googleMapsLoad = function () {
 	    
 	    tg.googleMapsLoaded = true;
 	}
-	*/
+	
 }
 
 
