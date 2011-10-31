@@ -1090,10 +1090,9 @@ timeglider.TG_Date = {};
 	    {"offset": "12:00", "name": "Int'l Date Line East"},
 	    {"offset": "13:00", "name": "New Zealand Daylight Time"}
 	];
-	
-	
-  
-	
+
+
+
         /*
         * boil
         * basic wrapper for parseInt to clean leading zeros,
@@ -1101,7 +1100,7 @@ timeglider.TG_Date = {};
         */
       	function boil (n) {
       		return parseInt(n, 10);
-      	};
+      	}; TG_Date.boil = boil;
       	
       	function unboil (n) {
       		var no = parseInt(n, 10);
@@ -1110,7 +1109,7 @@ timeglider.TG_Date = {};
       		} else {
       			return "0" + no;
       		}
-      	};
+      	}; TG_Date.unboil = unboil;
 
 
       	function getSec (fd) {
