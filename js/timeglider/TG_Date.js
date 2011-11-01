@@ -109,7 +109,7 @@ timeglider.TG_Date = {};
       		
       		if (parsed.tz_ho) {
       			// this is working ------ timezones in the string translate correctly
-      			parsed = TG_Date.toFromUTC(parsed, {hours:parsed.tz_ho, minutes:parsed.tz_mi}, "to")
+      			parsed = TG_Date.toFromUTC(parsed, {hours:parsed.tz_ho, minutes:parsed.tz_mi}, "to");
       		}
       					
 			$.extend(this,parsed);
@@ -965,7 +965,7 @@ timeglider.TG_Date = {};
 		// decimal overage or underage after adding offset
 		var ho_delta = (ob.ho + (ob.mi / 60)) + ((-1 * delta.ho) + ((delta.mi * -1) / 60));
 				
-		// DO WE GO FWD OR BACK
+		// FWD OR BACK ?
 		if (ho_delta < 0) {
 			// go back a day
 			nh_dec = 24 + ho_delta;
@@ -984,7 +984,7 @@ timeglider.TG_Date = {};
 				}
 			}
 			
-		} else if (ho_delta > 24) {
+		} else if (ho_delta >= 24) {
 			// going fwd a day
 			nh_dec = ho_delta - 24;			
 
