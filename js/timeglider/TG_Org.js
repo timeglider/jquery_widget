@@ -16,9 +16,9 @@
       // number of available levels for events
       tree_levels = 300,
       $ = jQuery,
-      ceiling_padding = 16;
-  
-  
+      ceiling_padding = 16,
+      icon_f = tg.icon_folder || "js/timeglider/icons/";
+
   /*
   *  @constructor
   */
@@ -168,7 +168,7 @@
             }
             
             if (b.icon) {
-              icon = "<img class='timeglider-event-icon' src='" + b.icon + "' style='height:"
+              icon = "<img class='timeglider-event-icon' src='" + icon_f + b.icon + "' style='height:"
             + b.fontsize + "px;left:-" + (b.fontsize + 2) + "px; top:" + title_adj + "px'>";
             } else {
               icon = '';

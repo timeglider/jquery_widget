@@ -84,14 +84,16 @@ timeglider.TG_Date = {};
     		offsetSeconds = offSec || 0;
    
    
-   		// Jim, we've got seconds coming in!
+   		// SERIAL SECONDS
 		if (typeof(strOrNum) == "number") {
       	  
 			dateStr = isoStr = TG_Date.getDateFromSec(strOrNum);
 			gotSec = (strOrNum + offsetSeconds);
-			
+		
+		
+		// STRING
 		} else {
-			// string -- floating dates like "today"
+		
 			if (strOrNum == "today") {
 				strOrNum = TG_Date.getToday();
 			} 

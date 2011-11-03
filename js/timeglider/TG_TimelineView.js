@@ -306,7 +306,7 @@ tg.TG_PlayerView = function (widget, mediator) {
 			me.resetTicksHandle();
 			me.registerDragging();
 		
-			// me.easeOutTicks();  
+			me.easeOutTicks();  
 		}
 		
 	}) // end draggable
@@ -685,49 +685,57 @@ tg.TG_PlayerView.prototype = {
   registerTitles : function () {
 		
 		var toff, w, tw, sw, pos, titx, 
-		  $elem, env, tb, ti, relPos, tbWidth,
-		  mo = $(CONTAINER).offset().left;
+		  $elem, $env, env, tb, ti, relPos, tbWidth,
+		  mo = $(CONTAINER).offset().left,
+		  trackTB = true;
 		
 		
 		$(".timeglider-event-spanning").each(
 			function() {
-			  // !TODO  needs optimizing of DOM "touching"
+			    // !TODO  needs optimizing of DOM "touching"
 			 	toff = $(this).offset().left - mo;
 				w = $(this).outerWidth();
 				$elem = $(".timeglider-event-title",this);
 				tw = $elem.outerWidth() + 5;
 				sw = $elem.siblings(".timeglider-event-spanner").outerWidth();
 				if (sw > tw) {
-          if ((toff < 0) && (Math.abs(toff) < (w-tw))) {
-            $elem.css({marginLeft:(-1 * toff)+5});
-          } 
-		}
+					if ((toff < 0) && (Math.abs(toff) < (w-tw))) {
+						$elem.css({marginLeft:(-1 * toff)+5});
+					} 
+				}
 				// is offscreen == false: $(this).removeClass('timeglider-event-offscreen')
 			}
 		);
 
+		// IE 7,8 not able to find the .titleBar element below
+		// while this .each is happening. Performance in .find()?
+		// This hack just turns off the titleBar tracking... :(
+		if ($.browser.msie && parseInt($.browser.version) <9) {
+			trackTB = false;
+		}
+		
+		if (trackTB === true) {
 		$(".tg-timeline-envelope").each(
 				function () {
 				  // !TODO  needs optimizing of DOM "touching"
-					env = $(this).offset().left - mo;
-					tb = $(".titleBar", this);
-					ti = $(".titleBar .timeline-title", this);
-					var tbpos =    
-					pos = tb.position().left;
-					// debug.log("pos-left", pos);
+					$env = $(this);
+					env = $env.offset().left - mo;
+					$tb = $env.find(".titleBar");
+					$ti = $tb.find(".timeline-title");
+										
+					pos = $tb.position().left;
 					
-				 	relPos = pos + env;
-					tbWidth = tb.outerWidth();
+				 	relPos = -1 * (pos + env);
 					
-					tw = tb.outerWidth();
-					
-				  titx = (-1 * relPos);
-					
-				 	if ( (relPos < 0) ) {
-						ti.css({marginLeft:titx+5});
+
+				 	if ( (relPos > 0) ) {
+						$ti.css({marginLeft:relPos+5});
 					} 
+				
 				}
 		); 
+		
+		} // end ie check
 	// whew! end register titles
 	},
 	
@@ -740,11 +748,10 @@ tg.TG_PlayerView.prototype = {
 		// !TODO: See if we can throttle this to be only
 		// once every 100ms....
 		var startSec = MED.startSec,
-		  tickPos = $(TICKS).position().left,
-		  secPerPx = MED.getZoomInfo().spp,
-		  newSec = startSec - (tickPos * secPerPx);
-		  
-		  var newD = new TG_Date(newSec);
+			tickPos = $(TICKS).position().left,
+			secPerPx = MED.getZoomInfo().spp,
+			newSec = startSec - (tickPos * secPerPx),
+			newD = new TG_Date(newSec);
 		   		 
 		  MED.setFocusDate(newD);
 		  
@@ -1504,44 +1511,37 @@ tg.TG_PlayerView.prototype = {
 
 	easeOutTicks : function() {
 		var me = this;
+		// debug.log("this.dragSpeed:", this.dragSpeed);
+		
 			if (Math.abs(this.dragSpeed) > 5) {
 				// This works, but isn't great:offset fails to register
 				// for new tim as it ends animation...
-				// $('#TimegliderTicks').animate({left: '+=' + (5 * me.dragSpeed)}, 400, function() {
+				
+				$('#TimegliderTicks').animate({left: '+=' + (5 * me.dragSpeed)}, 400, function() {
 					debug.trace("ticks stopped!", "note");
-					// });
+				});
 			}
 		
 	},
 	
 
+
 	/*
 	@param    obj with { tick  |  timeline }
 	@return   array of event ids 
+	This is per-timeline...
 	*/
 	getTimelineEventsByTick : function (obj) {
 	  
 		var unit = obj.tick.unit,
-		  serial = obj.tick.serial,
-		  hash = obj.timeline.dateHash,
-		  spans = obj.timeline.spans;
+			serial = obj.tick.serial,
+			hash = MED.eventCollection.getTimelineHash(obj.timeline.timeline_id);
 		  	
 		if (hash[unit][serial] && hash[unit][serial].length > 0) {
 			return hash[unit][serial];
 		} else {
 			return 0;
 		}
-	},
-	
-	/* TODO! MOVE THIS TO MEDIATOR/TIMELINE MODEL!!!! */
-	setTimelineProp : function (id, prop, value) {
-		var tl = MED.timelineCollection.get(id).attributes;
-		tl[prop] = value;	
-	},
-	
-	/* TODO! MOVE THIS TO MEDIATOR/TIMELINE MODEL!!!! */
-	getTimelineProp : function (id, prop) {
-		return MED.timelineCollection.get(id).attributes[prop];
 	},
 	
 	
@@ -1646,7 +1646,11 @@ tg.TG_PlayerView.prototype = {
 					axis:"y",
 					handle:".titleBar", 
 					stop: function () {
-						me.setTimelineProp(tl.id,"top", $(this).css("top"));
+						var ntop = $(this).css("top");
+						
+						MED.timelineCollection.get(tl.id).set({top:ntop}); // .attributes;
+					
+						// me.setTimelineProp(tl.id,"top", $(this).css("top"));
 						MED.refresh();	
 					}
 				})
@@ -1666,17 +1670,19 @@ tg.TG_PlayerView.prototype = {
 		    	$.merge(idArr, tArr);	
 			}
 			
-			
 			// detect if there are boundless spans (bridging, no start/end points)
+			// !TODO: optimize loop, use _.find() ?
 			for (var sp1=0; sp1<tl.spans.length; sp1++) {
 				spanin = tl.spans[sp1];;
 				if (spanin.start < lsec && spanin.end > lsec) {
 				    //not already in array
 				    if ($.inArray(spanin.id, idArr) == -1) {
+				      // adds to beginning to prioritize
 				      idArr.unshift(spanin.id);
 			      	}
 			    }
 			}
+			
 
 			stuff = this.compileTickEventsAsHtml(tl, idArr, 0, "sweep");
 			// TODO: make 56 below part of layout constants collection
@@ -1753,7 +1759,7 @@ tg.TG_PlayerView.prototype = {
 			if (btype == "append") {
           block_arg = tick_serial;
       }
-
+    
       for (var i=0; i<idArr.length; i++) {
 
 		// BBONE
@@ -2138,7 +2144,7 @@ tg.TG_TimelineView = Backbone.View.extend({
 		var me=this;
 		
 		this.model.bind('change:title', function () {
-			$(me.el).find(".timeline-title-span").text(me.model.get("title"));
+			$(me.el).find(".t  imeline-title-span").text(me.model.get("title"));
 		});
 		
 		this.model.bind('destroy', this.remove, this);
@@ -2147,8 +2153,6 @@ tg.TG_TimelineView = Backbone.View.extend({
 	
 
     tagName:  "div",
-
-    template: "",
     
     events: {
       "click .timeline-title-span" : "titleClick"
@@ -2168,9 +2172,11 @@ tg.TG_TimelineView = Backbone.View.extend({
     	
     	var me = this;
 		var id = this.model.get("id");
-		var title = this.model.get("title")
+		var title = this.model.get("title");
  	
-		$(this.el).html($.tmpl(this.template, this.model.attributes)).attr("id", this.model.get("id"));
+		$(this.el)
+			.html($.tmpl(this.template, this.model.attributes))
+			.attr("id", this.model.get("id"));
 	
       	return this;
     },
@@ -2375,7 +2381,7 @@ if (debug) {
 
 
 tg.googleMapsInit = function () {
-	debug.log("initializing google maps...")
+	// debug.log("initializing google maps...")
 }
 
 tg.googleMapsLoaded = false;

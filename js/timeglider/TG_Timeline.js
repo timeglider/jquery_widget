@@ -23,12 +23,24 @@
 	var TG_Date = tg.TG_Date,
 		$ = jQuery,
 		widget_options = {},
+		tg_units = TG_Date.units,
 		MED;
 
 
 
 
 	tg.TG_EventCollection = Backbone.Collection.extend({
+		
+		eventHash:{},
+
+		setTimelineHash: function(timeline_id, hash) {
+			this.eventHash[timeline_id] = hash;
+		},
+		
+		getTimelineHash: function(timeline_id, hash) {
+			return this.eventHash[timeline_id];
+		},
+		
 		model: tg.TG_Event
 	});
   
@@ -44,7 +56,7 @@
 		defaults: {
 			"title":  "Untitled"
 		},
-		
+	
 	
 		initialize: function(ev) { 
 		
@@ -93,7 +105,6 @@
 				that.get("image").width = this.width;
 			});
 		
-			// hoised function here... TODO: move this to utilities
 			function delegatr(contextObject, delegateMethod) {
 				return function() {
 					return delegateMethod.apply(contextObject, arguments);
@@ -106,13 +117,9 @@
 	});
 	
 	
-
-
-
 	tg.TG_TimelineCollection = Backbone.Collection.extend({
 		model: tg.TG_Timeline
 	});
-	
 	
 	
 	// map model onto larger timeglider namespace
@@ -139,6 +146,10 @@
 			
 			tdata.timeline_id = tdata.id;
 			
+			// initiates the timeline hash
+			var evHash = {};
+			
+			
 			widget_options = MED.options;
 			
 			var dhash = {
@@ -156,7 +167,7 @@
 				"bill":[]
 			};
 			
-			var units = TG_Date.units;
+			
 			
 			tdata.startSeconds = [];
 			tdata.endSeconds = [];
@@ -192,30 +203,30 @@
 							if (timeglider.mapping.ready){
 								ev.map.marker_instance = timeglider.mapping.addAddMarkerToMap(ev, MED.main_map);
 								// debug.log("marker_instance", ev.map.marker_instance);
-								
 							}
 							// requires TG_Mapping.js component
 							
 						} else {
 							// debug.log("NO MAIN MAP... BUT LOAD MAPS FOR MODAL");
 							// load instance of maps for modal viewing
+							// requires: TG_Mapping.js
 							tg.googleMapsLoad();
 						}
 					}
 					
+										
 					// make sure it has an id!
 					if (ev.id) { 
 						// TODO :: make sure it's unique... append with timeline id?
 						id = ev.id 
 					} else { 
+						// if lacking an id, we'll make one...
 						ev.id = id = "anon" + this.anonEventId++; 
 					}
 
 					// date_limit is old JSON prop name, replaced by date_display
-					
 					ddisp = ev.date_display || ev.date_limit || "da";
 					ev.date_display = ddisp.toLowerCase().substr(0,2);
-			
 								
 					// if a timezone offset is set on the timeline, adjust
 					// any events that do not have the timezone set on them
@@ -229,8 +240,7 @@
 					
 					ev.startdateObj = new TG_Date(ev.startdate, ev.date_display);
 					
-
-					// TODO: if they're valid!
+					// !TODO: only if they're valid!
 					if ((ev.enddate) && (ev.enddate !== ev.startdate)){
 						ev.enddateObj = new TG_Date(ev.enddate, ev.date_display);
 						ev.span=true;
@@ -239,6 +249,10 @@
 						ev.enddateObj = ev.startdateObj;
 						ev.span = false;
 					}
+					  
+					// cache the initial date for updating hash later
+					// important for edit/delete operations
+					ev.cache = {enddateObj:ev.startdateObj, enddateObj:ev.enddateObj}
 					
 					
 					if (ev.image_class == "above") { 
@@ -249,7 +263,7 @@
 					if (!ev.icon || ev.icon === "none") {
 						ev.icon = "";
 					}  else {
-						ev.icon = widget_options.icon_folder + ev.icon;
+						ev.icon = ev.icon;
 					}
 						
 					// for collapsed view and other metrics
@@ -257,9 +271,9 @@
 					tdata.endSeconds.push(ev.enddateObj.sec);
 
 					//// !! TODO VALIDATE DATE respecting startdate, too
-					var uxl=units.length;
-					for (var ux=0; ux < uxl; ux++) {
-						unit = units[ux];
+					var uxl = tg_units.length;
+					for (var ux = 0; ux < uxl; ux++) {
+						unit = tg_units[ux];
 						///// DATE HASHING in action 
 						ser = TG_Date.getTimeUnitSerial(ev.startdateObj, unit);
 						if (dhash[unit][ser] !== undefined) {
@@ -270,22 +284,25 @@
 						}
 						/////////////////////////////
 					} 
-		
+							
 		
 					/////////////////////////////////
 					// Since model is defined in the eventCollection
 					// we just need to add the raw object here and it
-					// is "vivified"...
+					// is "vivified", properties set, etc
 					var newEvent = new tg.TG_Event(ev);
 					MED.eventCollection.add(newEvent);
-					
-								
+			
 				}// end for: cycling through timeline's events
 			
 				// adding event secs to catalog of entire timeline
 				var fl = timeglider.getLowHigh($.merge(tdata.startSeconds,tdata.endSeconds));
 				/// bounds of timeline
 				tdata.bounds = {"first": fl.low, "last":fl.high };
+		
+		
+		
+		
 			
 			} /// end if there are events!
 			
@@ -305,9 +322,10 @@
 			/// ought to be attribute at the timeline level
 			/// TODO: create a $.merge for defaults for a timeline
 			tdata.display = "expanded";
-			tdata.dateHash = dhash;
 			
-			// keeping events in the eventCollection
+			MED.eventCollection.setTimelineHash(tdata.timeline_id, dhash);
+			
+			// keeping events in eventCollection
 			// hashing references to evnet IDs inside the date hash
 			delete tdata.events;
 

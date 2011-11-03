@@ -41,6 +41,8 @@
     this.max_zoom = options.max_zoom;
     this.min_zoom = options.min_zoom;
     
+    tg.icon_folder = options.icon_folder
+    
     // setting this without setTimeoffset to avoid refresh();
     this.timeOffset = TG_Date.getTimeOffset(options.timezone);
   
@@ -293,12 +295,10 @@ tg.TG_Mediator.prototype = {
    
       this.timelineCollection.add(obj);
       
-      // MAY NOT NEED THIS WITH BB COLLECTION
+      // MAY NOT NEED THIS WITH Backbone Collection change-binding
       $.publish("mediator.timelineListChangeSignal");
     },
 
-    ///  end of methods that need to go into (backbone) data model
-    ///////////////////////////
 
     /* 
     TODO: turn to $each, adding to activeTimelines:
@@ -316,7 +316,7 @@ tg.TG_Mediator.prototype = {
       	} else if (tid) {
       		// we need to wait just a bit...
       		// !TODO What is timeout for?? 
-			setTimeout(function () { MED.toggleTimeline(tid); }, 1000);
+			setTimeout(function () { MED.toggleTimeline(tid); }, 500);
 		} else {
 			this.setZoomLevel(40);
 		}
@@ -645,6 +645,7 @@ tg.TG_Mediator.prototype = {
         
 tg.getLowHigh = function (arr) {
 
+	// !TODO SORT ARRAY INSTEAD AND PLUCK 0 and LAST
 	var i, n, 
 		high = parseFloat(arr[0]), 
 		low = high;
