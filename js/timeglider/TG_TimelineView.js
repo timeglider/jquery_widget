@@ -2148,7 +2148,6 @@ tg.TG_TimelineView = Backbone.View.extend({
 		});
 		
 		this.model.bind('destroy', this.remove, this);
-
 	},
 	
 
@@ -2192,8 +2191,7 @@ tg.TG_TimelineView = Backbone.View.extend({
 
 
     titleClick: function() {
-      // $(this.el).addClass("editing");
-      alert("TITLE CLICK");
+      MED.timelineTitleClick(this.model.get("id"));
     },
 
 

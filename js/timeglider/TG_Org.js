@@ -16,13 +16,16 @@
       // number of available levels for events
       tree_levels = 300,
       $ = jQuery,
-      ceiling_padding = 16,
-      icon_f = tg.icon_folder || "js/timeglider/icons/";
+      ceiling_padding = 16;
+      
 
   /*
   *  @constructor
   */
   tg.TG_Org = function() {
+  
+  	
+    var icon_f = tg.icon_folder;
 
     this.blocks = [];
     this.ids = [];

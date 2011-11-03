@@ -41,7 +41,7 @@
     this.max_zoom = options.max_zoom;
     this.min_zoom = options.min_zoom;
     
-    tg.icon_folder = options.icon_folder
+    this.icon_folder = tg.icon_folder = options.icon_folder || "js/timeglider/icons/";
     
     // setting this without setTimeoffset to avoid refresh();
     this.timeOffset = TG_Date.getTimeOffset(options.timezone);
@@ -169,7 +169,9 @@ tg.TG_Mediator.prototype = {
 		return this.timelineCollection;
 	},
 	
-	
+	timelineTitleClick: function(timeline_id) {
+		$.publish("mediator.timelineTitleClick", {timeline_id:timeline_id});
+	},
 	  
 	/*
 	*  getTableTimelineData
