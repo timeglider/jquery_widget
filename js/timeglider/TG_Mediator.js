@@ -569,12 +569,10 @@ tg.TG_Mediator.prototype = {
 	},
 
 
-
-
 	toggleTimeline : function (id) {
 	
 		// patch until we have better multi-timeline support
-		this.activeTimelines = [];
+		// this.activeTimelines = [];
 
 		var lt = this.timelineCollection.get(id).attributes;
 		

@@ -185,18 +185,27 @@
 				
 				var date, ddisp, ev, id, unit, ser, tWidth;
 				var l = tdata.events.length;
-			
 	
 				for(var ei=0; ei< l; ei++) {
 				
+					ev=tdata.events[ei];
+
+					// make sure it has an id!
+					if (ev.id) { 
+						id = ev.id 
+					} else { 
+						// if lacking an id, we'll make one...
+						ev.id = id = "anon" + this.anonEventId++; 
+					}
+					
+										
+					
 					/*
 				 		We do some pre-processing ** INCLUDING HASHING THE EVENT *
 				 		BEFORE putting the event into it's Model&Collection because some 
 				 		(processed) event attributes are needed at the timeline level
 					*/
 			
-					ev=tdata.events[ei];
-					
 					if (ev.map) {
 						if (MED.main_map) {
 							
@@ -214,16 +223,6 @@
 						}
 					}
 					
-										
-					// make sure it has an id!
-					if (ev.id) { 
-						// TODO :: make sure it's unique... append with timeline id?
-						id = ev.id 
-					} else { 
-						// if lacking an id, we'll make one...
-						ev.id = id = "anon" + this.anonEventId++; 
-					}
-
 					// date_limit is old JSON prop name, replaced by date_display
 					ddisp = ev.date_display || ev.date_limit || "da";
 					ev.date_display = ddisp.toLowerCase().substr(0,2);
@@ -284,14 +283,36 @@
 						}
 						/////////////////////////////
 					} 
-							
+					
 		
 					/////////////////////////////////
 					// Since model is defined in the eventCollection
-					// we just need to add the raw object here and it
+					// we j  ust need to add the raw object here and it
 					// is "vivified", properties set, etc
-					var newEvent = new tg.TG_Event(ev);
-					MED.eventCollection.add(newEvent);
+					
+					ev.timelines = [tdata.timeline_id];
+					
+					if (!MED.eventCollection.get(id)) {
+					
+						var newEvent = new tg.TG_Event(ev);
+						MED.eventCollection.add(newEvent);
+					
+					} else {
+					// it's in the collection, but not associated with this timeline
+					
+					
+					// ... or maybe it is...
+					///////////////////////////////////
+					// ADD TIMELINE TO EVENT timelines ARRAY
+									
+						// if 
+						// event does NOT have timeline_id in its timelines array
+						// at least add timeline_id
+						// debug.log("DUPLICATE EVENT:", id);	
+					}
+					
+					
+					
 			
 				}// end for: cycling through timeline's events
 			
@@ -299,22 +320,20 @@
 				var fl = timeglider.getLowHigh($.merge(tdata.startSeconds,tdata.endSeconds));
 				/// bounds of timeline
 				tdata.bounds = {"first": fl.low, "last":fl.high };
-		
-		
-		
-		
-			
+					
 			} /// end if there are events!
 			
 			
-			
-			/* TODO: necessary to parse this now, or just leave as is? */
+			/* !TODO: necessary to parse this now, or just leave as is? */
 			if (tdata.legend.length > 0) {
-				var legend = tdata.legend;
-				for (var i=0; i<legend.length; i++) {
-					var legend_item = legend[i];
+				//var legend = tdata.legend;
+				//for (var i=0; i<legend.length; i++) {
+				//	var legend_item = legend[i];
 					// debug.log("leg. title:" + legend_item['title'])
-				} 
+				//}
+				tdata.hasLegend = true;
+			} else {
+				tdata.hasLegend = false;
 			}
 			
 			
@@ -322,6 +341,7 @@
 			/// ought to be attribute at the timeline level
 			/// TODO: create a $.merge for defaults for a timeline
 			tdata.display = "expanded";
+			
 			
 			MED.eventCollection.setTimelineHash(tdata.timeline_id, dhash);
 			

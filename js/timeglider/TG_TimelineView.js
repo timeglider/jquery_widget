@@ -387,11 +387,8 @@ tg.TG_PlayerView = function (widget, mediator) {
 	$.subscribe("mediator.focusToEvent", function () {
 		// mediator takes care of focusing date
 		var ev = MED.focusedEvent;
-		
 	});
 
-	
-	
 	$.subscribe("mediator.zoomLevelChange", function () {
 		
 		me.tickNum = 0;
@@ -462,7 +459,8 @@ tg.TG_PlayerView = function (widget, mediator) {
 	$.subscribe("mediator.activeTimelinesChange", function () {
 		
 		$(me._views.TIMELINE_MENU_UL + " li").each(function () {
-				var id = $(this).attr("id");
+			
+				var id = $(this).data("timeline_id");
 			    if ($.inArray(id, MED.activeTimelines) != -1) {
 					$(this).addClass("activeTimeline");
 				} else { 
@@ -854,7 +852,7 @@ tg.TG_PlayerView.prototype = {
 			
 			tagName: "li",
 			className: "timeglider-timeline-list-item",
-			template: "<a href='#'>${title}</a>...",
+			template: "${title}",
 			
 			events: {
 				"click": "toggleTimeline"
@@ -865,7 +863,8 @@ tg.TG_PlayerView.prototype = {
 			},
 			
 			render: function() {
-				$(this.el).html($.tmpl(this.template, this.model.attributes)).attr("id", this.model.get("id") + "_listItem");
+				var tid = this.model.get("id");
+				$(this.el).html($.tmpl(this.template, this.model.attributes)).data("timeline_id", tid)
 				return this;
 			}
 	
@@ -1621,9 +1620,11 @@ tg.TG_PlayerView.prototype = {
 			expCol, tl_top=0,
 			cht = me.dimensions.container.height,
 			ceiling = 0;
+		
 		//////////////////////////////////////////
+		
 		for (var a=0; a<active.length; a++) {
-
+			idArr = [];
 			// FOR EACH _ACTIVE_ TIMELINE...
 			tlModel = MED.timelineCollection.get(active[a]);
 			tl = tlModel.attributes;
@@ -1646,9 +1647,11 @@ tg.TG_PlayerView.prototype = {
 					axis:"y",
 					handle:".titleBar", 
 					stop: function () {
-						var ntop = $(this).css("top");
 						
-						MED.timelineCollection.get(tl.id).set({top:ntop}); // .attributes;
+						var ntop = $(this).css("top");
+						var tid = $(this).attr("id");
+						
+						MED.timelineCollection.get(tid).set({top:ntop}); // .attributes;
 					
 						// me.setTimelineProp(tl.id,"top", $(this).css("top"));
 						MED.refresh();	
@@ -1858,7 +1861,6 @@ tg.TG_PlayerView.prototype = {
 		} else {
 			tl.display = "expanded";
 		}
-		
 		MED.refresh();
 	},
   
@@ -2144,7 +2146,7 @@ tg.TG_TimelineView = Backbone.View.extend({
 		var me=this;
 		
 		this.model.bind('change:title', function () {
-			$(me.el).find(".t  imeline-title-span").text(me.model.get("title"));
+			$(me.el).find(".timeline-title-span").text(me.model.get("title"));
 		});
 		
 		this.model.bind('destroy', this.remove, this);
@@ -2159,22 +2161,38 @@ tg.TG_TimelineView = Backbone.View.extend({
     
     className: "tg-timeline-envelope",
     
-	template: "<div class='titleBar'><div class='timeline-title'>"
+	getTemplate: function() {
+		var me = this;
+		
+		var tmpl = "<div class='titleBar'><div class='timeline-title'>"
       			+ "<span class='timeline-title-span'>"
-      			+ "${title}</span><div class='tg-timeline-env-buttons'>"
-			 	+ "<span class='timeline-info' data-timeline_id='${id}'>info</span>"
-			 	+ "<span class='tg-timeline-legend-bt' data-timeline_id='${id}'>legend</span>"
-			 	// + "<span class='expand-collapse'>expand/collapse</span>" 
-			 	+ "</div></div></div></div>",
+      			+ "${title}</span><div class='tg-timeline-env-buttons'>";
+      	
+      	if (me.model.get("description")) {
+      		tmpl += "<span class='timeline-info' data-timeline_id='${id}'>info</span>";
+      	}
+      	
+      	if (me.model.get("hasLegend")) {
+      		tmpl += "<span class='tg-timeline-legend-bt' data-timeline_id='${id}'>legend</span>";
+      	}
+      	
+      	
+      	tmpl += "<span class='expand-collapse' data-timeline_id='${id}'>exp/col</span>"; 
+		tmpl += "</div></div></div></div>";
+ 	
+		return tmpl;	
+	},
 
     render: function() {
     	
     	var me = this;
-		var id = this.model.get("id");
-		var title = this.model.get("title");
+		var id = me.model.get("id");
+		var title = me.model.get("title");
+		
+		var _template = me.getTemplate();
  	
 		$(this.el)
-			.html($.tmpl(this.template, this.model.attributes))
+			.html($.tmpl(_template, this.model.attributes))
 			.attr("id", this.model.get("id"));
 	
       	return this;
