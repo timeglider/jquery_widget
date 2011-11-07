@@ -782,7 +782,7 @@
         "description": "Idaho population 88,548. Idaho becomes 43rd state on July 3.",
         "event_type": "event",
         "link": "",
-        "icon": "goldstar",
+        "icon": "goldstar.png",
         "low_threshold": "1",
         "high_threshold": "60",
         "importance": "63",

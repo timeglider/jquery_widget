@@ -77,6 +77,8 @@ timeglider.TG_Date = {};
 		
 	var VALID_DATE_PATTERN = /^(\-?\d+)?(\-\d{1,2})?(\-\d{1,2})?(?:T| )?(\d{1,2})?(?::)?(\d{1,2})?(?::)?(\d{1,2})?(\+|\-)?(\d{1,2})?(?::)?(\d{1,2})?/;
   
+  
+   // MAIN CONSTRUCTOR
         
 	tg.TG_Date = function (strOrNum, date_display, offSec) {
 
@@ -90,6 +92,9 @@ timeglider.TG_Date = {};
 			dateStr = isoStr = TG_Date.getDateFromSec(strOrNum);
 			gotSec = (strOrNum + offsetSeconds);
 		
+		} else if (typeof(strOrNum) === "object") {
+			
+			// dateStr = strOrNum.ye + "-" + strOrNum.mo + "-" + strOrNum.da 
 		
 		// STRING
 		} else {
@@ -109,10 +114,15 @@ timeglider.TG_Date = {};
 	    	      		
       		var parsed =  TG_Date.parse8601(dateStr);
       		
+      		
       		if (parsed.tz_ho) {
       			// this is working ------ timezones in the string translate correctly
+      			// OK: transforms date properly to UTC since it should have been there
       			parsed = TG_Date.toFromUTC(parsed, {hours:parsed.tz_ho, minutes:parsed.tz_mi}, "to");
       		}
+      		
+      		
+      		// ye, mo, da, ho, mi, se arrive in parsed (with tz_)
       					
 			$.extend(this,parsed);
 
@@ -134,7 +144,7 @@ timeglider.TG_Date = {};
   			return {error:"invalid date"};
   		}
 		        
-        // return this;
+        return this;
 
   } // end TG_Date Function
 
@@ -156,10 +166,11 @@ timeglider.TG_Date = {};
       var ret = 0;
       
   		switch (unit) {
-  			case "ye": ret = fd.ye; break;
+  			case "da": ret =  fd.rd; break;
   			// set up mo_num inside TG_Date constructor
   			case "mo": ret =  fd.mo_num; break;
-  			case "da": ret =  fd.rd; break;
+  			
+  			case "ye": ret = fd.ye; break;
   			case "de": ret =  Math.floor(fd.ye / 10); break;
   			case "ce": ret =  Math.floor(fd.ye / 100); break;
   			case "thou": ret =  Math.floor(fd.ye / 1000); break;
@@ -565,7 +576,6 @@ timeglider.TG_Date = {};
 
   	var absYe = Math.abs(ye);
   	var chunks = [0,335,306,275,245,214,184,153,122,92,61,31,0];
-  	debug.log("mo for neg date:", mo)
   	var mdays = TG_Date.monthsDayNums[mo];
   	var rawYeDays = (absYe - 1) * 366;
   	var rawMoDays = chunks[mo];
@@ -731,6 +741,8 @@ timeglider.TG_Date = {};
 			da_default = 1,
 			ho_default = 12,
 			mi_default = 0,
+			se_default = 0,
+			
 			dedash = function (n){
 				if (n) {
 			 		return parseInt(n.replace("-", ""), 10);
@@ -755,7 +767,7 @@ timeglider.TG_Date = {};
 		mi = dedash(rx[5]) || mi_default;
 		// rx[8] is ":"
 		se = dedash(rx[6]) || mi_default;
-		
+				
 		// if year is < 1 or > 9999, override
 		// tz offset, set it to 0/UTC no matter what
 		
@@ -788,6 +800,12 @@ timeglider.TG_Date = {};
 		
 	}; 
 	
+	/* 
+	* getDateTimeStrings
+	*
+	* @param str {String} ISO8601 date string
+	* @return {Object} date, time as strings with am or pm
+	*/
 	TG_Date.getDateTimeStrings = function (str) {
 	
 		var obj = TG_Date.parse8601(str);
@@ -926,25 +944,29 @@ timeglider.TG_Date = {};
 	* transforms TG_Date object to be either in UTC (GMT!) or in non-UTC
 	*
 	* @param ob: {Object} date object including ye, mo, da, etc
-	* @param offset: {String} eg: "-07:30"
+	* @param offset: {Object} eg: hours, minutes {Number} x 2
 	*
 	* with offsets made clear. Used for formatting dates at all times
 	* since all event dates are stored in UTC
+	*
+	* @ return {Object} returns SIMPLE DATE OBJECT: not a full TG_Date instance
+	*                   since we don't want the overhead of calculating .rd etc.
 	*/		
 	TG_Date.toFromUTC = function (ob, offset, toFrom) {
 				
 		var nh_dec = 0,
 			lastDays = [0,31,28,31,30,31,30,31,31,30,31,30,31,29],
+			
 			deltaFloatToHM = function (flt){
 				var fl = Math.abs(flt),
 					h = Math.floor(fl),
 					dec = fl - h,
 					m = Math.round(dec * 60);
 				
-				return {"ho":h, "mi":m};
+				return {"ho":h, "mi":m, "se":0};
 			},
 			delta = {};
-			
+						
 		// Offset is the "timezone setting" on the timeline,
 		// or the timezone to which to translate from UTC
 		if (toFrom == "from") {
@@ -1023,9 +1045,15 @@ timeglider.TG_Date = {};
 		
 				
 		////// 
-		return ob;
+		// return ob;
+		var retob = {ye:ob.ye, mo:ob.mo, da:ob.da, ho:ob.ho, mi:ob.mi, se:ob.se};
+		// debug.log("retob inside of toFromUTC:", retob);
+		
+		return retob;
+		
 		
 	}; // toFromUTC
+	
 	
 	
 	TG_Date.timezones = [

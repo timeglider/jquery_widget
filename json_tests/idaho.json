@@ -12,7 +12,6 @@
         "id": "1391bce",
         "title": "TEST BCE EVENT",
         "startdate": "-1000-07-01 12:00",
-
         "description": "TEST BCE EVENT.",
         "icon": "triangle_green.png",
         "low_threshold": "1",
@@ -752,7 +751,7 @@
         "date_limit": "ye",
         "description": "Idaho population 88,548. Idaho becomes 43rd state on July 3.",
         "event_type": "event",
-        "icon": "goldstar",
+        "icon": "goldstar.png",
         "low_threshold": "1",
         "high_threshold": "60",
         "importance": "63",
@@ -1280,7 +1279,7 @@
         
         "description": "Ernest Hemingway dies in Ketchum.",
         "event_type": "event",
-        "icon": "triangle_gray",
+        "icon": "triangle_gray.png",
         "low_threshold": "1",
         "high_threshold": "60",
         "importance": "45",

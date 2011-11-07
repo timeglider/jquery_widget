@@ -1675,8 +1675,8 @@ tg.TG_PlayerView.prototype = {
 			
 			// detect if there are boundless spans (bridging, no start/end points)
 			// !TODO: optimize loop, use _.find() ?
-			for (var sp1=0; sp1<tl.spans.length; sp1++) {
-				spanin = tl.spans[sp1];;
+			_.each(tl.spans, function (spanin) {
+				
 				if (spanin.start < lsec && spanin.end > lsec) {
 				    //not already in array
 				    if ($.inArray(spanin.id, idArr) == -1) {
@@ -1684,7 +1684,7 @@ tg.TG_PlayerView.prototype = {
 				      idArr.unshift(spanin.id);
 			      	}
 			    }
-			}
+			});
 			
 
 			stuff = this.compileTickEventsAsHtml(tl, idArr, 0, "sweep");

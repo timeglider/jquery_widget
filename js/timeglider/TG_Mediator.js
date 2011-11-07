@@ -644,19 +644,10 @@ tg.TG_Mediator.prototype = {
         
         
 tg.getLowHigh = function (arr) {
-
-	// !TODO SORT ARRAY INSTEAD AND PLUCK 0 and LAST
-	var i, n, 
-		high = parseFloat(arr[0]), 
-		low = high;
-
-	for (i=0; i<arr.length; i++) {
-		n = parseFloat(arr[i]);
-		if (n<low) low = n;
-		if (n>high) high = n;
-	}
-
-	return {"high":high, "low":low}
+	
+	var sorted = _.sortBy(arr, function(g){ return parseInt(g); });
+	
+	return {"low":_.first(sorted), "high":_.last(sorted)}
 
 };
         

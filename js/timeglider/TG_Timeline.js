@@ -31,6 +31,7 @@
 
 	tg.TG_EventCollection = Backbone.Collection.extend({
 		
+		// "master hash"
 		eventHash:{},
 
 		setTimelineHash: function(timeline_id, hash) {
@@ -153,6 +154,7 @@
 			widget_options = MED.options;
 			
 			var dhash = {
+				"all":[],
 				"da":[], 
 				"mo":[], 
 				"ye":[], 
@@ -168,13 +170,15 @@
 			};
 			
 			
-			
-			tdata.startSeconds = [];
-			tdata.endSeconds = [];
+
 			tdata.spans = [];
 			tdata.hasImagesAbove = false;
+			tdata.startSeconds = [];
+			tdata.endSeconds = [];
 			
+			// widget options timezone default is "00:00";
 			var tzoff = tdata.timezone || "00:00";
+			
 			tdata.timeOffset = TG_Date.getTimeOffset(tzoff);
 						
 			// TODO: VALIDATE COLOR, centralize default color(options?)
@@ -182,7 +186,7 @@
 			
 			if (tdata.events.length>0) {
 				
-				
+
 				var date, ddisp, ev, id, unit, ser, tWidth;
 				var l = tdata.events.length;
 	
@@ -243,15 +247,22 @@
 					if ((ev.enddate) && (ev.enddate !== ev.startdate)){
 						ev.enddateObj = new TG_Date(ev.enddate, ev.date_display);
 						ev.span=true;
-						tdata.spans.push({id:ev.id, start:ev.startdateObj.sec, end:ev.enddateObj.sec});
+						// index it rather than push to stack
+						tdata.spans["s_" + ev.id] = {id:ev.id, start:ev.startdateObj.sec, end:ev.enddateObj.sec};
+						
 					} else {
 						ev.enddateObj = ev.startdateObj;
 						ev.span = false;
 					}
-					  
+					
+					
+					tdata.startSeconds.push(ev.startdateObj.sec);
+					tdata.endSeconds.push(ev.enddateObj.sec);
+					
+					
 					// cache the initial date for updating hash later
 					// important for edit/delete operations
-					ev.cache = {enddateObj:ev.startdateObj, enddateObj:ev.enddateObj}
+					ev.cache = {span:ev.span, startdateObj:_.clone(ev.startdateObj), enddateObj:_.clone(ev.enddateObj)}
 					
 					
 					if (ev.image_class == "above") { 
@@ -265,11 +276,9 @@
 						ev.icon = ev.icon;
 					}
 						
-					// for collapsed view and other metrics
-					tdata.startSeconds.push(ev.startdateObj.sec);
-					tdata.endSeconds.push(ev.enddateObj.sec);
-
-					//// !! TODO VALIDATE DATE respecting startdate, too
+										
+					dhash["all"].push(id);
+					
 					var uxl = tg_units.length;
 					for (var ux = 0; ux < uxl; ux++) {
 						unit = tg_units[ux];
@@ -286,42 +295,43 @@
 					
 		
 					/////////////////////////////////
-					// Since model is defined in the eventCollection
-					// we j  ust need to add the raw object here and it
-					// is "vivified", properties set, etc
-					
-					ev.timelines = [tdata.timeline_id];
 					
 					if (!MED.eventCollection.get(id)) {
 					
-						var newEvent = new tg.TG_Event(ev);
-						MED.eventCollection.add(newEvent);
+						ev.timelines = [tdata.timeline_id];
+					
+						var new_model = new tg.TG_Event(ev);
+						// model is defined in the eventCollection
+						// we just need to add the raw object here and it
+						// is "vivified", properties set, etc
+						MED.eventCollection.add(new_model);
 					
 					} else {
-					// it's in the collection, but not associated with this timeline
-					
-					
-					// ... or maybe it is...
-					///////////////////////////////////
-					// ADD TIMELINE TO EVENT timelines ARRAY
-									
-						// if 
-						// event does NOT have timeline_id in its timelines array
-						// at least add timeline_id
-						// debug.log("DUPLICATE EVENT:", id);	
+						
+						// trusting here that this is a true duplicate!
+						// just needs to be associated with the timeline
+						var existing_model = MED.eventCollection.get(id);
+						existing_model.get("timelines").push(tdata.timeline_id);
+
 					}
-					
-					
-					
 			
-				}// end for: cycling through timeline's events
-			
-				// adding event secs to catalog of entire timeline
-				var fl = timeglider.getLowHigh($.merge(tdata.startSeconds,tdata.endSeconds));
+				} // end for: cycling through timeline's events
+							
+				// cycle through timeline, collecting start, end arrays
+				// sort start, select first
+				// sor last select last
+				// set bounds
+				
+				var merged = $.merge(tdata.startSeconds,tdata.endSeconds);
+				var sorted = _.sortBy(merged, function(g){ return parseInt(g); });
+				
 				/// bounds of timeline
-				tdata.bounds = {"first": fl.low, "last":fl.high };
-					
-			} /// end if there are events!
+				tdata.bounds = {"first": _.first(sorted), "last":_.last(sorted) };
+				
+				tdata.has_events = true;
+			} else {
+				tdata.has_events = false;
+			}
 			
 			
 			/* !TODO: necessary to parse this now, or just leave as is? */
@@ -352,8 +362,6 @@
 			return tdata;
 		
 		},
-		
-		
 		
 		initialize: function(attrs) { 
 			var processed = this._chewTimeline(attrs);
