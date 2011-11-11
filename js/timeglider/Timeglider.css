@@ -83,6 +83,7 @@
 	width:auto;
 	padding:4px;
 	position:absolute;
+	left:0;
 	-moz-border-radius:4px;
 	border-radius:4px;
 	-webkit-border-radius:4px;

@@ -303,9 +303,9 @@ tg.TG_PlayerView = function (widget, mediator) {
 		},
 	
 		stop: function(event, ui) {
+		
 			me.resetTicksHandle();
 			me.registerDragging();
-		
 			me.easeOutTicks();  
 		}
 		
@@ -380,8 +380,9 @@ tg.TG_PlayerView = function (widget, mediator) {
    	
 	$.subscribe("mediator.ticksOffsetChange", function () {
 		me.tickHangies();
-		me.registerTitles();
 		me.registerDragging();
+		me.registerTitles();
+			
 	});
 	
 	$.subscribe("mediator.focusToEvent", function () {
@@ -590,14 +591,7 @@ tg.TG_PlayerView.prototype = {
 		var fd = MED.getFocusDate();
 		$(DATE).text(fd.format("d MMM yyyy", false));
 	},
-
-
- 	
- 	
- 	doSomething : function() {
- 		alert("DO SOMETHING, viewer");
- 	},
- 	
+	 	
  	
 	/**
 	* setPanButton
@@ -686,7 +680,8 @@ tg.TG_PlayerView.prototype = {
 		  $elem, $env, env, tb, ti, relPos, tbWidth,
 		  mo = $(CONTAINER).offset().left,
 		  trackTB = true;
-		
+		  
+	
 		
 		$(".timeglider-event-spanning").each(
 			function() {
@@ -712,20 +707,22 @@ tg.TG_PlayerView.prototype = {
 			trackTB = false;
 		}
 		
-		if (trackTB === true) {
+		// if (trackTB === true) {
 		$(".tg-timeline-envelope").each(
 				function () {
 				  // !TODO  needs optimizing of DOM "touching"
 					$env = $(this);
 					env = $env.offset().left - mo;
 					$tb = $env.find(".titleBar");
-					$ti = $tb.find(".timeline-title");
-										
-					pos = $tb.position().left;
+									
+					// pos = $tb.position().left;
+					// rather than calculating position
+					// grab cached value stored in data()
+					pos = $tb.data("lef");
 					
 				 	relPos = -1 * (pos + env);
 					
-
+					$ti = $tb.find(".timeline-title");
 				 	if ( (relPos > 0) ) {
 						$ti.css({marginLeft:relPos+5});
 					} 
@@ -733,9 +730,12 @@ tg.TG_PlayerView.prototype = {
 				}
 		); 
 		
-		} // end ie check
-	// whew! end register titles
-	},
+		// } // end ie check
+		
+		
+		
+	
+	}, // end register titles
 	
 	
 	registerDragging : function () {
@@ -1613,7 +1613,7 @@ tg.TG_PlayerView.prototype = {
 			half = Math.floor(spp * (cw/2)),
 			lsec = foSec - half,
 			rsec = foSec + half,
-			tz_offset = 0,
+			tz_offset = 0, tbwidth = 0,
 			spanin,
 			legend_label = "",
 			spanins = [],
@@ -1638,7 +1638,6 @@ tg.TG_PlayerView.prototype = {
 					
 			tlView = new tg.TG_TimelineView({model:tlModel});
 			
-	
 			tz_offset = MED.timeOffset.seconds / spp;
 			
       		$tl = $(tlView.render().el).appendTo(TICKS);
@@ -1659,10 +1658,12 @@ tg.TG_PlayerView.prototype = {
 				})
 				.css({"top":tl_top, "left": tz_offset});
 
-			$title = $tl.children(".titleBar");
+			$title = $tl.find(".titleBar");
+			
 			t_f = cx + ((tl.bounds.first - foSec) / spp);
 			t_l = cx + ((tl.bounds.last - foSec) / spp);
-			$title.css({"top":tl_ht, "left":t_f, "width":(t_l-t_f)});
+			tbwidth = t_l-t_f;
+			$title.css({"top":tl_ht, "left":t_f, "width":tbwidth}).data({"lef":t_f, "wid":tbwidth});
 
 			/// for initial sweep display, setup fresh borg for organizing events
 			if (expCol == "expanded") { tl.borg = borg = new timeglider.TG_Org(); }
@@ -2164,9 +2165,10 @@ tg.TG_TimelineView = Backbone.View.extend({
 	getTemplate: function() {
 		var me = this;
 		
-		var tmpl = "<div class='titleBar'><div class='timeline-title'>"
-      			+ "<span class='timeline-title-span'>"
-      			+ "${title}</span><div class='tg-timeline-env-buttons'>";
+		var tmpl = "<div class='titleBar'>"
+				+ "<div class='timeline-title'>"
+      			+ "<span class='timeline-title-span'>${title}</span>"
+      			+ "<div class='tg-timeline-env-buttons'>";
       	
       	if (me.model.get("description")) {
       		tmpl += "<span class='timeline-info' data-timeline_id='${id}'>info</span>";
