@@ -1,0 +1,5 @@
+0.1.2
+-- BUG: I.E. 7/8, where timeline was un-draggable, or timeline title failed to show up fixed
+-- added "left" and "top" to data attribute of timeline title so that adjusting it later
+   in "registerTitles" is not so DOM intensive as it has to use .position() in loop
+-- FEATURE: maps can now be added into data with "map": object. Documentation forthcoming

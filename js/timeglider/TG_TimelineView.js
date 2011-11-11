@@ -2180,7 +2180,7 @@ tg.TG_TimelineView = Backbone.View.extend({
       	
       	
       	tmpl += "<span class='expand-collapse' data-timeline_id='${id}'>exp/col</span>"; 
-		tmpl += "</div></div></div></div>";
+		tmpl += "</div></div></div>";
  	
 		return tmpl;	
 	},
