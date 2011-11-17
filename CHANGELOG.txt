@@ -3,3 +3,5 @@
 -- added "left" and "top" to data attribute of timeline title so that adjusting it later
    in "registerTitles" is not so DOM intensive as it has to use .position() in loop
 -- FEATURE: maps can now be added into data with "map": object. Documentation forthcoming
+-- tied "size_importance" property into timeline, so you can turn importance scaling off
+   from timeline JSON: "size_importance":"false"
