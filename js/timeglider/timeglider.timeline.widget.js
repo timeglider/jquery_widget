@@ -51,12 +51,13 @@
 			data_source:"", 
 			culture:"en",
 			basic_fontsize:12, 
-			mouse_wheel: "zoom", 
+			mouse_wheel: "zoom", // !TODO | pan 
 			initial_timeline_id:'',
 			icon_folder:'js/timeglider/icons/',
 			show_footer:true,
 			display_zoom_level:true,
-			event_modal:{href:'', type:'default'}
+			event_modal:{href:'', type:'default'},
+			event_overflow:"plus"  // plus | scroll 
 		},
 		
 		_create : function () {

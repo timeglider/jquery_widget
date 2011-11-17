@@ -16,6 +16,18 @@
 			margin:32px;
 			height:500px;
 		}
+		
+		.scrolls {
+			margin-top:14px;
+			text-align:center;
+		}
+		
+		.scrolls a {
+			font-size:14px;
+			font-weight:bold;
+			color:blue;
+			cursor:pointer;
+		}
 </style>
 </head>
 <body>
@@ -29,7 +41,10 @@
 <tr><td id='zoomlevel' width='33%'>...</td><td id='tickwidth' width='33%'>tw</td><td id='focusdate'>...</td></tr>
 <tr><td id='tickpos'></td><td colspan='2' id='note'>...</td></tr>
 </table>
+<div class='scrolls'><a id='scrolldown'>down</a> <a id='scrollup'>up</a></div>
 </div>
+
+
 	
 		<!-- 3rd party libs -->
 	<script src="js/jquery.js" type="text/javascript" charset="utf-8"></script>
@@ -63,9 +78,9 @@
 	
 	
 
-  <script>
+  <script type='text/javascript'>
 
-	$(document).ready(function () { 
+	$(function () { 
 		
 		var tg1 = $("#placement").timeline({
 				"min_zoom":5, 
@@ -73,14 +88,24 @@
 				"show_centerline":true,
 				"data_source":"json_tests/idaho.json",
 				"show_footer":true,
-				"size_importance":true,
 				"display_zoom_level":true,
-				"event_modal":{type:"full"}
+				"event_modal":{type:"full"},
+				"event_overflow":"scroll"
 		});
+		
+		
+		$("#scrolldown").bind("click", function() {
+			$(".timeglider-timeline-event").animate({top:"+=100"})
+		})
+		
+		$("#scrollup").bind("click", function() {
+			$(".timeglider-timeline-event").animate({top:"-=100"})
+		})
 		
     }); // end document-ready
 	
 </script>
+
 
 
 

@@ -675,7 +675,8 @@ tg.validateOptions = function (widget_settings) {
     	icon_folder:{type:"string"},
     	show_footer:{type:"boolean"},
     	display_zoom_level:{type:"boolean"},
-    	event_modal:{type:"object"}
+    	event_modal:{type:"object"},
+    	event_overflow:{type:"string"}
   	}
   	
 	// msg: will be return value: validates when empty 

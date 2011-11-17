@@ -22,7 +22,11 @@ timeglider.TimelineView
 var TG_Date = tg.TG_Date, 
 	PL = "", 
 	MED = "", 
-	options = {}, 
+	options = {},
+	ticksSpeed = 0,
+	t1Left = 0,
+	t2Left = 0,
+	ticksSpeedIv,
 	$ = jQuery, 
 	intervals ={}, 
 	WIDGET_ID = "", 
@@ -40,6 +44,7 @@ tg.TG_PlayerView = function (widget, mediator) {
     
     
 	var me = this;
+	
 
 		// vars declared in closure above
 		MED = mediator;
@@ -76,6 +81,8 @@ tg.TG_PlayerView = function (widget, mediator) {
 	TICKS = this._views.TICKS;
 	DATE = this._views.DATE;
 	
+		
+	
   	/////////////////////////////
 	
 	/*  TEMPLATES FOR THINGS LIKE MODAL WINDOWS
@@ -89,6 +96,8 @@ tg.TG_PlayerView = function (widget, mediator) {
  	// this needs to be less than or equal to
  	//  timeglider.css value for timeglider-tick-height
  	this.tick_height = 34;
+ 	
+ 	this.imageLaneHeight = 60;
 
 	// in case custom event_modal fails, we need this object to exist
 	this._templates = {}
@@ -291,22 +300,36 @@ tg.TG_PlayerView = function (widget, mediator) {
 
 
 
+	function registerTicksSpeed () {
+		
+	}
 	
 	$(TICKS)
   	.draggable({ axis: 'x',
-		//start: function(event, ui) {
-			/// 
-		//},
+		start: function(event, ui) {
+			
+			// need this?
+		},
 		drag: function(event, ui) {
-			// just report movement to model...
-			MED.setTicksOffset($(this).position().left);
+			
+			t1Left = Math.floor($(this).position().left);
+			MED.setTicksOffset(t1Left);
+			
+			ticksSpeed = t1Left - t2Left;
+				
+			debug.trace("::>>" + ticksSpeed, "note");
+				
+			t2Left = t1Left;
 		},
 	
 		stop: function(event, ui) {
-		
+			
+			debug.trace("::||" + ticksSpeed, "note");
+			
 			me.resetTicksHandle();
 			me.registerDragging();
-			me.easeOutTicks();  
+			// me.easeOutTicks(); 
+ 
 		}
 		
 	}) // end draggable
@@ -377,7 +400,6 @@ tg.TG_PlayerView = function (widget, mediator) {
 	
 	/* PUB-SUB "LISTENERS" SUBSCRIBERS */
  
-   	
 	$.subscribe("mediator.ticksOffsetChange", function () {
 		me.tickHangies();
 		me.registerDragging();
@@ -1509,15 +1531,13 @@ tg.TG_PlayerView.prototype = {
 	
 
 	easeOutTicks : function() {
-		var me = this;
-		// debug.log("this.dragSpeed:", this.dragSpeed);
-		
-			if (Math.abs(this.dragSpeed) > 5) {
+			
+			if (Math.abs(ticksSpeed) > 5) {
 				// This works, but isn't great:offset fails to register
 				// for new tim as it ends animation...
 				
-				$('#TimegliderTicks').animate({left: '+=' + (5 * me.dragSpeed)}, 400, function() {
-					debug.trace("ticks stopped!", "note");
+				$(TICKS).animate({left: '+=' + (3 * ticksSpeed)}, 1000, "easeOutQuad", function() {
+					debug.trace("stopping easing", "note")
 				});
 			}
 		
@@ -1641,7 +1661,8 @@ tg.TG_PlayerView.prototype = {
 			tz_offset = MED.timeOffset.seconds / spp;
 			
       		$tl = $(tlView.render().el).appendTo(TICKS);
-   
+   			
+   			// this is the individual (named) timeline, not the entire interface
    			$tl.draggable({
 					axis:"y",
 					handle:".titleBar", 
@@ -1689,8 +1710,14 @@ tg.TG_PlayerView.prototype = {
 			
 
 			stuff = this.compileTickEventsAsHtml(tl, idArr, 0, "sweep");
+			
 			// TODO: make 56 below part of layout constants collection
-			ceiling = (tl.hasImagesAbove) ? tl_top - 56 : tl_top;
+			if (options.event_overflow == "scroll") {
+				ceiling = 0;
+			} else {
+				ceiling = (tl.hasImagesAbove) ? tl_top - me.imageLaneHeight : tl_top;
+			}
+			
 			
 			if (expCol == "expanded") {
 				stuff = borg.getHTML("sweep", ceiling);
@@ -1731,7 +1758,7 @@ tg.TG_PlayerView.prototype = {
 				 
 				// borg it if it's expanded.
 				if (tl.display == "expanded"){ 
-						stuff = tl.borg.getHTML(tick.serial, tl.top);
+						stuff = tl.borg.getHTML(tick.serial, tl.top); // tl.top = ceiling
 				}
 
 				$tl = $(CONTAINER + " .tg-timeline-envelope#" + tl.id).append(stuff);
@@ -2180,6 +2207,7 @@ tg.TG_TimelineView = Backbone.View.extend({
       	
       	
       	tmpl += "<span class='expand-collapse' data-timeline_id='${id}'>exp/col</span>"; 
+		
 		tmpl += "</div></div></div>";
  	
 		return tmpl;	

@@ -176,6 +176,8 @@
 			tdata.startSeconds = [];
 			tdata.endSeconds = [];
 			
+			tdata.size_importance = (tdata.size_importance == "false")? false : true;
+			
 			// widget options timezone default is "00:00";
 			var tzoff = tdata.timezone || "00:00";
 			
