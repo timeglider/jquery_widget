@@ -7,6 +7,12 @@
  * http://timeglider.com/jquery/?p=license
  *
  */
+ 
+ /* 
+ !TODO:
+ add 
+ change "click" bindings to CLICKORTOUCH
+ relying solely on jquery.support ....
 
 
 
@@ -30,7 +36,8 @@ var TG_Date = tg.TG_Date,
 	$ = jQuery, 
 	intervals ={}, 
 	WIDGET_ID = "", 
-	CONTAINER, TICKS, DATE;
+	CONTAINER, TICKS, DATE,
+	CLICKORTOUCH = $.support.touch ? "touchstart": "click";
     
     
 /*
@@ -333,14 +340,17 @@ tg.TG_PlayerView = function (widget, mediator) {
 		}
 		
 	}) // end draggable
-	.delegate(CONTAINER + " .timeglider-timeline-event", "click", function () { 
+	.delegate(CONTAINER + " .timeglider-timeline-event", CLICKORTOUCH, function () { 
 		
 		// EVENT ON-CLICK !!!!!!
 		var eid = $(this).attr("id"); 
 		var ev = MED.eventCollection.get(eid).attributes;
 		
+		debug.log("event id on touchstart/click:" + eid);
+		
+		
 		if (timeglider.mode == "authoring") {
-			// no need to do anything here
+			debug.log("hello authoring in TG_TimelineView.js");
 		} else {
 		
 			if (ev.click_callback) {
@@ -803,7 +813,7 @@ tg.TG_PlayerView.prototype = {
 		})              
               
       
-		$(me._views.FILTER_BT).click(function() { 
+		$(me._views.FILTER_BT).bind("click", function() { 
 		
 			$filter.fadeIn();
 
@@ -820,18 +830,18 @@ tg.TG_PlayerView.prototype = {
 				incl = "", excl = "";
 				
 				// set up listeners
-				$filter_apply.click(function () {
+				$filter_apply.bind("click", function () {
 				incl = $(fbox + " .timeglider-filter-include").val();
 				excl = $(fbox + " .timeglider-filter-exclude").val();
 				MED.setFilters({origin:"clude", include:incl, exclude:excl});
 				$(fbox).toggleClass("timeglider-display-block");
 				});
 				
-				$filter_close.click(function () {
+				$filter_close.bind("click", function () {
 				$(fbox).toggleClass("timeglider-display-none");
 				});
 				
-				$filter_clear.click(function () {
+				$filter_clear.bind("click", function () {
 				MED.setFilters({origin:"clude", include:'', exclude:''});
 				$(fbox + " .timeglider-filter-include").val('');
 				$(fbox + " .timeglider-filter-exclude").val('');
@@ -1595,6 +1605,8 @@ tg.TG_PlayerView.prototype = {
      }
      
      var ev_icon = ev.icon;
+     
+     	
      if (MED.filters.legend.length > 0) {
        if ($.inArray(ev_icon, MED.filters.legend) == -1) {
          ret = false;

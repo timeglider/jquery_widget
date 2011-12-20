@@ -471,15 +471,17 @@ tg.TG_Mediator.prototype = {
 			break;
 			
 			case "legend":
-			
-				var icon = obj.icon;
+				
+				var icon = _.last(obj.icon.split("/"));
+				
 				
 				if (icon == "all") {
 					this.filters.legend = [];
 					$.publish("mediator.legendAll");  
 				} else {
-				
+					
 					if ($.inArray(icon, this.filters.legend) == -1) {
+						debug.log("icon to put in legend filter:", icon);
 						this.filters.legend.push(icon);
 					} else {
 						// remove it
@@ -490,6 +492,8 @@ tg.TG_Mediator.prototype = {
 					}
 				
 				 } // end if/else for "clear"
+				 
+				 
 			   
 			break;
 		

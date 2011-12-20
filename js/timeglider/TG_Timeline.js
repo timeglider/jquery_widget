@@ -59,14 +59,28 @@
 		},
 	
 	
-		initialize: function(ev) { 
-		
+	initialize: function(ev) { 
+			// Images start out being given a default width and height
+			// of 0, so that we can "find out for ourselves" what the
+			// size is.... pretty costly, though...
+			// can this be done with PHP?
+			
 			if (ev.image) {
-			// register image with image collection for gathering sizes.
+				var img = ev.image;
+				
+				if (typeof img == "string") {
+				
+					var display_class = ev.image_class || "above";
 
-				var display_class = ev.image_class || "above";
-
-				ev.image = {id: ev.id, src:ev.image, display_class:display_class, width:0, height:0};
+					ev.image = {id: ev.id, src:ev.image, display_class:display_class, width:0, height:0};
+				
+				} else {
+						
+					ev.image.display_class = ev.display_class || "above";
+					ev.image.width = 0;
+					ev.image.height = 0;
+					
+				}
 
 				// this will follow up with reporting size in separate "thread"
 				this.getEventImageSize(ev.image);
@@ -82,8 +96,7 @@
 			
 			this.set(ev);
 			
-		},
-		
+		},		
 		
 		// TODO: validate event attributes
 		validate: function (attrs) {
@@ -98,7 +111,7 @@
 				img_src = imgTesting.src = img.src;
 		
 			imgTesting.onerror= delegatr(imgTesting, function () {
-				debug.log("error loading image:" + img_src);
+				// debug.log("error loading image:" + img_src);
 			});
 		
 			imgTesting.onload = delegatr(imgTesting, function () {
