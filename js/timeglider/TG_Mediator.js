@@ -79,16 +79,16 @@
     } // end mediator head
     
 
-tg.TG_Mediator.prototype = {
+	tg.TG_Mediator.prototype = {
 	
 	
-	focusToEvent: function(ev){
-		// !TODO open event, bring to zoom
-		this.focusedEvent = ev;
-		this.setFocusDate(ev.startdateObj)
-		$.publish("mediator.focusToEvent");
-	},
-	
+		focusToEvent: function(ev){
+			// !TODO open event, bring to zoom
+			this.focusedEvent = ev;
+			this.setFocusDate(ev.startdateObj)
+			$.publish("mediator.focusToEvent");
+		},
+		
 
 
     /* PUBLIC METHODS MEDIATED BY $.widget front */
@@ -578,32 +578,36 @@ tg.TG_Mediator.prototype = {
 		// patch until we have better multi-timeline support
 		// this.activeTimelines = [];
 
-		var lt = this.timelineCollection.get(id).attributes;
+		var tl = this.timelineCollection.get(id).attributes;
 		
-		var ia = $.inArray(id, this.activeTimelines);
+		var active = $.inArray(id, this.activeTimelines);
 		
-		if (ia == -1) {
-			// The timeline is 
-			// not active ---- bring it on
+		if (active == -1) {
+			// timeline not active ---- bring it on
 			this.activeTimelines.push(id);
+			
+			
+			// timeline focus_date is ISO-8601 basic;
+			// interface focusdate needs a TG_Date()
+			var tl_fd = new TG_Date(tl.focus_date);
+			
 			// setting FD does NOT refresh
-			
-			// timeline focus_date is ISO-8601 basic
-			// ==== new TG_Date()
-			var tl_fd = new TG_Date(lt.focus_date);
-			
 			this.setFocusDate(tl_fd);
 			
-			// resetting zoomLevel DOES refresh
-			this.setZoomLevel(lt.initial_zoom);
+			// resetting zoomLevel will refresh
+			this.setZoomLevel(tl.initial_zoom);
+			
 		
 		} else {
 			// it's active, remove it
-			this.activeTimelines.splice(ia,1);
+			this.activeTimelines.splice(active,1);
+			
+			this.refresh();
+			// this will change the menu list/appearance
 		}
 		
-		this.refresh();
-		// this will change the menu list/appearance
+		
+		
 		$.publish( "mediator.activeTimelinesChange" );
 	
 	},

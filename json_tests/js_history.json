@@ -40,6 +40,7 @@
 "startdate": "1997-09-01 12:00:00",
 "importance":"45",
 "link":"http://www.whatwg.org/",
+"css_class":"dhtml",
 "icon":"square_gray.png"
 },
 
@@ -139,11 +140,11 @@
 {
 "id":"jshist-dry",
 "title": "The Bad Rap Years",
-
 "description": "Of Javascript's initial insinuation into browsers, WWW founder Robert Cailliau said, 'the programming-vacuum filled itself with the most horrible kluge in the history of computing: Javascript.' But now JS is 'hawt' and its clay-like flexibility makes it enjoyable, inspiring more artistry and cleverness than other languages.",
 "startdate": "1998-01-01 12:00:00",
 "enddate": "2004-01-01 12:00:00",
 "date_limit":"mo",
+"span_color":"#FF0000",
 "link":"http://en.wikipedia.org/wiki/JavaScript",
 "importance":"52",
 "icon":"none"
@@ -159,7 +160,8 @@
 "date_limit":"mo",
 "link":[
 	{"url":"http://en.wikipedia.org/wiki/JScript", "label":"wikipedia"},
-	{"url":"http://nytimes.com", "label":"NYT"}],
+	{"url":"http://nytimes.com", "label":"NYT"}
+],
 "importance":"35",
 "icon":"triangle_green.png"
 },

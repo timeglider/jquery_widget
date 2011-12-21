@@ -112,6 +112,7 @@
 			
 			b = {},
 			blength = this.blocks.length,
+			b_span_color = "",
 			title_adj = 0;
       
 		for (var i=0; i<blength; i++) {
@@ -155,17 +156,21 @@
 	           
 	            if (b.y_position > 0) {
 	            	// absolute positioning
-					b.top = me.pol * b.y_position;
+								b.top = me.pol * b.y_position;
 	            } else {
 	            	// starts out checking block against the bottom layer
 	            	// *** This actually CHANGES the block object
 	            	checkAgainstLevel(b, 0);
 	            }
-	    
+	            
+	            
+	            b_span_color = (b.span_color) ? ";background-color:" + b.span_color: "";
+	            
 	            b.fontsize < 10 ? b.opacity = b.fontsize / 10 : b.opacity=1;
+	            
 	            if (b.span == true) {
 	              span_selector_class = "timeglider-event-spanning";
-	              span_div = "<div class='timeglider-event-spanner' style='top:" + title_adj + "px;height:" + b.fontsize + "px;width:" + b.spanwidth + "px'></div>"
+	              span_div = "<div class='timeglider-event-spanner' style='top:" + title_adj + "px;height:" + b.fontsize + "px;width:" + b.spanwidth + "px" + b_span_color + "'></div>"
 	            } else {
 	              span_selector_class = ""; 
 	              span_div = "";
@@ -195,7 +200,7 @@
 	         
 	             
 	             // TODO: function for getting "standard" event shit
-	              html += "<div class='timeglider-timeline-event " + span_selector_class + "' id='" + b.id + "' "
+	              html += "<div class='timeglider-timeline-event " + b.css_class + " " + span_selector_class + "' id='" + b.id + "' "
 	              + "style='width:" + b.width  + "px;"
 	              + "height:" + b.height + "px;"
 	              + "left:" + b.left  + "px;" 
@@ -209,9 +214,9 @@
 	              
 	              
 	            
-	           }// end if/else :: height > ceiling
-	            
-	          } // end if it's got valid HTML
+		           } // end if/else :: height > ceiling
+		            
+		          } // end if it's got valid HTML
 	            
 	
 	            } // end check for visible... EXPENSIVE!!!!
