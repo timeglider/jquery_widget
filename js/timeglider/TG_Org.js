@@ -32,9 +32,7 @@
     this.vis = [];
     this.tree = [];
     this.pol = -1;
-    
-    // !TODO::: REMOVE BLOCK (i.e. to/from same arrangement);
-   
+       
    
     /*
     * ******** PUBLIC METHODS **********
@@ -69,6 +67,7 @@
       return this;
     };
 
+
     /*
     * TG_Org.getBlocks
     * 
@@ -79,6 +78,7 @@
     this.getBlocks = function () {
       return this.blocks;
     };
+
 
     /*
     * TG_Org.getHTML
@@ -96,7 +96,7 @@
 		var level_tree = me.tree;
 	
 		this.blocks.sort(sortBlocksByImportance);
-	// cycle through events and move overlapping event up
+		// cycle through events and move overlapping event up
 	
 		var positioned = [], 
 			blHeight, 

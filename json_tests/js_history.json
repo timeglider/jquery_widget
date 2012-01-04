@@ -36,7 +36,7 @@
 {
 "id":"jshist-dhtml",
 "title": "DHTML in IE 4",
-"description":"Basic DHTML support was introduced with Internet Explorer 4.0, although there was a basic dynamic system with Netscape Navigator 4.0. When it originally became widespread DHTML style techniques were difficult to develop and debug due to varying degrees of support among web browsers of the technologies involved. Development became easier when Internet Explorer 5.0+, Mozilla Firefox 2.0+, and Opera 7.0+ adopted a shared Document Object Model.",
+"description":"Basic DHTML support was introduced with Internet Explorer 4.0, although there was a basic dynamic system with Netscape Navigator 4.0. When it originally became widespread DHTML style techniques were difficult to develop and debug due to varying degrees of support among web browsers of the technologies involved. ... [You might notice the color of this title being a different color; that's because we've added a 'css_class' attribute in the JSON for this event object.]",
 "startdate": "1997-09-01 12:00:00",
 "importance":"45",
 "link":"http://www.whatwg.org/",

@@ -158,6 +158,10 @@
 				"data_source":"json_tests/js_history.json",
 				"show_footer":true,
 				"display_zoom_level":true
+		}).resizable({
+			stop:function(){ 
+				$(this).data("timeline").resize();
+			}
 		});
 		
 		/*

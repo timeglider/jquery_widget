@@ -399,11 +399,7 @@ tg.TG_PlayerView = function (widget, mediator) {
 
 	// TODO: make function displayCenterline()
 	// TODO: simply append a centerline template rather than .css'ing it!
-	if (MED.options.show_centerline === true) {
-		$(this._views.CENTERLINE).css({"height":me.dimensions.container.height, "left": me.dimensions.container.centerx});
-	} else {
-		$(this._views.CENTERLINE).css({"display":"none"});
-	}
+	me.setCenterline();
 	
 	
 	
@@ -578,6 +574,16 @@ tg.TG_PlayerView = function (widget, mediator) {
 
 
 tg.TG_PlayerView.prototype = {
+
+
+	resize: function() {
+		var new_height = $(PL).height();
+		$(CONTAINER).height(new_height);
+		this.dimensions = this.getWidgetDimensions();
+		this.setCenterline();
+		MED.refresh();
+	},
+	
 	
 	getWidgetDimensions : function () {
 			
@@ -644,10 +650,6 @@ tg.TG_PlayerView.prototype = {
   	},
   
   
-  	
-
- 	
- 	
  	
 	/* 
 	* intervalMachine
@@ -1297,6 +1299,16 @@ tg.TG_PlayerView.prototype = {
 		/* end addTick */
 	}, 
 	
+	
+	setCenterline: function () {
+		var me = this;
+		
+		if (MED.options.show_centerline === true) {
+			$(this._views.CENTERLINE).css({"height":me.dimensions.container.height, "left": me.dimensions.container.centerx});
+		} else {
+			$(this._views.CENTERLINE).css({"display":"none"});
+		}
+	},
 	
 	
 	getHourLabelFromHour : function (h24, width) {

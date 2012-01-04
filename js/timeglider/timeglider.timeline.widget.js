@@ -158,8 +158,11 @@
 		},
 		
 		
+		resize : function () {
+			timelinePlayer.resize();
+		},
 		
-		
+				
 		getMediator : function () {
 			return MED;
 		},
