@@ -258,8 +258,6 @@ tg.TG_PlayerView = function (widget, mediator) {
 	// END CONTAINER CHAIN
 	
 	
-	
-	
 	this.basicFontSize = options.basic_fontsize;
 	
 	if (options.show_footer == false) {
@@ -281,7 +279,6 @@ tg.TG_PlayerView = function (widget, mediator) {
 	this.buildSlider();
 	this.setupFilter();
 	
-
 	this.setPanButton($(".timeglider-pan-right"),-30);
 	this.setPanButton($(".timeglider-pan-left"),30);
 	
@@ -297,12 +294,10 @@ tg.TG_PlayerView = function (widget, mediator) {
 		
 			
 		.bind('mousewheel', function(event, delta) {
-						
 			      var dir = Math.ceil(-1 * (delta * 3));
 						var zl = MED.getZoomLevel();
 						MED.setZoomLevel(zl += dir);
-			      return false;
-			            
+			      return false;    
 		}); // end TRUCK EVENTS
 
 
@@ -433,6 +428,15 @@ tg.TG_PlayerView = function (widget, mediator) {
 		me.castTicks("zoomLevelChange");
 		
 	});
+	
+	
+	$.subscribe("viewer.rendered", function () {
+		// do things necessary after view has been
+		// if you want to hide either titles or icons:
+		// $(".timeglider-event-icon").hide();
+		// $(".timeglider-event-title").hide();
+	});
+
 	
 	
 	/// This happens on a TOTAL REFRESH of 
@@ -1757,6 +1761,8 @@ tg.TG_PlayerView.prototype = {
 		// initial title shift since it's not on-drag
 		me.registerTitles();
 		
+		$.publish("viewer.rendered"); 
+		
 	}, // ends freshTimelines()
 
   
@@ -1790,6 +1796,8 @@ tg.TG_PlayerView.prototype = {
 				this.registerEventImages($tl);
 					
 		  } // end for in active timelines
+		  
+		  $.publish("viewer.rendered"); 
 					
 	}, // end appendTimelines()
 	
