@@ -343,13 +343,13 @@ tg.TG_PlayerView = function (widget, mediator) {
 		
 		debug.log("event id on touchstart/click:" + eid);
 		
-		
 		if (timeglider.mode == "authoring") {
-			debug.log("hello authoring in TG_TimelineView.js");
+			// authoring will have its own handler
+			
 		} else {
-		
+			// custom callback for an event
 			if (ev.click_callback) {
-		    
+		    		
 			    	var ccarr = ev.click_callback.split(".");
 			    	var cclen = ccarr.length;
 			    	if (cclen == 1) {
@@ -363,7 +363,7 @@ tg.TG_PlayerView = function (widget, mediator) {
 			    		window[ccarr[0]][ccarr[1]][ccarr[2]](ev);
 			    	}
 			
-		    
+		  // no custom callback ÑÊjust regular old modal
 			} else {
 	      		me.eventModal(eid);
 			}
@@ -2128,13 +2128,25 @@ tg.TG_PlayerView.prototype = {
 	  	/* only one legend at a time ?? */
 	  
 	    var me=this,
-	    	leg = MED.timelineCollection.get(id).attributes.legend,
-	        l, icon, title, html = "";
+	    		leg = MED.timelineCollection.get(id).attributes.legend,
+	      	l=0, 
+	      	icon = "", 
+	      	title = "", 
+	      	html = "",
+	      	authr = "";
 	    
-	    for (l = 0; l < leg.length; l++) {
-			icon = options.icon_folder + leg[l].icon;
-			title = leg[l].title;
-			html += "<li><img src='" + icon + "'>" + title + "</li>";
+	    for (l=0; l < leg.length; l++) {
+				icon = options.icon_folder + leg[l].icon;
+				title = leg[l].title;
+				
+				if (timeglider.mode === "authoring") {
+					authr = "<div class='tg-legend-author'>dr</div>";
+				} else {
+					authr = "";
+				}
+				
+				html += "<li>" + authr + "<span class='legend-info'><img src='" + icon + "'>" + title + "</span></li>";
+				// 
 	    }
 	   
 	    var templ_obj = {id:id, legend_list:html};
@@ -2154,15 +2166,17 @@ tg.TG_PlayerView.prototype = {
       				collision: "none none"
       		});
 
-  		$(CONTAINER + " .timeglider-legend li").click(function() { 
-  		    var legend_item_id = $(this).parent().attr("id");
+  		$(CONTAINER + " .legend-info").bind("click", function() { 
+  		    var legend_item_id = $(this).next(".timeglider-legend").attr("id");
   		    var icon = ($(this).children("img").attr("src"));
-  		    $(this).toggleClass("tg-legend-icon-selected");
+  		    $(this).parent().toggleClass("tg-legend-icon-selected");
   		    MED.setFilters({origin:"legend", icon: icon});
   		});
 
 	},
   
+
+
   
   
 	

@@ -81,7 +81,8 @@
 "date_limit":"ho",
 "link":"http://en.wikipedia.org/wiki/JavaScript",
 "importance":"40",
-"icon":"flag_green.png"
+"icon":"flag_green.png",
+"y_position":100
 },
 
 {
@@ -135,8 +136,6 @@
 "icon":"quote.png"
 },
 
-
-
 {
 "id":"jshist-dry",
 "title": "The Bad Rap Years",
@@ -163,7 +162,8 @@
 	{"url":"http://nytimes.com", "label":"NYT"}
 ],
 "importance":"35",
-"icon":"triangle_green.png"
+"icon":"triangle_green.png",
+"y_position":100
 },
 
 {
