@@ -6,3 +6,8 @@
 -- FEATURE: maps can now be added into data with "map": object. Documentation forthcoming
 -- tied "size_importance" property into timeline, so you can turn importance scaling off
    from timeline JSON: "size_importance":"false"
+   
+27 Jan 2012
+-- Changed modal positioning to be center to container; planning to create an arrow
+   between event and description modal
+   

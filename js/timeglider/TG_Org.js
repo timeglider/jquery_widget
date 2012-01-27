@@ -34,9 +34,9 @@
     this.pol = -1;
        
    
-    /*
-    * ******** PUBLIC METHODS **********
-    */
+	/*
+	* ******** PUBLIC METHODS **********
+	*/
   
     
     /*
@@ -50,10 +50,10 @@
     * 
     */
     this.addBlock = function (evob, tickScope) {
-       evob.right = evob.left + evob.width;
-       evob.bottom = evob.top + evob.height;
-       evob.tickScope = tickScope;
-       me.blocks.push(evob);
+		evob.right = evob.left + evob.width;
+		evob.bottom = evob.top + evob.height;
+		evob.tickScope = tickScope;
+		me.blocks.push(evob);
     };
     
     
@@ -113,118 +113,127 @@
 			b = {},
 			blength = this.blocks.length,
 			b_span_color = "",
-			title_adj = 0;
+			title_adj = 0,
+			
+			highest = 0,
+			guageHighest = function(n) {
+				highest = (n > highest) ? n : highest;
+			};
       
 		for (var i=0; i<blength; i++) {
-	        b = this.blocks[i];
+	  		b = this.blocks[i];
 	
-	        // full sweep or just a tick added left or right
-	        if (b.tickScope == tickScope) {
-	          
-	          // is it not yet visible?
-	          if (_.indexOf(b.id, this.vis) == -1) {
-	            
-	            // it's not in the "visible" array, so add it
-	            this.vis.push(b.id);
-	            title_adj = 0;
-	            
-	            if (b.html && b.html.substr(0,4) == "<div") {
-	              // chop off the end and re-glue with style & id
-	              
-	              html += ("<div"+ 
-	                      " style='left:" + b.left + "px' "+
-	                      "id='" + b.id + "'"+
-	                       b.html.substr(4));
-	              
-	            } else {      
-	            
-	            // if it has an image, it's either in "layout" mode (out on timeline full size)
-	            // or it's going to be thumbnailed into the "bar"
-	            if (b.image) {
-	              if (b.image.display_class == "layout") {
-	                title_adj = b.image.height + 4;
-	              } 
-	              // different image classes ("bar", "above") are positioned
-	              // using a separate $.each routine in TimelineView rather than
-	              // being given absolute positioning here.
-	              img = "<div class='timeglider-event-image-" + b.image.display_class + "'><img src='" + b.image.src + "'></div>";
-	            } else {
-	              // no image
-	              img = "";
-	            } 
-	      
-	           
-	            if (b.y_position > 0) {
-	            	// absolute positioning
-								b.top = me.pol * b.y_position;
-	            } else {
-	            	// starts out checking block against the bottom layer
-	            	// *** This actually CHANGES the block object
-	            	checkAgainstLevel(b, 0);
-	            }
-	            
-	            
-	            b_span_color = (b.span_color) ? ";background-color:" + b.span_color: "";
-	            
-	            b.fontsize < 10 ? b.opacity = b.fontsize / 10 : b.opacity=1;
-	            
-	            if (b.span == true) {
-	              span_selector_class = "timeglider-event-spanning";
-	              span_div = "<div class='timeglider-event-spanner' style='top:" + title_adj + "px;height:" + b.fontsize + "px;width:" + b.spanwidth + "px" + b_span_color + "'></div>"
-	            } else {
-	              span_selector_class = ""; 
-	              span_div = "";
-	            }
-	            
-	            if (b.icon) {
-	              icon = "<img class='timeglider-event-icon' src='" + icon_f + b.icon + "' style='height:"
-	            + b.fontsize + "px;left:-" + (b.fontsize + 2) + "px; top:" + title_adj + "px'>";
-	            } else {
-	              icon = '';
-	            }
-	            
-				// note: divs that are higher have lower "top" values
-	          	// `ceiling` being set at 0 (event_overflow set to "scroll") 
-	          	// may require/allow for event scrolling possibilities...
-				if (ceiling && (me.pol == -1) && (Math.abs(b.top) > (ceiling - ceiling_padding))) {
-	         
-	             	// + + + symbols in place of events just under ceiling
-	             	// if things are higher than the ceiling, show plus signs instead,
-	             	// and we'll zoom in with these.
-					html += "<div class='timeglider-more-plus' style='left:" + b.left  + 
-	                    "px; top:-" + (ceiling - (Math.floor(ceiling_padding/3))) + "px'>+</div>"; 
-	                    
-	           } else {
-	             
-	             south_padding = (me.pol === 1) ? 42 : 0;
-	         
-	             
-	             // TODO: function for getting "standard" event shit
-	              html += "<div class='timeglider-timeline-event " + b.css_class + " " + span_selector_class + "' id='" + b.id + "' "
-	              + "style='width:" + b.width  + "px;"
-	              + "height:" + b.height + "px;"
-	              + "left:" + b.left  + "px;" 
-	              + "opacity:" + b.opacity + ";"
-	              + "top:" + (b.top + south_padding) + "px;"
-	              + "font-size:" + b.fontsize  + "px;'>"
-	              + icon + img + span_div 
-	              + "<div class='timeglider-event-title' style='top:" + title_adj + "px'>" 
-	              + b.title
-	              + "</div></div>";
-	              
-	              
-	            
-		           } // end if/else :: height > ceiling
-		            
-		          } // end if it's got valid HTML
-	            
-	
-	            } // end check for visible... EXPENSIVE!!!!
-	          } // end tickScope check
-	        } // end for()
+	    	// full sweep or just a tick added left or right
+			if (b.tickScope == tickScope) {
 
-            return html;
-  }; /// end getHTML
+				// is it not yet visible?
+				if (_.indexOf(b.id, this.vis) == -1) {
+	
+					// it's not in the "visible" array, so add it
+					this.vis.push(b.id);
+					title_adj = 0;
+	
+					if (b.html && b.html.substr(0,4) == "<div") {
+		            	// chop off the end and re-glue with style & id
+						html += ("<div"+ 
+		                      " style='left:" + b.left + "px' "+
+		                      "id='" + b.id + "'"+
+		                       b.html.substr(4));
+		              
+					} else {      
+		            
+		            	// if it has an image, it's either in "layout" mode (out on timeline full size)
+		            	// or it's going to be thumbnailed into the "bar"
+						if (b.image) {
+							if (b.image.display_class == "layout") {
+								title_adj = b.image.height + 4;
+							} 
+							// different image classes ("bar", "above") are positioned
+							// using a separate $.each routine in TimelineView rather than
+							// being given absolute positioning here.
+							img = "<div class='timeglider-event-image-" + b.image.display_class + "'><img src='" + b.image.src + "'></div>";
+						} else {
+							// no image
+							img = "";
+						} 
+		      
+		           
+						if (b.y_position > 0) {
+							// absolute positioning
+							b.top = me.pol * b.y_position;
+						} else {
+							// starts out checking block against the bottom layer
+							// *** This CHANGES the `b` block object
+							checkAgainstLevel(b, 0);
+						}
+						
+						guageHighest(Math.abs(b.top));
+	
+						b_span_color = (b.span_color) ? ";background-color:" + b.span_color: "";
+		            
+						b.fontsize < 10 ? b.opacity = b.fontsize / 10 : b.opacity=1;
+		            
+						if (b.span == true) {
+							span_selector_class = "timeglider-event-spanning";
+							span_div = "<div class='timeglider-event-spanner' style='top:" + title_adj + "px;height:" + b.fontsize + "px;width:" + b.spanwidth + "px" + b_span_color + "'></div>"
+						} else {
+							span_selector_class = ""; 
+							span_div = "";
+						}
+	
+						if (b.icon) {
+						  icon = "<img class='timeglider-event-icon' src='" + icon_f + b.icon + "' style='height:"
+						+ b.fontsize + "px;left:-" + (b.fontsize + 2) + "px; top:" + title_adj + "px'>";
+						} else {
+						  icon = '';
+						}
+		            
+						// note: divs that are higher have lower "top" values
+						// `ceiling` being set at 0 (event_overflow set to "scroll") 
+						// may require/allow for event scrolling possibilities...
+						if (ceiling && (me.pol == -1) && (Math.abs(b.top) > (ceiling - ceiling_padding))) {
+						
+						 	// + + + symbols in place of events just under ceiling
+						 	// if things are higher than the ceiling, show plus signs instead,
+						 	// and we'll zoom in with these.
+							html += "<div class='timeglider-more-plus' style='left:" + b.left  + 
+						        "px; top:-" + (ceiling - (Math.floor(ceiling_padding/3))) + "px'>+</div>"; 
+						        
+						} else {
+						 
+							south_padding = (me.pol === 1) ? 42 : 0;
+						
+						 
+							// TODO: function for getting "standard" event shit
+							html += "<div class='timeglider-timeline-event " 
+								+ b.css_class + " " + span_selector_class 
+								+ "' id='" + b.id + "' "
+								+ "style='width:" + b.width  + "px;"
+								+ "height:" + b.height + "px;"
+								+ "left:" + b.left  + "px;" 
+								+ "opacity:" + b.opacity + ";"
+								+ "top:" + (b.top + south_padding) + "px;"
+								+ "font-size:" + b.fontsize  + "px;'>"
+								+ icon + img + span_div 
+								+ "<div class='timeglider-event-title' style='top:" + title_adj + "px'>" 
+								+ b.title
+								+ "</div></div>";
+						
+						} // end if/else :: height > ceiling
+	
+					} // end if it's got valid HTML
+	
+				} // end check for visible... EXPENSIVE!!!!
+				
+			} // end tickScope check
+			
+		} // end for()
+
+	
+	return {"html":html, "highest":highest};
+
+
+	}; /// end getHTML
 
 
 

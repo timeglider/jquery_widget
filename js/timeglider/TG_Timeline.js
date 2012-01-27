@@ -159,10 +159,8 @@
 			MED = tdata.mediator;
 			
 			tdata.timeline_id = tdata.id;
-			
-			// initiates the timeline hash
+						// initiates the timeline hash
 			var evHash = {};
-			
 			
 			widget_options = MED.options;
 			
@@ -188,6 +186,8 @@
 			tdata.hasImagesAbove = false;
 			tdata.startSeconds = [];
 			tdata.endSeconds = [];
+			
+			tdata.focusDateObj = new TG_Date(tdata.focus_date);
 			
 			tdata.size_importance = (tdata.size_importance == "false")? false : true;
 			

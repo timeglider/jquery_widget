@@ -19,7 +19,7 @@
 /*
 ****************************************
 timeglider.TimelineView
-****************************************
+*****************p***********************
 */
 (function(tg){
 
@@ -753,16 +753,19 @@ tg.TG_PlayerView.prototype = {
 					env = $env.offset().left - mo;
 					$tb = $env.find(".titleBar");
 									
-					// pos = $tb.position().left;
-					// rather than calculating position
-					// grab cached value stored in data()
+					// `pos` is a pre-cached $tb.position().left;
+					// rather than calculating position here, it's
+					// grabbing a cached value stored in element data()
 					pos = $tb.data("lef");
 					
 				 	relPos = -1 * (pos + env);
 					
 					$ti = $tb.find(".timeline-title");
+					// if it's pushed left of the window
 				 	if ( (relPos > 0) ) {
-						$ti.css({marginLeft:relPos+5});
+				 		if (relPos < ($tb.width()-$ti.width())) {
+							$ti.css({marginLeft:relPos+5});
+						}
 					} 
 				
 				}
@@ -1709,9 +1712,18 @@ tg.TG_PlayerView.prototype = {
 
 			$title = $tl.find(".titleBar");
 			
-			t_f = cx + ((tl.bounds.first - foSec) / spp);
-			t_l = cx + ((tl.bounds.last - foSec) / spp);
+			
+			if (typeof tl.bounds != "undefined") {
+				t_f = cx + ((tl.bounds.first - foSec) / spp);
+				t_l = cx + ((tl.bounds.last - foSec) / spp);
+			} else {
+				// if no events, we have to make this up
+				t_f = cx;
+				t_l = cx + 300;
+			}
+	
 			tbwidth = t_l-t_f;
+			
 			$title.css({"top":tl_ht, "left":t_f, "width":tbwidth}).data({"lef":t_f, "wid":tbwidth});
 
 			/// for initial sweep display, setup fresh borg for organizing events
@@ -1752,7 +1764,9 @@ tg.TG_PlayerView.prototype = {
 				tl.borg = borg.getBorg();
 			}
 			
-			if (stuff != "undefined") { $tl.append(stuff); }
+			if (stuff != "undefined") { $tl.append(stuff.html); }
+			
+			// debug.log("fresh, stuff.highest:", stuff.highest);
 			
 			this.registerEventImages($tl);
 			
@@ -1791,7 +1805,9 @@ tg.TG_PlayerView.prototype = {
 						stuff = tl.borg.getHTML(tick.serial, tl.top); // tl.top = ceiling
 				}
 
-				$tl = $(CONTAINER + " .tg-timeline-envelope#" + tl.id).append(stuff);
+				$tl = $(CONTAINER + " .tg-timeline-envelope#" + tl.id).append(stuff.html);
+				
+				debug.log("append, stuff.highest:", stuff.highest);
 				
 				this.registerEventImages($tl);
 					
@@ -2109,11 +2125,11 @@ tg.TG_PlayerView.prototype = {
 						.appendTo(TICKS)
 						.css("z-index", me.ztop++)
 						.position({
-							my: "right center",
-							at: "left center",
-							of: $par,
-							offset: "-12, -1", // left, top
-							collision: "flip fit"
+							my: "center top",
+							at: "center top",
+							of: (CONTAINER),
+							offset: "0, 100", // left, top
+							collision: "fit fit"
 					})
       				.draggable()
       				.hover(function () { $(this).css("z-index", me.ztop++); });
@@ -2133,19 +2149,13 @@ tg.TG_PlayerView.prototype = {
 	      	icon = "", 
 	      	title = "", 
 	      	html = "",
-	      	authr = "";
+	      	i_sel = "";
 	    
 	    for (l=0; l < leg.length; l++) {
 				icon = options.icon_folder + leg[l].icon;
 				title = leg[l].title;
-				
-				if (timeglider.mode === "authoring") {
-					authr = "<div class='tg-legend-author'>dr</div>";
-				} else {
-					authr = "";
-				}
-				
-				html += "<li>" + authr + "<span class='legend-info'><img src='" + icon + "'>" + title + "</span></li>";
+								
+				html += "<li><img class='legend-icon' src='" + icon + "'><span class='legend-info'>" + title + "</span></li>";
 				// 
 	    }
 	   
@@ -2165,10 +2175,19 @@ tg.TG_PlayerView.prototype = {
       				offset: "16, -4", // left, top
       				collision: "none none"
       		});
-
-  		$(CONTAINER + " .legend-info").bind("click", function() { 
-  		    var legend_item_id = $(this).next(".timeglider-legend").attr("id");
-  		    var icon = ($(this).children("img").attr("src"));
+			
+			if (timeglider.mode === "authoring") {
+				  // in authoring mode, we'll use the icon as a handle for dragging
+					i_sel = CONTAINER + " .legend-info";
+				} else {
+					i_sel = CONTAINER + " .legend-info, " + CONTAINER + " .legend-icon";
+				}
+				
+  		$(i_sel).bind("mouseup", function() { 
+  		    var $legend_item = $(this).next(".timeglider-legend");
+  		    debug.log("legend_item...:", $legend_item);
+  		    var icon = ($legend_item.children("img").attr("src"));
+  		    debug.log("legend icon...:", icon);
   		    $(this).parent().toggleClass("tg-legend-icon-selected");
   		    MED.setFilters({origin:"legend", icon: icon});
   		});
