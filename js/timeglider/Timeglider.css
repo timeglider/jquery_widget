@@ -205,9 +205,11 @@
  
  
 .timeglider-tick-sub-label {
- float:left;
+ 
  color:#FAFAFA;
- display:inline;
+ /* OLD float:left; display:inline; */
+ position:absolute;
+ top:2px;
  /* This padding-left needs to be exactly the same as
     the value in TG_TimelineView addTick() for setting hour labels
  */

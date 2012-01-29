@@ -1189,9 +1189,9 @@ tg.TG_PlayerView.prototype = {
 
 		var me = this,       mDays = 0,      dist = 0,        pos = 0,       
 			tperu = 0,       serial = 0,     shiftLeft = 0,   ctr = 0,  
-			tid = "",        tickHtml = "",  idRef = "",      label = {}, 
+			tid = "",        tickHtml = "",  sub_label = "",  label = {}, 
 			$tickDiv = {},   tInfo = {},     pack = {},       mInfo = {},
-			sub_labels = "", hour_num=0,     day_num=1,       hour_label="";
+			sub_labels = "",
 			
 			tickUnit = MED.getZoomInfo().unit,
 			tickWidth = MED.getZoomInfo().width,
@@ -1252,46 +1252,36 @@ tg.TG_PlayerView.prototype = {
     
 		if (dist > 5) {
 		
-			/* Raphael CANVAS for tick lines
-			@param tid {string} dom-id-with-no-hash, width, height 
-			*/
+			// As of Jan 29, 2012, no more Raphael
 			
-			var lines = Raphael(tid, tickWidth, 30),
-				c, l, xd, stk = '', 
-				ht = 10, downset = 20;
+			var c, l, xd, stk = '', 
+				ht = 10, downset = 20, 
+				lpos = 0;
 			
 			for (l = 0; l < tperu; l++) {
-				// xd is cross distance...
-				xd = l * dist;
-				stk += "M" + xd + " " + downset + " L" + xd + " " + (ht + downset);
-				
-				
-				// gather 24 hours of the day
-				if (tickUnit == "da" && dist > 16) {
-					hour_label = me.getHourLabelFromHour(hour_num, dist);
-					// set width below to subtract CSS padding-left
-					sub_labels += "<div class='timeglider-tick-sub-label' style='width:" + (dist - 4) + "px'>" + hour_label + "</div>";
-					hour_num++;
-				}
-				
-				// add days into month
-				if (tickUnit == "mo" && dist > 16) {
-					// set width below to subtract CSS padding-left
-					sub_labels += "<div class='timeglider-tick-sub-label' style='width:" + (dist - 4) + "px'>" + (day_num) + "</div>";
-					
-					day_num++;
-				}
-			}
 			
-			c = lines.path(stk);
-			// !TODO --- add stroke color into options object
-			c.attr({"stroke":"#333", "stroke-width":1});
-		
+				sub_label = "&nbsp;";
+				
+				if (dist > 16) {
+					if (tickUnit == "da" && dist > 16) {
+						// hours starting with 0
+						sub_label = me.getHourLabelFromHour(l, dist);
+					} else  if (tickUnit == "mo") {
+						// days starting with 1
+						sub_label = l + 1;
+					}
+				}
+				
+				sub_labels += "<div class='timeglider-tick-sub-label' style='left:" + lpos + "px;width:" + dist + "px'>" + sub_label + "</div>";
+				
+				lpos += dist;
+			}
+					
 		} // end dist > 5  if there's enough space between tickmarks
 			
 		// add hours gathered in loop above
 		if (sub_labels) {
-		  $tickDiv.append("<div style='width:" + (tickWidth + 10) + "px;position:absolute;top:17px;left:0;overflow:hidden'>" + sub_labels + "</div>");
+		  $tickDiv.append("<div style='background-color:none;height:24px;width:" + (tickWidth + 10) + "px;position:absolute;top:10px;left:0;overflow:hidden'>" + sub_labels + "</div>");
 	  	} 
 		
 		pack = {"unit":tickUnit, "width":tickWidth, "serial":serial};
