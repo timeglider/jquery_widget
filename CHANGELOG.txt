@@ -10,4 +10,20 @@
 27 Jan 2012
 -- Changed modal positioning to be center to container; planning to create an arrow
    between event and description modal
+
+
+0.1.3
+29 Jan 2012
+-- Raphael was a 50k load in the .min file, but we were only using it for rendering
+   the little "tick" marks in the ruler. Replaced this with simple <div> elements,
+   either empty or with the unit sub-labels (hours on day ticks, days on month ticks);
+   min file now at 115k.
+
+-- images rendered 'inline' now need image.display_class of "inline" rather than "layout";
+   also, inline image rendering a bit improved with a dual blocking system in TG_Org now,
+   the title is considered one block (with one width), and the image is considered another
+   block (usually narrower). Things fit a little tighter now.
+   
+
+   
    
