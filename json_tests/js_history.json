@@ -81,8 +81,7 @@
 "date_limit":"ho",
 "link":"http://en.wikipedia.org/wiki/JavaScript",
 "importance":"40",
-"icon":"flag_green.png",
-"y_position":100
+"icon":"flag_green.png"
 },
 
 {
@@ -97,7 +96,7 @@
 "date_limit":"ho",
 "icon":"star_purple.png",
 "image":"img/tests/js_thumb.jpg",
-"image_class":"layout"
+"image_class":"inline"
 },
 
 {
@@ -162,8 +161,7 @@
 	{"url":"http://nytimes.com", "label":"NYT"}
 ],
 "importance":"35",
-"icon":"triangle_green.png",
-"y_position":100
+"icon":"triangle_green.png"
 },
 
 {

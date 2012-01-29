@@ -18,16 +18,19 @@
 (function(tg){
   
   
-  var MED = {},
-      TG_Date = tg.TG_Date,
-      options = {},
-      $ = jQuery;
+var MED = {},
+	TG_Date = tg.TG_Date,
+	options = {},
+	$ = jQuery,
+	$container = {};
       
       
 
-  tg.TG_Mediator = function (wopts) {
+tg.TG_Mediator = function (wopts, $el) {
   
     this.options = options = wopts;
+    
+   	$container = $el;
 
     // these relate to the display ------ not individual timeline attributes
     this._focusDate = {};
@@ -63,6 +66,8 @@
     this.initial_timeline_id = options.initial_timeline_id || "";
     this.sole_timeline_id = "";
     
+    this.dimensions = {};
+    
     this.focusedEvent = '';
     
     if (options.max_zoom === options.min_zoom) {
@@ -78,6 +83,9 @@
 
     } // end mediator head
     
+    
+    
+    
 
 	tg.TG_Mediator.prototype = {
 	
@@ -90,26 +98,66 @@
 		},
 		
 
-
-    /* PUBLIC METHODS MEDIATED BY $.widget front */
-    gotoDateZoom: function (fdStr, zoom) {
-        var fd = new TG_Date(fdStr),
-            zl = false;
-        this.setFocusDate(fd);
-        
-        // setting zoom _does_ refresh automatically
-        if (zoom) { 
-            var zl = this.setZoomLevel(zoom);
-        };
-        
-        if (!zoom || zl == false) { this.refresh(); }
-    },
-    
-    
-    zoom : function (n) {
-      var new_zoom = this.getZoomLevel() + parseInt(n);
-      this.setZoomLevel(new_zoom);
-    },
+	    /* PUBLIC METHODS MEDIATED BY $.widget front */
+	    gotoDateZoom: function (fdStr, zoom) {
+	        var fd = new TG_Date(fdStr),
+	            zl = false;
+	        this.setFocusDate(fd);
+	        
+	        // setting zoom _does_ refresh automatically
+	        if (zoom) { 
+	        	var zl = this.setZoomLevel(zoom);
+	        };
+	        
+	        if (!zoom || zl == false) { 
+	        	this.refresh(); 
+	        }
+	    },
+	    
+	    
+	    zoom : function (n) {
+	      var new_zoom = this.getZoomLevel() + parseInt(n);
+	      this.setZoomLevel(new_zoom);
+	    },
+	    
+	    
+	    getScope : function () {
+	    
+	      var zi = this.getZoomInfo();
+	      var fd = this.getFocusDate();
+	      
+	      var tBounds = this.getActiveTimelinesBounds();
+	      
+	      return {
+	      	"spp":Math.round(zi.spp), 
+	      	"width":this.dimensions.container.width,
+	      	"focusDateSec":Math.round(fd.sec),
+	      	"timelines":this.activeTimelines,
+	      	"timelineBounds":tBounds,
+	      	"container": $container
+	      }
+	    },
+	    
+	    
+	    /*
+	     * Gets the bounds for 1+ timelines in view
+	     */
+	    getActiveTimelinesBounds: function() {
+	    	
+	    	var active = this.activeTimelines,
+	    		tl = {},
+	    		startSec = 99999999999,
+	    		endSec = 0;
+	    	
+	    	for (var t=0; t<active.length; t++) {
+	    		tl = this.timelineCollection.get(active[t]);
+	    		startSec = (tl.get("bounds").first < startSec) ? tl.get("bounds").first : startSec;
+	    		endSec = (tl.get("bounds").last > endSec) ? tl.get("bounds").last : endSec;
+	    	}
+	    	
+			return {"first":startSec, "last":endSec};
+	    
+	    },
     
     
     
@@ -126,19 +174,19 @@
 		  
 		    if (typeof src === "object") {
 				// OBJECT (already loaded, created)
-				M.parseData(src);
+				M.parseTimelineData(src);
 		      
 		    } else if (src.substr(0,1) == "#") {
 				// TABLE
 				var tableData = [M.getTableTimelineData(src)];
 				// debug.log(JSON.stringify(tableData));
-				M.parseData(tableData);
+				M.parseTimelineData(tableData);
 		      
 		    } else {
 		    	// FROM NEW JSON
 				// getJSON is shorthand for $.ajax...
 		        $.getJSON(src, function (data) {
-		              M.parseData(data);
+		              M.parseTimelineData(data);
 		           }
 		        );
 		
@@ -234,11 +282,11 @@
 	
  
 	/*
-	* parseData
+	* parseTimelineData
 	* @param data {object} Multiple (1+) timelines object 
 	* derived from data in loadTimelineData
 	*/
-	parseData : function (data) {
+	parseTimelineData : function (data) {
 	
 		var M = this,
 			ct = 0,
@@ -289,6 +337,7 @@
 	    	$.publish("mediator.timelineDataLoaded");
 		}
 	},
+	
 
 
     /* Makes an indexed array of timelines */
@@ -300,6 +349,7 @@
       // MAY NOT NEED THIS WITH Backbone Collection change-binding
       $.publish("mediator.timelineListChangeSignal");
     },
+    
 
 
     /* 
@@ -351,11 +401,23 @@
         this.timeOffset = TG_Date.getTimeOffset(offsetStr);
         this.refresh();
     },
-    // might as well
+    
+    
+    // timezone hours/minutes ofset
     getTimeoffset : function () {
         return this.timeOffset;
     },
-       
+    
+    
+        /*
+    *  setTimeoffset
+    *  @param offset [String] eg: "-07:00"
+    *      
+    */
+    setDimensions : function (d) {
+        this.dimensions = d;
+        debug.log("dimensions:", d);
+    },
       
     /*
     *  setFocusDate
@@ -407,6 +469,7 @@
 			    this._zoomLevel = z;
 			    this._zoomInfo = tg.zoomTree[z];
 			    $.publish("mediator.zoomLevelChange");
+			    $.publish("mediator.scopeChange");
 			    return true
 			} else {
 		    	return false;
@@ -474,14 +537,12 @@
 				
 				var icon = _.last(obj.icon.split("/"));
 				
-				
 				if (icon == "all") {
 					this.filters.legend = [];
-					$.publish("mediator.legendAll");  
+					$.publish("mediator.legendAll");
 				} else {
 					
 					if ($.inArray(icon, this.filters.legend) == -1) {
-						debug.log("icon to put in legend filter:", icon);
 						this.filters.legend.push(icon);
 					} else {
 						// remove it
@@ -498,8 +559,12 @@
 			break;
 		
 		} // end switch
-   
-        $.publish("mediator.filtersChange");   
+   		
+   		
+        $.publish("mediator.filtersChange"); 
+        $.publish("mediator.scopeChange");
+        
+           
         this.refresh();
 	},
          
@@ -515,7 +580,8 @@
 		this._ticksOffset = newOffset;
 		
 		// In other words, ticks are being dragged!
-		$.publish( "mediator.ticksOffsetChange" );
+		$.publish("mediator.ticksOffsetChange");
+		$.publish("mediator.scopeChange");
 	},
 
 
@@ -605,8 +671,6 @@
 			this.refresh();
 			// this will change the menu list/appearance
 		}
-		
-		
 		
 		$.publish( "mediator.activeTimelinesChange" );
 	
@@ -753,6 +817,7 @@ tg.validateOptions = function (widget_settings) {
 	return msg;
 
 };
+
         
        
 })(timeglider);

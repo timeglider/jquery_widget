@@ -265,7 +265,7 @@ tg.TG_PlayerView = function (widget, mediator) {
 	}
 
 	this.dragSpeed = 0;
-	this.dimensions = this.getWidgetDimensions();
+	this.dimensions = MED.dimensions = this.getWidgetDimensions();
 	this.tickNum = 0;
 	this.leftside = 0;
 	this.rightside = 0;
@@ -319,7 +319,7 @@ tg.TG_PlayerView = function (widget, mediator) {
 			
 			ticksSpeed = t1Left - t2Left;
 				
-			debug.trace("::>>" + ticksSpeed, "note");
+			// debug.trace("::>>" + ticksSpeed, "note");
 				
 			t2Left = t1Left;
 		},
@@ -405,7 +405,6 @@ tg.TG_PlayerView = function (widget, mediator) {
 		me.tickHangies();
 		me.registerDragging();
 		me.registerTitles();
-			
 	});
 	
 	$.subscribe("mediator.focusToEvent", function () {
@@ -584,6 +583,7 @@ tg.TG_PlayerView.prototype = {
 		var new_height = $(PL).height();
 		$(CONTAINER).height(new_height);
 		this.dimensions = this.getWidgetDimensions();
+		MED.setDimensions(this.dimensions);
 		this.setCenterline();
 		MED.refresh();
 	},
@@ -1765,10 +1765,10 @@ tg.TG_PlayerView.prototype = {
 			}
 			
 			if (stuff != "undefined") { $tl.append(stuff.html); }
-			
-			// debug.log("fresh, stuff.highest:", stuff.highest);
-			
-			this.registerEventImages($tl);
+						
+			setTimeout( function() {
+				me.registerEventImages($tl);
+			}, 3);
 			
 		}// end for each timeline
 		
@@ -1806,9 +1806,7 @@ tg.TG_PlayerView.prototype = {
 				}
 
 				$tl = $(CONTAINER + " .tg-timeline-envelope#" + tl.id).append(stuff.html);
-				
-				debug.log("append, stuff.highest:", stuff.highest);
-				
+								
 				this.registerEventImages($tl);
 					
 		  } // end for in active timelines
@@ -1823,23 +1821,23 @@ tg.TG_PlayerView.prototype = {
   // "sweep" vs tick.serial  (or fresh/append)
   compileTickEventsAsHtml : function (tl, idArr, tick_serial, btype) {
    
-      var img_ht, posx = 0,
-          cx = this.dimensions.container.centerx,
-          expCol = tl.display,
-          ht = $tl.height();
-          stuff = "",
-          foSec = MED.startSec, 
-			    spp = MED.getZoomInfo().spp,
-			    zl = MED.getZoomInfo().level,
-			    buffer = 20, img_ht = 0,
-			    borg = tl.borg,
-			    block_arg = "sweep"; // default for initial load
+		var posx = 0,
+			cx = this.dimensions.container.centerx,
+			expCol = tl.display,
+			ht = $tl.height();
+			stuff = "",
+			foSec = MED.startSec, 
+			spp = MED.getZoomInfo().spp,
+			zl = MED.getZoomInfo().level,
+			buffer = 20, img_ht = 0,
+			borg = tl.borg,
+			block_arg = "sweep"; // default for initial load
 			    
-			if (btype == "append") {
+		if (btype == "append") {
           block_arg = tick_serial;
-      }
+		}
     
-      for (var i=0; i<idArr.length; i++) {
+		for (var i=0; i<idArr.length; i++) {
 
 		// BBONE
       	ev = MED.eventCollection.get(idArr[i]).attributes;
@@ -1856,24 +1854,28 @@ tg.TG_PlayerView.prototype = {
       			ev.width = (ev.titleWidth * impq) + buffer;
       			ev.fontsize = this.basicFontSize * impq;
       			ev.left = posx; // will remain constant
-            ev.spanwidth = 0;
-            
-      			if (ev.span == true) {
-      			  ev.spanwidth = (ev.enddateObj.sec - ev.startdateObj.sec) / spp;
-      			  if (ev.spanwidth > ev.width) { ev.width = ev.spanwidth; }
-      			}
-      			
-      		  img_ht = 0;
-      		  if (ev.image && ev.image.display_class === "layout") {
-      		    img_ht = ev.image.height + 2;
-      		    ev.width = (ev.image.width > ev.width) ? ev.image.width : ev.width;
-      	    }
 
-      			ev.height = Math.ceil(ev.fontsize) + img_ht;
+				ev.spanwidth = 0;
+				if (ev.span == true) {
+					ev.spanwidth = (ev.enddateObj.sec - ev.startdateObj.sec) / spp;
+					if (ev.spanwidth > ev.width) { ev.width = ev.spanwidth; }
+				} 
+  
+   				img_ht = 0;
+  				
+  				var font_ht = Math.ceil(ev.fontsize);
+  				
+				if (ev.image && ev.image.display_class === "inline") {
+					img_ht = ev.image.height + 2;
+					ev.width = (ev.image.width > ev.width) ? ev.image.width : ev.width;
+					ev.shape = {"ev_ht":font_ht, "img_ht":img_ht + 32};
+				} 
+				
+				ev.height = font_ht + img_ht;
       			ev.top = ht - ev.height;
-            
-            // block_arg is either "sweep" for existing ticks
-            // or the serial number of the tick being added by dragging
+      
+            	// block_arg is either "sweep" for existing ticks
+            	// or the serial number of the tick being added by dragging
       			borg.addBlock(ev, block_arg);
            
       	  } else if (expCol == "collapsed") {
@@ -1916,14 +1918,15 @@ tg.TG_PlayerView.prototype = {
 	      }
       );
       
+      
       $(CONTAINER + " .timeglider-event-image-above").each(
     		    function () {
-    		      $(this).position({
+    		      $(this).css("display", "block").position({
     		        		my: "top",
             				at: "top",
             				of: $(CONTAINER),
             				offset: "0, 12"
-    	        }).css("left", 0);
+    	        }).css({left:0});
     	      }
         );
 	  
@@ -2177,20 +2180,18 @@ tg.TG_PlayerView.prototype = {
       		});
 			
 			if (timeglider.mode === "authoring") {
-				  // in authoring mode, we'll use the icon as a handle for dragging
-					i_sel = CONTAINER + " .legend-info";
-				} else {
-					i_sel = CONTAINER + " .legend-info, " + CONTAINER + " .legend-icon";
-				}
+				// in authoring mode, we'll use the icon as a handle for dragging
+				i_sel = CONTAINER + " .legend-info";
+			} else {
+				i_sel = CONTAINER + " .legend-info, " + CONTAINER + " .legend-icon";
+			}
 				
-  		$(i_sel).bind("mouseup", function() { 
-  		    var $legend_item = $(this).next(".timeglider-legend");
-  		    debug.log("legend_item...:", $legend_item);
-  		    var icon = ($legend_item.children("img").attr("src"));
-  		    debug.log("legend icon...:", icon);
-  		    $(this).parent().toggleClass("tg-legend-icon-selected");
-  		    MED.setFilters({origin:"legend", icon: icon});
-  		});
+	  		$(i_sel).bind("mouseup", function(e) { 
+	  		    var $legend_item = $(e.target).parent();
+	  		    var icon = ($legend_item.children("img").attr("src"));
+	  		    $(this).parent().toggleClass("tg-legend-icon-selected");
+	  		    MED.setFilters({origin:"legend", icon: icon});
+	  		});
 
 	},
   

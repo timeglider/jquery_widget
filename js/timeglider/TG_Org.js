@@ -12,7 +12,7 @@
 (function(tg){
 
   // standard "brick" height for placement grid
-  var lev_ht = tg.levelHeight = 10,
+  var lev_ht = tg.levelHeight = 12,
       // number of available levels for events
       tree_levels = 300,
       $ = jQuery,
@@ -50,10 +50,12 @@
     * 
     */
     this.addBlock = function (evob, tickScope) {
+    	
 		evob.right = evob.left + evob.width;
 		evob.bottom = evob.top + evob.height;
 		evob.tickScope = tickScope;
 		me.blocks.push(evob);
+
     };
     
     
@@ -122,7 +124,8 @@
       
 		for (var i=0; i<blength; i++) {
 	  		b = this.blocks[i];
-	
+			title_adj = 0;
+			
 	    	// full sweep or just a tick added left or right
 			if (b.tickScope == tickScope) {
 
@@ -131,8 +134,8 @@
 	
 					// it's not in the "visible" array, so add it
 					this.vis.push(b.id);
-					title_adj = 0;
-	
+					
+					// if it's got static HTML in it
 					if (b.html && b.html.substr(0,4) == "<div") {
 		            	// chop off the end and re-glue with style & id
 						html += ("<div"+ 
@@ -141,17 +144,41 @@
 		                       b.html.substr(4));
 		              
 					} else {      
-		            
+		            	
 		            	// if it has an image, it's either in "layout" mode (out on timeline full size)
 		            	// or it's going to be thumbnailed into the "bar"
 						if (b.image) {
-							if (b.image.display_class == "layout") {
-								title_adj = b.image.height + 4;
+							
+							
+							if (b.image.display_class != "above") {
+
+								img_scale = (b.image.scale || 100) / 100;
+								
+								if (img_scale < 1) {
+									// 
+									// 
+									b.image_width = img_scale * b.image.width;
+									b.image_height = img_scale * b.image.height;
+									
+									img_style = " style='width:" + b.image_width + "px;height:auto' ";
+									
+									
+									
+								} else {
+									img_style = "";
+									b.image_width = b.image.width;
+									b.image_height = b.image.height;
+								}
+									title_adj = b.image_height + 4;
+								
+							} else {
+								// other classes of images don't scale here
+								img_style = "";
 							} 
 							// different image classes ("bar", "above") are positioned
 							// using a separate $.each routine in TimelineView rather than
 							// being given absolute positioning here.
-							img = "<div class='timeglider-event-image-" + b.image.display_class + "'><img src='" + b.image.src + "'></div>";
+							img = "<div class='timeglider-event-image-" + b.image.display_class + "'><img src='" + b.image.src + "' " + img_style + "></div>";
 						} else {
 							// no image
 							img = "";
@@ -175,7 +202,7 @@
 		            
 						if (b.span == true) {
 							span_selector_class = "timeglider-event-spanning";
-							span_div = "<div class='timeglider-event-spanner' style='top:" + title_adj + "px;height:" + b.fontsize + "px;width:" + b.spanwidth + "px" + b_span_color + "'></div>"
+							span_div = "<div class='timeglider-event-spanner' style='top:" + "px;height:" + b.fontsize + "px;width:" + b.spanwidth + "px" + b_span_color + "'></div>"
 						} else {
 							span_selector_class = ""; 
 							span_div = "";
@@ -192,12 +219,13 @@
 						// `ceiling` being set at 0 (event_overflow set to "scroll") 
 						// may require/allow for event scrolling possibilities...
 						if (ceiling && (me.pol == -1) && (Math.abs(b.top) > (ceiling - ceiling_padding))) {
-						
+							
 						 	// + + + symbols in place of events just under ceiling
 						 	// if things are higher than the ceiling, show plus signs instead,
 						 	// and we'll zoom in with these.
 							html += "<div class='timeglider-more-plus' style='left:" + b.left  + 
-						        "px; top:-" + (ceiling - (Math.floor(ceiling_padding/3))) + "px'>+</div>"; 
+						        "px; top:-" + (ceiling - (Math.floor(ceiling_padding/3))) + "px'>+</div>";
+						         
 						        
 						} else {
 						 
@@ -306,16 +334,18 @@
 
     };
 
-
-   var checkAgainstLevel = function (block, level_num) {
+	// private function
+	var checkAgainstLevel = function (block, level_num) {
        
-      var ol = false, ol2 = false, tree = me.tree,
+		var ol = false, 
+      		ol2 = false, 
+      		tree = me.tree,
 
-        // level_blocks is the array of blocks at a level
-        level_blocks = tree[level_num],
-        next_level = level_num + 1,
-        collision = false,
-        bricks_high = 2;
+			// level_blocks is the array of blocks at a level
+			level_blocks = tree[level_num],
+			next_level = level_num + 1,
+			collision = false,
+			bricks_high = 2;
                 
       if (level_blocks != undefined) {
         
@@ -347,24 +377,84 @@
           } // end for
 
           if (collision == false) {
-            // ADD TO TREE OF PLACED EVENTS
-            if (me.pol === -1) {
-            	block.top -= block.fontsize;
-            } else {
-           		block.top += block.fontsize;
-            }
           
+            // buffer            
+            if (me.pol === -1) {
+            	block.top -= 8; // block.fontsize; 
+            } else {
+           		block.top += 8; // block.fontsize; 
+            }
+          	
+          	// ADD TO TREE OF PLACED EVENTS
             // Place block in level
             level_blocks.push(block);
          
-            // find out how many (lev_ht px) levels (bricks) the event is high
-            bricks_high = Math.ceil(block.height / lev_ht);
             
-            for (var k=1; k<=bricks_high; k++) {
-              tree[level_num + k].push(block);
-            }
-   
-          } // end if collision if false
+            
+            //debug.log("fontsize vs height:", block.fontsize, block.height);
+            if (typeof block.shape === "object") {
+            	// ev_ht, img_ht
+            	// debug.log("bricks high:", block.shape.ev_ht);
+            	var high_title = 0;
+            	var high_img = 0;
+            	var last_lev = 0;
+            	
+            	high_title = Math.ceil((block.shape.ev_ht) / lev_ht);
+            	            	
+            	// TITLE 
+	            for (var k=1; k<=high_title; k++) {
+	            	last_lev =  level_num + k;
+	            	tree[last_lev].push(block);  
+	            }
+	            
+	            high_img = Math.ceil((block.shape.img_ht) / lev_ht);
+	            var img_rt = block.left + block.image.width + 32;
+            	var img_blk = {left:block.left, right:img_rt, top:block.top, bottom:block.bottom}
+	            
+	            // IMAGE
+	            for (var i=1; i<=high_img; i++) { 
+	            	tree[last_lev + i].push(img_blk);  
+	            }
+	            
+            	
+            	
+            } else {
+            	
+            	// find out how many (lev_ht px) levels (bricks) the event is high
+            	bricks_high = Math.ceil(block.height / lev_ht);
+	            for (var k=1; k<=bricks_high; k++) { 
+	            	 tree[level_num + k].push(block);  
+	            }
+            
+            
+             }
+            
+
+            
+            
+            /*
+            // POSSIBLY TOO EXPENSIVE!!!!!
+            // if it has an image in it, make separate section for that...
+            if (block.image) { if (block.image.display_class=='inline') {
+            	// debug.log("img block img:", block.image_width, block.image_height);
+            	var img_block={
+            		"left":block.left, 
+            		"right":block.left + block.image_width,
+            		"top":block.top + block.image_height,
+            		"bottom":block.bottom + block.fontsize + 4
+            		};
+            	var b_high = Math.ceil(block.image_height / lev_ht);
+            	for (var g=1; g<=b_high; g++) {
+            		var lvg = level_num + g;
+            		debug.log("levelnum + g:", lvg) ;
+					tree[lvg].push(img_block);
+				}
+
+            }}
+   			*/
+   			
+   			
+          } // end if collision is false
         
       }  // end if level_blocks != undefined
       }; // end checkAgainstLevel()

@@ -20,6 +20,7 @@
 		
 		#placement {
 			margin:32px;
+			margin-bottom:0;
 			height:500px;
 		}
 		
@@ -63,6 +64,27 @@
 			color:green;
 		}
 		
+		
+		.scrubber {
+			height:32px;
+			margin:0px 32px;
+			background-color:black;
+			border:1px solid black;
+			margin-bottom:32px;
+			position:relative;
+			overflow:hidden;
+		}
+		
+		
+		.scrubber-handle {
+			height:32px;
+			width:150px;
+			background-color:green;
+			position:absolute;
+			top:0;
+			left:0;
+		}	
+		
 		</style>
 </head>
 <body>
@@ -70,6 +92,8 @@
 
 
 <div id='placement'></div>
+
+<div id='placement-scrubber' class='scrubber'><div id='placement-scrubber-handle' class='scrubber-handle'></div></div>
 
 
 <div class='methods'>
@@ -181,10 +205,91 @@
 		});
 		
 		/*
+		// test to bring up filter by default, on load
 		setTimeout(function() {
 			$(".timeglider-filter-bt").trigger("click");
 		}, 500);
 		*/
+		
+		
+		// SCRUBBER TESTING
+		//////////////////////////////////////
+		// local reference var for actor scope
+		var tg_actorScope = {};
+		var tg_frameToTimeline = 1;
+		var handle_start = 0;
+		
+		
+		$(".scrubber-handle").draggable({
+			axis:"x",
+			start:function(e) {
+				var $handle = $(e.target);
+				handle_start = $handle.position().left;
+			},
+			drag: function (e) {
+				var $handle = $(e.target);
+				var $ticks = tg_actorScope.container.find(".timeglider-ticks");				
+				var adj = handle_start * (1/tg_frameToTimeline);
+				var invert = Math.round($handle.position().left * (-1/tg_frameToTimeline)) + adj;
+				
+				$ticks.css("left",  invert);
+				
+				$.publish("mediator.ticksOffsetChange");
+			}
+		});
+		
+		
+		
+		$.subscribe("mediator.scopeChange", function() {
+			
+			var s = tg_actorScope = tg_actor.getScope();
+			// s object has:
+			// s.focusDateSec (seconds)
+			// s.spp (seconds per pixel)
+			// s.timelineBounds.first (seconds)
+			// s.timelineBounds.last (seconds)
+			// s.timelines (array of ids)
+			// s.width (container width in px)
+			
+			var tlBnds = s.timelineBounds;
+			var w = s.width;
+		
+			// half-screen in seconds
+			var secHalf = (w * s.spp)/2; 
+			
+			// time bounds
+			var frBnds_right = s.focusDateSec + secHalf;
+			var frBnds_left = s.focusDateSec - secHalf;
+			
+			// total frame secconds
+			var frSeconds = frBnds_right - frBnds_left;
+			// total timeline seconds
+			var tlLength = tlBnds.last - tlBnds.first;
+			// ratio of timeline - to - frame
+			var ratio = frSeconds / tlLength;
+			
+			tg_frameToTimeline = ratio;
+			
+			// default scrubber to whole width
+			var scrWidth = w;
+			
+			// how far to the left of the frame is the timeline?
+			var lOffset = ((frBnds_left - tlBnds.first) / tlLength) * w;
+						
+			if (ratio < 1) {
+				scrWidth = ratio * w;
+				$("#placement-scrubber-handle")
+					.css({"display":"block", "left":lOffset + "px"})
+					.width(scrWidth);
+			} else {
+			    $("#placement-scrubber-handle")
+			    	.css("display", "none");
+			}
+
+			
+		});
+		
+		
 	
     }); // end document-ready
     

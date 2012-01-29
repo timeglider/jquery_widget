@@ -117,7 +117,7 @@
 		*
 		*/
 		_init : function () {
-		
+			
 			// validateOptions should come out as empty string
 			var optionsCheck = timeglider.validateOptions(this.options);
 			
@@ -125,13 +125,11 @@
 			
 				tg.TG_Date.setCulture(this.options.culture);
 			
-				MED = new tg.TG_Mediator(this.options);
+				MED = new tg.TG_Mediator(this.options, this.element);
 				timelinePlayer = new tg.TG_PlayerView(this, MED);
 			
 				// after timelinePlayer is created this stuff can be done
 				MED.setFocusDate(new TG_Date(this.options.initial_focus));
-				
-				
 				MED.loadTimelineData(this.options.data_source);
 			
 			} else {
@@ -165,6 +163,11 @@
 				
 		getMediator : function () {
 			return MED;
+		},
+		
+		
+		getScope : function () {
+			return MED.getScope();
 		},
 		
 		

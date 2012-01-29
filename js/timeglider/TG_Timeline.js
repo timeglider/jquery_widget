@@ -60,10 +60,12 @@
 	
 	
 	initialize: function(ev) { 
+	
+	
 			// Images start out being given a default width and height
 			// of 0, so that we can "find out for ourselves" what the
 			// size is.... pretty costly, though...
-			// can this be done with PHP?
+			// can this be done better with PHP?
 			
 			if (ev.image) {
 				var img = ev.image;
@@ -76,7 +78,7 @@
 				
 				} else {
 						
-					ev.image.display_class = ev.display_class || "above";
+					ev.image.display_class = ev.image.display_class || "above";
 					ev.image.width = 0;
 					ev.image.height = 0;
 					
@@ -215,9 +217,7 @@
 					} else { 
 						// if lacking an id, we'll make one...
 						ev.id = id = "anon" + this.anonEventId++; 
-					}
-					
-										
+					}				
 					
 					/*
 				 		We do some pre-processing ** INCLUDING HASHING THE EVENT *
@@ -271,6 +271,14 @@
 					}
 					
 					
+					// haven't parsed the image/image_class business...
+					if (ev.image) {
+						if ((ev.image_class == "above")||(ev.image.display_class=="above")) { 
+							tdata.hasImagesAbove = true; 
+						}
+					}
+					
+				
 					tdata.startSeconds.push(ev.startdateObj.sec);
 					tdata.endSeconds.push(ev.enddateObj.sec);
 					
@@ -280,10 +288,7 @@
 					ev.cache = {span:ev.span, startdateObj:_.clone(ev.startdateObj), enddateObj:_.clone(ev.enddateObj)}
 					
 					
-					if (ev.image_class == "above") { 
-						tdata.hasImagesAbove = true; 
-					}
-	
+					
 					
 					if (!ev.icon || ev.icon === "none") {
 						ev.icon = "";

@@ -154,12 +154,19 @@
 
 .timeglider-date-display {
 	position:absolute;
-	right:100px;
-	top:40px;
-	font-size:32px;
-	color:#ffffff;
+	right:72px;
+	top:-3px;
+	font-size:16px;
+	color:#F0F0F0;
 	font-weight:bold;
-	text-shadow: 1px 1px 1px #333;
+	padding:6px;
+	border:2px solid #777;
+	-moz-border-radius-bottomright: 4px;
+	-moz-border-radius-bottomleft: 4px;
+	-webkit-border-radius: 0px 0px 4px 4px;
+	border-radius: 0px 0px 4px 4px;
+	background-color:#555;
+	z-index:999999999;
 }
   
   
@@ -196,6 +203,7 @@
   font-weight:bold;
  }
  
+ 
 .timeglider-tick-sub-label {
  float:left;
  color:#FAFAFA;
@@ -203,9 +211,11 @@
  /* This padding-left needs to be exactly the same as
     the value in TG_TimelineView addTick() for setting hour labels
  */
- padding-left:4px;
+ padding-left:3px;
+ border-left:1px solid green;
  font-size:9px;
  margin:0;
+ 
 }
   
 .timeglider-handle {
@@ -290,8 +300,8 @@
 	cursor:pointer;
 }
 
-.timeglider-timeline-event:hover .timeglider-event-image-layout img {
-  border:1px solid #CC0000;
+.timeglider-timeline-event:hover .timeglider-event-image-inline img {
+	opacity:.5;
 }
 
 .timeglider-event-hover-info {
@@ -346,20 +356,22 @@
    position:absolute;
    /* top:-28px; */
    z-index:1;
+   display:none;
 }
 .timeglider-event-image-above img {
   height:48px;
   width:auto;
+  border:1px solid #000;
 }
 
 
-.timeglider-event-image-layout {
+.timeglider-event-image-inline {
   /* div for default fullsize image with event */
   position:absolute;
   
 }
 
-.timeglider-event-image-layout img {
+.timeglider-event-image-inline img {
   position:absolute;
 }
 
