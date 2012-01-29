@@ -209,12 +209,13 @@
  color:#FAFAFA;
  /* OLD float:left; display:inline; */
  position:absolute;
+ height:12px;
  top:2px;
  /* This padding-left needs to be exactly the same as
     the value in TG_TimelineView addTick() for setting hour labels
  */
  padding-left:3px;
- border-left:1px solid green;
+ border-left:1px solid #777;
  font-size:9px;
  margin:0;
  
