@@ -182,9 +182,7 @@
 				"bill":[]
 			};
 			
-			
-
-			tdata.spans = [];
+			tdata.spans = {};
 			tdata.hasImagesAbove = false;
 			tdata.startSeconds = [];
 			tdata.endSeconds = [];
@@ -263,6 +261,7 @@
 						ev.enddateObj = new TG_Date(ev.enddate, ev.date_display);
 						ev.span=true;
 						// index it rather than push to stack
+						
 						tdata.spans["s_" + ev.id] = {id:ev.id, start:ev.startdateObj.sec, end:ev.enddateObj.sec};
 						
 					} else {
@@ -273,7 +272,9 @@
 					
 					// haven't parsed the image/image_class business...
 					if (ev.image) {
-						if ((ev.image_class == "above")||(ev.image.display_class=="above")) { 
+						
+						if (ev.image.display_class != "inline") { 
+							
 							tdata.hasImagesAbove = true; 
 						}
 					}
@@ -286,10 +287,7 @@
 					// cache the initial date for updating hash later
 					// important for edit/delete operations
 					ev.cache = {span:ev.span, startdateObj:_.clone(ev.startdateObj), enddateObj:_.clone(ev.enddateObj)}
-					
-					
-					
-					
+										
 					if (!ev.icon || ev.icon === "none") {
 						ev.icon = "";
 					}  else {
@@ -385,6 +383,8 @@
 		
 		initialize: function(attrs) { 
 			var processed = this._chewTimeline(attrs);
+			
+			debug.log("processed:", processed);
 			
 			this.set(processed);
 			

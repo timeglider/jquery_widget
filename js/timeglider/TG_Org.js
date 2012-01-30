@@ -334,6 +334,7 @@
 
     };
 
+
 	// private function
 	var checkAgainstLevel = function (block, level_num) {
        
@@ -377,12 +378,13 @@
           } // end for
 
           if (collision == false) {
-          
+          	
+          	
             // buffer            
             if (me.pol === -1) {
-            	block.top -= 8; // block.fontsize; 
+            	block.top -= block.fontsize; 
             } else {
-           		block.top += 8; // block.fontsize; 
+           		block.top += block.fontsize; 
             }
           	
           	// ADD TO TREE OF PLACED EVENTS
@@ -430,29 +432,7 @@
              }
             
 
-            
-            
-            /*
-            // POSSIBLY TOO EXPENSIVE!!!!!
-            // if it has an image in it, make separate section for that...
-            if (block.image) { if (block.image.display_class=='inline') {
-            	// debug.log("img block img:", block.image_width, block.image_height);
-            	var img_block={
-            		"left":block.left, 
-            		"right":block.left + block.image_width,
-            		"top":block.top + block.image_height,
-            		"bottom":block.bottom + block.fontsize + 4
-            		};
-            	var b_high = Math.ceil(block.image_height / lev_ht);
-            	for (var g=1; g<=b_high; g++) {
-            		var lvg = level_num + g;
-            		debug.log("levelnum + g:", lvg) ;
-					tree[lvg].push(img_block);
-				}
-
-            }}
-   			*/
-   			
+               			
    			
           } // end if collision is false
         

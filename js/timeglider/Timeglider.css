@@ -206,7 +206,7 @@
  
 .timeglider-tick-sub-label {
  
- color:#FAFAFA;
+ color:#000;
  /* OLD float:left; display:inline; */
  position:absolute;
  height:12px;
@@ -218,7 +218,8 @@
  border-left:1px solid #777;
  font-size:9px;
  margin:0;
- 
+ background-image:url("img/subtick_highlight.png");
+ background-repeat:no-repeat;
 }
   
 .timeglider-handle {

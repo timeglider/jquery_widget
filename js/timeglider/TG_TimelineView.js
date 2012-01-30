@@ -384,7 +384,7 @@ tg.TG_PlayerView = function (widget, mediator) {
 	.delegate(".timeglider-event-collapsed", "hover", function () { 
 
 		var title = MED.eventCollection.get($(this).attr("id")).attributes.title;
-		debug.trace("collapsed, title:" + title, "note");
+		// debug.trace("collapsed, title:" + title, "note");
 		 
 	});
 	// END TICKS CHAIN!!
@@ -1668,8 +1668,9 @@ tg.TG_PlayerView.prototype = {
 			idArr = [];
 			// FOR EACH _ACTIVE_ TIMELINE...
 			tlModel = MED.timelineCollection.get(active[a]);
-			tl = tlModel.attributes;
 			
+			tl = tlModel.attributes;
+						
 			expCol = tl.display;
 			
 			// TODO establish the 120 below in some kind of constant!
@@ -1727,6 +1728,8 @@ tg.TG_PlayerView.prototype = {
 			
 			// detect if there are boundless spans (bridging, no start/end points)
 			// !TODO: optimize loop, use _.find() ?
+			
+			
 			_.each(tl.spans, function (spanin) {
 				
 				if (spanin.start < lsec && spanin.end > lsec) {
@@ -1856,7 +1859,8 @@ tg.TG_PlayerView.prototype = {
   				var font_ht = Math.ceil(ev.fontsize);
   				
 				if (ev.image && ev.image.display_class === "inline") {
-					img_ht = ev.image.height + 2;
+					var img_scale = (ev.image.scale || 100) / 100;
+					img_ht = (img_scale * ev.image.height) + 2;
 					ev.width = (ev.image.width > ev.width) ? ev.image.width : ev.width;
 					ev.shape = {"ev_ht":font_ht, "img_ht":img_ht + 32};
 				} 
