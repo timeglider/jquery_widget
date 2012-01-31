@@ -8,6 +8,8 @@
 
 <link rel="stylesheet" href="js/timeglider/Timeglider.css" type="text/css" media="screen" title="no title" charset="utf-8">
 
+
+
 <style type='text/css'>
         /* timeline div style */
 		body { font-family:Helvetica, Arial, sans-serif; }
@@ -21,7 +23,7 @@
 		
 		
 		#placement {
-			width:750px;
+			width:850px;
 			margin:32px auto 32px auto;
 			height:400px;
 		}
@@ -30,7 +32,7 @@
 		    /* In case JS fails, the table will still
 			   display.
 			*/
-			width:750px;
+			width:850px;
 			margin:32px auto 32px auto;
 			border:1px solid black;
 			border-collapse:collapse;
@@ -85,6 +87,7 @@
 	<th class="tg-date_limit">date limit</th>
 	<th class="tg-importance">importance</th>
 	<th class="tg-link">link</th>
+	<th class="tg-modal_type">modal</th>
     </tr>
     
     
@@ -100,6 +103,7 @@
 		<td>&nbsp;</td>
 		<td>50</td>
 		<td>http://www.ridgewoodnj.net/main.cfm</td>
+		<td></td>
     </tr>
 
 	<tr>
@@ -111,6 +115,7 @@
 		<td>da</td>
 		<td>32</td>
 		<td>http://hanoverhigh.us/Hanover/</td>
+		<td></td>
     </tr>
 
 	<tr>
@@ -122,17 +127,19 @@
 		<td>mo</td>
 		<td>32</td>
 		<td></td>
+		<td></td>
     </tr>
 
 	<tr>
       <td>1986-09-01</td>
       <td>1992-06-01</td>
       <td>Wesleyan</td>
-		<td>After six years of too little sex, too many drugs, and questionable rock and roll.</td>
+		<td>Six years of too little sex, too many drugs, and questionable rock and roll.</td>
 		<td>star_blue.png</td>
 		<td>da</td>
 		<td>32</td>
 		<td>http://wesleyan.edu</td>
+		<td>full</td>
     </tr>
 
 	<tr>
@@ -143,6 +150,7 @@
 		<td>star_green.png</td>
 		<td>ye</td>
 		<td>45</td>
+		<td></td>
 		<td></td>
     </tr>
   </table>
@@ -163,7 +171,6 @@
     <script src="js/ba-tinyPubSub.js" type="text/javascript" charset="utf-8"></script>
 	<script src="js/jquery.mousewheel.min.js" type="text/javascript" charset="utf-8"></script>
 	<script src="js/jquery.ui.ipad.js" type="text/javascript" charset="utf-8"></script>
-	<script src="js/raphael-min.js" type="text/javascript" charset="utf-8"></script>
 
 	    
 	<!-- TIMEGLIDER -->
@@ -174,7 +181,7 @@
 	<script src="js/timeglider/TG_Mediator.js" type="text/javascript" charset="utf-8"></script> 
 	<script src="js/timeglider/timeglider.timeline.widget.js" type="text/javascript" charset="utf-8"></script>
 
-  <script>
+  <script type="text/javascript">
 
 	$(document).ready(function () { 
 		

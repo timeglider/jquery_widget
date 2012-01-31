@@ -1982,6 +1982,7 @@ tg.TG_PlayerView.prototype = {
   
   
 	eventModal : function (eid) {
+	
 		// remove if same event already has modal opened
 		$(CONTAINER + " #" + eid + "_modal").remove();
 		
@@ -1990,10 +1991,12 @@ tg.TG_PlayerView.prototype = {
 			video_view=false, 
 			map = "", map_options = {}, $modal, llar=[], mapZoom = 0,
 			
-			// global modal option...
-			modal_type = options.event_modal.type,
 			$par = $("#" + eid),
 			ev = MED.eventCollection.get(eid).attributes,
+			
+			// global modal option...
+			modal_type = ev.modal_type || options.event_modal.type,
+
 			ev_img = (ev.image && ev.image.src) ? "<img src='" + ev.image.src + "'>" : "",
 			links = this.createEventLinksMenu(ev.link),
 		  	
@@ -2003,21 +2006,18 @@ tg.TG_PlayerView.prototype = {
 				id:eid,
 				dateline: me.getEventDateLine(ev),
 				links:links,
-				image:ev_img,
-				video: ev.video
+				image:ev_img
 			}
-		  
+			
 		  	
 			if (ev.video) { 
 				templ_obj.video = ev.video;
 				modal_type = "full";
 				video_view = true;
-			} else if (ev.map) {
-				if (ev.map.latlong) { 
-					
-					map_view = true;
-					modal_type = "full";
-				}
+				templ_obj.video = ev.video;
+			} else if (ev.map && ev.map.latlong) {
+				map_view = true;
+				modal_type = "full";
 			}
 
 	    
