@@ -326,7 +326,7 @@ tg.TG_PlayerView = function (widget, mediator) {
 	
 		stop: function(event, ui) {
 			
-			debug.trace("::||" + ticksSpeed, "note");
+			// debug.trace("::||" + ticksSpeed, "note");
 			
 			me.resetTicksHandle();
 			me.registerDragging();
@@ -341,7 +341,7 @@ tg.TG_PlayerView = function (widget, mediator) {
 		var eid = $(this).attr("id"); 
 		var ev = MED.eventCollection.get(eid).attributes;
 		
-		debug.log("event id on touchstart/click:" + eid);
+		// debug.log("event id on touchstart/click:" + eid);
 		
 		if (timeglider.mode == "authoring") {
 			// authoring will have its own handler

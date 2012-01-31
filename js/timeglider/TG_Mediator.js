@@ -416,7 +416,7 @@ tg.TG_Mediator = function (wopts, $el) {
     */
     setDimensions : function (d) {
         this.dimensions = d;
-        debug.log("dimensions:", d);
+        // debug.log("dimensions:", d);
     },
       
     /*
@@ -525,6 +525,8 @@ tg.TG_Mediator = function (wopts, $el) {
 	*
 	*/
     setFilters : function (obj) {
+    
+    	var me = this;
       
 		switch (obj.origin) {
 		
@@ -535,13 +537,14 @@ tg.TG_Mediator = function (wopts, $el) {
 			
 			case "legend":
 				
-				var icon = _.last(obj.icon.split("/"));
-				
+				// subtract the icons folder URL...
+				var icon = obj.icon.replace(me.options.icon_folder, "");
+	
 				if (icon == "all") {
 					this.filters.legend = [];
 					$.publish("mediator.legendAll");
 				} else {
-					
+										
 					if ($.inArray(icon, this.filters.legend) == -1) {
 						this.filters.legend.push(icon);
 					} else {

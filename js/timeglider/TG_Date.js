@@ -849,7 +849,6 @@ timeglider.TG_Date = {};
 				mo = match[3] || "07",
 				da = match[4] || "1";
 			
-			debug.log("bc:", bc)
 			if (parseInt(ye, 10) < 0 || bc.substr(0,1) == "b") {
 				ye = -1 * (Math.abs(ye));
 			}
@@ -1047,7 +1046,6 @@ timeglider.TG_Date = {};
 		////// 
 		// return ob;
 		var retob = {ye:ob.ye, mo:ob.mo, da:ob.da, ho:ob.ho, mi:ob.mi, se:ob.se};
-		// debug.log("retob inside of toFromUTC:", retob);
 		
 		return retob;
 		
