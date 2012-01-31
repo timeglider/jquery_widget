@@ -1994,7 +1994,7 @@ tg.TG_PlayerView.prototype = {
 			$par = $("#" + eid),
 			ev = MED.eventCollection.get(eid).attributes,
 			
-			// global modal option...
+			// modal type: first check event, then timeline-wide option
 			modal_type = ev.modal_type || options.event_modal.type,
 
 			ev_img = (ev.image && ev.image.src) ? "<img src='" + ev.image.src + "'>" : "",
