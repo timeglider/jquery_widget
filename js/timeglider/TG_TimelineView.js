@@ -1263,28 +1263,23 @@ tg.TG_PlayerView.prototype = {
 				sub_label = "&nbsp;";
 				
 				if (dist > 16) {
-					if (tickUnit == "da" && dist > 16) {
+				
+					if (tickUnit == "da") {
 						// hours starting with 0
-						hr_info = me.getHourLabelFromHour(l, dist);
-						
-						if (dist > 130) {
-							sl4hd = dist/4 - 4;
-							ampm = hr_info.ampm;
-							short = hr_info.short;
-							sub_label = 
-								  "<div class='minutes' style='width:" + sl4hd + "px'>" + short + ":00 " + ampm + "</div>"
-								+ "<div class='minutes' style='width:" + sl4hd + "px'>" + short + ":15 " + ampm + "</div>"
-								+ "<div class='minutes' style='width:" + sl4hd + "px'>" + short + ":30 " + ampm + "</div>"
-								+ "<div class='minutes' style='width:" + sl4hd + "px'>" + short + ":45 " + ampm + "</div>";
-									
-						} else {
-							sub_label = hr_info.full;
-						}
+						sub_label = me.getHourLabelFromHour(l, dist);
 						
 					} else  if (tickUnit == "mo") {
 						// days starting with 1
 						sub_label = l + 1;
-					}
+					} else if (tickUnit == "ye") {
+						if (dist > 30){
+							// Jan, Feb, Mar...
+							sub_label = "&nbsp;" + TG_Date.monthNamesAbbr[l+1];
+						} else {
+							// month abbrevs: J, F, M...
+							sub_label = "&nbsp;" + TG_Date.monthNamesLet[l+1];
+						}
+					}	
 				}
 				
 				sub_labels += "<div class='timeglider-tick-sub-label' style='left:" + lpos + "px;width:" + dist + "px'>" + sub_label + "</div>";
@@ -1324,17 +1319,38 @@ tg.TG_PlayerView.prototype = {
 	
 	
 	getHourLabelFromHour : function (h24, width) {
-		var ampm = "", htxt = "", bagels = "";
 		
-		htxt = (h24 > 12) ? h24-12 : h24;
-		if (htxt == 0) htxt = 12;
-		
-		bagels = (width > 60) ? ":00" : "";
-		
-		ampm = (h24 > 11) ? " pm" : " am";
-		
-		return {full:htxt + bagels + ampm, short:htxt, ampm:ampm};
-	
+		var ampm = "", htxt = h24, bagels = "", sublabel = "";
+
+		if (width < 16) {
+			// no room for anything; will just be ticks
+			return '';
+		} else {
+			
+			if (h24 > 12) {
+				htxt = h24-12;
+			} else if (h24 == 0) {
+				htxt = 12;
+			} 	
+						
+			if (width > 30) { 
+				ampm = (h24 > 11) ? " pm" : " am";
+			} 
+			
+			if (width > 200) {
+				sl4hd = width/4 - 4;
+				
+				return "<div class='minutes' style='width:" + sl4hd + "px'>" + htxt + ":00 " + ampm + "</div>"
+				+ "<div class='minutes' style='width:" + sl4hd + "px'>" + htxt + ":15 " + ampm + "</div>"
+				+ "<div class='minutes' style='width:" + sl4hd + "px'>" + htxt + ":30 " + ampm + "</div>"
+				+ "<div class='minutes' style='width:" + sl4hd + "px'>" + htxt + ":45 " + ampm + "</div>";
+				
+			} else {
+				bagels = (width > 60) ? ":00" : "";
+				return htxt + bagels + ampm;
+			}
+		}
+
 	},
 
 	
