@@ -19,7 +19,7 @@
 /*
 ****************************************
 timeglider.TimelineView
-*****************p***********************
+****************************************
 */
 (function(tg){
 
@@ -1252,10 +1252,10 @@ tg.TG_PlayerView.prototype = {
     
 		if (dist > 5) {
 		
-			// As of Jan 29, 2012, no more Raphael
+			// As of Jan 29, 2012, no more Raphael!
 			
-			var c, l, xd, stk = '', 
-				ht = 10, downset = 20, 
+			var c, l, xd, stk = '', sl4hd = 0,
+				ht = 10, downset = 20, hr_info = {}, ampm = '',
 				lpos = 0;
 			
 			for (l = 0; l < tperu; l++) {
@@ -1265,7 +1265,22 @@ tg.TG_PlayerView.prototype = {
 				if (dist > 16) {
 					if (tickUnit == "da" && dist > 16) {
 						// hours starting with 0
-						sub_label = me.getHourLabelFromHour(l, dist);
+						hr_info = me.getHourLabelFromHour(l, dist);
+						
+						if (dist > 130) {
+							sl4hd = dist/4 - 4;
+							ampm = hr_info.ampm;
+							short = hr_info.short;
+							sub_label = 
+								  "<div class='minutes' style='width:" + sl4hd + "px'>" + short + ":00 " + ampm + "</div>"
+								+ "<div class='minutes' style='width:" + sl4hd + "px'>" + short + ":15 " + ampm + "</div>"
+								+ "<div class='minutes' style='width:" + sl4hd + "px'>" + short + ":30 " + ampm + "</div>"
+								+ "<div class='minutes' style='width:" + sl4hd + "px'>" + short + ":45 " + ampm + "</div>";
+									
+						} else {
+							sub_label = hr_info.full;
+						}
+						
 					} else  if (tickUnit == "mo") {
 						// days starting with 1
 						sub_label = l + 1;
@@ -1315,9 +1330,10 @@ tg.TG_PlayerView.prototype = {
 		if (htxt == 0) htxt = 12;
 		
 		bagels = (width > 60) ? ":00" : "";
+		
 		ampm = (h24 > 11) ? " pm" : " am";
 		
-		return htxt + bagels + ampm;
+		return {full:htxt + bagels + ampm, short:htxt, ampm:ampm};
 	
 	},
 

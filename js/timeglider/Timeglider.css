@@ -221,6 +221,17 @@
  background-image:url("img/subtick_highlight.png");
  background-repeat:no-repeat;
 }
+
+.timeglider-tick-sub-label .minutes {
+	height:12px;
+	font-size:9px;
+	color:#000;
+	float:left;
+	margin:0;
+	border-left:1px solid #FFF;
+	padding-left:4px;
+	margin-left:-3px;
+}
   
 .timeglider-handle {
 		position:absolute;
