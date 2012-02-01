@@ -1279,7 +1279,16 @@ tg.TG_PlayerView.prototype = {
 							// month abbrevs: J, F, M...
 							sub_label = "&nbsp;" + TG_Date.monthNamesLet[l+1];
 						}
-					}	
+					} else if (tickUnit == "de") {
+						if (dist > 44){
+							sub_label = serial + "" + l;
+						}
+					} else if (tickUnit == "ce") {
+						if (dist > 28){
+							sub_label = serial + "" + l + "0";
+						}
+					}
+					
 				}
 				
 				sub_labels += "<div class='timeglider-tick-sub-label' style='left:" + lpos + "px;width:" + dist + "px'>" + sub_label + "</div>";
