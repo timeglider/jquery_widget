@@ -262,7 +262,13 @@ tg.TG_Mediator = function (wopts, $el) {
 	
 				children.each(function(i){
 					field = keys[i],
-					value = $(this).text();
+					
+					if (field == "description"){
+						value = $(this).text();
+					} else {
+						value = $(this).html();
+					}
+					
 					// TODO: VALIDATE EVENT STUFF HERE
 	
 					row_obj[ field ] = value;
@@ -353,8 +359,9 @@ tg.TG_Mediator = function (wopts, $el) {
 
 
     /* 
-    TODO: turn to $each, adding to activeTimelines:
-    i.e. could be more than one 
+    now loads multiple initial timelines: make sure
+    to set the "top" attributes of timelines to make sure
+    they don't overlap when initially loaded
     */
     setInitialTimelines : function () {
         
@@ -403,7 +410,7 @@ tg.TG_Mediator = function (wopts, $el) {
 			me.setZoomLevel(40);
 		}
       
-      }, 
+    }, 
 
 
 	refresh : function () {
