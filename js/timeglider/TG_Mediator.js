@@ -357,20 +357,50 @@ tg.TG_Mediator = function (wopts, $el) {
     i.e. could be more than one 
     */
     setInitialTimelines : function () {
-        	
-		var me = this;
+        
+		var me = this,
+			initial_timelines = this.initial_timeline_id,
+			first_focus_id = "";
+			
+		// i.e. really, it's an array
+      	if (typeof initial_timelines == "object") {
+      		// set first timeline in array as one to focus on
+      		first_focus_id = this.initial_timeline_id[0];
+      		// make all specified ids active
+      		_.each(initial_timelines, function (id) {
+      			me.activeTimelines.push(id);
+      		});
+      		
+      	} else {
+      		// not an array: a string would be single id or ""
+      		tid = this.initial_timeline_id || this.sole_timeline_id;
+      		me.activeTimelines = [tid];
+      	}
+      	
       
-		var tid = this.initial_timeline_id || this.sole_timeline_id;
-      
-      	// !AUTH
       	if (timeglider.mode == "authoring") {
-      		this.setZoomLevel(40);
-      	} else if (tid) {
+      		// no timelines loaded right away
+      		me.setZoomLevel(40);
+      		
+      	} else if (first_focus_id) {
+      	
       		// we need to wait just a bit...
-      		// !TODO What is timeout for?? 
-			setTimeout(function () { MED.toggleTimeline(tid); }, 500);
+			setTimeout(function () { 
+				
+				// timeline on which to focus is first/only
+				var tl = me.timelineCollection.get(first_focus_id);
+				var tl_fd = new TG_Date(tl.get("focus_date"));
+			
+				me.setFocusDate(tl_fd);
+			
+				// resetting zoomLevel will refresh
+				me.setZoomLevel(tl.get("initial_zoom"));
+				
+			}, 500);
+			
 		} else {
-			this.setZoomLevel(40);
+			// could be no timelines to load
+			me.setZoomLevel(40);
 		}
       
       }, 
@@ -746,7 +776,7 @@ tg.validateOptions = function (widget_settings) {
     	data_source:{type:"url"}, 
     	basic_fontsize:{type:"number", min:9, max:100}, 
     	mouse_wheel:{type:"string", possible:["zoom","pan"]}, 
-    	initial_timeline_id:{type:"string"},
+    	initial_timeline_id:{type:"mixed"},
     	icon_folder:{type:"string"},
     	show_footer:{type:"boolean"},
     	display_zoom_level:{type:"boolean"},
@@ -813,6 +843,9 @@ tg.validateOptions = function (widget_settings) {
 					/// TODO test for pattern for color, including "red", "orange", etc
 				break;
 
+				case "mixed":
+					/// TODO test for pattern for color, including "red", "orange", etc
+				break;
 			}
 		}
 	}); // end each

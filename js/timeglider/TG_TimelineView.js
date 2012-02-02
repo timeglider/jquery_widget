@@ -1820,16 +1820,16 @@ tg.TG_PlayerView.prototype = {
 	* @param tick {Object} contains serial, time-unit, and more info
 	*/
 	appendTimelines : function (tick) {
-      
+      		
 			var active = MED.activeTimelines, 
 			    $tl, tl, tl_top, stuff = "",
 			    me = this;
 			    
 			// FOR EACH TIMELINE...
 			for (var a=0; a<active.length; a++) {
-
+				
 				tl = MED.timelineCollection.get(active[a]).attributes;
-        
+        		debug.log("tl id:", tl.id);
 				// get the events from timeline model hash
 				idArr = this.getTimelineEventsByTick({tick:tick, timeline:tl});
 				stuff = this.compileTickEventsAsHtml(tl, idArr, tick.serial, "append");
