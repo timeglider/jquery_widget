@@ -400,13 +400,16 @@
             	var high_title = 0;
             	var high_img = 0;
             	var last_lev = 0;
+            	var add_to = 0;
             	
             	high_title = Math.ceil((block.shape.ev_ht) / lev_ht);
             	            	
             	// TITLE 
 	            for (var k=1; k<=high_title; k++) {
 	            	last_lev =  level_num + k;
-	            	tree[last_lev].push(block);  
+	            	if (last_lev <= tree_levels) {
+	            		tree[last_lev].push(block);
+	            	}  
 	            }
 	            
 	            high_img = Math.ceil((block.shape.img_ht) / lev_ht);
@@ -415,7 +418,10 @@
 	            
 	            // IMAGE
 	            for (var i=1; i<=high_img; i++) { 
-	            	tree[last_lev + i].push(img_blk);  
+	            	add_to = last_lev + i;
+	            	if (add_to <= tree_levels) {
+	            		tree[add_to].push(img_blk);
+	            	}  
 	            }
 	            
             	
@@ -424,8 +430,14 @@
             	
             	// find out how many (lev_ht px) levels (bricks) the event is high
             	bricks_high = Math.ceil(block.height / lev_ht);
-	            for (var k=1; k<=bricks_high; k++) { 
-	            	 tree[level_num + k].push(block);  
+	            for (var k=1; k<=bricks_high; k++) {
+	            	//
+	            	add_to = level_num + k;
+	            	if (add_to <= tree_levels) {
+	            		tree[level_num + k].push(block); 
+	            	} else {
+	            		debug.log("too many levels!");
+	            	}
 	            }
             
             

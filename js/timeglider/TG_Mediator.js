@@ -261,12 +261,12 @@ tg.TG_Mediator = function (wopts, $el) {
 	       		row_obj = {};
 	
 				children.each(function(i){
-					field = keys[i],
+					field = keys[i];
 					
 					if (field == "description"){
-						value = $(this).text();
-					} else {
 						value = $(this).html();
+					} else {
+						value = $(this).text();
 					}
 					
 					// TODO: VALIDATE EVENT STUFF HERE
