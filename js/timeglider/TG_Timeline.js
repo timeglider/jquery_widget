@@ -113,7 +113,8 @@
 				img_src = imgTesting.src = img.src;
 		
 			imgTesting.onerror= delegatr(imgTesting, function () {
-				// debug.log("error loading image:" + img_src);
+				debug.log("error loading image:" + img_src);
+				that.set({"image":""});
 			});
 		
 			imgTesting.onload = delegatr(imgTesting, function () {

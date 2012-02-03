@@ -128,7 +128,6 @@
         "low_threshold": "1",
         "high_threshold": "60",
         "importance": "38",
-        "image_class": "bar",
         "image":"img/tests/idaho.jpg"
     }
     ,
@@ -208,7 +207,6 @@
         "low_threshold": "1",
         "high_threshold": "60",
         "importance": "32",
-        "image_class": "bar",
         "image":"img/tests/idaho.jpg"
     }
     ,
@@ -450,7 +448,6 @@
         "high_threshold": "60",
         "importance": "30",
 		"image":"http://imnh.isu.edu/digitalatlas/geog/explore/images/1863.jpg",
-		"image_class":"bar",
 		"link":[{"url":"http://en.wikipedia.org/wiki/JScript", "label":"wikipedia"}, {"url":"http://nytimes.com", "label":"NYT"}],
         "ypix": "0",
         "slug":""
@@ -596,7 +593,6 @@
         "low_threshold": "1",
         "high_threshold": "60",
         "importance": "54",
-        "image_class": "bar",
         "image":"img/tests/idaho.jpg"
     }
     ,
@@ -1156,7 +1152,6 @@
         "low_threshold": "1",
         "high_threshold": "60",
         "importance": "25",
-        "image_class": "bar",
         "image":"img/tests/idaho.jpg"
     }
     ,

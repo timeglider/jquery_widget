@@ -106,18 +106,16 @@
 			span_selector_class, 
 			span_div, 
 			img = '', 
-			icon = ''
+			icon = '',
 			html = '', 
-			
-			// in case the timeline is inverted
 			south_padding = 0,
-			
 			b = {},
 			blength = this.blocks.length,
 			b_span_color = "",
 			title_adj = 0,
-			
 			highest = 0,
+			img_scale = 100,
+			img_style = "",
 			guageHighest = function(n) {
 				highest = (n > highest) ? n : highest;
 			};
@@ -125,6 +123,8 @@
 		for (var i=0; i<blength; i++) {
 	  		b = this.blocks[i];
 			title_adj = 0;
+			img_scale = 100;
+			img_style = "";
 			
 	    	// full sweep or just a tick added left or right
 			if (b.tickScope == tickScope) {

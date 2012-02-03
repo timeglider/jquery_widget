@@ -23,7 +23,12 @@
    also, inline image rendering a bit improved with a dual blocking system in TG_Org now,
    the title is considered one block (with one width), and the image is considered another
    block (usually narrower). Things fit a little tighter now.
-   
+
+03 Feb 2012
+-- Ran down some Closure Compiler detected errors, mostly vars placed in global space;
+-- if image loading produces error, image in model is deleted
+-- in .min file, jquery.mousewheel is now being hand-placed... getting garfed in double
+   minification
 
    
    

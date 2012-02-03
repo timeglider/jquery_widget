@@ -281,29 +281,26 @@ tg.TG_PlayerView = function (widget, mediator) {
 	
 	this.setPanButton($(".timeglider-pan-right"),-30);
 	this.setPanButton($(".timeglider-pan-left"),30);
-	
   
 	$(this._views.TRUCK)
 	
 		// doubleclicking will be used by authoring mode
 		.bind('dblclick', function(e) {
-		
-			MED.registerUIEvent({name:"dblclick", event:e, dimensions:me.dimensions});
-				
+			MED.registerUIEvent({name:"dblclick", event:e, dimensions:me.dimensions});		
 		})
 		
-			
 		.bind('mousewheel', function(event, delta) {
-			      var dir = Math.ceil(-1 * (delta * 3));
-						var zl = MED.getZoomLevel();
-						MED.setZoomLevel(zl += dir);
-			      return false;    
+			var dir = Math.ceil(-1 * (delta * 3));
+			var zl = MED.getZoomLevel();
+			MED.setZoomLevel(zl += dir);
+			
+			return false;    
 		}); // end TRUCK EVENTS
 
 
 
 	function registerTicksSpeed () {
-		
+		//!TODO: for gliding
 	}
 	
 	$(TICKS)
@@ -701,7 +698,7 @@ tg.TG_PlayerView.prototype = {
   */
   pan : function (dir) {
 
-    var d = dir || 20;
+    var d = dir || 20,
     	$t = $(TICKS),
     	newPos = $t.position().left + d;
         
@@ -715,7 +712,7 @@ tg.TG_PlayerView.prototype = {
   registerTitles : function () {
 		
 		var toff, w, tw, sw, pos, titx, 
-		  $elem, $env, env, tb, ti, relPos, tbWidth,
+		  $elem, $env, env, $tb, $ti, relPos, tbWidth,
 		  mo = $(CONTAINER).offset().left,
 		  trackTB = true;
 		  
@@ -804,7 +801,7 @@ tg.TG_PlayerView.prototype = {
 	/* FILTER BOX SETUP */
 	setupFilter : function () {
 	
-		var me=this, $bt = 
+		var me=this, $bt = {},
 
 		$filter = $.tmpl(me._templates.filter_modal,{}).appendTo(me._views.CONTAINER);
 		
@@ -1081,7 +1078,7 @@ tg.TG_PlayerView.prototype = {
 	*/
 	
 	getEventDateLine: function(ev) {
-		var startDateF = "<span class='timeglider-dateline-startdate'>" + ev.startdateObj.format('', true, MED.timeOffset) + "</span>";
+		var startDateF = "<span class='timeglider-dateline-startdate'>" + ev.startdateObj.format('', true, MED.timeOffset) + "</span>",
     		endDateF = "";
     	
     	if (ev.span == true) {
@@ -1329,7 +1326,7 @@ tg.TG_PlayerView.prototype = {
 	
 	getHourLabelFromHour : function (h24, width) {
 		
-		var ampm = "", htxt = h24, bagels = "", sublabel = "";
+		var ampm = "", htxt = h24, bagels = "", sublabel = "", sl4hd = 0;
 
 		if (width < 16) {
 			// no room for anything; will just be ticks
@@ -1681,7 +1678,7 @@ tg.TG_PlayerView.prototype = {
 			active = MED.activeTimelines,
 			ticks = MED.ticksArray,
 			borg = '',
-			$title, $ev, 
+			$title, $ev, $tl,
 			evid, ev,
 			stuff = '', 
 			cx = me.dimensions.container.centerx,
@@ -1821,7 +1818,7 @@ tg.TG_PlayerView.prototype = {
 	*/
 	appendTimelines : function (tick) {
       		
-			var active = MED.activeTimelines, 
+			var active = MED.activeTimelines, idArr = [],
 			    $tl, tl, tl_top, stuff = "",
 			    me = this;
 			    
@@ -1858,13 +1855,15 @@ tg.TG_PlayerView.prototype = {
 		var posx = 0,
 			cx = this.dimensions.container.centerx,
 			expCol = tl.display,
-			ht = $tl.height();
+			ht = 0,
 			stuff = "",
 			foSec = MED.startSec, 
 			spp = MED.getZoomInfo().spp,
 			zl = MED.getZoomInfo().level,
 			buffer = 20, img_ht = 0,
 			borg = tl.borg,
+			ev = {},
+			impq,
 			block_arg = "sweep"; // default for initial load
 			    
 		if (btype == "append") {
@@ -2083,9 +2082,9 @@ tg.TG_PlayerView.prototype = {
       	  				$modal.find("#insert").append("<div id='map_modal_map'></div>");
       	  				
       	  				mapZoom = ev.map.zoom || 12;
-      	  				llarr = String(ev.map.latlong).split(",");
+      	  				var llarr = String(ev.map.latlong).split(",");
       	  				
-      	  				map_ll = new google.maps.LatLng(parseFloat(llarr[0]), parseFloat(llarr[1]));
+      	  				var map_ll = new google.maps.LatLng(parseFloat(llarr[0]), parseFloat(llarr[1]));
 						map_options = {
 							zoom:mapZoom,
 							center: map_ll,

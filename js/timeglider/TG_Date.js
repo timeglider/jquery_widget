@@ -309,8 +309,8 @@ timeglider.TG_Date = {};
   * RELATES TO TICK WIDTH: SPECIFIC TO TIMELINE VIEW
   */
   TG_Date.getMonthWidth = function(mo,ye,tickWidth) {
-
-  	var dayWidth = t / 28;
+	
+  	var dayWidth = tickWidth / 28;
   	var ad;
   	var nd = 28;
 
@@ -318,7 +318,7 @@ timeglider.TG_Date = {};
   		case 1: case 3: case 5: case 7: case 8: case 10: case 12: ad = 3; break;
   		case 4: case 6: case 9: case 11: ad = 2; break;
   		// leap year
-  		case 2: if (TG_Date.isLeapYear(yr) == true) { ad = 1; } else { ad=0; }; break;
+  		case 2: if (TG_Date.isLeapYear(ye) == true) { ad = 1; } else { ad=0; }; break;
 		
   	}
 
@@ -735,7 +735,7 @@ timeglider.TG_Date = {};
 		25    YyYyYyY-MM-DD HH:MM:SS-ZH:ZM
 		*/
 		
-		var ye, mo, da, ho, mi, se, bce, bce_ye,
+		var ye, mo, da, ho, mi, se, bce, bce_ye, tz_pm, tz_ho, tz_mi,
 			mo_default = 1,
 			da_default = 1,
 			ho_default = 12,
@@ -835,7 +835,7 @@ timeglider.TG_Date = {};
 		if (!date_str) return false; // date needs some value
 		var reg = /^(\-?\d+|today|now) ?(bce?)?-?(\d{1,2})?-?(\d{1,2})?/,
 			valid = "",
-			match = date_str.match(reg);
+			match = date_str.match(reg),
 			zb = TG_Date.zeroButt;
 			
 		if (match) {
