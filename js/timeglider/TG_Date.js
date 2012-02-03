@@ -88,7 +88,7 @@ timeglider.TG_Date = {};
    
    		// SERIAL SECONDS
 		if (typeof(strOrNum) == "number") {
-      	  
+      	  	
 			dateStr = isoStr = TG_Date.getDateFromSec(strOrNum);
 			gotSec = (strOrNum + offsetSeconds);
 		
@@ -110,8 +110,7 @@ timeglider.TG_Date = {};
 
 			// !TODO: translate strings like "today" and "now"
 			// "next week", "a week from thursday", "christmas"
-	    	
-	    	      		
+	       		
       		var parsed =  TG_Date.parse8601(dateStr);
       		
       		
@@ -751,8 +750,8 @@ timeglider.TG_Date = {};
 			 	}
 			},
 			//       YyYyYyY    MM          DD
-			reg = VALID_DATE_PATTERN,
-			rx = str.match(reg);
+			reg = VALID_DATE_PATTERN;
+			var rx = str.match(reg);
 
     	// picks up positive OR negative (bce)	
 		ye = parseInt(rx[1]);

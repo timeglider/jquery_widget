@@ -147,7 +147,6 @@
 		defaults: {
 			// no other defaults?
 			"initial_zoom":25,
-			"focus_date":"today",
 			"timezone":"00:00",
 			"title":  "Untitled",
 			"events": [],
@@ -186,8 +185,6 @@
 			tdata.hasImagesAbove = false;
 			tdata.startSeconds = [];
 			tdata.endSeconds = [];
-			
-			tdata.focusDateObj = new TG_Date(tdata.focus_date);
 			
 			tdata.size_importance = (tdata.size_importance == "false")? false : true;
 			
@@ -347,8 +344,19 @@
 				tdata.bounds = {"first": _.first(sorted), "last":_.last(sorted) };
 				
 				tdata.has_events = true;
+				
+				var date_from_sec = TG_Date.getDateFromSec(tdata.bounds.first);
+				debug.log("date from sec");
+				
+				tdata.focus_date = tdata.focus_date || date_from_sec;
+				tdata.focusDateObj = new TG_Date(tdata.focus_date);
+				debug.log("tdata.focusDateObj:", tdata.focusDateObj);
+				
 			} else {
 				tdata.has_events = false;
+				// why focusing here!
+				tdata.focus_date = tdata.focus_date || "today";
+				debug.log("hello today 357?");
 			}
 			
 			
@@ -383,7 +391,9 @@
 		
 		initialize: function(attrs) { 
 			var processed = this._chewTimeline(attrs);
-						
+			debug.log("processed:", processed);
+			
+			
 			this.set(processed);
 			
 			this.bind("change", function() {

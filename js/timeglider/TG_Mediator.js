@@ -221,6 +221,7 @@ tg.TG_Mediator = function (wopts, $el) {
 		$.publish("mediator.timelineTitleClick", {timeline_id:timeline_id});
 	},
 	  
+	  
 	/*
 	*  getTableTimelineData
 	*  @param table_id {string} the html/DOM id of the table
@@ -378,13 +379,17 @@ tg.TG_Mediator = function (wopts, $el) {
       			me.activeTimelines.push(id);
       		});
       		
-      	} else {
+      	} else if (initial_timelines.length > 0){
       		// not an array: a string would be single id or ""
-      		tid = this.initial_timeline_id || this.sole_timeline_id;
-      		me.activeTimelines = [tid];
+      		first_focus_id = this.initial_timeline_id || this.sole_timeline_id;
+      		me.activeTimelines = [first_focus_id];
+      	} else if (this.timelineCollection.length > 0) {
+      		// in case there is no initial id
+      		first_focus_id = this.timelineCollection.pluck("id")[0];
+      		me.activeTimelines = [first_focus_id];
       	}
       	
-      
+      	
       	if (timeglider.mode == "authoring") {
       		// no timelines loaded right away
       		me.setZoomLevel(40);
@@ -396,14 +401,15 @@ tg.TG_Mediator = function (wopts, $el) {
 				
 				// timeline on which to focus is first/only
 				var tl = me.timelineCollection.get(first_focus_id);
-				var tl_fd = new TG_Date(tl.get("focus_date"));
+				var tl_fd = tl.get("focusDateObj");
 			
 				me.setFocusDate(tl_fd);
+				debug.log("focus date of loaded timeline:", tl_fd);
 			
 				// resetting zoomLevel will refresh
 				me.setZoomLevel(tl.get("initial_zoom"));
 				
-			}, 500);
+			}, 1000);
 			
 		} else {
 			// could be no timelines to load
