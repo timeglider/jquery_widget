@@ -42,6 +42,7 @@
 		
 		// defaults!
 		options : { 
+			base_namespace:"tg",
 			timezone:"00:00",
 			initial_focus:tg.TG_Date.getToday(), 
 			editor:'none', 
@@ -125,8 +126,11 @@
 			
 				tg.TG_Date.setCulture(this.options.culture);
 			
+			
+			
 				MED = new tg.TG_Mediator(this.options, this.element);
 				timelinePlayer = new tg.TG_PlayerView(this, MED);
+				
 			
 				// after timelinePlayer is created this stuff can be done
 				MED.setFocusDate(new TG_Date(this.options.initial_focus));

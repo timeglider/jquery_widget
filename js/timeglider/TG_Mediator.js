@@ -22,7 +22,8 @@ var MED = {},
 	TG_Date = tg.TG_Date,
 	options = {},
 	$ = jQuery,
-	$container = {};
+	$container = {},
+	container_name = '';
       
       
 
@@ -31,6 +32,9 @@ tg.TG_Mediator = function (wopts, $el) {
     this.options = options = wopts;
     
    	$container = $el;
+   	
+   	container_name = wopts.base_namespace + "#" + $container.attr("id");
+
 
     // these relate to the display ------ not individual timeline attributes
     this._focusDate = {};
@@ -94,7 +98,7 @@ tg.TG_Mediator = function (wopts, $el) {
 			// !TODO open event, bring to zoom
 			this.focusedEvent = ev;
 			this.setFocusDate(ev.startdateObj)
-			$.publish("mediator.focusToEvent");
+			$.publish(container_name + ".mediator.focusToEvent");
 		},
 		
 
@@ -218,7 +222,7 @@ tg.TG_Mediator = function (wopts, $el) {
 	},
 	
 	timelineTitleClick: function(timeline_id) {
-		$.publish("mediator.timelineTitleClick", {timeline_id:timeline_id});
+		$.publish(container_name + ".mediator.timelineTitleClick", {timeline_id:timeline_id});
 	},
 	  
 	  
@@ -341,7 +345,7 @@ tg.TG_Mediator = function (wopts, $el) {
 		if (a && b) {
 	    	this.setInitialTimelines();
 	   
-	    	$.publish("mediator.timelineDataLoaded");
+	    	$.publish(container_name + ".mediator.timelineDataLoaded");
 		}
 	},
 	
@@ -354,7 +358,7 @@ tg.TG_Mediator = function (wopts, $el) {
       this.timelineCollection.add(obj);
       
       // MAY NOT NEED THIS WITH Backbone Collection change-binding
-      $.publish("mediator.timelineListChangeSignal");
+      $.publish(container_name + ".mediator.timelineListChangeSignal");
     },
     
 
@@ -421,7 +425,7 @@ tg.TG_Mediator = function (wopts, $el) {
 
 	refresh : function () {
 		this.startSec = this._focusDate.sec;
-		$.publish("mediator.refreshSignal");       
+		$.publish(container_name + ".mediator.refreshSignal");       
     },
 
     
@@ -429,7 +433,7 @@ tg.TG_Mediator = function (wopts, $el) {
         this.ticksReady = bool;
         
         if (bool === true) { 
-          $.publish("mediator.ticksReadySignal");
+          $.publish(container_name + ".mediator.ticksReadySignal");
         }
     },
 
@@ -511,8 +515,8 @@ tg.TG_Mediator = function (wopts, $el) {
 			if (z != this._zoomLevel) {
 			    this._zoomLevel = z;
 			    this._zoomInfo = tg.zoomTree[z];
-			    $.publish("mediator.zoomLevelChange");
-			    $.publish("mediator.scopeChange");
+			    $.publish(container_name + ".mediator.zoomLevelChange");
+			    $.publish(container_name + ".mediator.scopeChange");
 			    return true
 			} else {
 		    	return false;
@@ -553,7 +557,7 @@ tg.TG_Mediator = function (wopts, $el) {
 				// foc = new TG_Date(fdSec);
 				////////////////////////////
 				
-				$.publish("mediator.dblclick", {date:clickDate});
+				$.publish(container_name + ".mediator.dblclick", {date:clickDate});
 				
 			break;
 		}
@@ -585,7 +589,7 @@ tg.TG_Mediator = function (wopts, $el) {
 	
 				if (icon == "all") {
 					this.filters.legend = [];
-					$.publish("mediator.legendAll");
+					$.publish(container_name + ".mediator.legendAll");
 				} else {
 										
 					if ($.inArray(icon, this.filters.legend) == -1) {
@@ -607,8 +611,8 @@ tg.TG_Mediator = function (wopts, $el) {
 		} // end switch
    		
    		
-        $.publish("mediator.filtersChange"); 
-        $.publish("mediator.scopeChange");
+        $.publish(container_name + ".mediator.filtersChange"); 
+        $.publish(container_name + ".mediator.scopeChange");
         
            
         this.refresh();
@@ -626,8 +630,8 @@ tg.TG_Mediator = function (wopts, $el) {
 		this._ticksOffset = newOffset;
 		
 		// In other words, ticks are being dragged!
-		$.publish("mediator.ticksOffsetChange");
-		$.publish("mediator.scopeChange");
+		$.publish(container_name + ".mediator.ticksOffsetChange");
+		$.publish(container_name + ".mediator.scopeChange");
 	},
 
 
@@ -679,7 +683,7 @@ tg.TG_Mediator = function (wopts, $el) {
 		}
 		
 		// this.ticksArrayChange.broadcast();
-		$.publish( "mediator.ticksArrayChange" );
+		$.publish(container_name + ".mediator.ticksArrayChange");
 		
 		return obj.serial;
 	},
@@ -718,7 +722,7 @@ tg.TG_Mediator = function (wopts, $el) {
 			// this will change the menu list/appearance
 		}
 		
-		$.publish( "mediator.activeTimelinesChange" );
+		$.publish(container_name + ".mediator.activeTimelinesChange");
 	
 	},
      

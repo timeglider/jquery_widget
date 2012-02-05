@@ -33,6 +33,7 @@ var TG_Date = tg.TG_Date,
 	t1Left = 0,
 	t2Left = 0,
 	ticksSpeedIv,
+	container_name = '',
 	$ = jQuery, 
 	intervals ={}, 
 	WIDGET_ID = "", 
@@ -56,10 +57,12 @@ tg.TG_PlayerView = function (widget, mediator) {
 		// vars declared in closure above
 		MED = mediator;
 		options = MED.options;
-		// core identifier to "uniquify" the container
+				// core identifier to "uniquify" the container
 		PL = "#" + widget._id;
+		
 		WIDGET_ID = widget._id;
-      	    
+      	container_name = options.base_namespace + "#" + WIDGET_ID;
+
 
 	/*  references specific to the instance (rather than timeglider) so
 		one can have more than one instance of the widget on a page */ 	      
@@ -386,37 +389,34 @@ tg.TG_PlayerView = function (widget, mediator) {
 	});
 	// END TICKS CHAIN!!
 	
-	  
- 
-
+	
 	// TODO: make function displayCenterline()
 	// TODO: simply append a centerline template rather than .css'ing it!
 	me.setCenterline();
 	
 	
-	
-	
 	/* PUB-SUB "LISTENERS" SUBSCRIBERS */
  
-	$.subscribe("mediator.ticksOffsetChange", function () {
+	$.subscribe(container_name + ".mediator.ticksOffsetChange", function () {
 		me.tickHangies();
 		me.registerDragging();
 		me.registerTitles();
 	});
 	
-	$.subscribe("mediator.focusToEvent", function () {
+	$.subscribe(container_name + ".mediator.focusToEvent", function () {
 		// mediator takes care of focusing date
 		var ev = MED.focusedEvent;
 	});
 
-	$.subscribe("mediator.zoomLevelChange", function () {
+
+	$.subscribe(container_name + ".mediator.zoomLevelChange", function () {
 		
 		me.tickNum = 0;
 		me.leftside = 0;
 		
 		var zl = MED.getZoomLevel();
 		
-		// if the slider isn't already at the given value change it
+		// if the slider isn't already at the given value change in
 		$(me._views.SLIDER).slider("value", me.invSliderVal(zl));
 		
 		me.displayZoomLevel(zl);
@@ -426,7 +426,7 @@ tg.TG_PlayerView = function (widget, mediator) {
 	});
 	
 	
-	$.subscribe("viewer.rendered", function () {
+	$.subscribe(container_name + ".viewer.rendered", function () {
 		// do things necessary after view has been
 		// if you want to hide either titles or icons:
 		// $(".timeglider-event-icon").hide();
@@ -438,7 +438,7 @@ tg.TG_PlayerView = function (widget, mediator) {
 	/// This happens on a TOTAL REFRESH of 
 	/// ticks, as when zooming; panning will load
 	/// events of active timelines per tick	
-	$.subscribe("mediator.ticksReadySignal", function (b) {
+	$.subscribe(container_name + ".mediator.ticksReadySignal", function (b) {
 		if (MED.ticksReady === true) {
 			me.freshTimelines();
 		} 
@@ -450,7 +450,7 @@ tg.TG_PlayerView = function (widget, mediator) {
     	possibly different timeline/legend/etc parameters
     	! The only view method that responds directly to a model refresh()
 	*/
-	$.subscribe("mediator.refreshSignal", function () {
+	$.subscribe(container_name + ".mediator.refreshSignal", function () {
 	  
   		me.tickNum = 0;
   		me.leftside = 0;
@@ -461,7 +461,7 @@ tg.TG_PlayerView = function (widget, mediator) {
 
 	// adding to or removing from ticksArray
 	// DORMANT: necessary?
-	$.subscribe( 'mediator.ticksArrayChange', function () {
+	$.subscribe(container_name + ".mediator.ticksArrayChange", function () {
 		/*
     	SCAN OVER TICKS FOR ANY REASON?
 		*/
@@ -470,13 +470,13 @@ tg.TG_PlayerView = function (widget, mediator) {
 	
 	// listen for focus date change
 	// mainly if date is zipped-to rather than dragged
-	$.subscribe("mediator.focusDateChange", function () {
+	$.subscribe(container_name + ".mediator.focusDateChange", function () {
 		this.displayFocusDate();
 	});
 	
 	
 	// CREATE TIMELINES MENU
-	$.subscribe("mediator.timelineDataLoaded", function (arg) {
+	$.subscribe(container_name + ".mediator.timelineDataLoaded", function (arg) {
 	
 		$(".timeglider-loading").fadeOut(500);  
 		me.buildSettingsMenu();
@@ -485,7 +485,7 @@ tg.TG_PlayerView = function (widget, mediator) {
 	});
 	
 
-	$.subscribe("mediator.activeTimelinesChange", function () {
+	$.subscribe(container_name + ".mediator.activeTimelinesChange", function () {
 		
 		$(me._views.TIMELINE_MENU_UL + " li").each(function () {
 			
@@ -499,14 +499,12 @@ tg.TG_PlayerView = function (widget, mediator) {
 	});
 	
 	
-	$.subscribe("mediator.filterChange", function () {
+	$.subscribe(container_name + ".mediator.filterChange", function () {
     	// refresh is done inside MED -- no need to refresh here
 	});
 	/* END PUB-SUB SUBSCRIBERS */
 
 
-
-	
 
 	/// TESTING /////
 	
@@ -801,18 +799,20 @@ tg.TG_PlayerView.prototype = {
 	/* FILTER BOX SETUP */
 	setupFilter : function () {
 	
-		var me=this, $bt = {},
-
-		$filter = $.tmpl(me._templates.filter_modal,{}).appendTo(me._views.CONTAINER);
+		var me = this, 
+			$bt = $(me._views.FILTER_BT),
+			$filter = $.tmpl(me._templates.filter_modal,{}).appendTo(me._views.CONTAINER);
 		
-		$filter.css("z-index", me.ztop++)
-  	            .position({
+		$filter.position({
           		    my: "right bottom",
         			    at: "right top",
         			    of: $(me._views.FILTER_BT),
-        			    offset: "-8, -12"
-              }).hide();
-              
+        			    offset: "-8, -30"
+              }).css("z-index", me.ztop++).hide();
+        
+        
+        
+           
         $(CONTAINER)
 	    .delegate(".timeglider-filter-box .close-button", "click", function () {
 			$filter.fadeOut();
@@ -878,9 +878,7 @@ tg.TG_PlayerView.prototype = {
 			$(me._views.TIMELINE_MENU).remove()
 		}	
 		
-		var $menu= $.tmpl(me._templates.timeline_list_modal,{}).appendTo(me._views.CONTAINER);		
-		
-			
+		var $menu= $.tmpl(me._templates.timeline_list_modal,{}).appendTo(me._views.CONTAINER);					
 		// each timeline's <li> item in menu
 		var menuItem = Backbone.View.extend({
 		
@@ -922,7 +920,7 @@ tg.TG_PlayerView.prototype = {
 	        		my: "right bottom",
 	      			at: "right top",
 	      			of: $(me._views.TIMELINE_LIST_BT),
-	      			offset: "-8, -12"
+	      			offset: "-8, -30"
 	    }).hide();
 	    
 	    
@@ -984,7 +982,7 @@ tg.TG_PlayerView.prototype = {
 	        		my: "right bottom",
 	      			at: "right top",
 	      			of: $(me._views.SETTINGS_BT),
-	      			offset: "-8, -12"
+	      			offset: "-8, -30"
 	    }).hide();
 	    
 	    
@@ -1608,7 +1606,7 @@ tg.TG_PlayerView.prototype = {
 	This is per-timeline...
 	*/
 	getTimelineEventsByTick : function (obj) {
-	  
+	  	  
 		var unit = obj.tick.unit,
 			serial = obj.tick.serial,
 			hash = MED.eventCollection.getTimelineHash(obj.timeline.timeline_id);
