@@ -12,7 +12,7 @@
 (function(tg){
 
   // standard "brick" height for placement grid
-  var lev_ht = tg.levelHeight = 12,
+  var lev_ht = tg.levelHeight = 8,
       // number of available levels for events
       tree_levels = 300,
       $ = jQuery,
@@ -150,35 +150,22 @@
 						if (b.image) {
 							
 							
-							if (b.image.display_class != "above") {
-
-								img_scale = (b.image.scale || 100) / 100;
-								
-								if (img_scale < 1) {
-									// 
-									// 
-									b.image_width = img_scale * b.image.width;
-									b.image_height = img_scale * b.image.height;
-									
-									img_style = " style='width:" + b.image_width + "px;height:auto' ";
-									
-									
-									
-								} else {
-									img_style = "";
-									b.image_width = b.image.width;
-									b.image_height = b.image.height;
-								}
-									title_adj = b.image_height + 4;
-								
+							if (b.shape && b.image.display_class == "inline") {
+								img_style = " style='width:" + b.shape.img_wi + "px;height:auto;top:-" + b.shape.img_ht + "px'";
 							} else {
-								// other classes of images don't scale here
 								img_style = "";
-							} 
+							}
+
+														 
+								
+							title_adj = 0; // b.shape.img_ht + 4;
+							
 							// different image classes ("bar", "above") are positioned
 							// using a separate $.each routine in TimelineView rather than
 							// being given absolute positioning here.
 							img = "<div class='timeglider-event-image-" + b.image.display_class + "'><img src='" + b.image.src + "' " + img_style + "></div>";
+							
+							
 						} else {
 							// no image
 							img = "";
@@ -289,7 +276,11 @@
    */
    var sortBlocksByImportance = function (a, b) {
       var x = b.importance, y = a.importance;
-      /// !TODO :: if missing or invalid, return -1
+      
+      if (a.image && (!b.image)){
+      	return -1;
+      }
+      
       return ((x < y) ? -1 : ((x > y) ? 1 : 0));
   };
 
@@ -312,13 +303,16 @@
         if (  
           ((b2.left >= b1.left) && (b2.left <= b1.right)) || 
           ((b2.right >= b1.left) && (b2.right <= b1.right)) || 
-          ((b2.right >= b1.right) && (b2.left <= b1.left)) || 
+          ((b2.right >= b1.right) && (b2.left <= b1.left)) ||
           ((b2.right <= b1.right) && (b2.left >= b1.left))  
             ) {
     
-          // So, some kind of left-right overlap is happening, but
+          // OK, some kind of left-right overlap is happening, but
           // there also has to be top-bottom overlap for collision
-          if (  ((b2.bottom <= b1.bottom) && (b2.bottom >= b1.top)) || ((b2.top <= b1.bottom) && (b2.top >= b1.top)) || ((b2.top == b1.bottom) && (b2.top == b1.top))  ) {
+          if (  ((b2.bottom <= b1.bottom) && (b2.bottom >= b1.top)) || 
+          		((b2.top <= b1.bottom) && (b2.top >= b1.top)) || 
+          		((b2.top == b1.bottom) && (b2.top == b1.top))
+          	  ) {
             // passes 2nd test -- it's overlapping!
             return true;
 
@@ -346,41 +340,47 @@
 			level_blocks = tree[level_num],
 			next_level = level_num + 1,
 			collision = false,
-			bricks_high = 2;
+			bricks_high = 2,
+			last_lev = 0,
+			shape_ol = false;
                 
-      if (level_blocks != undefined) {
+		if (level_blocks != undefined) {
         
-        // Go through all the blocks on that level...
-        for (var e=0; e < level_blocks.length; e++) {
-    
-          ol = isOverlapping(level_blocks[e],block);
-          // Add more isOverlapping checks here for taller blocks
-  
-          if (ol == true) {
-            // BUMP UP
-            if (me.pol === -1) {
-            	block.top -= lev_ht; 
-            	block.bottom -= lev_ht; 
-            } else {
-                // bottom side of timeline
-            	block.top += lev_ht; 
-            	block.bottom += lev_ht; 
-            }
-            // THEN CHECK @ NEXT LEVEL
-            
-            // *** RECURSIVE ***
-            checkAgainstLevel(block,next_level);
-            
-            collision = true;
-            // STOP LOOP -- there's a collision
-            break;
-          } 
-          } // end for
+			// Go through all the blocks on that level...
+			for (var e=0; e < level_blocks.length; e++) {
+			
+				ol = isOverlapping(level_blocks[e],block);
+				
+				if (block.shape) {
+					shape_ol = isOverlapping(level_blocks[e], block.shape);
+				}
+			
+				if (ol == true || shape_ol == true) {
+					// BUMP UP
+					if (me.pol === -1) {
+						// DEFAULT, bottom up
+						block.top -= lev_ht; 
+						block.bottom -= lev_ht; 
+					} else {
+						// "SOUTH" side, top town
+						block.top += lev_ht; 
+						block.bottom += lev_ht; 
+					}
+			
+					// THEN CHECK @ NEXT LEVEL
+					// *** RECURSIVE ***
+					checkAgainstLevel(block,next_level);
+			
+					collision = true;
+					
+					// STOP LOOP -- there's a collision
+					break;
+				} 
+			} // end for
 
-          if (collision == false) {
-          	
-          	
-            // buffer            
+		
+		if (collision == false) {
+          	          
             if (me.pol === -1) {
             	block.top -= block.fontsize; 
             } else {
@@ -390,62 +390,44 @@
           	// ADD TO TREE OF PLACED EVENTS
             // Place block in level
             level_blocks.push(block);
-         
-            
-            
-            //debug.log("fontsize vs height:", block.fontsize, block.height);
-            if (typeof block.shape === "object") {
-            	// ev_ht, img_ht
-            	// debug.log("bricks high:", block.shape.ev_ht);
-            	var high_title = 0;
-            	var high_img = 0;
-            	var last_lev = 0;
-            	var add_to = 0;
+       
+       		// find out how many (lev_ht px) levels (bricks) the event is high
+        	bricks_high = Math.ceil(block.height / lev_ht);
+            for (var k=1; k<=bricks_high; k++) {
+            	//
+            	add_to = level_num + k;
+            	if (add_to <= tree_levels) {
+            		tree[add_to].push(block); 
+            		last_lev = add_to;
+            	} else {
+            		debug.log("too many levels!");
+            	}
+            }
+                        // we have a "block shape"
+            // i.e. something like an image
+            if (block.shape) {
+            	var shp = block.shape;
             	
-            	high_title = Math.ceil((block.shape.ev_ht) / lev_ht);
-            	            	
-            	// TITLE 
-	            for (var k=1; k<=high_title; k++) {
-	            	last_lev =  level_num + k;
-	            	if (last_lev <= tree_levels) {
-	            		tree[last_lev].push(block);
-	            	}  
-	            }
-	            
-	            high_img = Math.ceil((block.shape.img_ht) / lev_ht);
-	            var img_rt = block.left + block.image.width + 32;
-            	var img_blk = {left:block.left, right:img_rt, top:block.top, bottom:block.bottom}
-	            
+            	var add_to = 0;
+	            var bricks_high_img = Math.ceil(shp.img_ht / lev_ht);
+	            var img_rt = block.left + shp.img_wi + 12;
+	            var img_blk_bottom = block.top -4;
+	            var img_blk_top = img_blk_bottom - shp.img_ht;
+            	
+				var img_blk = {left:block.left, right:img_rt, bottom:img_blk_bottom, top:img_blk_top};
+				
+				
 	            // IMAGE
-	            for (var i=1; i<=high_img; i++) { 
+	            for (var i=1; i<=bricks_high_img; i++) { 
+	 
 	            	add_to = last_lev + i;
+	            	
 	            	if (add_to <= tree_levels) {
 	            		tree[add_to].push(img_blk);
 	            	}  
 	            }
-	            
-            	
-            	
-            } else {
-            	
-            	// find out how many (lev_ht px) levels (bricks) the event is high
-            	bricks_high = Math.ceil(block.height / lev_ht);
-	            for (var k=1; k<=bricks_high; k++) {
-	            	//
-	            	add_to = level_num + k;
-	            	if (add_to <= tree_levels) {
-	            		tree[level_num + k].push(block); 
-	            	} else {
-	            		debug.log("too many levels!");
-	            	}
-	            }
-            
-            
-             }
-            
+            }             
 
-               			
-   			
           } // end if collision is false
         
       }  // end if level_blocks != undefined

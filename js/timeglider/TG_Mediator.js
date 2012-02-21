@@ -171,8 +171,9 @@ tg.TG_Mediator = function (wopts, $el) {
 	* !TODO: create option for XML
 	*/
 	loadTimelineData : function (src) {
-	var M = this; // model ref
-	// Allow to pass in either the url for the data or the data itself.
+		
+		var M = this; // model ref
+		// Allow to pass in either the url for the data or the data itself.
 	
 		if (src) {
 		  
@@ -190,9 +191,8 @@ tg.TG_Mediator = function (wopts, $el) {
 		    	// FROM NEW JSON
 				// getJSON is shorthand for $.ajax...
 		        $.getJSON(src, function (data) {
-		              M.parseTimelineData(data);
-		           }
-		        );
+		        	M.parseTimelineData(data);
+		        });
 		
 		    }// end [obj vs remote]
 		
@@ -298,7 +298,10 @@ tg.TG_Mediator = function (wopts, $el) {
 	* derived from data in loadTimelineData
 	*/
 	parseTimelineData : function (data) {
-	
+		
+		debug.log("parseTimelineData json...", data);
+		
+		
 		var M = this,
 			ct = 0,
 			dl = data.length, 
@@ -338,7 +341,6 @@ tg.TG_Mediator = function (wopts, $el) {
 	*/
 	tryLoading : function () {
 	
-		
 		var a = (this.imagesSized == this.imagesToSize),
 	    	b = (this.timelineDataLoaded == true);
 	
@@ -349,18 +351,21 @@ tg.TG_Mediator = function (wopts, $el) {
 		}
 	},
 	
+	
 
 
     /* Makes an indexed array of timelines */
     swallowTimeline : function (obj) {
-      this.sole_timeline_id = obj.id;
-   
-      this.timelineCollection.add(obj);
+    	debug.log("swallow:", obj);
+
+		this.sole_timeline_id = obj.id;
+		this.timelineCollection.add(obj);
       
-      // MAY NOT NEED THIS WITH Backbone Collection change-binding
-      $.publish(container_name + ".mediator.timelineListChangeSignal");
+		// MAY NOT NEED THIS WITH Backbone Collection change-binding
+		$.publish(container_name + ".mediator.timelineListChangeSignal");
     },
     
+
 
 
     /* 
@@ -408,7 +413,6 @@ tg.TG_Mediator = function (wopts, $el) {
 				var tl_fd = tl.get("focusDateObj");
 			
 				me.setFocusDate(tl_fd);
-				debug.log("focus date of loaded timeline:", tl_fd);
 			
 				// resetting zoomLevel will refresh
 				me.setZoomLevel(tl.get("initial_zoom"));

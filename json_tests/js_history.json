@@ -20,6 +20,49 @@
 },
 
 
+
+
+
+{
+"id":"jshist-mosaic",
+"title": "First Popular Browser: Mosaic",
+"description":"Mosaic is the web browser credited with popularizing the World Wide Web. It was also a client for earlier protocols such as FTP, NNTP, and gopher. Its clean, easily understood user interface, reliability, Windows port and simple installation all contributed to making it the application that opened up the Web to the general public. Mosaic was also the first browser to display images inline with text instead of displaying images in a separate window. While often described as the first graphical web browser, Mosaic was preceded by the lesser-known Erwise and ViolaWWW.",
+"startdate": "1993-01-23 12:00:00",
+"importance":"40",
+"date_limit":"da",
+"link":"http://en.wikipedia.org/wiki/Mosaic_%28web_browser%29",
+"icon":"square_yellow.png"
+},
+
+
+
+{
+"id":"jshist-nnavigator",
+"title": "Netscape Navigator v1.0",
+"description":"Netscape Navigator was a proprietary web browser that was popular in the 1990s. It was the flagship product of the Netscape Communications Corporation and the dominant web browser in terms of usage share, although by 2002 its usage had almost disappeared. This was primarily due to the increased usage of Microsoft's Internet Explorer web browser software, and partly because the Netscape Corporation (later purchased by AOL) did not.",
+"startdate": "1994-12-15 12:00:00",
+"importance":"45",
+"date_limit":"da",
+"link":"http://en.wikipedia.org/wiki/Mosaic_%28web_browser%29",
+"icon":"square_yellow.png"
+},
+
+
+
+{
+"id":"jshist-ie1",
+"title": "Internet Explorer v1.0",
+"description":"The first version of Internet Explorer (later referred to as Internet Explorer 1) made its debut on August 16, 1995. It was a reworked version of Spyglass Mosaic, which Microsoft had licensed, like many other companies initiating browser development, from Spyglass Inc. It came with Microsoft Plus! for Windows 95 and the OEM release of Windows 95, and was installed as part of the Internet Jumpstart Kit in Plus!. The Internet Explorer team began with about six people in early development. Internet Explorer 1.5 was released several months later for Windows NT and added support for basic table rendering. By including it free of charge on their OS, they did not have to pay royalties to Spyglass Inc., resulting in a lawsuit and a multi-million USD settlement.",
+"startdate": "1995-08-16 12:00:00",
+"date_limit":"da",
+"importance":"45",
+"link":"http://en.wikipedia.org/wiki/Internet_Explorer#Internet_Explorer_1",
+"icon":"square_yellow.png"
+},
+
+
+
+
 {
 "id":"jshist-whatwg",
 "title": "WHATWG Founded",
@@ -75,10 +118,10 @@
 
 {
 "id":"jshist-01",
-"title": "Mocha - Live Script",
+"title": "\"Ten Days in May\" Mocha is created",
 "description": "<img src='img/eich.jpg' style='float:left;margin-right:8px;margin-bottom:8px'>JavaScript was originally developed by Brendan Eich of Netscape under the name Mocha. LiveScript was the official name for the language when it first shipped in beta releases of Netscape Navigator 2.0 in September 1995",
 "startdate": "1995-05-01 12:00:00",
-"date_limit":"ho",
+"date_limit":"mo",
 "link":"http://en.wikipedia.org/wiki/JavaScript",
 "importance":"40",
 "icon":"flag_green.png"
@@ -93,7 +136,7 @@
 "date_limit":"mo",
 "link":"http://en.wikipedia.org/wiki/JavaScript",
 "importance":"55",
-"date_limit":"ho",
+"date_limit":"da",
 "icon":"star_purple.png",
 "image":"img/tests/js_thumb.jpg",
 "image_class":"inline"
@@ -142,7 +185,6 @@
 "startdate": "1998-01-01 12:00:00",
 "enddate": "2004-01-01 12:00:00",
 "date_limit":"mo",
-"span_color":"#FF0000",
 "link":"http://en.wikipedia.org/wiki/JavaScript",
 "importance":"52",
 "icon":"none"

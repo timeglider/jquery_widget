@@ -43,7 +43,7 @@ var TG_Date = tg.TG_Date,
     
 /*
 *  timeglider.TG_PlayerView
-*  For a few reasons, this is _not_ a backbone view, though
+*  This is _not_ a backbone view, though
 *  other elements inside of it are.
 *  
 *
@@ -185,6 +185,7 @@ tg.TG_PlayerView = function (widget, mediator) {
           "</div>")
 
     };
+    
     
     
     
@@ -1606,16 +1607,18 @@ tg.TG_PlayerView.prototype = {
 	This is per-timeline...
 	*/
 	getTimelineEventsByTick : function (obj) {
-	  	  
+	  	 	  	 
 		var unit = obj.tick.unit,
 			serial = obj.tick.serial,
 			hash = MED.eventCollection.getTimelineHash(obj.timeline.timeline_id);
-		  	
-		if (hash[unit][serial] && hash[unit][serial].length > 0) {
-			return hash[unit][serial];
-		} else {
-			return 0;
-		}
+				
+			if (hash[unit][serial] && hash[unit][serial].length > 0) {
+				// looking for an array of events...
+				return hash[unit][serial];
+			} else {
+				return 0;
+			}
+
 	},
 	
 	
@@ -1787,6 +1790,7 @@ tg.TG_PlayerView.prototype = {
 				ceiling = (tl.hasImagesAbove) ? tl_top - me.imageLaneHeight : tl_top;
 			}
 			
+			var beforeStuff = +new Date();
 			
 			if (expCol == "expanded") {
 				stuff = borg.getHTML("sweep", ceiling);
@@ -1794,7 +1798,14 @@ tg.TG_PlayerView.prototype = {
 			}
 			
 			if (stuff != "undefined") { $tl.append(stuff.html); }
-						
+			
+			
+			var afterStuff = +new Date();
+			// debug.log("compile time:", (afterStuff - beforeStuff));
+			
+			
+			
+					
 			setTimeout( function() {
 				me.registerEventImages($tl);
 			}, 3);
@@ -1858,7 +1869,7 @@ tg.TG_PlayerView.prototype = {
 			foSec = MED.startSec, 
 			spp = MED.getZoomInfo().spp,
 			zl = MED.getZoomInfo().level,
-			buffer = 20, img_ht = 0,
+			buffer = 20, img_ht = 0, img_wi = 0,
 			borg = tl.borg,
 			ev = {},
 			impq,
@@ -1880,7 +1891,7 @@ tg.TG_PlayerView.prototype = {
 
       		if (expCol == "expanded") {
 
-      		  impq = (tl.size_importance !== false) ? this.scaleToImportance(ev.importance, zl) : 1;
+				impq = (tl.size_importance !== false) ? this.scaleToImportance(ev.importance, zl) : 1;
 
       			ev.width = (ev.titleWidth * impq) + buffer;
       			ev.fontsize = this.basicFontSize * impq;
@@ -1896,16 +1907,30 @@ tg.TG_PlayerView.prototype = {
   				
   				var font_ht = Math.ceil(ev.fontsize);
   				
+				ev.height = (font_ht + 2);
+      			ev.top = (ht - font_ht);
+      			
+      			
 				if (ev.image && ev.image.display_class === "inline") {
 					var img_scale = (ev.image.scale || 100) / 100;
 					img_ht = (img_scale * ev.image.height) + 2;
-					ev.width = (ev.image.width > ev.width) ? ev.image.width : ev.width;
-					ev.shape = {"ev_ht":font_ht, "img_ht":img_ht + 32};
-				} 
+					img_wi = (img_scale * ev.image.width) + 2;
+					// !TODO 
+					// THIS NEEDS TO BE REVERSABLE WITH POLARITY
+					ev.shape = {
+						"img_ht":img_ht, 
+						"img_wi":img_wi, 
+						"top": (ev.top - img_ht), 
+						"bottom": ev.top - 4, 
+						"left": ev.left, 
+						"right":ev.left + img_wi
+					};
+					
+				} else {
+					ev.shape = null;
+				}
 				
-				ev.height = font_ht + img_ht;
-      			ev.top = ht - ev.height;
-      
+				
             	// block_arg is either "sweep" for existing ticks
             	// or the serial number of the tick being added by dragging
       			borg.addBlock(ev, block_arg);

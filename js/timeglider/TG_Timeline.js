@@ -56,7 +56,7 @@
 	
 		defaults: {
 			"title":  "Untitled"
-		},
+	},
 	
 	
 	initialize: function(ev) { 
@@ -392,8 +392,6 @@
 		
 		initialize: function(attrs) { 
 			var processed = this._chewTimeline(attrs);
-			debug.log("processed:", processed);
-			
 			
 			this.set(processed);
 			
