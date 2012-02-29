@@ -1,12 +1,70 @@
 [
 {
-"id":"jshist",
+"id":"js_history",
 "title":"A little history of JavaScript",
 "description":"Mainly, showing the emergence of different JS libraries.",
-"focus_date":"1996-07-01 12:00:00",
+"focus_date":"1996-08-20 12:00:00",
 "timezone":"-07:00",
-"initial_zoom":"37",
+"initial_zoom":"40",
 "events":[
+
+
+
+
+
+{
+"id":"jshist-Lambda",
+"title": "Lambda Calculus",
+"description":"Created by the man who coined the term 'Artificial Intelligence', John McCarthy, Lisp was initially only described in an academic paper. The langauge was first implemented in hardware in March of 1960 on an IBM 704.",
+"startdate": "1936-07-01 12:00:00",
+"high_threshold":44,
+"importance":"40",
+"link":"http://en.wikipedia.org/wiki/Lisp_(programming_language)",
+"date_display":"ye",
+"icon":"triangle_green.png"
+},
+
+
+
+{
+"id":"jshist-lisp",
+"title": "Lisp",
+"description":"Created by the man who coined the term 'Artificial Intelligence', John McCarthy, Lisp was initially only described in an academic paper: It applies the lambda calculus, with potential heavy use of currying, to computer processes. The langauge was first implemented in hardware in March of 1960 on an IBM 704.",
+"startdate": "1958-01-01 12:00:00",
+"high_threshold":44,
+"importance":"40",
+"link":"http://en.wikipedia.org/wiki/Lisp_(programming_language)",
+"date_display":"ye",
+"icon":"triangle_green.png"
+},
+
+
+
+{
+"id":"jshist-nojs",
+"title": "There was no Javascript",
+"description":"Amazingly, until Brendan Eich created Javascript in 1995, there was none.",
+"startdate": "1936-01-01 12:00:00",
+"enddate": "1995-05-01 12:00:00",
+"low_threshold":45,
+"importance":"60",
+"date_display":"no",
+"icon":"none"
+},
+
+
+{
+"id":"jshist-scheme",
+"title": "Scheme",
+"description":"Guy L. Steele and Gerald Jay Sussman, over five years, create the Lambda Papers, part of a series of papers on Artificial Intellicence (the 'AI Memos') describing Scheme as a <em>dialect</em> of Lisp. Says Wikipedia:<br>The development of Scheme was heavily influenced by two predecessors that were quite different from one another: Lisp provided its general semantics and syntax, and ALGOL provided its lexical scope and block structure.<br><br>When Netscape hired Brendan Eich, he was apparently told that they wanted \"Scheme in the browser\". Of course, this was not to be.",
+"startdate": "1975-01-01 12:00:00",
+"high_threshold":44,
+"importance":"40",
+"link":"http://en.wikipedia.org/wiki/Scheme_(programming_language)",
+"date_display":"ye",
+"icon":"triangle_green.png"
+},
+
 
 
 {
@@ -14,9 +72,10 @@
 "title": "Self",
 "description":"Self, one of the inspirations for Javascript's simplicity, is created at Xerox PARC ",
 "startdate": "1986-01-01 12:00:00",
+"high_threshold":44,
 "importance":"40",
 "date_display":"none",
-"icon":"flag_green.png"
+"icon":"triangle_green.png"
 },
 
 
@@ -28,11 +87,27 @@
 "title": "First Popular Browser: Mosaic",
 "description":"Mosaic is the web browser credited with popularizing the World Wide Web. It was also a client for earlier protocols such as FTP, NNTP, and gopher. Its clean, easily understood user interface, reliability, Windows port and simple installation all contributed to making it the application that opened up the Web to the general public. Mosaic was also the first browser to display images inline with text instead of displaying images in a separate window. While often described as the first graphical web browser, Mosaic was preceded by the lesser-known Erwise and ViolaWWW.",
 "startdate": "1993-01-23 12:00:00",
+"high_threshold":44,
 "importance":"40",
 "date_limit":"da",
 "link":"http://en.wikipedia.org/wiki/Mosaic_%28web_browser%29",
-"icon":"square_yellow.png"
+"icon":"triangle_yellow.png"
 },
+
+
+
+{
+"id":"jshist-java",
+"title": "Java",
+"description":"From Wikipedia:<br>Java was originally designed for interactive television, but it was too advanced for the digital cable television industry at the time. The language was initially called Oak after an oak tree that stood outside James Gosling's office; it went by the name Green later, and was later renamed Java, from Java coffee, said to be consumed in large quantities by the language's creators. Gosling aimed to implement a virtual machine and a language that had a familiar C/C++ style of notation.",
+"startdate": "1991-06-15 12:00:00",
+"high_threshold":44,
+"importance":"45",
+"date_limit":"da",
+"link":"http://en.wikipedia.org/wiki/Mosaic_%28web_browser%29",
+"icon":"triangle_green.png"
+},
+
 
 
 
@@ -41,12 +116,27 @@
 "title": "Netscape Navigator v1.0",
 "description":"Netscape Navigator was a proprietary web browser that was popular in the 1990s. It was the flagship product of the Netscape Communications Corporation and the dominant web browser in terms of usage share, although by 2002 its usage had almost disappeared. This was primarily due to the increased usage of Microsoft's Internet Explorer web browser software, and partly because the Netscape Corporation (later purchased by AOL) did not.",
 "startdate": "1994-12-15 12:00:00",
-"importance":"45",
+"high_threshold":44,
+"importance":"40",
 "date_limit":"da",
 "link":"http://en.wikipedia.org/wiki/Mosaic_%28web_browser%29",
-"icon":"square_yellow.png"
+"icon":"triangle_yellow.png"
 },
 
+
+
+{
+"id":"jshist-jvms",
+"title": "Eich and Hickman work on JVMs",
+"description":"Eich and Kipp Hickman work on Java Virtual Machines, create Netscape Portable Runtime (NSPR). This becomes the basis for creating Mocha.<br><br>Says Eich: Kipp Hickman and I had been studying Java in April and May 1995, and Kipp had started writing his own JVM. Kipp and I wrote the first version of NSPR as a portability layer underlying his JVM, and I used it for the same purpose when prototyping “Mocha” in early-to-mid-May.",
+"startdate": "1995-04-01 12:00:00",
+"enddate": "1995-05-15 12:00:00",
+"high_threshold":44,
+"importance":"20",
+"link":"http://brendaneich.com/2008/04/popularity/",
+"date_display":"da",
+"icon":"circle_gray.png"
+},
 
 
 {
@@ -55,9 +145,10 @@
 "description":"The first version of Internet Explorer (later referred to as Internet Explorer 1) made its debut on August 16, 1995. It was a reworked version of Spyglass Mosaic, which Microsoft had licensed, like many other companies initiating browser development, from Spyglass Inc. It came with Microsoft Plus! for Windows 95 and the OEM release of Windows 95, and was installed as part of the Internet Jumpstart Kit in Plus!. The Internet Explorer team began with about six people in early development. Internet Explorer 1.5 was released several months later for Windows NT and added support for basic table rendering. By including it free of charge on their OS, they did not have to pay royalties to Spyglass Inc., resulting in a lawsuit and a multi-million USD settlement.",
 "startdate": "1995-08-16 12:00:00",
 "date_limit":"da",
-"importance":"45",
+"high_threshold":44,
+"importance":"30",
 "link":"http://en.wikipedia.org/wiki/Internet_Explorer#Internet_Explorer_1",
-"icon":"square_yellow.png"
+"icon":"triangle_yellow.png"
 },
 
 
@@ -68,6 +159,7 @@
 "title": "WHATWG Founded",
 "description":"The Web Hypertext Application Technology Working Group (WHATWG) is a community of people interested in evolving HTML and related technologies. The WHATWG was founded by individuals from Apple, the Mozilla Foundation and Opera Software in 2004.",
 "startdate": "2004-06-04 12:00:00",
+"high_threshold":44,
 "importance":"40",
 "link":"http://www.whatwg.org/",
 "icon":"square_blue.png"
@@ -81,10 +173,10 @@
 "title": "DHTML in IE 4",
 "description":"Basic DHTML support was introduced with Internet Explorer 4.0, although there was a basic dynamic system with Netscape Navigator 4.0. When it originally became widespread DHTML style techniques were difficult to develop and debug due to varying degrees of support among web browsers of the technologies involved. ... [You might notice the color of this title being a different color; that's because we've added a 'css_class' attribute in the JSON for this event object.]",
 "startdate": "1997-09-01 12:00:00",
+"high_threshold":44,
 "importance":"45",
 "link":"http://www.whatwg.org/",
-"css_class":"dhtml",
-"icon":"square_gray.png"
+"icon":"circle_blue.png"
 },
 
 
@@ -94,12 +186,23 @@
 "title": "Cross-Browser Animation",
 "description":"by Dave Thau and Apple Developer Connection: Dynamic HTML (DHTML) provides a new range of ways to animate a page. DHTML can animate both text and images and animations can move throughout the browser window, instead of being anchored in one spot. Unfortunately, DHTML can be tricky because of differences between browsers.",
 "startdate": "2002-05-24 12:00:00",
+"high_threshold":44,
 "importance":"32",
 "link":"http://oreilly.com/pub/a/javascript/2002/05/24/animation.html",
 "icon":"quote.png"
 },
 
 
+{
+"id":"jshist-script.aculo.us",
+"title": "script.aculo.us",
+"description":"Wikipedia:<br>script.aculo.us was extracted by Thomas Fuchs from his work on fluxiom, a web based digital asset management tool by the design company wollzelle. It was first released to the public in June 2005.",
+"startdate": "2005-06-01 12:00:00",
+"high_threshold":44,
+"importance":"40",
+"image_class":"above",
+"icon":"triangle_orange.png"
+},
 
 
 
@@ -109,50 +212,109 @@
 "description":"The Prototype JavaScript Framework is a JavaScript framework created by Sam Stephenson in February 2005 as part of the foundation for Ajax support in Ruby on Rails. It is implemented as a single file of JavaScript code, usually named prototype.js. Prototype is distributed standalone, but also as part of larger projects, such as Ruby on Rails, script.aculo.us and Rico.",
 "startdate": "2005-02-01 12:00:00",
 "enddate": "2005-02-01 12:00:00",
-"importance":"40",
+"high_threshold":44,
+"importance":"45",
 "image":"img/prototype.jpg",
 "image_class":"above",
-"icon":"triangle_green.png"
+"icon":"triangle_orange.png"
 },
 
 
 {
 "id":"jshist-01",
-"title": "\"Ten Days in May\" Mocha is created",
-"description": "<img src='img/eich.jpg' style='float:left;margin-right:8px;margin-bottom:8px'>JavaScript was originally developed by Brendan Eich of Netscape under the name Mocha. LiveScript was the official name for the language when it first shipped in beta releases of Netscape Navigator 2.0 in September 1995",
-"startdate": "1995-05-01 12:00:00",
-"date_limit":"mo",
+"title": "\"Ten Days in May\": Mocha",
+"description": "<img src='img/eich.jpg' style='float:left;margin-right:8px;margin-bottom:8px'>JavaScript was originally developed by Brendan Eich of Netscape under the name Mocha.",
+"startdate": "1995-05-15 06:00:00",
+"enddate": "1995-05-25 23:00:00",
+"date_limit":"da",
 "link":"http://en.wikipedia.org/wiki/JavaScript",
-"importance":"40",
-"icon":"flag_green.png"
+"high_threshold":44,
+"importance":"55",
+"icon":"triangle_green.png"
 },
+
+{
+"id":"jshist-nnav2",
+"title": "LiveScript Ships in Netscape Navigator 2.0",
+"description": "",
+"startdate": "1995-06-01 06:00:00",
+"date_limit":"da",
+"link":"http://en.wikipedia.org/wiki/JavaScript",
+"high_threshold":44,
+"importance":"40",
+"icon":"triangle_green.png"
+},
+
 
 {
 "id":"jshist-02",
 "title": "JavaScript",
-"description": "LiveScript is Renamed JavaScript in a joint announcement with Netscape and Sun Microsystems",
+"description": "LiveScript is renamed JavaScript in a joint announcement with Netscape and Sun Microsystems",
 "startdate": "1995-12-04 12:00:00",
 "enddate": "1995-12-04 12:00:00",
 "date_limit":"mo",
 "link":"http://en.wikipedia.org/wiki/JavaScript",
+"high_threshold":44,
 "importance":"55",
 "date_limit":"da",
 "icon":"star_purple.png",
-"image":"img/tests/js_thumb.jpg",
-"image_class":"inline"
+"image":"img/tests/js_thumb.jpg"
 },
+
+
+{
+"id":"jshist-span",
+"title": "Javascript Era",
+"description": "There was Javascript.",
+"startdate": "1995-12-04 12:00:00",
+"enddate": "today",
+"date_limit":"mo",
+"low_threshold":45,
+"importance":"60",
+"date_limit":"ye",
+"icon":"none"
+},
+
 
 {
 "id":"jshist-14rhino",
-"title": "Mozilla Rhino is started",
-"description": "Very fast Javascript engine introduced",
+"title": "Mozilla Rhino Engine",
+"description": "Fast, but flawed Java engine introduced",
 "startdate": "1997-10-01 12:00:00",
 "enddate": "1997-10-01 12:00:00",
 "date_limit":"mo",
 "link":"http://www.mozilla.org/rhino/history.html",
+"high_threshold":44,
 "importance":"35",
 "icon":"square_gray.png"
 },
+
+
+{
+"id":"jshist-squirrelfish",
+"title": "Webkit Squirrelfish",
+"description": "Wikipedia:<br>On June 2, 2008, the WebKit project announced they rewrote JavaScriptCore as \"SquirrelFish\", a bytecode interpreter. The project evolved into SquirrelFish Extreme (abbreviated SFX), announced on September 18, 2008, which compiles JavaScript into native machine code, eliminating the need for a bytecode interpreter and thus speeding up JavaScript execution.",
+"startdate": "2008-06-02",
+"date_limit":"mo",
+"link":"http://en.wikipedia.org/wiki/WebKit#Further_development",
+"high_threshold":44,
+"importance":"35",
+"icon":"square_gray.png"
+},
+
+{
+"id":"jshist-tracemonkey",
+"title": "TraceMonkey, JIT engine",
+"description": "Firefox releases a turbo-charged version of SpiderMonkey with Firefox 3.5that is the first <a href='http://en.wikipedia.org/wiki/Just-in-time_compilation'>JIT</a> (Just In Time) compiler of Javascript.",
+"startdate": "2009-06-30",
+"date_limit":"mo",
+"link":"http://en.wikipedia.org/wiki/TraceMonkey#TraceMonkey",
+"high_threshold":44,
+"importance":"35",
+"icon":"square_gray.png"
+},
+
+
 
 {
 "id":"jshist-resig-post",
@@ -162,6 +324,7 @@
 "enddate": "2008-08-14 12:00:00",
 "date_limit":"da",
 "link":"http://ejohn.org/blog/ecmascript-harmony/",
+"high_threshold":44,
 "importance":"30",
 "icon":"quote.png"
 },
@@ -169,26 +332,48 @@
 {
 "id":"jshist-jj-garrett",
 "title": "Ajax: A New Approach to Web Applications",
-"description": "Seminal essay by Jesse James Garrett: 'An Ajax application eliminates the start-stop-start-stop nature of interaction on the Web by introducing an intermediary—an Ajax engine—between the user and the server. It seems like adding a layer to the application would make it less responsive, but the opposite is true.'",
+"description": "Jesse James Garrett publishes his seminal essay and coins the term \"ajax\". Said Garrett 'An Ajax application eliminates the start-stop-start-stop nature of interaction on the Web by introducing an intermediary—an Ajax engine—between the user and the server. It seems like adding a layer to the application would make it less responsive, but the opposite is true.'<br><br>Soon, JS would turn 'hawt'. Its clay-like flexibility actually made it enjoyable, inspiring more artistry and cleverness than other languages.",
 "startdate": "2005-02-18 12:00:00",
 "enddate": "2005-02-18 12:00:00",
 "date_limit":"da",
 "link":"http://www.adaptivepath.com/ideas/e000385",
+"high_threshold":44,
 "importance":"42",
 "icon":"quote.png"
 },
 
 {
-"id":"jshist-dry",
-"title": "The Bad Rap Years",
-"description": "Of Javascript's initial insinuation into browsers, WWW founder Robert Cailliau said, 'the programming-vacuum filled itself with the most horrible kluge in the history of computing: Javascript.' But now JS is 'hawt' and its clay-like flexibility makes it enjoyable, inspiring more artistry and cleverness than other languages.",
+"id":"jshist-shadow-years",
+"title": "The Shadow Years",
+"description": "Of Javascript's initial insinuation into browsers, WWW founder Robert Cailliau said, 'the programming-vacuum filled itself with the most horrible kluge in the history of computing: Javascript.'",
 "startdate": "1998-01-01 12:00:00",
 "enddate": "2004-01-01 12:00:00",
 "date_limit":"mo",
 "link":"http://en.wikipedia.org/wiki/JavaScript",
-"importance":"52",
+"high_threshold":44,
+"importance":"40",
+"css_class":"shadow-years",
+"span_color":"#000000",
 "icon":"none"
 },
+
+
+{
+"id":"jshist-ajax age",
+"title": "The Ajax Age",
+"description": "Ajax, seeded by the XMLHttpRequest object, is born.",
+"startdate": "2004-01-01 12:00:00",
+"enddate": "today",
+"date_limit":"ye",
+"link":"http://en.wikipedia.org/wiki/Ajax_%28programming%29",
+"high_threshold":44,
+"importance":"40",
+"span_color":"#FFFFFF",
+"icon":"none"
+},
+
+
+
 
 
 {
@@ -198,25 +383,38 @@
 "startdate": "1996-08-01 12:00:00",
 "enddate": "1996-08-01 12:00:00",
 "date_limit":"mo",
-"link":[
-	{"url":"http://en.wikipedia.org/wiki/JScript", "label":"wikipedia"},
-	{"url":"http://nytimes.com", "label":"NYT"}
-],
+"link": "http://en.wikipedia.org/wiki/JScript",
+"high_threshold":44,
 "importance":"35",
 "icon":"triangle_green.png"
 },
 
+
 {
 "id":"jshist-04",
-"title": "ECMAScript industry standard",
-"description": "Netscape announced that it had submitted JavaScript to Ecma International for consideration as an industry standard, and subsequent work resulted in the standardized version named ECMAScript",
-"startdate": "1997-06-01 12:00:00",
-"enddate": "1997-06-01 12:00:00",
+"title": "JS submitted to ECMA",
+"description": "Netscape submits JavaScript to Ecma International for consideration as an industry standard. Interestingly, Sun Microsystems at one point submitted Java to Ecma, but withdrew the submission later.",
+"startdate": "1996-11-01 12:00:00",
 "date_limit":"mo",
 "link":"http://www.ecmascript.org/",
+"high_threshold":44,
 "importance":"35",
 "icon":"triangle_green.png"
 },
+
+
+{
+"id":"jshist-ecma1",
+"title": "ECMA-262 Edition 1",
+"description": "ECMA standards body formally announces first standardized version of Javascript:ECMA-262 Edition 1",
+"startdate": "1997-06-01 12:00:00",
+"date_limit":"mo",
+"link":"http://www.ecmascript.org/",
+"high_threshold":44,
+"importance":"35",
+"icon":"triangle_green.png"
+},
+
 {
 "id":"jshist-05",
 "title": "Dojo Toolkit",
@@ -226,20 +424,23 @@
 "link":"http://dojotoolkit.org/",
 "image":"img/dojo.jpg",
 "image_class":"above",
+"high_threshold":44,
 "importance":"35",
-"icon":"triangle_green.png"
+"icon":"triangle_orange.png"
 },
 {
 "id":"jshist-08",
-"title": "JSON",
-"description": "Douglas Crockford was the first to specify and popularize the JSON format. JSON was used at State Software, a company co-founded by Crockford, starting around 2001. The JSON.org website was launched in 2002. In December 2005, Yahoo! began offering some of its web services in JSON.  Google started offering JSON feeds for its GData web protocol in December 2006.",
-"startdate": "2005-12-01 12:00:00",
-"enddate": "2005-12-01 12:00:00",
+"title": "JSON emerges",
+"description": "Wikipedia:<br>Douglas Crockford was the first to specify and popularize the JSON format. JSON was used at State Software, a company co-founded by Crockford, starting around 2001. The JSON.org website was launched in 2002. In December 2005, Yahoo! began offering some of its web services in JSON.  Google started offering JSON feeds for its GData web protocol in December 2006.",
+"startdate": "2002-07-01 12:00:00",
+"enddate": "2002-07-01 12:00:00",
 "date_limit":"mo",
 "link":"http://json.org",
+"high_threshold":44,
 "importance":"35",
-"icon":"triangle_green.png"
+"icon":"circle_orange.png"
 },
+
 {
 "id":"jshist-09",
 "title": "jQuery",
@@ -247,10 +448,11 @@
 "startdate": "2005-12-01 12:00:00",
 "enddate": "2005-12-01 12:00:00",
 "link":"http://jquery.com/",
-"importance":"40",
+"high_threshold":44,
+"importance":"45",
 "image":"img/jquery.jpg",
 "image_class":"above",
-"icon":"triangle_green.png"
+"icon":"triangle_orange.png"
 },
 {
 "id":"jshist-16",
@@ -260,8 +462,9 @@
 "enddate": "2006-09-01 12:00:00",
 "date_limit":"mo",
 "link":"http://mootools.net/",
+"high_threshold":44,
 "importance":"35",
-"icon":"triangle_green.png"
+"icon":"triangle_orange.png"
 },
 
 {
@@ -272,8 +475,9 @@
 "enddate": "2006-02-01 12:00:00",
 "date_limit":"mo",
 "link":"http://developer.yahoo.com/yui/",
+"high_threshold":44,
 "importance":"35",
-"icon":"triangle_green.png"
+"icon":"triangle_orange.png"
 },
 
 {
@@ -283,8 +487,9 @@
 "startdate": "2010-06-13 11:39:00",
 "link":"http://paulirish.com/2010/10-things-i-learned-from-the-jquery-source/",
 "video":"http://player.vimeo.com/video/12529436",
+"high_threshold":44,
 "importance":"20",
-"icon":"video.png"
+"icon":"triangle_orange.png"
 },
 
 
@@ -297,8 +502,9 @@
 "enddate": "2006-05-17 12:00:00",
 "date_limit":"mo",
 "link":"http://en.wikipedia.org/wiki/Google_Web_Toolkit",
+"high_threshold":44,
 "importance":"35",
-"icon":"triangle_green.png"
+"icon":"triangle_orange.png"
 },
 
 
@@ -311,9 +517,25 @@
 "enddate": "2007-08-02 12:00:00",
 "date_limit":"mo",
 "link":"http://www.sencha.com/products/js/",
+"high_threshold":44,
 "importance":"35",
-"icon":"triangle_green.png"
+"icon":"triangle_orange.png"
 },
+
+
+{
+"id":"jshist-spidermonk",
+"title": "Spidermonkey",
+"description": "Very fast Javascript engine introduced",
+"startdate": "1996-10-01 12:00:00",
+"date_limit":"mo",
+"link":"http://en.wikipedia.org/wiki/SpiderMonkey",
+"high_threshold":44,
+"importance":"30",
+"icon":"square_gray.png"
+},
+
+
 {
 "id":"jshist-14",
 "title": "Google Chrome V8",
@@ -322,7 +544,8 @@
 "enddate": "2008-12-01 12:00:00",
 "date_limit":"mo",
 "link":"http://code.google.com/p/v8/",
-"importance":"35",
+"high_threshold":44,
+"importance":"40",
 "icon":"square_gray.png"
 },
 
@@ -333,8 +556,9 @@
 "startdate": "2009-01-01 12:00:00",
 "enddate": "2009-01-01 12:00:00",
 "link":"http://www.commonjs.org/",
+"high_threshold":44,
 "importance":"35",
-"icon":"triangle_green.png"
+"icon":"square_blue.png"
 },
 
 {
@@ -344,9 +568,27 @@
 "startdate": "2010-10-16 12:00:00",
 "enddate": "2010-10-16 12:00:00",
 "link":"http://www.jquerymobile.com",
+"high_threshold":44,
 "importance":"30",
-"icon":"triangle_green.png"
+"icon":"triangle_orange.png"
 },
+
+
+
+
+{
+"id":"jshist-ffconf",
+"title": "Full Frontal Conference",
+"description": "Released at the Boston JQuery Conference",
+"startdate": "2009-11-20 12:00:00",
+"link":"http://2009.full-frontal.org/",
+"high_threshold":44,
+"importance":"30",
+"icon":"circle_blue.png"
+},
+
+
+
 
 {
 "id":"jsconf2010",
@@ -355,8 +597,9 @@
 "startdate": "2010-04-17 08:00:00",
 "enddate": "2010-04-18 18:00:00",
 "link":"http://jsconf.us/2010/",
+"high_threshold":44,
 "importance":"40",
-"icon":"star_green.png",
+"icon":"circle_blue.png",
 "map":{
 	"label":"JSConf 2010", 
 	"latlong":"38.8969007, -77.0724308",
@@ -377,8 +620,9 @@
 "startdate": "2011-05-02 08:00:00",
 "enddate": "2011-05-03 18:00:00",
 "link":"http://2011.jsconf.us/",
+"high_threshold":44,
 "importance":"40",
-"icon":"star_green.png",
+"icon":"circle_blue.png",
 "map":{
 	"label":"JSConf 2011", 
 	"latlong":"45.51655690309638,-122.68299579620361",
@@ -394,10 +638,13 @@
 }
 ],
 "legend": [
-   {"title":"libraries", "icon":"triangle_green.png"},
+   {"title":"libraries", "icon":"triangle_orange.png"},
    {"title":"engines", "icon":"square_gray.png"},
-   {"title":"origins", "icon":"flag_green.png"},
-   {"title":"conferences", "icon":"star_green.png"}
+   {"title":"browsers", "icon":"triangle_yellow.png"},
+   {"title":"origins", "icon":"triangle_green.png"},
+   {"title":"standards", "icon":"square_blue.png"},
+   {"title":"conferences", "icon":"circle_blue.png"},
+   {"title":"milestones", "icon":"triangle_blue.png"}
 ]
          
 }

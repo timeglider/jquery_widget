@@ -460,7 +460,7 @@ tg.TG_Mediator = function (wopts, $el) {
     },
     
     
-        /*
+    /*
     *  setTimeoffset
     *  @param offset [String] eg: "-07:00"
     *      
@@ -542,6 +542,25 @@ tg.TG_Mediator = function (wopts, $el) {
 	},
 	
 	
+	
+	/* 
+	 * from click etc. on page, what is the date?
+	 */
+	getDateFromOffset: function (dp_x) {
+		var me = this,
+			ctnr = me.dimensions.container,
+			Cw = ctnr.width,
+    		Cx = dp_x - (ctnr.offset.left),
+    		offMid = Cx - Cw/2,
+	    	secPerPx = me.getZoomInfo().spp,
+	    	fdSec = me.getFocusDate().sec,
+			dcSec = Math.floor(fdSec + (offMid * secPerPx));
+			
+			return new TG_Date(dcSec);
+	},
+	
+	
+	// incoming: {name:"dblclick", event:e, dimensions:me.dimensions}
 	registerUIEvent: function (info) {
 		var me = this;
 		
@@ -549,16 +568,7 @@ tg.TG_Mediator = function (wopts, $el) {
 			case "dblclick": 
 			// info comes with 
 				
-				/////////////
-				var Cw = info.dimensions.container.width,
-		    	Cx = info.event.pageX - (info.dimensions.container.offset.left),
-		    	offMid = Cx - Cw/2,
-			    secPerPx = me.getZoomInfo().spp,
-				// Cy = event.pageY - $(PLACEMENT).offset().top,
-			    fdSec = me.getFocusDate().sec,
-				dcSec = Math.floor(fdSec + (offMid * secPerPx)),
-				clickDate = new TG_Date(dcSec);
-				// foc = new TG_Date(fdSec);
+				var clickDate = me.getDateFromOffset(info.event.pageX);
 				////////////////////////////
 				
 				$.publish(container_name + ".mediator.dblclick", {date:clickDate});
@@ -729,9 +739,7 @@ tg.TG_Mediator = function (wopts, $el) {
 		$.publish(container_name + ".mediator.activeTimelinesChange");
 	
 	},
-     
-     
-       
+           
 	/*
 	*  reportImageSize
 	*  @param img {Object} has "id" of event, "src", "width" and "height" at least

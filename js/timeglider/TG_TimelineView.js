@@ -91,7 +91,7 @@ tg.TG_PlayerView = function (widget, mediator) {
 	TICKS = this._views.TICKS;
 	DATE = this._views.DATE;
 	
-		
+	
 	
   	/////////////////////////////
 	
@@ -108,6 +108,8 @@ tg.TG_PlayerView = function (widget, mediator) {
  	this.tick_height = 34;
  	
  	this.imageLaneHeight = 60;
+ 	
+ 	this.dragScopeState = ["okay",0];
 
 	// in case custom event_modal fails, we need this object to exist
 	this._templates = {}
@@ -290,7 +292,7 @@ tg.TG_PlayerView = function (widget, mediator) {
 	
 		// doubleclicking will be used by authoring mode
 		.bind('dblclick', function(e) {
-			MED.registerUIEvent({name:"dblclick", event:e, dimensions:me.dimensions});		
+			MED.registerUIEvent({name:"dblclick", event:e});		
 		})
 		
 		.bind('mousewheel', function(event, delta) {
@@ -301,8 +303,6 @@ tg.TG_PlayerView = function (widget, mediator) {
 			return false;    
 		}); // end TRUCK EVENTS
 
-
-
 	function registerTicksSpeed () {
 		//!TODO: for gliding
 	}
@@ -311,7 +311,7 @@ tg.TG_PlayerView = function (widget, mediator) {
   	.draggable({ axis: 'x',
 		start: function(event, ui) {
 			
-			// need this?
+			
 		},
 		drag: function(event, ui) {
 			
@@ -319,10 +319,24 @@ tg.TG_PlayerView = function (widget, mediator) {
 			MED.setTicksOffset(t1Left);
 			
 			ticksSpeed = t1Left - t2Left;
-				
-			// debug.trace("::>>" + ticksSpeed, "note");
-				
 			t2Left = t1Left;
+			
+			var dsState = me.dragScopeState
+						
+			if (dsState[0] == "over-left") {
+				
+				$(TICKS).css("left", dsState[1]-5);
+				// return false
+				
+			} else if (dsState[0] == "over-right") {
+				
+				$(TICKS).css("left", dsState[1]+5);
+				// return false;
+				
+			} else {
+				return true;
+			}
+			
 		},
 	
 		stop: function(event, ui) {
@@ -463,10 +477,30 @@ tg.TG_PlayerView = function (widget, mediator) {
 	// adding to or removing from ticksArray
 	// DORMANT: necessary?
 	$.subscribe(container_name + ".mediator.ticksArrayChange", function () {
-		/*
-    	SCAN OVER TICKS FOR ANY REASON?
-		*/
+		// empty for now		
 	});
+	
+	
+	
+	$.subscribe(container_name + ".mediator.scopeChange", function() {
+		var scope = MED.getScope();
+		var tbounds = scope.timelineBounds;
+		var focus = scope.focusDateSec;
+		
+		if (focus > tbounds.last) {
+			// past right end of timeline(s): stop leftward drag
+			me.dragScopeState = ["over-right", $(TICKS).position().left];
+		} else if (focus < tbounds.first) {
+			// over left end of timeline(s): stop rightward drag
+			me.dragScopeState = ["over-left", $(TICKS).position().left];
+		} else {
+			me.dragScopeState = ["okay",0];
+
+		}
+		
+	
+	});
+	
 	
 	
 	// listen for focus date change
@@ -1096,8 +1130,7 @@ tg.TG_PlayerView.prototype = {
         	// using true in format() sets up display limit
         	        	
         	    
-    	// This works, but what if it has to sit on the bottom
-    	// debug.log("hover display:" + ev_obj.date_display);
+    	// This works, but what if it has to sit on the bottom?
     	if (ev.date_display != "no") {
 			$hov
 			.position({
@@ -1715,8 +1748,7 @@ tg.TG_PlayerView.prototype = {
 			// TODO establish the 120 below in some kind of constant!
 			// meanwhile: tl_top is the starting height of a loaded timeline 
 			tl_top = (tl.top) ? parseInt(tl.top.replace("px", "")) : (cht-me.initTimelineVOffset); 
-			
-					
+				
 			tlView = new tg.TG_TimelineView({model:tlModel});
 			
 			tz_offset = MED.timeOffset.seconds / spp;
@@ -1790,7 +1822,7 @@ tg.TG_PlayerView.prototype = {
 				ceiling = (tl.hasImagesAbove) ? tl_top - me.imageLaneHeight : tl_top;
 			}
 			
-			var beforeStuff = +new Date();
+			// var beforeStuff = +new Date();
 			
 			if (expCol == "expanded") {
 				stuff = borg.getHTML("sweep", ceiling);
@@ -1800,10 +1832,7 @@ tg.TG_PlayerView.prototype = {
 			if (stuff != "undefined") { $tl.append(stuff.html); }
 			
 			
-			var afterStuff = +new Date();
-			// debug.log("compile time:", (afterStuff - beforeStuff));
-			
-			
+			// var afterStuff = +new Date();
 			
 					
 			setTimeout( function() {
@@ -1930,7 +1959,6 @@ tg.TG_PlayerView.prototype = {
 					ev.shape = null;
 				}
 				
-				
             	// block_arg is either "sweep" for existing ticks
             	// or the serial number of the tick being added by dragging
       			borg.addBlock(ev, block_arg);
@@ -1945,7 +1973,7 @@ tg.TG_PlayerView.prototype = {
       }
       
       if (expCol == "collapsed") {
-        return stuff;
+        return {html:stuff};
       } else {
         // if expanded, "stuff" is
         // being built into the borg
@@ -2201,10 +2229,10 @@ tg.TG_PlayerView.prototype = {
 	
 	
 	legendModal : function (id) {
-	  	/* only one legend at a time ?? */
+	  	// only one legend at a time ??
 	  
 	    var me=this,
-	    		leg = MED.timelineCollection.get(id).attributes.legend,
+	    	leg = MED.timelineCollection.get(id).attributes.legend,
 	      	l=0, 
 	      	icon = "", 
 	      	title = "", 
@@ -2213,10 +2241,9 @@ tg.TG_PlayerView.prototype = {
 	    
 	    for (l=0; l < leg.length; l++) {
 				icon = options.icon_folder + leg[l].icon;
-				title = leg[l].title;
-								
+				title = leg[l].title;				
 				html += "<li><img class='legend-icon' src='" + icon + "'><span class='legend-info'>" + title + "</span></li>";
-				// 
+				 
 	    }
 	   
 	    var templ_obj = {id:id, legend_list:html};
@@ -2232,22 +2259,18 @@ tg.TG_PlayerView.prototype = {
       				my: "left top",
       				at: "left top",
       				of: (CONTAINER),
-      				offset: "16, -4", // left, top
+      				offset: "16, -4", // x, y
       				collision: "none none"
       		});
 			
-			if (timeglider.mode === "authoring") {
-				// in authoring mode, we'll use the icon as a handle for dragging
-				i_sel = CONTAINER + " .legend-info";
-			} else {
-				i_sel = CONTAINER + " .legend-info, " + CONTAINER + " .legend-icon";
-			}
+			i_sel = CONTAINER + " .legend-info, " + CONTAINER + " .legend-icon";
 				
 	  		$(i_sel).bind("mouseup", function(e) { 
+	  			// if dragged, return false...
 	  		    var $legend_item = $(e.target).parent();
 	  		    var icon = ($legend_item.children("img").attr("src"));
 	  		    $(this).parent().toggleClass("tg-legend-icon-selected");
-	  		    MED.setFilters({origin:"legend", icon: icon});
+	  		    MED.setFilters({origin:"legend", icon: icon}); 
 	  		});
 
 	},
