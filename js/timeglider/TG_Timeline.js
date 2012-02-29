@@ -347,11 +347,9 @@
 				tdata.has_events = true;
 				
 				var date_from_sec = TG_Date.getDateFromSec(tdata.bounds.first);
-				debug.log("date from sec");
 				
 				tdata.focus_date = tdata.focus_date || date_from_sec;
 				tdata.focusDateObj = new TG_Date(tdata.focus_date);
-				debug.log("tdata.focusDateObj:", tdata.focusDateObj);
 				
 			} else {
 				tdata.has_events = false;

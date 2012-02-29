@@ -298,10 +298,7 @@ tg.TG_Mediator = function (wopts, $el) {
 	* derived from data in loadTimelineData
 	*/
 	parseTimelineData : function (data) {
-		
-		debug.log("parseTimelineData json...", data);
-		
-		
+				
 		var M = this,
 			ct = 0,
 			dl = data.length, 
@@ -356,7 +353,6 @@ tg.TG_Mediator = function (wopts, $el) {
 
     /* Makes an indexed array of timelines */
     swallowTimeline : function (obj) {
-    	debug.log("swallow:", obj);
 
 		this.sole_timeline_id = obj.id;
 		this.timelineCollection.add(obj);

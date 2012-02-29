@@ -1864,7 +1864,7 @@ tg.TG_PlayerView.prototype = {
 			for (var a=0; a<active.length; a++) {
 				
 				tl = MED.timelineCollection.get(active[a]).attributes;
-        		debug.log("tl id:", tl.id);
+        		
 				// get the events from timeline model hash
 				idArr = this.getTimelineEventsByTick({tick:tick, timeline:tl});
 				stuff = this.compileTickEventsAsHtml(tl, idArr, tick.serial, "append");
