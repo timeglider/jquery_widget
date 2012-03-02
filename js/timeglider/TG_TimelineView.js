@@ -1338,7 +1338,7 @@ tg.TG_PlayerView.prototype = {
 			
 		// add hours gathered in loop above
 		if (sub_labels) {
-		  $tickDiv.append("<div style='background-color:none;height:24px;width:" + (tickWidth + 10) + "px;position:absolute;top:15px;left:0;overflow:hidden'>" + sub_labels +  "(" + serial + ")</div>");
+		  $tickDiv.append("<div style='background-color:none;height:24px;width:" + (tickWidth + 10) + "px;position:absolute;top:15px;left:0;overflow:hidden'>" + sub_labels + "</div>");
 	  	} 
 		
 		pack = {"unit":tickUnit, "width":tickWidth, "serial":serial};

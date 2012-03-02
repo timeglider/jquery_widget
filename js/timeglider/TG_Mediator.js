@@ -91,7 +91,6 @@ tg.TG_Mediator = function (wopts, $el) {
 
 	tg.TG_Mediator.prototype = {
 	
-	
 		focusToEvent: function(ev){
 			// !TODO open event, bring to zoom
 			this.focusedEvent = ev;
@@ -108,7 +107,6 @@ tg.TG_Mediator = function (wopts, $el) {
 		filterBy: function(type, content){
 			// !TODO open event, bring to zoom
 			var fObj = {origin:type};
-			
 			fObj[type] = content;
 			debug.log("fObj:", fObj);
 			this.setFilters(fObj);
