@@ -1921,11 +1921,11 @@ tg.TG_PlayerView.prototype = {
 			// TODO establish the 120 below in some kind of constant!
 			// meanwhile: tl_top is the starting height of a loaded timeline 
 			tl_top = (tl.top) ? parseInt(tl.top.replace("px", "")) : (cht-me.initTimelineVOffset); 
-				
+							
 			tlView = new tg.TG_TimelineView({model:tlModel});
 			
 			tz_offset = MED.timeOffset.seconds / spp;
-			
+						
       		$tl = $(tlView.render().el).appendTo(TICKS);
    			
    			// this is the individual (named) timeline, not the entire interface
@@ -1956,8 +1956,24 @@ tg.TG_PlayerView.prototype = {
 				t_f = cx;
 				t_l = cx + 300;
 			}
-	
-			tbwidth = t_l-t_f;
+		
+			tbwidth = Math.floor(t_l - t_f);
+			var tmax = 10000000;
+			var farl = -1 * (tmax - 2000);
+			
+			// browsers have a maximum width for divs before
+			// they konk out... if we get to a high point, we
+			// can truncate the div, but have to make sure to
+			// equally adjust the left position if the right
+			// end of the div is needing to be placed in-screen
+			// whew.
+			if (tbwidth > tmax) {
+				var dif = tbwidth - tmax;
+				tbwidth = tmax;
+				if (t_f < farl) {
+					t_f = t_f + dif;
+				}
+			} 
 			
 			$title.css({"top":tl_ht, "left":t_f, "width":tbwidth}).data({"lef":t_f, "wid":tbwidth});
 
@@ -2529,7 +2545,8 @@ tg.TG_PlayerView.prototype = {
 	
 tg.TG_TimelineView = Backbone.View.extend({
 
-	initialize: function () {
+	initialize: function (t) {
+		
 		var me=this;
 		
 		this.model.bind('change:title', function () {

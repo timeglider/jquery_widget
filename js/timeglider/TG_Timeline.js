@@ -275,11 +275,12 @@
 						}
 					}
 					
-				
+					
+					
+					
 					tdata.startSeconds.push(ev.startdateObj.sec);
 					tdata.endSeconds.push(ev.enddateObj.sec);
-					
-					
+
 					// cache the initial date for updating hash later
 					// important for edit/delete operations
 					ev.cache = {span:ev.span, startdateObj:_.clone(ev.startdateObj), enddateObj:_.clone(ev.enddateObj)}
@@ -289,48 +290,52 @@
 					}  else {
 						ev.icon = ev.icon;
 					}
-						
-										
-					dhash["all"].push(id);
 					
-					var uxl = tg_units.length;
-					for (var ux = 0; ux < uxl; ux++) {
-						unit = tg_units[ux];
-						///// DATE HASHING in action 
-						ser = TG_Date.getTimeUnitSerial(ev.startdateObj, unit);
-						if (dhash[unit][ser] !== undefined) {
-							var shash = dhash[unit][ser];
-							if (_.indexOf(shash, id) === -1) {
-								dhash[unit][ser].push(id);
+					
+					if ((!isNaN(ev.startdateObj.sec))&&(!isNaN(ev.enddateObj.sec))){
+									
+						dhash["all"].push(id);
+						
+						var uxl = tg_units.length;
+						for (var ux = 0; ux < uxl; ux++) {
+							unit = tg_units[ux];
+							///// DATE HASHING in action 
+							ser = TG_Date.getTimeUnitSerial(ev.startdateObj, unit);
+							if (dhash[unit][ser] !== undefined) {
+								var shash = dhash[unit][ser];
+								if (_.indexOf(shash, id) === -1) {
+									dhash[unit][ser].push(id);
+								}
+							} else {
+								// create the array
+								dhash[unit][ser] = [id];
 							}
-						} else {
-							// create the array
-							dhash[unit][ser] = [id];
-						}
-						/////////////////////////////
-					} 
-					
-		
-					/////////////////////////////////
-					
-					if (!MED.eventCollection.get(id)) {
-					
-						ev.timelines = [tdata.timeline_id];
-					
-						var new_model = new tg.TG_Event(ev);
-						// model is defined in the eventCollection
-						// we just need to add the raw object here and it
-						// is "vivified", properties set, etc
-						MED.eventCollection.add(new_model);
-					
-					} else {
+							/////////////////////////////
+						} 
 						
-						// trusting here that this is a true duplicate!
-						// just needs to be associated with the timeline
-						var existing_model = MED.eventCollection.get(id);
-						existing_model.get("timelines").push(tdata.timeline_id);
-
-					}
+			
+						/////////////////////////////////
+						
+						if (!MED.eventCollection.get(id)) {
+						
+							ev.timelines = [tdata.timeline_id];
+						
+							var new_model = new tg.TG_Event(ev);
+							// model is defined in the eventCollection
+							// we just need to add the raw object here and it
+							// is "vivified", properties set, etc
+							MED.eventCollection.add(new_model);
+						
+						} else {
+							
+							// trusting here that this is a true duplicate!
+							// just needs to be associated with the timeline
+							var existing_model = MED.eventCollection.get(id);
+							existing_model.get("timelines").push(tdata.timeline_id);
+	
+						}
+					
+					} // end if !NaN
 			
 				} // end for: cycling through timeline's events
 							
@@ -338,10 +343,10 @@
 				// sort start, select first
 				// sor last select last
 				// set bounds
-				
+								
 				var merged = $.merge(tdata.startSeconds,tdata.endSeconds);
 				var sorted = _.sortBy(merged, function(g){ return parseInt(g); });
-				
+
 				/// bounds of timeline
 				tdata.bounds = {"first": _.first(sorted), "last":_.last(sorted) };
 				
