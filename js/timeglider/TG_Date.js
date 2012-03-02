@@ -163,22 +163,28 @@ timeglider.TG_Date = {};
   */
   TG_Date.getTimeUnitSerial = function (fd, unit) {
       var ret = 0;
+      var floorCeil;
+      
+      if (fd.ye < 0) {
+      	floorCeil = Math.ceil;
+      } else {
+      	floorCeil = Math.floor;
+      }
       
   		switch (unit) {
   			case "da": ret =  fd.rd; break;
   			// set up mo_num inside TG_Date constructor
   			case "mo": ret =  fd.mo_num; break;
-  			
   			case "ye": ret = fd.ye; break;
-  			case "de": ret =  Math.floor(fd.ye / 10); break;
-  			case "ce": ret =  Math.floor(fd.ye / 100); break;
-  			case "thou": ret =  Math.floor(fd.ye / 1000); break;
-  			case "tenthou": ret =  Math.floor(fd.ye / 10000); break;
-  			case "hundredthou": ret =  Math.floor(fd.ye / 100000); break;
-  			case "mill": ret =  Math.floor(fd.ye / 1000000); break;
-  			case "tenmill": ret =  Math.floor(fd.ye / 10000000); break;
-  			case "hundredmill": ret =  Math.floor(fd.ye / 100000000); break;
-  			case "bill": ret =  Math.floor(fd.ye / 1000000000); break;
+  			case "de": ret =  floorCeil(fd.ye / 10); break;
+  			case "ce": ret =  floorCeil(fd.ye / 100); break;
+  			case "thou": ret =  floorCeil(fd.ye / 1000); break;
+  			case "tenthou": ret =  floorCeil(fd.ye / 10000); break;
+  			case "hundredthou": ret =  floorCeil(fd.ye / 100000); break;
+  			case "mill": ret =  floorCeil(fd.ye / 1000000); break;
+  			case "tenmill": ret =  floorCeil(fd.ye / 10000000); break;
+  			case "hundredmill": ret =  floorCeil(fd.ye / 100000000); break;
+  			case "bill": ret =  floorCeil(fd.ye / 1000000000); break;
   		}
   		return ret;
   };

@@ -57,7 +57,7 @@ tg.TG_Mediator = function (wopts, $el) {
     this.gesturing = false;
     this.gestureStartZoom = 0;
     this.gestureStartScale = 0; // .999 etc reduced to 1 to 100
-    this.filters = {include:"", exclude:"", legend:[]};
+    this.filters = {include:"", exclude:"", legend:[], tags:[]};
 
     this.timelineCollection = new tg.TG_TimelineCollection;
     this.eventCollection = new tg.TG_EventCollection;
@@ -88,8 +88,6 @@ tg.TG_Mediator = function (wopts, $el) {
     } // end mediator head
     
     
-    
-    
 
 	tg.TG_Mediator.prototype = {
 	
@@ -100,6 +98,22 @@ tg.TG_Mediator = function (wopts, $el) {
 			this.setFocusDate(ev.startdateObj)
 			$.publish(container_name + ".mediator.focusToEvent");
 		},
+		
+		/*
+		 * filterBy
+		 * @param type {String} tags|include|exclude|legend
+		 * @param content {String} content to be filtered, i.e. keyword, etc
+		 *
+		 */
+		filterBy: function(type, content){
+			// !TODO open event, bring to zoom
+			var fObj = {origin:type};
+			
+			fObj[type] = content;
+			debug.log("fObj:", fObj);
+			this.setFilters(fObj);
+		},
+
 		
 
 	    /* PUBLIC METHODS MEDIATED BY $.widget front */
@@ -578,7 +592,7 @@ tg.TG_Mediator = function (wopts, $el) {
 	/*
 	*  setFilters
 	*  @param obj {Object} containing: 
-	*         origin ("clude", "legend"), include (Str), exclude (Str), legend (Obj)
+	*         origin ("clude", "legend", "tags"), include (Str), exclude (Str), legend (Obj)
 	*
 	*/
     setFilters : function (obj) {
@@ -592,9 +606,18 @@ tg.TG_Mediator = function (wopts, $el) {
 				this.filters.exclude = obj.exclude;
 			break;
 			
+			case "tags":
+				if (obj.tags) {
+					this.filters.tags = obj.tags.split(",");
+				} else {
+					this.filters.tags = [];
+				}
+			break;
+			
 			case "legend":
 				
 				// subtract the icons folder URL...
+				// starting icon with "shapes/" etc.
 				var icon = obj.icon.replace(me.options.icon_folder, "");
 	
 				if (icon == "all") {
@@ -613,16 +636,14 @@ tg.TG_Mediator = function (wopts, $el) {
 					}
 				
 				 } // end if/else for "clear"
-				 
-				 
-			   
+				  
 			break;
 		
 		} // end switch
    		
    		
         $.publish(container_name + ".mediator.filtersChange"); 
-        $.publish(container_name + ".mediator.scopeChange");
+        // $.publish(container_name + ".mediator.scopeChange");
         
            
         this.refresh();
@@ -677,7 +698,9 @@ tg.TG_Mediator = function (wopts, $el) {
 	*		 used for initial tick; others set off init
 	*/
 	addToTicksArray : function (obj, focusDate) {
-	
+		
+		// var ser = 0;
+		
 		if (obj.type == "init") {
 			// CENTER
 			obj.serial = TG_Date.getTimeUnitSerial(focusDate, obj.unit);

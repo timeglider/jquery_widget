@@ -21,7 +21,7 @@
 		#p1 {
 			margin:32px;
 			margin-bottom:0;
-			height:500px;
+			height:700px;
 		}
 		
 		
@@ -62,7 +62,28 @@
 		
 		
 		.shadow-years .timeglider-event-title {
+			color:#F0F0F0;
+		}
+		.shadow-years .timeglider-event-spanner {
+			background-color:#222;
+		}
+		
+		.bibliocene .timeglider-event-title {
+			color:#F0F0F0;
+		}
+		.bibliocene .timeglider-event-spanner {
+			background-color:orange;
+		}
+		
+		.js-era .timeglider-event-title {
 			color:#FFF;
+		}
+		.js-era .timeglider-event-spanner {
+			background-color:green;
+		}
+		
+		.tg-timeline-envelope {
+		
 		}
 		
 		
@@ -197,9 +218,9 @@
 		var tg1 = $("#p1").timeline({
 				"timezone":"-07:00",
 				"min_zoom":1, 
-				"max_zoom":50, 
+				"max_zoom":100, 
 				"show_centerline":true,
-				"data_source":"json_tests/js_history.json",
+				"data_source":"json_tests/waybc.json",
 				"show_footer":true,
 				"display_zoom_level":true
 		}).resizable({
@@ -234,9 +255,9 @@
 		
 		
 		// test to bring up filter by default, on load
-		//setTimeout(function() {
-		//	$(".timeglider-filter-bt").trigger("click");
-		//}, 500);
+		setTimeout(function() {
+			$(".tg-timeline-legend-bt").trigger("click");
+		}, 2000);
 		
 		
 		

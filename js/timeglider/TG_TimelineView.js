@@ -280,6 +280,7 @@ tg.TG_PlayerView = function (widget, mediator) {
 	this.sliderActive = false;
 	this.ztop = 1000;
 	this.filterBoxActivated = false;
+	this.visibleEvents = [];
 	
 	// INITIAL CONSTRUCTION
 	this.buildSlider();
@@ -364,7 +365,7 @@ tg.TG_PlayerView = function (widget, mediator) {
 		} else {
 			// custom callback for an event
 			if (ev.click_callback) {
-		    		
+		    		try {
 			    	var ccarr = ev.click_callback.split(".");
 			    	var cclen = ccarr.length;
 			    	if (cclen == 1) {
@@ -376,6 +377,10 @@ tg.TG_PlayerView = function (widget, mediator) {
 			    	} else if (cclen == 3) {
 			    		// ns.ns.fn
 			    		window[ccarr[0]][ccarr[1]][ccarr[2]](ev);
+			    	}
+			    	
+			    	} catch (e) {
+			    		debug.log(ev.click_callback + " method cannot be found");
 			    	}
 			
 		  // no custom callback ÑÊjust regular old modal
@@ -525,7 +530,7 @@ tg.TG_PlayerView = function (widget, mediator) {
 		$(me._views.TIMELINE_MENU_UL + " li").each(function () {
 			
 				var id = $(this).data("timeline_id");
-			    if ($.inArray(id, MED.activeTimelines) != -1) {
+			    if (_.indexOf(MED.activeTimelines, id) != -1) {
 					$(this).addClass("activeTimeline");
 				} else { 
 					$(this).removeClass("activeTimeline");	
@@ -1187,20 +1192,19 @@ tg.TG_PlayerView.prototype = {
 			tickWidth = MED.getZoomInfo().width,
 			twTotal = 0,
 			ctr = this.dimensions.container.centerx,
+			// determine how many are necessary to fill (overfill) container
 			nTicks = Math.ceil(this.dimensions.container.width / tickWidth) + 4,
 			leftright = 'l';
-			
-	
+
 		MED.setTicksReady(false);
     
 		// INITIAL TICK added  in center according to focus date provided
 		this.addTick({"type":"init", "focus_date":fDate});
-	
-		// determine how many are necessary to fill (overfill) container
 		
-		// ALTERNATING L & R
+		// ALTERNATING L & R ticks
 		for (var i=1; i<=nTicks; i +=1) {
 			this.addTick({"type":leftright});
+			// switch l and r for alternating layout action
 			leftright = (leftright == "l") ? "r" : "l";
 		}
 		
@@ -1212,10 +1216,12 @@ tg.TG_PlayerView.prototype = {
   
 	
 	/*
-	* @param info {object} --object--> type: init|l|r focusDate: date object for init type
+	* @param info {object} --object--> 
+	*                     type: init|l|r 
+	*                     focusDate: date object for init type
 	*/											
 	addTick : function (info) {
-
+		
 		var me = this,       mDays = 0,      dist = 0,        pos = 0,       
 			tperu = 0,       serial = 0,     shiftLeft = 0,   ctr = 0,  
 			tid = "",        tickHtml = "",  sub_label = "",  label = {}, 
@@ -1227,7 +1233,8 @@ tg.TG_PlayerView.prototype = {
 			focusDate = MED.getFocusDate(),
 			tick_top = parseInt(this.dimensions.tick.top),	
 			serial = MED.addToTicksArray({type:info.type, unit:tickUnit}, focusDate);
-						
+			
+			
 		// adjust tick-width for months (mo)
   		if (tickUnit == "mo") {
   			// starts with default tickWidth set for 28 days: How many px, days to add?
@@ -1239,12 +1246,14 @@ tg.TG_PlayerView.prototype = {
 
 		// tickNum has been reset to zero by refresh/zoom
 		this.tickNum ++;
+		
 		if (info.type == "init") {
 			
 			shiftLeft = this.tickOffsetFromDate(MED.getZoomInfo(), MED.getFocusDate(), tickWidth);
-
 			pos = Math.ceil(this.dimensions.container.centerx + shiftLeft);
-						
+			
+			// both and left and right sides are defined
+			// here because it is the first tick on screen			
 			this.leftside = pos;
 			this.rightside = (pos + tickWidth);
 			
@@ -1329,18 +1338,25 @@ tg.TG_PlayerView.prototype = {
 			
 		// add hours gathered in loop above
 		if (sub_labels) {
-		  $tickDiv.append("<div style='background-color:none;height:24px;width:" + (tickWidth + 10) + "px;position:absolute;top:15px;left:0;overflow:hidden'>" + sub_labels + "</div>");
+		  $tickDiv.append("<div style='background-color:none;height:24px;width:" + (tickWidth + 10) + "px;position:absolute;top:15px;left:0;overflow:hidden'>" + sub_labels +  "(" + serial + ")</div>");
 	  	} 
 		
 		pack = {"unit":tickUnit, "width":tickWidth, "serial":serial};
-  
+  		
 		label = this.getDateLabelForTick(pack);
-	
+		
+		// In order to gather whether an outlier span is 
+		// occuring on drag-right (the right side of a span)
+		// we need some seconds...
+		
+		pack.seconds = this.getTickSeconds[tickUnit](pack.serial);
+		
 		// DO OTHER STUFF TO THE TICK, MAKE THE LABEL AN ACTIONABLE ELEMENT
 		// SHOULD APPEND WHOLE LABEL + TICKLINES HERE
 		$tickDiv.children("#label").text(label);
 
 		return pack;
+		
 		/* end addTick */
 	}, 
 	
@@ -1353,6 +1369,73 @@ tg.TG_PlayerView.prototype = {
 		} else {
 			$(this._views.CENTERLINE).css({"display":"none"});
 		}
+	},
+	
+	/* 
+	 * @param pack {Object} `unit` and `serial`
+	 */
+	getTickSeconds: {
+		da: function(ser) {
+			var s = ser * 86400,
+				e = s + 86400;
+			return {start:s, end:e}; 
+		},
+		mo: function(ser) {
+			var s = ser * 2629800,
+				e = s + 2629800;
+			return {start:s, end:e}; 
+		},
+		ye: function(ser) {
+			var s = ser * 31540000,
+				e = s + 31540000;
+			return {start:s, end:e}; 
+		}, 
+		de: function(ser) {
+			var s = ser * 315400000,
+				e = s + 315400000;
+			return {start:s, end:e};
+		},
+		ce: function(ser) {
+			var s = ser * 3154000000,
+				e = s + 3154000000;
+			return {start:s, end:e};
+		},
+		thou: function(ser) {
+			var s = ser * 3154000000,
+				e = s + 3154000000;
+			return {start:s, end:e};
+		},
+		tenthou: function(ser) {
+			var s = ser * 3154000000,
+				e = s + 3154000000;
+			return {start:s, end:e};
+		},
+		hundredthou: function(ser) {
+			var s = ser * 3154000000,
+				e = s + 3154000000;
+			return {start:s, end:e};
+		},
+		mill: function(ser) {
+			var s = ser * 3154000000,
+				e = s + 3154000000;
+			return {start:s, end:e};
+		},
+		tenmill: function(ser) {
+			var s = ser * 3154000000,
+				e = s + 3154000000;
+			return {start:s, end:e};
+		},
+		hundredmill: function(ser) {
+			var s = ser * 3154000000,
+				e = s + 3154000000;
+			return {start:s, end:e};
+		},
+		bill: function(ser) {
+			var s = ser * 3154000000,
+				e = s + 3154000000;
+			return {start:s, end:e};
+		}
+		
 	},
 	
 	
@@ -1420,128 +1503,158 @@ tg.TG_PlayerView.prototype = {
 	*
 	*/
 	getDateLabelForTick : function  (obj) {
+	
 		var i, me=this, ser = obj.serial, tw = obj.width;
 	
 		switch(obj.unit) {
 
-      case "bill":
-      	if (ser == 0) {
-		      return "1";
-	      } else if (ser > 0) {
-	         return (ser) + " billion";
-        } else {
-	         return (ser) + " b.y. bce";
-        }
-        
-      case "hundredmill":
-      	if (ser == 0) {
-		      return "1";
-	      } else if (ser > 0) {
-	         return (ser) + "00 million";
-        } else {
-	         return (ser) + "00 m.y. bce";
-        }
-        
-      case "tenmill":
-      		if (ser == 0) {
-  		      return "1";
-  	      } else if (ser > 0) {
-  	         return (ser) + "0 million";
-          } else {
-  	         return (ser) + "0 m.y. bce";
-          }
-        		    
-      case "mill":
-    		if (ser == 0) {
-		      return "1";
-	      } else if (ser > 0) {
-	         return (ser) + " million";
-        } else {
-	         return (ser) + " m.y. bce";
-        }
-      		    
-      case "hundredthou":
-  		  if (ser == 0) {
-		      return "1";
-	      } else if (ser > 0) {
-	        return (ser) + "00,000";
-        } else {
-	         return (ser) + "00,000 bce";
-        }   
-    		    
-		  case "tenthou":
-		    if (ser == 0) {
-		      return "1";
-	      } else if (ser > 0) {
-     	      return (ser) + "0,000";
-        } else {
-     	      return (ser) + "0,000 bce";
-        }
- 
-		  case "thou": 
-		    if (ser == 0) {
-		      return "1" + "(" + ser + ")";
-	      } else if (ser > 0) {
-     	    return (ser) + "000";
-        } else {
-     	    return (ser) + "000 bce";
-        }
-
-		  case "ce": 
-		    if (ser == 0) {
- 		       return "1" + "(" + ser + ")";
- 	      } else if (ser > 0) {
-   	       return (ser) + "00";
-        } else {
-   	       return (ser) + "00 bce";
-        }
- 	   		    
+			case "bill":
+				if (ser == 0) {
+					return "1";
+				} else if (ser > 0) {
+					return (ser) + " billion";
+				} else {
+					return (ser) + " b.y. bce";
+				}
+			break;
+	      
+	      
+			case "hundredmill":
+				if (ser == 0) {
+					return "1";
+				} else if (ser > 0) {
+					return (ser) + "00 million";
+				} else {
+					return (ser) + "00 m.y. bce";
+				}
+			break;
+	      
+	      
+			case "tenmill":
+				if (ser == 0) {
+					return "1";
+				} else if (ser > 0) {
+					return (ser) + "0 million";
+				} else {
+					return (ser) + "0 m.y. bce";
+				}
+			break;
+	      
+	          
+			case "mill":
+				if (ser == 0) {
+					return "1";
+				} else if (ser > 0) {
+					return (ser) + " million";
+				} else {
+					return (ser) + " m.y. bce";
+				}
+			break;
+	      	
+	      		    
+			case "hundredthou":
+				if (ser == 0) {
+					return "1";
+				} else if (ser > 0) {
+					return (ser) + "00,000";
+				} else {
+					return (ser) + "00,000 bce";
+				}
+			break;
+			
+	    		    
+			case "tenthou":
+				if (ser == 0) {
+					return "1";
+				} else if (ser > 0) {
+					return (ser) + "0,000";
+				} else {
+					return (ser) + "0,000 bce";
+				}
+			break;
+	 
+			case "thou": 
+				if (ser == 0) {
+					return "1" + "(" + ser + ")";
+				} else if (ser > 0) {
+					return (ser) + "000";
+				} else {
+					return (ser) + "000 bce";
+				}
+			break;
+	
+			case "ce": 
+				if (ser == 0) {
+					return "1" + "(" + ser + ")";
+				} else if (ser > 0) {
+					return (ser) + "00";
+				} else {
+					return (ser) + "00 bce";
+				}
+			break;
+	        
+	 	   		    
 			case "de": 
 				if (ser > 120){
 					return (ser * 10) + "s";
 				} else {
 					return (ser * 10);
 				}
+			break;
+			
 			case "ye": 
 				return ser; 
+			break;
+			
 			case "mo": 
 			  
-			   i = TG_Date.getDateFromMonthNum(ser);
-			   if (tw < 120) {
-			     return TG_Date.monthNamesAbbr[i.mo] + " " + i.ye; 
-		     } else {
-		       return TG_Date.monthNames[i.mo] + ", " + i.ye; 
-	       }
+				i = TG_Date.getDateFromMonthNum(ser);
+				
+				if (tw < 120) {
+					return TG_Date.monthNamesAbbr[i.mo] + " " + i.ye; 
+				} else {
+					return TG_Date.monthNames[i.mo] + ", " + i.ye; 
+				}
+			break;
 				
 				
 			case "da": 
-			  // COSTLY: test performance here on dragging
-			  i = new TG_Date(TG_Date.getDateFromRD(ser));
-			  if (tw < 120) {
-				  return TG_Date.monthNamesAbbr[i.mo] + " " + i.da + ", " + i.ye;
-		    } else {
-		      return TG_Date.monthNames[i.mo] + " " + i.da + ", " + i.ye;
-	      }
+			
+				// COSTLY: test performance here on dragging
+				i = new TG_Date(TG_Date.getDateFromRD(ser));
+				
+				if (tw < 120) {
+					return TG_Date.monthNamesAbbr[i.mo] + " " + i.da + ", " + i.ye;
+				} else {
+					return TG_Date.monthNames[i.mo] + " " + i.da + ", " + i.ye;
+				}
+			break;
 		
 			default: return obj.unit + ":" + ser + ":" + tw;
 		}
 		
 	},
 
-
+    /*
+     *	tickHangies
+     *  When dragging the interface, we detect when to add a new
+     *  tick on left or right side: whether the outer tick has
+     *  come within a 100px margin of the left or right of the frame
+     *
+     */
 	tickHangies : function () {
 		var tPos = $(TICKS).position().left,
 		    lHangie = this.leftside + tPos,
 		    rHangie = this.rightside + tPos - this.dimensions.container.width,
-		    tick, added = false,
+		    tickPack, added = false,
 		    me = this;
 		
 		if (lHangie > -100) {
-			tick = this.addTick({"type":"l"});
-			me.appendTimelines(tick);
+			tickPack = this.addTick({"type":"l"});
+			me.appendTimelines(tickPack, "left");
 		} else if (rHangie < 100) {
-			tick = this.addTick({"type":"r"});
-			me.appendTimelines(tick);
+			tickPack = this.addTick({"type":"r"});
+			me.appendTimelines(tickPack, "right");
 		}
 	},
 	
@@ -1587,23 +1700,44 @@ tg.TG_PlayerView.prototype = {
 				break;
 			
 			case "thou": 
-				prop = ((fdate.ye % 1000) / 1000); //   + (fdate.ye / 1000) + (fdate.mo / 12000);
+				prop = ((fdate.ye % 1000) / 1000); 
 				p = w * prop;
 				break;
-				
 
 			case "tenthou":  
 			
-				prop = ((fdate.ye % 10000) / 10000); //   + (fdate.ye / 1000) + (fdate.mo / 12000);
+				prop = ((fdate.ye % 10000) / 10000); 
 				p = w * prop;
-				
 				break;
 
 			case "hundredthou": 
 			
-				prop = ((fdate.ye % 100000) / 100000); //   + (fdate.ye / 1000) + (fdate.mo / 12000);
+				prop = ((fdate.ye % 100000) / 100000);
 				p = w * prop;
+				break;
 				
+			case "mill": 
+			
+				prop = ((fdate.ye % 1000000) / 1000000);
+				p = w * prop;
+				break;
+				
+			case "tenmill": 
+			
+				prop = ((fdate.ye % 10000000) / 1000000);
+				p = w * prop;
+				break;
+				
+			case "hundredmill": 
+			
+				prop = ((fdate.ye % 100000000) / 10000000);
+				p = w * prop;
+				break;
+				
+			case "bill": 
+			
+				prop = ((fdate.ye % 1000000000) / 1000000000);
+				p = w * prop;
 				break;
 
 			default: p=0;
@@ -1649,53 +1783,77 @@ tg.TG_PlayerView.prototype = {
 				// looking for an array of events...
 				return hash[unit][serial];
 			} else {
-				return 0;
+				return [];
 			}
 
 	},
 	
 	
 	passesFilters : function (ev, zoomLevel) {
-	   var ret = true,
-	    ei = "", ea = [], e,
-	    ii = "", ia = [], i;
-	   
-	   // filter by thresholds first
-	   if  ((zoomLevel < ev.low_threshold) || (zoomLevel > ev.high_threshold)) {
-	     return false;
-     }
- 
-	   var incl = MED.filters.include;
- 	   if (incl) {
- 	      ia = incl.split(",");
- 	      ret = false;
- 	      // cycle through comma separated include keywords
- 	      for (i=0; i<ia.length; i++) {
- 	        ii = new RegExp($.trim(ia[i]), "i");
- 	        if (ev.title.match(ii)) { ret = true; }
-         }
-      }
-
-	   var excl = MED.filters.exclude;
-	   if (excl) {
-	      ea = excl.split(",");
-	      for (e=0; e<ea.length; e++) {
-	        ei = new RegExp($.trim(ea[e]), "i");
-	        if (ev.title.match(ei)) { ret = false; }
-        }
-     }
-     
-     var ev_icon = ev.icon;
-     
-     	
-     if (MED.filters.legend.length > 0) {
-       if ($.inArray(ev_icon, MED.filters.legend) == -1) {
-         ret = false;
-       }
-     }
- 
-	   return ret;
-  },
+		var ret = true,
+			ev_icon = "",
+			ei = "", ea = [], e,
+			ii = "", ia = [], i;
+		
+		// MASTER FILTER BY THRESHOLD
+		if  ((zoomLevel < ev.low_threshold) || (zoomLevel > ev.high_threshold)) {
+			return false;
+		}
+		
+		var incl = MED.filters.include;
+		
+		// KEYWORDS FOR SHOWING THIS EVENT
+		if (incl) {
+			ia = incl.split(",");
+			ret = false;
+			// cycle through comma separated include keywords
+			for (i=0; i<ia.length; i++) {
+				ii = new RegExp($.trim(ia[i]), "i");
+				if (ev.title.match(ii) || ev.description.match(ii)) { ret = true; }
+			}
+		}
+		
+		// KEYWORDS THAT TRIGGER HIDING
+		var excl = MED.filters.exclude;
+		
+		if (excl) {
+			ea = excl.split(",");
+			for (e=0; e<ea.length; e++) {
+				ei = new RegExp($.trim(ea[e]), "i");
+				if (ev.title.match(ei) || ev.description.match(ei)) { ret = false; }
+			}
+		}
+		
+		// LEGEND FILTER
+		if (MED.filters.legend.length > 0) {
+			ev_icon = ev.icon;
+			if (_.indexOf(MED.filters.legend, ev_icon) == -1) {
+				// if it's not in the legend list
+				ret = false;
+			}
+		}
+		
+		// TAGS FILTER
+		
+		if (MED.filters.tags.length > 0) {
+			if (ev.tags) {
+				ev_tags = ev.tags.split(",");
+				_.each(ev_tags, function(tag) {
+					tag = $.trim(tag);
+					if (_.indexOf(MED.filters.tags, tag) !== -1) {
+						ret = true;
+					}
+				});
+			} else {
+				// event has no tags at all..
+				ret = false;
+			}
+		}
+		
+		/////////////
+		
+		return ret;
+	},
   
   
 	
@@ -1733,11 +1891,26 @@ tg.TG_PlayerView.prototype = {
 			expCol, tl_top=0,
 			cht = me.dimensions.container.height,
 			ceiling = 0;
+			
+			me.visibleEvents = [];
+			
+	
+		/////////////////////////////////////////
+		
+		/* 
+		var testDate = MED.getFocusDate();
+		
+		var tdFocus = Math.floor(testDate.sec);
+		
+		var tickSec = me.getTickSeconds['da'](testDate.rd);
+		debug.log("testDate gts obj:", tdFocus - tickSec.start);
+		*/
 		
 		//////////////////////////////////////////
+		idArr = [];
 		
 		for (var a=0; a<active.length; a++) {
-			idArr = [];
+			
 			// FOR EACH _ACTIVE_ TIMELINE...
 			tlModel = MED.timelineCollection.get(active[a]);
 			
@@ -1794,26 +1967,33 @@ tg.TG_PlayerView.prototype = {
 			//cycle through ticks for hashed events
 			for (var tx=0; tx<ticks.length; tx++) {
 				tArr = this.getTimelineEventsByTick({tick:ticks[tx], timeline:tl});
-		    	$.merge(idArr, tArr);	
+		    	idArr = _.union(idArr, tArr);	
 			}
 			
+			// debug.log("visible events:", idArr);
+			me.visibleEvents = idArr;
+			
 			// detect if there are boundless spans (bridging, no start/end points)
-			// !TODO: optimize loop, use _.find() ?
-			
-			
+		
 			_.each(tl.spans, function (spanin) {
 				
-				if (spanin.start < lsec && spanin.end > lsec) {
-				    //not already in array
-				    if ($.inArray(spanin.id, idArr) == -1) {
-				      // adds to beginning to prioritize
-				      idArr.unshift(spanin.id);
-			      	}
+				if (_.indexOf(idArr, spanin.id) === -1) {
+										
+					if ((spanin.start < lsec && spanin.end > rsec) 
+					 || (spanin.end < rsec && spanin.end > lsec)) {
+	
+					      // adds to beginning to prioritize
+					      idArr.unshift(spanin.id);
+					      me.visibleEvents.push(spanin.id);
+				      	
+				    }
+				    
 			    }
+			    
 			});
 			
-
-			stuff = this.compileTickEventsAsHtml(tl, idArr, 0, "sweep");
+			// clean out dupes with _.uniq
+			stuff = this.compileTickEventsAsHtml(tl, _.uniq(idArr), 0, "sweep");
 			
 			// TODO: make 56 below part of layout constants collection
 			if (options.event_overflow == "scroll") {
@@ -1827,7 +2007,7 @@ tg.TG_PlayerView.prototype = {
 			if (expCol == "expanded") {
 				stuff = borg.getHTML("sweep", ceiling);
 				tl.borg = borg.getBorg();
-			}
+			} 
 			
 			if (stuff != "undefined") { $tl.append(stuff.html); }
 			
@@ -1854,12 +2034,15 @@ tg.TG_PlayerView.prototype = {
 	* appendTimelines
 	* @param tick {Object} contains serial, time-unit, and more info
 	*/
-	appendTimelines : function (tick) {
+	appendTimelines : function (tick, side) {
       		
-			var active = MED.activeTimelines, idArr = [],
-			    $tl, tl, tl_top, stuff = "",
+			var active = MED.activeTimelines, 
+				idArr = [],
+			    $tl, tl, tl_top, 
+			    stuff = "", diff = 0,
 			    me = this;
-			    
+			
+
 			// FOR EACH TIMELINE...
 			for (var a=0; a<active.length; a++) {
 				
@@ -1867,21 +2050,50 @@ tg.TG_PlayerView.prototype = {
         		
 				// get the events from timeline model hash
 				idArr = this.getTimelineEventsByTick({tick:tick, timeline:tl});
+				
+				me.visibleEvents = _.union(me.visibleEvents, idArr);
+				
+				// we need to see if the right end of a long span
+				// is present in the newly added tick
+				if (side == "left") {
+					
+					_.each(tl.spans, function (spanin) {
+						
+						// diff = tick.seconds.start - spanin.end;
+						// var tsize = tick.seconds.end - tick.seconds.start;
+					
+						if (spanin.end < tick.seconds.end && spanin.end > tick.seconds.start) {
+							
+						    //not already in array
+						    if (_.indexOf(me.visibleEvents, spanin.id) === -1) {
+						      	// add to beginning to prioritize
+						      	idArr.unshift(spanin.id);
+						      	me.visibleEvents.unshift(spanin.id);
+					      	}
+					    }
+			    
+					});
+			
+				}	
+				
+				// this either puts it into the timeline's borg object
+				// or, if compressed, creates HTML for compressed version.
+				// stuff here would be null if expanded...
 				stuff = this.compileTickEventsAsHtml(tl, idArr, tick.serial, "append");
 				 
 				// borg it if it's expanded.
 				if (tl.display == "expanded"){ 
-						stuff = tl.borg.getHTML(tick.serial, tl.top); // tl.top = ceiling
+					stuff = tl.borg.getHTML(tick.serial, tl.top); // tl.top = ceiling
 				}
 
 				$tl = $(CONTAINER + " .tg-timeline-envelope#" + tl.id).append(stuff.html);
 								
 				this.registerEventImages($tl);
 					
-		  } // end for in active timelines
+		  } // end for() in active timelines
 		  
 		  $.publish("viewer.rendered"); 
-					
+				
 	}, // end appendTimelines()
 	
 	
@@ -1890,7 +2102,8 @@ tg.TG_PlayerView.prototype = {
   // "sweep" vs tick.serial  (or fresh/append)
   compileTickEventsAsHtml : function (tl, idArr, tick_serial, btype) {
    
-		var posx = 0,
+		var me=this,
+			posx = 0,
 			cx = this.dimensions.container.centerx,
 			expCol = tl.display,
 			ht = 0,
@@ -1898,7 +2111,7 @@ tg.TG_PlayerView.prototype = {
 			foSec = MED.startSec, 
 			spp = MED.getZoomInfo().spp,
 			zl = MED.getZoomInfo().level,
-			buffer = 20, img_ht = 0, img_wi = 0,
+			buffer = 16, img_ht = 0, img_wi = 0,
 			borg = tl.borg,
 			ev = {},
 			impq,
@@ -1913,13 +2126,12 @@ tg.TG_PlayerView.prototype = {
 		// BBONE
       	ev = MED.eventCollection.get(idArr[i]).attributes;
 
-
       	if (this.passesFilters(ev, zl) === true) {
-			
+      					
       		posx = cx + ((ev.startdateObj.sec - foSec) / spp);
 
       		if (expCol == "expanded") {
-
+				
 				impq = (tl.size_importance !== false) ? this.scaleToImportance(ev.importance, zl) : 1;
 
       			ev.width = (ev.titleWidth * impq) + buffer;
@@ -1928,8 +2140,10 @@ tg.TG_PlayerView.prototype = {
 
 				ev.spanwidth = 0;
 				if (ev.span == true) {
-					ev.spanwidth = (ev.enddateObj.sec - ev.startdateObj.sec) / spp;
-					if (ev.spanwidth > ev.width) { ev.width = ev.spanwidth; }
+										
+					ev.spanwidth = ((ev.enddateObj.sec - ev.startdateObj.sec) / spp);
+					if (ev.spanwidth > ev.width) { ev.width = ev.spanwidth + buffer; }
+					
 				} 
   
    				img_ht = 0;
@@ -1962,7 +2176,9 @@ tg.TG_PlayerView.prototype = {
             	// block_arg is either "sweep" for existing ticks
             	// or the serial number of the tick being added by dragging
       			borg.addBlock(ev, block_arg);
-           
+          
+          // end expanded state
+          
       	  } else if (expCol == "collapsed") {
       			stuff += "<div id='" + ev.id + 
       			"' class='timeglider-event-collapsed' style='top:" + 
@@ -2274,9 +2490,6 @@ tg.TG_PlayerView.prototype = {
 	  		});
 
 	},
-  
-
-
   
   
 	

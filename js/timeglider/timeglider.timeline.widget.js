@@ -175,6 +175,11 @@
 		},
 		
 		
+		filterBy : function (type, content) {
+			MED.filterBy(type, content);
+		},
+		
+		
 		/**
 		* zoom
 		* zooms the timeline in or out, adding an amount, often 1 or -1

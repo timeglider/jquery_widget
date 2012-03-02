@@ -161,9 +161,7 @@
 			MED = tdata.mediator;
 			
 			tdata.timeline_id = tdata.id;
-						// initiates the timeline hash
-			var evHash = {};
-			
+						
 			widget_options = MED.options;
 			
 			var dhash = {
@@ -301,7 +299,10 @@
 						///// DATE HASHING in action 
 						ser = TG_Date.getTimeUnitSerial(ev.startdateObj, unit);
 						if (dhash[unit][ser] !== undefined) {
-							dhash[unit][ser].push(id);
+							var shash = dhash[unit][ser];
+							if (_.indexOf(shash, id) === -1) {
+								dhash[unit][ser].push(id);
+							}
 						} else {
 							// create the array
 							dhash[unit][ser] = [id];
