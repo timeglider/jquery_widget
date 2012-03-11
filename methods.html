@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html>
+<html lang='en'>
 <head>
-<meta http-equiv="Content-Type" content="text/html" />
+<meta charset="utf-8" />
 <title>Timeglider jQuery Plugin</title>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<meta charset="utf-8" />
+
 
 <link rel="stylesheet" href="css/aristo/jquery-ui-1.8.5.custom.css" type="text/css" media="screen" title="no title" charset="utf-8">
 
@@ -14,17 +14,15 @@
 <style type='text/css'>
 		
 		body {
-			font-family: Helvetica, Arial, sans-serif;
+			font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 		}
-		
 		
 		#p1 {
 			margin:32px;
 			margin-bottom:0;
-			height:700px;
+			height:500px;
 		}
-		
-		
+
 		.methods h4 {
 			background-color:#F0F0F0;
 			color:#CC0000;
@@ -118,7 +116,7 @@
 
 
 <div id='p1'></div>
-<div id='p1-scrubber' class='scrubber'><div id='p1-scrubber-handle' class='scrubber-handle'></div></div>
+
 
 
 <br><br><br>
@@ -135,6 +133,7 @@
 <ul>
 <li class='goto' date='2001-09-11 08:24:00' zoom='22'>Sept 11, 2001</li>
 <li class='goto' date='today'>Today</li>
+
 </ul>
 
 
@@ -144,9 +143,10 @@
 <li class='zoom' z='1'>zoom out</li>
 <li class='pan-left'>pan to left</li>
 <li class='pan-right'>pan to right</li>
+<li id='refresh'>Refresh</li>
 </ul>
 
-
+<div class='scrolls'><a id='scrolldown'>down</a> <a id='scrollup'>up</a></div>
 
 <h4>loading</h4>
 <ul>
@@ -179,7 +179,7 @@
 	<script src="js/jquery.ui.ipad.js" type="text/javascript" charset="utf-8"></script>
 	<script src="js/jquery.global.js" type="text/javascript" charset="utf-8"></script>	
 	<script src="js/timeglider/TG_Date.js" type="text/javascript" charset="utf-8"></script>
-	<script src="js/timeglider/TG_Org.js" type="text/javascript" charset="utf-8"></script>
+	<script src="js/timeglider/TG_Org2.js" type="text/javascript" charset="utf-8"></script>
 	<script src="js/timeglider/TG_Timeline.js" type="text/javascript" charset="utf-8"></script> 
 	<script src="js/timeglider/TG_TimelineView.js" type="text/javascript" charset="utf-8"></script>
 	<script src="js/timeglider/TG_Mediator.js" type="text/javascript" charset="utf-8"></script> 
@@ -221,12 +221,14 @@
 		
 		var tg1 = $("#p1").timeline({
 				"timezone":"-07:00",
-				"min_zoom":1, 
+				"min_zoom":20, 
 				"max_zoom":100, 
 				"show_centerline":true,
-				"data_source":"json_tests/waybc.json",
+				"data_source":"json_tests/cia.json",
 				"show_footer":true,
-				"display_zoom_level":true
+				"display_zoom_level":true,
+				"constrain_to_data":true
+				// "event_overflow":"scroll"
 		}).resizable({
 			stop:function(){ 
 				$(this).data("timeline").resize();
@@ -257,91 +259,22 @@
 			tg_actor.load(src);
 		});
 		
-		
-		// test to bring up filter by default, on load
-		setTimeout(function() {
-			$(".tg-timeline-legend-bt").trigger("click");
-		}, 2000);
-		
-		
-		
-		// SCRUBBER TESTING
-		//////////////////////////////////////
-		// local reference var for actor scope
-		var tg_actorScope = {};
-		var tg_frameToTimeline = 1;
-		var handle_start = 0;
-		
-		
-		$(".scrubber-handle").draggable({
-			axis:"x",
-			start:function(e) {
-				var $handle = $(e.target);
-				handle_start = $handle.position().left;
-			},
-			drag: function (e) {
-				var $handle = $(e.target);
-				var $ticks = tg_actorScope.container.find(".timeglider-ticks");				
-				var adj = handle_start * (1/tg_frameToTimeline);
-				var invert = Math.round($handle.position().left * (-1/tg_frameToTimeline)) + adj;
-				
-				$ticks.css("left",  invert);
-				
-				$.publish("mediator.ticksOffsetChange");
-			}
+		$("#refresh").click(function() {
+			// 
+			var med = tg_actor.getMediator();
+			med.runTest();
 		});
 		
 		
 		
+		$("#scrolldown").bind("click", function() {
+			$(".timeglider-timeline-event").animate({top:"+=100"})
+		})
 		
-		$.subscribe("tg#p1.mediator.scopeChange", function() {
-			
-			
-			var s = tg_actorScope = tg_actor.getScope();
-			// s object has:
-			// s.focusDateSec (seconds)
-			// s.spp (seconds per pixel)
-			// s.timelineBounds.first (seconds)
-			// s.timelineBounds.last (seconds)
-			// s.timelines (array of ids)
-			// s.width (container width in px)
-			
-			var tlBnds = s.timelineBounds;
-			var w = s.width;
+		$("#scrollup").bind("click", function() {
+			$(".timeglider-timeline-event").animate({top:"-=100"})
+		})
 		
-			// half-screen in seconds
-			var secHalf = (w * s.spp)/2; 
-			
-			// time bounds
-			var frBnds_right = s.focusDateSec + secHalf;
-			var frBnds_left = s.focusDateSec - secHalf;
-			
-			// total frame secconds
-			var frSeconds = frBnds_right - frBnds_left;
-			// total timeline seconds
-			var tlLength = tlBnds.last - tlBnds.first;
-			// ratio of timeline - to - frame
-			var ratio = frSeconds / tlLength;
-			
-			tg_frameToTimeline = ratio;
-			
-			// default scrubber to whole width
-			var scrWidth = w;
-			
-			// how far to the left of the frame is the timeline?
-			var lOffset = ((frBnds_left - tlBnds.first) / tlLength) * w;
-						
-			if (ratio < 1) {
-				scrWidth = ratio * w;
-				$("#p1-scrubber-handle")
-					.css({"display":"block", "left":lOffset + "px"})
-					.width(scrWidth);
-			} else {
-			    $("#p1-scrubber-handle")
-			    	.css("display", "none");
-			}
-
-		});
 		
 				
 	

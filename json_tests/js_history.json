@@ -3,9 +3,9 @@
 "id":"js_history",
 "title":"A little history of JavaScript",
 "description":"Javascript emerged in a specific context: the fast-paced development of Netscape's browser. When he was hired at Netscape, Brendan Eich was told that it would be \"Scheme for the browser\", but he was later told to make it more like C and Java. The first iteration of JS, created over a 10 day period, was a super-flexible, but also highly flawed child of the internet age.",
-"focus_date":"1975-08-20 12:00:00",
+"focus_date":"1996-06-20 12:00:00",
 "timezone":"-07:00",
-"initial_zoom":"51",
+"initial_zoom":"39",
 "events":[
 
 
@@ -37,24 +37,6 @@
 "icon":"square_black.png"
 },
 
-
-
-
-{
-"id":"jshist-zoom-in",
-"title": "&nbsp;",
-"description":"",
-"startdate": "2012-03-01 12:00:00",
-"importance":"40",
-"click_callback":"timeglider.methods.zoomIn",
-"date_display":"no",
-"image_class":"inline",
-"image":"_js_history/zoom_in.png",
-"icon":"none",
-"high_threshold":51,
-"low_threshold":51,
-"y_position":210
-},
 
 
 
@@ -97,6 +79,7 @@
 "importance":"60",
 "date_display":"ye",
 "modal_type":"full",
+"image":"_js_history/berners-lee.jpg",
 "icon":"flag_yellow.png"
 },
 
@@ -155,7 +138,6 @@
 },
 
 
-
 {
 "id":"jshist-perl",
 "title": "Perl",
@@ -164,6 +146,19 @@
 "importance":"45",
 "high_threshold":50,
 "date_display":"ye",
+"icon":"circle_green.png"
+},
+
+
+{
+"id":"jshist-assem",
+"title": "Assembly Languages",
+"description":"Wikipedia:<br>Assembly languages date to the introduction of the stored-program computer. The EDSAC computer (1949) had an assembler called initial orders featuring one-letter mnemonics.",
+"startdate": "1949-06-01 12:00:00",
+"importance":"48",
+"link":"http://en.wikipedia.org/wiki/Assembly_language",
+"date_display":"ye",
+"high_threshold":50,
 "icon":"circle_green.png"
 },
 
@@ -237,6 +232,19 @@
 },
 
 
+{
+"id":"jshist-c",
+"title": "C",
+"description":"Wikipedia:<br>The initial development of C occurred at AT&T Bell Labs between 1969 and 1973; according to Ritchie, the most creative period occurred in 1972. It was named \"C\" because its features were derived from an earlier language called \"B\", which according to Ken Thompson was a stripped-down version of the BCPL programming language.",
+"startdate": "1972-06-01 12:00:00",
+"importance":"55",
+"high_threshold":50,
+"image":"_js_history/ritchie_thompson.jpg",
+"date_display":"ye",
+"icon":"circle_green.png"
+},
+
+
 
 
 {
@@ -248,20 +256,6 @@
 "high_threshold":50,
 "low_threshold":46,
 "date_display":"da",
-"icon":"circle_green.png"
-},
-
-
-{
-"id":"jshist-c",
-"title": "C",
-"description":"Wikipedia:<br>The initial development of C occurred at AT&T Bell Labs between 1969 and 1973; according to Ritchie, the most creative period occurred in 1972. It was named \"C\" because its features were derived from an earlier language called \"B\", which according to Ken Thompson was a stripped-down version of the BCPL programming language.",
-"startdate": "1972-06-01 12:00:00",
-"importance":"55",
-"high_threshold":50,
-"low_threshold":46,
-"image":"_js_history/ritchie_thompson.jpg",
-"date_display":"ye",
 "icon":"circle_green.png"
 },
 
@@ -325,6 +319,19 @@
 
 
 
+{
+"id":"jshist-macwww",
+"title": "MacWWW",
+"description":"Wikipedia:<br>MacWWW, also known as Samba, is an early minimalist web browser from 1992 meant to run on Macintosh computers. It was the first web browser for the Mac OS platform, and the first for any non-Unix operating system.",
+"startdate": "1992-12-23 12:00:00",
+"high_threshold":40,
+"importance":"30",
+"date_display":"da",
+"link":"http://en.wikipedia.org/wiki/MacWWW",
+"icon":"triangle_yellow.png"
+},
+
+
 
 
 {
@@ -344,14 +351,83 @@
 {
 "id":"jshist-java",
 "title": "Java",
-"description":"From Wikipedia:<br>Java was originally designed for interactive television, but it was too advanced for the digital cable television industry at the time. The language was initially called Oak after an oak tree that stood outside James Gosling's office; it went by the name Green later, and was later renamed Java, from Java coffee, said to be consumed in large quantities by the language's creators. Gosling aimed to implement a virtual machine and a language that had a familiar C/C++ style of notation.",
+"description":"<img src='_js_history/gosling.jpg' style='float:left'>From Wikipedia:<br>Java was originally designed for interactive television, but it was too advanced for the digital cable television industry at the time. The language was initially called Oak after an oak tree that stood outside James Gosling's office; it went by the name Green later, and was later renamed Java, from Java coffee, said to be consumed in large quantities by the language's creators. Gosling aimed to implement a virtual machine and a language that had a familiar C/C++ style of notation.",
 "startdate": "1991-06-15 12:00:00",
 "high_threshold":50,
 "importance":"50",
 "date_display":"ye",
-"image":"_js_history/gosling.jpg",
 "link":"http://en.wikipedia.org/wiki/Mosaic_%28web_browser%29",
 "icon":"circle_green.png"
+},
+
+
+
+{
+"id":"jshist-nexus",
+"title": "WorldWideWeb (Nexus) Browser",
+"description":"Tim Berners-Lee creates the first browser, initially called WorldWideWeb, but renamed to 'Nexus' to clear up confusion between the www network and his browser.",
+"startdate": "1990-12-23 12:00:00",
+"high_threshold":40,
+"importance":"35",
+"date_display":"da",
+"link":"http://en.wikipedia.org/wiki/WorldWideWeb",
+"icon":"triangle_yellow.png"
+},
+
+
+{
+"id":"jshist-aol1",
+"title": "AOL 1.0",
+"description":"Tim Berners-Lee creates the first browser, initially called WorldWideWeb, but renamed to 'Nexus' to clear up confusion between the www network and his browser.",
+"startdate": "1993-01-23 12:00:00",
+"high_threshold":40,
+"importance":"30",
+"date_display":"da",
+"link":"http://en.wikipedia.org/wiki/WorldWideWeb",
+"icon":"circle_purple.png"
+},
+
+
+{
+"id":"jshist-booklink",
+"title": "AOL acquires BookLink ",
+"description":"...foiling Microsoft.",
+"startdate": "1994-11-23 12:00:00",
+"high_threshold":40,
+"importance":"30",
+"date_display":"da",
+"link":"http://en.wikipedia.org/wiki/BookLink",
+"icon":"circle_purple.png"
+},
+
+
+
+
+{
+"id":"jshist-booklink",
+"title": "AOL acquires BookLink browser",
+"description":"Tim Berners-Lee creates the first browser.",
+"startdate": "1994-11-23 12:00:00",
+"high_threshold":40,
+"importance":"35",
+"date_display":"da",
+"link":"http://en.wikipedia.org/wiki/WorldWideWeb",
+"icon":"triangle_yellow.png"
+},
+
+
+
+{
+"id":"jshist-netscape",
+"title": "Netscape founded",
+"description":"Jim Clark, of Silicon Graphics, and Mark Andreesen create Netscape.",
+"startdate": "1994-04-04 12:00:00",
+"high_threshold":40,
+"importance":"40",
+"date_display":"da",
+"image":"_js_history/andreesen.jpg",
+"link":"http://en.wikipedia.org/wiki/Mosaic_%28web_browser%29",
+"icon":"circle_purple.png"
 },
 
 
@@ -360,7 +436,7 @@
 {
 "id":"jshist-nnavigator",
 "title": "Netscape Navigator v1.0",
-"description":"Netscape Navigator was a proprietary web browser that was popular in the 1990s. It was the flagship product of the Netscape Communications Corporation and the dominant web browser in terms of usage share, although by 2002 its usage had almost disappeared. This was primarily due to the increased usage of Microsoft's Internet Explorer web browser software, and partly because the Netscape Corporation (later purchased by AOL) did not.",
+"description":"Wikipedia:<br>Netscape Navigator was a proprietary web browser that was popular in the 1990s. It was the flagship product of the Netscape Communications Corporation and the dominant web browser in terms of usage share, although by 2002 its usage had almost disappeared.",
 "startdate": "1994-12-15 12:00:00",
 "high_threshold":40,
 "importance":"40",
@@ -388,13 +464,13 @@
 {
 "id":"jshist-ie1",
 "title": "Internet Explorer v1.0",
-"description":"The first version of Internet Explorer (later referred to as Internet Explorer 1) made its debut on August 16, 1995. It was a reworked version of Spyglass Mosaic, which Microsoft had licensed, like many other companies initiating browser development, from Spyglass Inc. It came with Microsoft Plus! for Windows 95 and the OEM release of Windows 95, and was installed as part of the Internet Jumpstart Kit in Plus!. The Internet Explorer team began with about six people in early development. Internet Explorer 1.5 was released several months later for Windows NT and added support for basic table rendering. By including it free of charge on their OS, they did not have to pay royalties to Spyglass Inc., resulting in a lawsuit and a multi-million USD settlement.",
+"description":"The first version of Internet Explorer (later referred to as Internet Explorer 1) made its debut on August 16, 1995. It was a reworked version of Spyglass Mosaic, which Microsoft had licensed, like many other companies initiating browser development, from Spyglass Inc. It came with Microsoft Plus! for Windows 95 and the OEM release of Windows 95, and was installed as part of the Internet Jumpstart Kit in Plus!",
 "startdate": "1995-08-16 12:00:00",
 "date_display":"da",
 "high_threshold":40,
 "importance":"30",
 "link":"http://en.wikipedia.org/wiki/Internet_Explorer#Internet_Explorer_1",
-"icon":"triangle_blue.png"
+"icon":"circle_purple.png"
 },
 
 
@@ -422,7 +498,7 @@
 "high_threshold":40,
 "importance":"30",
 "link":"http://www.whatwg.org/",
-"icon":"triangle_blue.png"
+"icon":"circle_purple.png"
 },
 
 
@@ -441,6 +517,37 @@
 
 
 {
+"id":"jshist-mochi_kit",
+"title": "mochikit",
+"description":"Mochikit was one of the earliest comprehensive JS DOM manipulation libraries. Wikipedia:<br>Ispired by the Python networking framework, Twisted, it uses the concept of deferred execution to allow asynchronous behaviour. This has made it useful in the development of interactive web pages which maintain a dialog with the web server, sometimes called Ajax applications.",
+"startdate": "2005-05-01 12:00:00",
+"high_threshold":40,
+"importance":"30",
+"link":"http://en.wikipedia.org/wiki/MochiKit",
+"image_class":"above",
+"icon":"triangle_orange.png"
+},
+
+
+
+
+
+{
+"id":"jshist-qoox",
+"title": "qooxdo",
+"description":"qoxdoo, pronounced 'cooks do' was introduced in 2006. Wikipedia:<br>qooxdoo is entirely class-based and tries to leverage the features of object-oriented JavaScript. It is based on namespaces and does not modify or extend native JavaScript types",
+"startdate": "2006-06-01 12:00:00",
+"high_threshold":40,
+"importance":"30",
+"link":"http://en.wikipedia.org/wiki/qooxdoo",
+"image_class":"above",
+"icon":"triangle_orange.png"
+},
+
+
+
+
+{
 "id":"jshist-script.aculo.us",
 "title": "script.aculo.us",
 "description":"Wikipedia:<br>script.aculo.us was extracted by Thomas Fuchs from his work on fluxiom, a web based digital asset management tool by the design company wollzelle. It was first released to the public in June 2005.",
@@ -455,10 +562,11 @@
 {
 "id":"jshist-livewire",
 "title": "Netscape LiveWire",
-"description":"LiveWire was a first attempt by Netscape to create a super-framework that included their Java back-end and database connectivity and front-end scripting. This was ostensibly to go head-to-head with Microsoft's new ASP framework. But also, Javascript could be included in the compile-time file to interpret server-side data (a .web file), much like today's PHP. It is uncanny how similar their system was to the later Flash compiled-bytecode system. It was a complete flop.",
+"description":"<img src='_js_history/livewire_cover.jpg' style='float:left'>LiveWire was a first attempt by Netscape to create a super-framework that included their Java back-end and database connectivity and front-end scripting. This was ostensibly to go head-to-head with Microsoft's new ASP framework. But also, Javascript could be included in the compile-time file to interpret server-side data (a .web file), much like today's PHP. It is uncanny how similar their system was to the later Flash compiled-bytecode system. It was a complete flop.",
 "startdate": "1997-06-01 12:00:00",
 "high_threshold":40,
 "importance":"35",
+"modal_type":"full",
 "image_class":"above",
 "icon":"square_orange.png"
 },
@@ -552,14 +660,16 @@
 {
 "id":"jshist-01",
 "title": "\"Ten Days in May\": Mocha",
-"description": "<img src='img/eich.jpg' style='float:left;margin-right:8px;margin-bottom:8px'>JavaScript was developed by Brendan Eich of Netscape, originally under the name Mocha.<br><br><a href='http://brendaneich.com/2008/04/popularity/'>Said Eich:</a><br><em>As I’ve often said, and as others at Netscape can confirm, I was recruited to Netscape with the promise of \"doing Scheme\" in the browser. At least client engineering management...were convinced that Netscape should embed a programming language, in source form, in HTML.</em>",
+"description": "JavaScript was developed by Brendan Eich of Netscape, originally under the name Mocha.<br><br><a href='http://brendaneich.com/2008/04/popularity/'>Said Eich:</a><br><em>As I’ve often said, and as others at Netscape can confirm, I was recruited to Netscape with the promise of \"doing Scheme\" in the browser. At least client engineering management...were convinced that Netscape should embed a programming language, in source form, in HTML.</em>",
 "startdate": "1995-05-15 06:00:00",
 "enddate": "1995-05-25 23:00:00",
 "date_display":"da",
 "link":"http://en.wikipedia.org/wiki/JavaScript",
 "high_threshold":40,
 "importance":"55",
-"icon":"triangle_green.png"
+"modal_type":"full",
+"icon":"triangle_green.png",
+"image":"_js_history/eich.gif"
 },
 
 {
@@ -586,8 +696,7 @@
 "high_threshold":40,
 "importance":"55",
 "date_display":"da",
-"icon":"circle_green.png",
-"image":"_js_history/eich.gif"
+"icon":"circle_green.png"
 },
 
 
@@ -610,9 +719,9 @@
 
 {
 "id":"jshist-js-era",
-"title": "Javascript",
+"title": "Javascript Era",
 "description": "There was Javascript.",
-"startdate": "1995-12-04 12:00:00",
+"startdate": "1995-05-01 12:00:00",
 "enddate": "today",
 "date_display":"mo",
 "low_threshold":41,
@@ -709,8 +818,43 @@
 
 
 {
+"id":"jshist-inception",
+"title": "JS Inception",
+"description": "...",
+"startdate": "1995-05-15 06:00:00",
+"enddate": "1997-11-01 12:00:00",
+"date_display":"mo",
+"link":"http://en.wikipedia.org/wiki/JavaScript",
+"low_threshold":41,
+"high_threshold":45,
+"importance":60,
+"css_class":"inception",
+"icon":"none"
+},
+
+
+
+
+{
+"id":"jshist-browserwars",
+"title": "Browserwars",
+"description": "Wikipedia:<br>In 1996, Netscape's share of the browser market reached 86%; but then Microsoft began integrating its browser with its operating system and bundling deals with OEMs, and within two years the balance had reversed.",
+"startdate": "1996-01-01 12:00:00",
+"enddate": "1998-12-01 12:00:00",
+"date_display":"mo",
+"link":"http://en.wikipedia.org/wiki/JavaScript",
+"high_threshold":45,
+"importance":60,
+"css_class":"browserwars",
+"icon":"none"
+},
+
+
+
+
+{
 "id":"jshist-shadow-years",
-"title": "Shadow Years",
+"title": "THE DHTML DOLDRUMS",
 "description": "In these first years, JS seems like a necessary evil that had been avoidable but which was now entrenched. Of Javascript's initial insinuation into browsers, WWW founder Robert Cailliau said, 'the programming-vacuum filled itself with the most horrible kluge in the history of computing: Javascript.'",
 "startdate": "1998-01-01 12:00:00",
 "enddate": "2004-01-01 12:00:00",
@@ -725,7 +869,7 @@
 
 {
 "id":"jshist-ajax-age",
-"title": "The Ajax Age",
+"title": "The Ajax'aissance",
 "description": "Ajax, seeded by the XMLHttpRequest object, is born.",
 "startdate": "2005-01-01 12:00:00",
 "enddate": "today",
@@ -753,6 +897,24 @@
 "css_class":"hawt",
 "icon":"none"
 },
+
+
+
+
+{
+"id":"jshist-aolscape",
+"title": "Netscape sold to AOL for $4.2 billion",
+"description": "O'Reilly publishes the first comprehensive book on Javascript.",
+"startdate": "1998-11-24 12:00:00",
+"date_display":"mo",
+"link":"http://news.cnet.com/2100-1023-218360.html",
+"high_threshold":40,
+"importance":"45",
+"icon":"flag_black.png"
+},
+
+
+
 
 
 {
@@ -797,6 +959,50 @@
 "icon":"triangle_green.png"
 },
 
+
+{
+"id":"jshist-ecma2",
+"title": "ECMA-262 Edition 2",
+"description": "Editorial changes to keep the specification fully aligned with ISO/IEC 16262 international standard",
+"startdate": "1998-06-01 12:00:00",
+"date_display":"mo",
+"link":"http://www.ecmascript.org/",
+"high_threshold":40,
+"importance":"30",
+"icon":"triangle_green.png"
+},
+
+
+{
+"id":"jshist-ecma3",
+"title": "ECMA-262 Edition 3",
+"description": "Added regular expressions, better string handling, new control statements, try/catch exception handling, tighter definition of errors, formatting for numeric output and other enhancements",
+"startdate": "1999-12-01 12:00:00",
+"date_display":"mo",
+"link":"http://en.wikipedia.org/wiki/ECMAScript",
+"high_threshold":40,
+"importance":"45",
+"icon":"triangle_green.png"
+},
+
+
+{
+"id":"jshist-ecma4",
+"title": "ECMA Ed. 4 TANKS",
+"description": "Added regular expressions, better string handling, new control statements, try/catch exception handling, tighter definition of errors, formatting for numeric output and other enhancements",
+"startdate": "2003-11-01 12:00:00",
+"date_display":"mo",
+"link":"http://en.wikipedia.org/wiki/ECMAScript",
+"high_threshold":40,
+"importance":"45",
+"icon":"triangle_green.png"
+},
+
+
+
+
+
+
 {
 "id":"jshist-05",
 "title": "Dojo Toolkit",
@@ -812,7 +1018,7 @@
 },
 {
 "id":"jshist-08",
-"title": "JSON emerges",
+"title": "JSON is introduced",
 "description": "Wikipedia:<br>Douglas Crockford was the first to specify and popularize the JSON format. JSON was used at State Software, a company co-founded by Crockford, starting around 2001. The JSON.org website was launched in 2002. In December 2005, Yahoo! began offering some of its web services in JSON.  Google started offering JSON feeds for its GData web protocol in December 2006.",
 "startdate": "2002-07-01 12:00:00",
 "enddate": "2002-07-01 12:00:00",
@@ -820,7 +1026,7 @@
 "link":"http://json.org",
 "image":"_js_history/crockford.jpg",
 "high_threshold":40,
-"importance":"35",
+"importance":"45",
 "icon":"circle_orange.png"
 },
 
@@ -837,6 +1043,34 @@
 "image_class":"above",
 "icon":"triangle_orange.png"
 },
+
+
+{
+"id":"jshist-as1",
+"title": "Actionscript 1",
+"description": "With the release of Flash 5 in September 2000, the \"actions\" from Flash 4 were enhanced once more and named \"ActionScript\" for the first time. This was the first version of ActionScript with influences from JavaScript.",
+"startdate": "2000-09-01 12:00:00",
+"link":"http://en.wikipedia.org/wiki/ActionScript",
+"high_threshold":40,
+"importance":"35",
+"icon":"square_red.png"
+},
+
+
+
+{
+"id":"jshist-as2",
+"title": "Actionscript 2",
+"description": "In response to user demand for a language better equipped for larger and more complex applications, ActionScript 2.0 featured compile-time type checking and class-based syntax, such as the keywords class and extends.",
+"startdate": "2003-09-01 12:00:00",
+"link":"http://en.wikipedia.org/wiki/ActionScript",
+"high_threshold":40,
+"importance":"40",
+"icon":"square_red.png"
+},
+
+
+
 {
 "id":"jshist-16",
 "title": "MooTools",
@@ -919,6 +1153,21 @@
 "importance":"35",
 "icon":"triangle_orange.png"
 },
+
+
+{
+"id":"jshist-googclosure",
+"title": "Google Closure Tools",
+"description": "Google Closure Tools is a set of tools to help developers build rich web applications with JavaScript. It was developed by Google for use in their web applications such as Gmail, Google Docs and Google Maps.",
+"startdate": "2009-11-01 12:00:00",
+"date_display":"mo",
+"link":"http://en.wikipedia.org/wiki/Google_Web_Toolkit",
+"high_threshold":40,
+"importance":"35",
+"icon":"triangle_orange.png"
+},
+
+
 
 
 

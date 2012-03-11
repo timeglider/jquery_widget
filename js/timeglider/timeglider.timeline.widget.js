@@ -57,6 +57,7 @@
 			icon_folder:'js/timeglider/icons/',
 			show_footer:true,
 			display_zoom_level:true,
+			constrain_to_data:false,
 			event_modal:{href:'', type:'default'},
 			event_overflow:"plus"  // plus | scroll 
 		},
@@ -143,6 +144,10 @@
 		},
 		
 		
+		
+		
+		
+		
 		/** 
 		*********  PUBLIC METHODS ***************
 		*
@@ -157,26 +162,53 @@
 		*/
 		goTo : function (d, z) {
 			MED.gotoDateZoom(d,z);
+			return this;
 		},
 		
+		refresh : function () {
+			MED.refresh();
+			return this;
+		},
 		
 		resize : function () {
 			timelinePlayer.resize();
+			return this;
 		},
 		
-				
+		filterBy : function (type, content) {
+			MED.filterBy(type, content);
+			return this;
+		},
+
+		addFilterAction: function (name, filterFunction, actionFunction) {
+			MED.addFilterAction(name, filterFunction, actionFunction);
+			return this;
+		},
+		
+		removeFilterAction: function (name) {
+			MED.removeFilterAction(name);	
+			return this;
+		},
+		
 		getMediator : function () {
 			return MED;
 		},
 		
+		/*
+		 * getEventByID
+		 * By passing just an id, this returns the whole event object
+		 * (or the attributes of the Backbone model)
+		 * By adding a property such as "title", you can just get one property
+		 * @param id {String} The event id, as it was passed in JSON data
+		 * @param prop {String} optional property name string in case you 
+		 *        only want that one property
+		*/
+		getEventByID : function (id, prop) {
+			return MED.getEventByID(id, prop);
+		},
 		
 		getScope : function () {
 			return MED.getScope();
-		},
-		
-		
-		filterBy : function (type, content) {
-			MED.filterBy(type, content);
 		},
 		
 		

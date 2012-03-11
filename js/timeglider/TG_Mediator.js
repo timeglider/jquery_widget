@@ -58,6 +58,10 @@ tg.TG_Mediator = function (wopts, $el) {
     this.gestureStartZoom = 0;
     this.gestureStartScale = 0; // .999 etc reduced to 1 to 100
     this.filters = {include:"", exclude:"", legend:[], tags:[]};
+    
+    // 
+    this.filterActions = {};
+
 
     this.timelineCollection = new tg.TG_TimelineCollection;
     this.eventCollection = new tg.TG_EventCollection;
@@ -154,6 +158,26 @@ tg.TG_Mediator = function (wopts, $el) {
 	      }
 	    },
 	    
+	    
+	    addFilterAction: function(actionName, actionFilter, actionFunction) {
+	    	this.filterActions[actionName] = {filter:actionFilter, fn:actionFunction};
+	    	this.refresh();
+	    },
+	    
+	    removeFilterAction: function(actionName) {
+	    	delete this.filterActions[actionName];
+	    },
+	    
+	    
+	    getEventByID: function(id, prop) {
+	    	var evob = this.eventCollection.get(id).attributes;
+	    	
+	    	if (prop && evob.hasOwnProperty(prop)) {
+	    		return evob[prop];
+	    	} else {
+	    		return evob;
+	    	}
+	    },
 	    
 	    /*
 	     * Gets the bounds for 1+ timelines in view
@@ -436,7 +460,7 @@ tg.TG_Mediator = function (wopts, $el) {
 
 
 	refresh : function () {
-		this.startSec = this._focusDate.sec;
+		
 		$.publish(container_name + ".mediator.refreshSignal");       
     },
 
@@ -444,9 +468,12 @@ tg.TG_Mediator = function (wopts, $el) {
     setTicksReady : function (bool) {
         this.ticksReady = bool;
         
+        this.startSec = this._focusDate.sec;
+                
         if (bool === true) { 
           $.publish(container_name + ".mediator.ticksReadySignal");
         }
+   
     },
 
     
@@ -484,8 +511,7 @@ tg.TG_Mediator = function (wopts, $el) {
     *      
     */
     setFocusDate : function (fd) {
-        // !TODO :: VALIDATE FOCUS DATE
-         
+     
 		if (fd != this._focusDate) {
 			this._focusDate = fd; 
         }
@@ -508,6 +534,14 @@ tg.TG_Mediator = function (wopts, $el) {
         return parseInt(this._zoomLevel);
     },
     
+    
+    runTest:function() {
+    	var startsec = -158112000043140;
+    	var d = TG_Date.getDateFromSec(startsec);
+    	
+    	debug.log("test date:", d);
+    
+    },
 
 
 	/* 
@@ -523,6 +557,7 @@ tg.TG_Mediator = function (wopts, $el) {
 		
 			// focusdate has to come first for combined zoom+focusdate switch
 			this.startSec = this._focusDate.sec;
+			
 			  
 			if (z != this._zoomLevel) {
 			    this._zoomLevel = z;
@@ -623,7 +658,7 @@ tg.TG_Mediator = function (wopts, $el) {
 					$.publish(container_name + ".mediator.legendAll");
 				} else {
 										
-					if ($.inArray(icon, this.filters.legend) == -1) {
+					if (_.indexOf(this.filters.legend, icon) == -1) {
 						this.filters.legend.push(icon);
 					} else {
 						// remove it
@@ -727,7 +762,7 @@ tg.TG_Mediator = function (wopts, $el) {
 
 		var tl = this.timelineCollection.get(id).attributes;
 		
-		var active = $.inArray(id, this.activeTimelines);
+		var active = _.indexOf(this.activeTimelines, id);
 		
 		if (active == -1) {
 			// timeline not active ---- bring it on
@@ -749,10 +784,10 @@ tg.TG_Mediator = function (wopts, $el) {
 			// it's active, remove it
 			this.activeTimelines.splice(active,1);
 			
-			this.refresh();
+			
 			// this will change the menu list/appearance
 		}
-		
+		this.refresh();
 		$.publish(container_name + ".mediator.activeTimelinesChange");
 	
 	},
@@ -826,6 +861,7 @@ tg.validateOptions = function (widget_settings) {
     	icon_folder:{type:"string"},
     	show_footer:{type:"boolean"},
     	display_zoom_level:{type:"boolean"},
+    	constrain_to_data:{type:"boolean"},
     	event_modal:{type:"object"},
     	event_overflow:{type:"string"}
   	}
@@ -842,7 +878,7 @@ tg.validateOptions = function (widget_settings) {
 				case "string": 
 					if (typeof value != "string") { msg += (key + " needs to be a string." + lb); }
 					if (me.optionsMaster[key].possible) {
-						if ($.inArray(value, me.optionsMaster[key].possible) == -1) {
+						if (_.indexOf(me.optionsMaster[key].possible, value) == -1) {
 							msg += (key + " must be: " + me.optionsMaster[key].possible.join(" or "));
 						}
 					}
@@ -871,7 +907,7 @@ tg.validateOptions = function (widget_settings) {
 					
 					var cities = ["New York", "Denver", "Chicago", "Los Angeles"];
 					var pattern = /[+|-]?[0-9]+:[0-9]+/;
-						if (($.inArray(value, cities) == -1) && (value.match(pattern) == -1)) { 
+						if ((_.indexOf(cities, value) == -1) && (value.match(pattern) == -1)) { 
 							msg += ("The timezone is not formatted properly");
 						}
 						

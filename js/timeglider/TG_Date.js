@@ -101,7 +101,8 @@ timeglider.TG_Date = {};
 		
 			if (strOrNum == "today") {
 				strOrNum = TG_Date.getToday();
-			} 
+			}
+			
 			dateStr = isoStr = strOrNum;
 		}
   
@@ -380,10 +381,11 @@ timeglider.TG_Date = {};
   @param snum is the rata die or day serial number
   */
   TG_Date.getDateFromRD = function (snum) {
-    // in case it arrives as an RD-decimal
+    
     if (getDateFromRDCache[snum]) {
       return getDateFromRDCache[snum]
     }
+    // in case it arrives as an RD-decimal
     var snumAb = Math.floor(snum);
 
     var bigP = 146097; // constant days in big cal cycle
@@ -435,7 +437,9 @@ timeglider.TG_Date = {};
 	  // the sec/86400 represents a "rd-decimal form"
 	  // that will allow extraction of hour, minute, second
   	var ret = TG_Date.getDateFromRD(sec / 86400);
+  	
   	getDateFromSecCache[sec] = ret;
+  	
   	return ret;
   };
 
@@ -1146,13 +1150,14 @@ timeglider.TG_Date = {};
 
 
       	function getSec (fd) {
-      		// 
+      		      		
       		var daSec = Math.abs(fd.rd) * 86400;
       		var hoSec = (fd.ho) * 3600;
       		var miSec = (fd.mi - 1) * 60;
-      		var bc = 1;
-      		if (fd.rd < 0) bc = -1;
-      		return bc * (daSec + hoSec + miSec);
+      		var bc = (fd.rd > 0) ? 1 : -1;
+      		var ret = bc * (daSec + hoSec + miSec);
+      		
+      		return ret;
       	};
 
 

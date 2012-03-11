@@ -62,7 +62,8 @@ tg.TG_PlayerView = function (widget, mediator) {
 		
 		WIDGET_ID = widget._id;
       	container_name = options.base_namespace + "#" + WIDGET_ID;
-
+	
+		this.gens = 0;
 
 	/*  references specific to the instance (rather than timeglider) so
 		one can have more than one instance of the widget on a page */ 	      
@@ -92,9 +93,25 @@ tg.TG_PlayerView = function (widget, mediator) {
 	DATE = this._views.DATE;
 	
 	
+	// height for images in the top image lane
+	this.imageLaneHeight = 40;
 	
-  	/////////////////////////////
-	
+	// distance from bottom of container (not vertically from ticks)
+	// for timelines to be by default; if a timeline has a "top" value,
+	// it will be set according to that
+ 	this.initTimelineVOffset = 100;
+ 	
+ 	// this needs to be less than or equal to
+ 	// timeglider.css value for .timeglider-tick 
+ 	// height property
+ 	this.tick_height = 34;
+ 	
+ 	
+ 	// a state var for the left-right position of the timeline
+ 	// to help track whether the timeline is too far left/right
+ 	this.dragScopeState = {state:"okay",pos:0};
+
+
 	/*  TEMPLATES FOR THINGS LIKE MODAL WINDOWS
 	*   events themselves are non-templated and rendered in TG_Org.js
 	*   as there are too many on-the-fly style attributes etc, and 
@@ -102,15 +119,6 @@ tg.TG_PlayerView = function (widget, mediator) {
 	*
 	*
 	*/
- 	this.initTimelineVOffset = 100;
- 	// this needs to be less than or equal to
- 	//  timeglider.css value for timeglider-tick-height
- 	this.tick_height = 34;
- 	
- 	this.imageLaneHeight = 60;
- 	
- 	this.dragScopeState = ["okay",0];
-
 	// in case custom event_modal fails, we need this object to exist
 	this._templates = {}
   
@@ -249,6 +257,14 @@ tg.TG_PlayerView = function (widget, mediator) {
 		.delegate(".timeglider-more-plus", "click", function () {
 			MED.zoom(-1);
 	})
+	.	delegate(".timeglider-more-plus", "hover", function () {
+			
+			var evid = $(this).data("event_id");
+			
+			//!TODO
+			// take id and focus to it, then zoom in until it's
+			// visible: then highlight and fade out highlight
+	})
 		.delegate(".timeglider-legend-close", "click", function () {
 			var $legend = $(CONTAINER + " .timeglider-legend");
 			$legend.fadeOut(300, function () { $legend.remove(); });
@@ -280,7 +296,6 @@ tg.TG_PlayerView = function (widget, mediator) {
 	this.sliderActive = false;
 	this.ztop = 1000;
 	this.filterBoxActivated = false;
-	this.visibleEvents = [];
 	
 	// INITIAL CONSTRUCTION
 	this.buildSlider();
@@ -311,32 +326,48 @@ tg.TG_PlayerView = function (widget, mediator) {
 	$(TICKS)
   	.draggable({ axis: 'x',
 		start: function(event, ui) {
-			
-			
+			// anything??	
 		},
 		drag: function(event, ui) {
 			
 			t1Left = Math.floor($(this).position().left);
+			
 			MED.setTicksOffset(t1Left);
 			
 			ticksSpeed = t1Left - t2Left;
 			t2Left = t1Left;
 			
-			var dsState = me.dragScopeState
-						
-			if (dsState[0] == "over-left") {
+			
+			// to keep dragging limited to
+			// timeline scope, set "constrain_to_data"
+			// to true in main widget options
+			var dsState = me.dragScopeState;
+			
+			if (options.constrain_to_data && MED.activeTimelines.length == 1) {
 				
-				$(TICKS).css("left", dsState[1]-5);
-				// return false
+				var $tb = $(".titleBar");			
+				var tbPos = $tb.data("lef");
+				var ctr = me.dimensions.container.centerx;
 				
-			} else if (dsState[0] == "over-right") {
-				
-				$(TICKS).css("left", dsState[1]+5);
-				// return false;
-				
-			} else {
-				return true;
+				if (dsState.state == "over-left") {
+					// set timeline left side to center of frame
+					var newPos = (-1 * tbPos) + (ctr-1);
+					$(TICKS).css("left", newPos);
+					me.dragScopeState = {state:"okay"};
+					me.registerDragging();
+					return false;
+					
+				} else if (dsState.state == "over-right") {
+					// set timeline right side to center of frame
+					var newPos = ((-1 * tbPos) + (ctr-1)) - ($tb.width() - 4);
+					$(TICKS).css("left", newPos);
+					me.dragScopeState = {state:"okay"};
+					me.registerDragging();
+					return false;
+				}
 			}
+			
+			return true;
 			
 		},
 	
@@ -346,7 +377,7 @@ tg.TG_PlayerView = function (widget, mediator) {
 			
 			me.resetTicksHandle();
 			me.registerDragging();
-			// me.easeOutTicks(); 
+			me.registerTitles();
  
 		}
 		
@@ -418,9 +449,13 @@ tg.TG_PlayerView = function (widget, mediator) {
 	/* PUB-SUB "LISTENERS" SUBSCRIBERS */
  
 	$.subscribe(container_name + ".mediator.ticksOffsetChange", function () {
+		
+		
 		me.tickHangies();
+		// TOO MUCH! CRASHES Firefox
 		me.registerDragging();
 		me.registerTitles();
+		
 	});
 	
 	$.subscribe(container_name + ".mediator.focusToEvent", function () {
@@ -488,22 +523,23 @@ tg.TG_PlayerView = function (widget, mediator) {
 	
 	
 	$.subscribe(container_name + ".mediator.scopeChange", function() {
+		
 		var scope = MED.getScope();
 		var tbounds = scope.timelineBounds;
 		var focus = scope.focusDateSec;
 		
 		if (focus > tbounds.last) {
 			// past right end of timeline(s): stop leftward drag
-			me.dragScopeState = ["over-right", $(TICKS).position().left];
+			me.dragScopeState = {state:"over-right"};
 		} else if (focus < tbounds.first) {
-			// over left end of timeline(s): stop rightward drag
-			me.dragScopeState = ["over-left", $(TICKS).position().left];
+						// over left end of timeline(s): stop rightward drag
+			me.dragScopeState = {state:"over-left"};
 		} else {
-			me.dragScopeState = ["okay",0];
+		
+			me.dragScopeState = {state:"okay"};
 
 		}
 		
-	
 	});
 	
 	
@@ -664,10 +700,12 @@ tg.TG_PlayerView.prototype = {
  	},
  	
  	
-	displayFocusDate: function () {
+	displayFocusDate: _.throttle(function () {
+		// this is expensive for real-time dragging...
+		// without throttle, leads to crashing in Firefox
 		var fd = MED.getFocusDate();
 		$(DATE).text(fd.format("d MMM yyyy", false));
-	},
+	}, 300),
 	 	
  	
 	/**
@@ -754,21 +792,32 @@ tg.TG_PlayerView.prototype = {
 		  mo = $(CONTAINER).offset().left,
 		  trackTB = true;
 		  
-	
-		
-		$(".timeglider-event-spanning").each(
+
+		$(CONTAINER + " .timeglider-event-spanning").each(
 			function() {
 			    // !TODO  needs optimizing of DOM "touching"
-			 	toff = $(this).offset().left - mo;
-				w = $(this).outerWidth();
-				$elem = $(".timeglider-event-title",this);
-				tw = $elem.outerWidth() + 5;
+			    var $spev = $(this);
+			 	toff = $spev.offset().left - mo;
+				$elem = $spev.find(".timeglider-event-title");
+				tw = $elem.outerWidth();
 				sw = $elem.siblings(".timeglider-event-spanner").outerWidth();
+				
+				// if the span is wider than the title element
 				if (sw > tw) {
-					if ((toff < 0) && (Math.abs(toff) < (w-tw))) {
-						$elem.css({marginLeft:(-1 * toff)+5});
-					} 
-				}
+					// if the offset is to the left of the frame
+					if (toff < 0) {
+						var dif = sw-tw;
+						if (Math.abs(toff) < dif) {
+							$elem.css({marginLeft:(-1 * toff) + 5});
+						} else {
+							// keep it aligned right if the right side is poking in
+							$elem.css({marginLeft:(sw - tw) - 5});
+						}
+					// otherwise just keep it aligned on the left side of the span
+					} else {
+						$elem.css({marginLeft:5});
+					}
+				} 
 				// is offscreen == false: $(this).removeClass('timeglider-event-offscreen')
 			}
 		);
@@ -781,7 +830,7 @@ tg.TG_PlayerView.prototype = {
 		}
 		
 		// if (trackTB === true) {
-		$(".tg-timeline-envelope").each(
+		$(CONTAINER + " .tg-timeline-envelope").each(
 				function () {
 				  // !TODO  needs optimizing of DOM "touching"
 					$env = $(this);
@@ -797,20 +846,23 @@ tg.TG_PlayerView.prototype = {
 					
 					$ti = $tb.find(".timeline-title");
 					// if it's pushed left of the window
+					
+					
 				 	if ( (relPos > 0) ) {
-				 		if (relPos < ($tb.width()-$ti.width())) {
-							$ti.css({marginLeft:relPos+5});
+				 		var dif = $tb.width()-$ti.width();
+				 		if (relPos < dif) {
+							$ti.css({marginLeft:relPos + 5});
+						} else {
+							$ti.css({marginLeft:dif - 5});
 						}
-					} 
+					}  else {
+						$ti.css({marginLeft:5});
+					}
 				
 				}
 		); 
 		
-		// } // end ie check
-		
-		
-		
-	
+			
 	}, // end register titles
 	
 	
@@ -823,16 +875,29 @@ tg.TG_PlayerView.prototype = {
 		// once every 100ms....
 		var startSec = MED.startSec,
 			tickPos = $(TICKS).position().left,
-			secPerPx = MED.getZoomInfo().spp,
-			newSec = startSec - (tickPos * secPerPx),
-			newD = new TG_Date(newSec);
-		   		 
-		  MED.setFocusDate(newD);
-		  
-		  this.displayFocusDate();
+			secPerPx = MED.getZoomInfo().spp;
+			
+			/*
+			debug.log(MED.getFocusDate().ye);
+		
+			debug.log("RD.startSec:", startSec);
+			debug.log("RD.tickPos:", tickPos);
+			debug.log("RD.secPerPx", secPerPx);
+			*/
+						
+		var newSec = startSec - (tickPos * secPerPx);
+			
+			//debug.log("RD.newSec:", newSec);
+		
+		var newD = new TG_Date(newSec);
+			
+			//debug.log("RD.newD.ye", newD.ye);
+			
+		MED.setFocusDate(newD);
+		
+		// remove this???
+		this.displayFocusDate();
 	},
-	
-	
 	
 	
 	
@@ -1199,6 +1264,7 @@ tg.TG_PlayerView.prototype = {
 		MED.setTicksReady(false);
     
 		// INITIAL TICK added  in center according to focus date provided
+		
 		this.addTick({"type":"init", "focus_date":fDate});
 		
 		// ALTERNATING L & R ticks
@@ -1250,8 +1316,9 @@ tg.TG_PlayerView.prototype = {
 		if (info.type == "init") {
 			
 			shiftLeft = this.tickOffsetFromDate(MED.getZoomInfo(), MED.getFocusDate(), tickWidth);
-			pos = Math.ceil(this.dimensions.container.centerx + shiftLeft);
 			
+			pos = Math.ceil(this.dimensions.container.centerx + shiftLeft);
+			$(TICKS).data("init-left", pos);
 			// both and left and right sides are defined
 			// here because it is the first tick on screen			
 			this.leftside = pos;
@@ -1713,7 +1780,9 @@ tg.TG_PlayerView.prototype = {
 			case "hundredthou": 
 			
 				prop = ((fdate.ye % 100000) / 100000);
+				debug.log("hundredthou prop:", prop);
 				p = w * prop;
+				debug.log("hundredthou p:", p);
 				break;
 				
 			case "mill": 
@@ -1724,7 +1793,7 @@ tg.TG_PlayerView.prototype = {
 				
 			case "tenmill": 
 			
-				prop = ((fdate.ye % 10000000) / 1000000);
+				prop = ((fdate.ye % 10000000) / 10000000);
 				p = w * prop;
 				break;
 				
@@ -1876,8 +1945,10 @@ tg.TG_PlayerView.prototype = {
 			cx = me.dimensions.container.centerx,
 			cw = me.dimensions.container.width,
 			foSec = MED.getFocusDate().sec,
-			spp = MED.getZoomInfo().spp,
-			zl = MED.getZoomInfo().level,
+			zi = MED.getZoomInfo(),
+			spp = zi.spp,
+			zl = zi.level,
+			tickUnit = zi.unit,
 			tArr = [],
 			idArr = [],
 			// left and right scope
@@ -1892,8 +1963,6 @@ tg.TG_PlayerView.prototype = {
 			cht = me.dimensions.container.height,
 			ceiling = 0;
 			
-			me.visibleEvents = [];
-			
 	
 		/////////////////////////////////////////
 		
@@ -1907,14 +1976,17 @@ tg.TG_PlayerView.prototype = {
 		*/
 		
 		//////////////////////////////////////////
-		idArr = [];
+		
 		
 		for (var a=0; a<active.length; a++) {
 			
+			idArr = [];
+			
 			// FOR EACH _ACTIVE_ TIMELINE...
 			tlModel = MED.timelineCollection.get(active[a]);
-			
+
 			tl = tlModel.attributes;
+			tl.visibleEvents = [];
 						
 			expCol = tl.display;
 			
@@ -1937,16 +2009,17 @@ tg.TG_PlayerView.prototype = {
 						var ntop = $(this).css("top");
 						var tid = $(this).attr("id");
 						
+						// if we've dragged the timeline up or down
+						// reset its .top value and refresh, mainly
+						// to reset ceiling (+/visible) properties
 						MED.timelineCollection.get(tid).set({top:ntop}); // .attributes;
 					
-						// me.setTimelineProp(tl.id,"top", $(this).css("top"));
 						MED.refresh();	
 					}
 				})
 				.css({"top":tl_top, "left": tz_offset});
 
 			$title = $tl.find(".titleBar");
-			
 			
 			if (typeof tl.bounds != "undefined") {
 				t_f = cx + ((tl.bounds.first - foSec) / spp);
@@ -1956,9 +2029,11 @@ tg.TG_PlayerView.prototype = {
 				t_f = cx;
 				t_l = cx + 300;
 			}
-		
+			
+			// debug.log("bounds", tl.bounds.first, tl.bounds.last);
 			tbwidth = Math.floor(t_l - t_f);
-			var tmax = 10000000;
+						
+			var tmax = 1000000;
 			var farl = -1 * (tmax - 2000);
 			
 			// browsers have a maximum width for divs before
@@ -1975,6 +2050,7 @@ tg.TG_PlayerView.prototype = {
 				}
 			} 
 			
+
 			$title.css({"top":tl_ht, "left":t_f, "width":tbwidth}).data({"lef":t_f, "wid":tbwidth});
 
 			/// for initial sweep display, setup fresh borg for organizing events
@@ -1985,9 +2061,8 @@ tg.TG_PlayerView.prototype = {
 				tArr = this.getTimelineEventsByTick({tick:ticks[tx], timeline:tl});
 		    	idArr = _.union(idArr, tArr);	
 			}
-			
-			// debug.log("visible events:", idArr);
-			me.visibleEvents = idArr;
+						
+			tl.visibleEvents = idArr;
 			
 			// detect if there are boundless spans (bridging, no start/end points)
 		
@@ -2000,7 +2075,7 @@ tg.TG_PlayerView.prototype = {
 	
 					      // adds to beginning to prioritize
 					      idArr.unshift(spanin.id);
-					      me.visibleEvents.push(spanin.id);
+					      tl.visibleEvents.push(spanin.id);
 				      	
 				    }
 				    
@@ -2008,8 +2083,9 @@ tg.TG_PlayerView.prototype = {
 			    
 			});
 			
+			
 			// clean out dupes with _.uniq
-			stuff = this.compileTickEventsAsHtml(tl, _.uniq(idArr), 0, "sweep");
+			stuff = this.compileTickEventsAsHtml(tl, _.uniq(idArr), 0, "sweep", tickUnit);
 			
 			// TODO: make 56 below part of layout constants collection
 			if (options.event_overflow == "scroll") {
@@ -2027,10 +2103,7 @@ tg.TG_PlayerView.prototype = {
 			
 			if (stuff != "undefined") { $tl.append(stuff.html); }
 			
-			
-			// var afterStuff = +new Date();
-			
-					
+			// var afterStuff = +new Date();	
 			setTimeout( function() {
 				me.registerEventImages($tl);
 			}, 3);
@@ -2039,6 +2112,10 @@ tg.TG_PlayerView.prototype = {
 		
 		// initial title shift since it's not on-drag
 		me.registerTitles();
+		
+		
+		setTimeout(function () { me.applyFilterActions(); }, 300);
+		
 		
 		$.publish("viewer.rendered"); 
 		
@@ -2058,7 +2135,8 @@ tg.TG_PlayerView.prototype = {
 			    stuff = "", diff = 0,
 			    me = this;
 			
-
+			// !PROCESS: EXTRASPANS
+			// debug.log("ADD A TICK", tick.serial);
 			// FOR EACH TIMELINE...
 			for (var a=0; a<active.length; a++) {
 				
@@ -2067,24 +2145,24 @@ tg.TG_PlayerView.prototype = {
 				// get the events from timeline model hash
 				idArr = this.getTimelineEventsByTick({tick:tick, timeline:tl});
 				
-				me.visibleEvents = _.union(me.visibleEvents, idArr);
+				tl.visibleEvents = _.union(tl.visibleEvents, idArr);
 				
+				// debug.log("visible events:", me.visibleEvents);
 				// we need to see if the right end of a long span
 				// is present in the newly added tick
 				if (side == "left") {
 					
 					_.each(tl.spans, function (spanin) {
 						
-						// diff = tick.seconds.start - spanin.end;
-						// var tsize = tick.seconds.end - tick.seconds.start;
-					
+						//var diff = tick.seconds.start - spanin.end;
 						if (spanin.end < tick.seconds.end && spanin.end > tick.seconds.start) {
 							
+							
 						    //not already in array
-						    if (_.indexOf(me.visibleEvents, spanin.id) === -1) {
+						    if (_.indexOf(tl.visibleEvents, spanin.id) === -1) {
 						      	// add to beginning to prioritize
 						      	idArr.unshift(spanin.id);
-						      	me.visibleEvents.unshift(spanin.id);
+						      	tl.visibleEvents.push(spanin.id);
 					      	}
 					    }
 			    
@@ -2095,28 +2173,40 @@ tg.TG_PlayerView.prototype = {
 				// this either puts it into the timeline's borg object
 				// or, if compressed, creates HTML for compressed version.
 				// stuff here would be null if expanded...
-				stuff = this.compileTickEventsAsHtml(tl, idArr, tick.serial, "append");
-				 
+				stuff = this.compileTickEventsAsHtml(tl, idArr, tick.serial, "append", tick.unit);
+				
 				// borg it if it's expanded.
 				if (tl.display == "expanded"){ 
-					stuff = tl.borg.getHTML(tick.serial, tl.top); // tl.top = ceiling
+					// tl.top is the ceiling
+					stuff = tl.borg.getHTML(tick.serial, tl.top); 
 				}
-
-				$tl = $(CONTAINER + " .tg-timeline-envelope#" + tl.id).append(stuff.html);
-								
+			
+				var $vu = $(CONTAINER + " .tg-timeline-envelope#" + tl.id);
+				
+				$vu.append(stuff.html);
+				
+				
 				this.registerEventImages($tl);
 					
 		  } // end for() in active timelines
+		  
+		  // this needs to be delayed because the append usually 
+		  // happens while dragging, which already brings the 
+		  // browser to the processor limits; make timeout time
+		  // below larger if things are crashing : )
+		  setTimeout(function () { me.applyFilterActions(); }, 500);
 		  
 		  $.publish("viewer.rendered"); 
 				
 	}, // end appendTimelines()
 	
 	
+	
+	
   
   // events array, MED, tl, borg, 
   // "sweep" vs tick.serial  (or fresh/append)
-  compileTickEventsAsHtml : function (tl, idArr, tick_serial, btype) {
+  compileTickEventsAsHtml : function (tl, idArr, tick_serial, btype, tickUnit) {
    
 		var me=this,
 			posx = 0,
@@ -2125,34 +2215,55 @@ tg.TG_PlayerView.prototype = {
 			ht = 0,
 			stuff = "",
 			foSec = MED.startSec, 
-			spp = MED.getZoomInfo().spp,
-			zl = MED.getZoomInfo().level,
-			buffer = 16, img_ht = 0, img_wi = 0,
+			zi = MED.getZoomInfo(),
+			spp = zi.spp,
+			zl = zi.level,
+			buffer = 16, 
+			img_ht = 0, 
+			img_wi = 0,
 			borg = tl.borg,
 			ev = {},
 			impq,
 			block_arg = "sweep"; // default for initial load
+			
+			tl.borg.clearFresh();
+			
+		
+		var isBig = function(tu) {
+			if (tu == "da" || tu == "mo" || tu == "ye" || tu == "ce" || tu == "de"){
+				return false;
+			} else {
+				return true;
+			}
+		};
 			    
 		if (btype == "append") {
           block_arg = tick_serial;
 		}
-    
+		
 		for (var i=0; i<idArr.length; i++) {
 
 		// BBONE
       	ev = MED.eventCollection.get(idArr[i]).attributes;
 
       	if (this.passesFilters(ev, zl) === true) {
-      					
-      		posx = cx + ((ev.startdateObj.sec - foSec) / spp);
-
+      		
+      		// the larger units (>=thou) have have an error
+      		// in their placement from long calculations;
+      		// we can compensate for them here...
+      		var adjust = (isBig(tickUnit)) ? .99795 : 1;
+      		var ev_sds = ev.startdateObj.sec * adjust;
+     		      
+      		posx = cx + ((ev_sds - foSec) / spp);
+      		
+      			
       		if (expCol == "expanded") {
 				
 				impq = (tl.size_importance !== false) ? this.scaleToImportance(ev.importance, zl) : 1;
 
       			ev.width = (ev.titleWidth * impq) + buffer;
       			ev.fontsize = this.basicFontSize * impq;
-      			ev.left = posx; // will remain constant
+      			ev.left = posx;
 
 				ev.spanwidth = 0;
 				if (ev.span == true) {
@@ -2166,10 +2277,9 @@ tg.TG_PlayerView.prototype = {
   				
   				var font_ht = Math.ceil(ev.fontsize);
   				
-				ev.height = (font_ht + 2);
+				ev.height = (font_ht + 4);
       			ev.top = (ht - font_ht);
-      			
-      			
+    
 				if (ev.image && ev.image.display_class === "inline") {
 					var img_scale = (ev.image.scale || 100) / 100;
 					img_ht = (img_scale * ev.image.height) + 2;
@@ -2213,6 +2323,12 @@ tg.TG_PlayerView.prototype = {
       }
 
 	},
+	
+
+	setImageLaneHeight: function(new_height) {
+		this.imageLaneHeight = new_height;
+		MED.refresh();
+	},
   
 	/*
 	* registerEventImages
@@ -2223,7 +2339,10 @@ tg.TG_PlayerView.prototype = {
 	*
 	*/
 	registerEventImages : function ($timeline) {
-	  
+	  var me = this;
+	  /*
+	  // decommissioned for now, since images in the bar
+	  // collide with the title so often
 	  $(CONTAINER + " .timeglider-event-image-bar").each(
 		    function () {
 		      $(this).position({
@@ -2234,21 +2353,66 @@ tg.TG_PlayerView.prototype = {
 	        }).css("left", 0);
 	      }
       );
-      
+      */
       
       $(CONTAINER + " .timeglider-event-image-above").each(
     		    function () {
-    		      $(this).css("display", "block").position({
-    		        		my: "top",
-            				at: "top",
-            				of: $(CONTAINER),
-            				offset: "0, 12"
-    	        }).css({left:0});
+    		    	var alti = me.imageLaneHeight,
+    		    		$div = $(this),
+    		    		$img = $(this).find("img"),
+    		    		yoff = 12,
+    		    		imax = $img.data("max_height"),
+    		    		
+    		    		// if the image is smaller than the tallest
+    		    		// allowed image, keep height smaller
+    		    		imght = (imax < alti) ?  imax: alti;
+  						
+  						if (imax < alti) {
+  							yoff += ((alti - imax) / 2)
+  						} 
+					$div.css({"display":"block"})
+						.position({
+		        			my: "top",
+	    					at: "top",
+	    					of: $(CONTAINER),
+	    					offset: "0, " + yoff
+    	        		})
+    	        		.css({left:0});
+    	        
+					$img.css("height", imght);
     	      }
         );
 	  
-  },
+	},
   
+
+
+	applyFilterActions: function() {
+		
+		var fa = MED.filterActions,
+			collection = MED.eventCollection.models,
+			ev_id;
+	
+		if (!_.isEmpty(fa)) {
+			// For performance reasons, having just
+			// one filter function is probably smart : )
+			_.each(fa, function (f) {
+				// filter:actionFilter, fn:actionFunction
+				
+				_.each(collection, function (ev) {
+					if (f.filter(ev)) {
+						ev_id = ev.get("id");
+						// it's passed the filter, so run it through
+						// the action function
+						f.fn($(".timeglider-timeline-event#" + ev_id));
+					}
+				});
+				
+			})
+		}	
+		
+	},
+	
   
 	expandCollapseTimeline : function (id) {
 		var tl = MED.timelineCollection.get(id).attributes;
@@ -2632,7 +2796,6 @@ tg.TG_TimelineView = Backbone.View.extend({
 
 
 
-
 /*
       zoomTree
       ****************
@@ -2643,7 +2806,6 @@ tg.TG_TimelineView = Backbone.View.extend({
       rather to 1 month to 10 years. For now, it's static according to 
       a "universal" system.
 */
-  
 tg.zoomTree = [
     {},
     {unit:"da", width:35000,level:1, label:"5 hours"},
@@ -2758,22 +2920,22 @@ tg.zoomTree = [
     			var zl = zt[z];
     			var sec = 0;
     			switch(zl.unit) {
-    				case "da": sec =   86400; break;
-    				case "mo": sec =   2419200; break; // assumes only 28 days per 
-    				case "ye": sec =   31536000; break;
-    				case "de": sec =   315360000; break;
-    				case "ce": sec =   3153600000; break;
-    				case "thou": sec =    31536000000; break;
-    				case "tenthou": sec = 315360000000; break;
+    				case "da": sec =          86400; break;
+    				case "mo": sec =          2419200; break; // assumes only 28 days per 
+    				case "ye": sec =          31536000; break;
+    				case "de": sec =          315360000; break;
+    				case "ce": sec =          3153600000; break;
+    				case "thou": sec =        31536000000; break;
+    				case "tenthou": sec =     315360000000; break;
     				case "hundredthou": sec = 3153600000000; break;
-    				case "mill": sec =    31536000000000; break;
-    				case "tenmill": sec = 315360000000000; break;
+    				case "mill": sec =        31536000000000; break;
+    				case "tenmill": sec =     315360000000000; break;
     				case "hundredmill": sec = 3153600000000000; break;
-    				case "bill": sec =31536000000000000; break;
+    				case "bill": sec =        31536000000000000; break;
     			}
-    			// pixels
-    			zl.spp = sec / parseInt(zl.width);
-    			// trace ("level " + z + " unit:" + zl.unit.substr(0,2) + " sec:" + Math.floor(zl.spp));
+    			// generate hash for seconds per pixel
+    			zl.spp = Math.round(sec / parseInt(zl.width));
+    			
     		}
 
     // call it right away to establish values

@@ -94,7 +94,15 @@
 				ev.image = '';
 			}
 			
-			ev.titleWidth = tg.getStringWidth(ev.title);	
+			// further urldecoding?
+			// by replacing the &amp; with & we actually
+			// preserve HTML entities 	
+			ev.title = ev.title.replace(/&amp;/g, "&");
+			
+			
+			ev.titleWidth = tg.getStringWidth(ev.title);
+			
+			
 			
 			this.set(ev);
 			
@@ -350,19 +358,23 @@
 				/// bounds of timeline
 				tdata.bounds = {"first": _.first(sorted), "last":_.last(sorted) };
 				
-				tdata.has_events = true;
-				
 				var date_from_sec = TG_Date.getDateFromSec(tdata.bounds.first);
-				
 				tdata.focus_date = tdata.focus_date || date_from_sec;
 				tdata.focusDateObj = new TG_Date(tdata.focus_date);
+				tdata.has_events = 1;
 				
 			} else {
-				tdata.has_events = false;
-				// why focusing here!
-				tdata.focus_date = tdata.focus_date || "today";
-				debug.log("hello today 357?");
+			
+				
+				tdata.focus_date = tdata.focus_date || "today";				
+				tdata.focusDateObj = new TG_Date(tdata.focus_date);
+				tdata.bounds = {"first": tdata.focusDateObj.sec, "last":tdata.focusDateObj.sec + 86400};
+				tdata.has_events = 0;
+				
 			}
+			
+			
+			
 			
 			
 			/* !TODO: necessary to parse this now, or just leave as is? */

@@ -12,7 +12,7 @@
 (function(tg){
 
   // standard "brick" height for placement grid
-  var lev_ht = tg.levelHeight = 10,
+  var lev_ht = tg.levelHeight = 8,
       // number of available levels for events
       tree_levels = 300,
       $ = jQuery,
@@ -54,9 +54,21 @@
 		evob.right = evob.left + evob.width;
 		evob.bottom = evob.top + evob.height;
 		evob.tickScope = tickScope;
+		
+		me.freshBlocks.push(evob);
 		me.blocks.push(evob);
 
     };
+    
+    
+    /*
+     *
+     */
+    this.clearFresh = function () {
+    	me.freshBlocks = [];
+    }
+    
+    
     
     
     /*
@@ -110,7 +122,7 @@
 			html = '', 
 			south_padding = 0,
 			b = {},
-			blength = this.blocks.length,
+			blength = this.freshBlocks.length,
 			b_span_color = "",
 			title_adj = 0,
 			highest = 0,
@@ -121,7 +133,7 @@
 			};
       
 		for (var i=0; i<blength; i++) {
-	  		b = this.blocks[i];
+	  		b = this.freshBlocks[i];
 			title_adj = 0;
 			img_scale = 100;
 			img_style = "";
@@ -163,7 +175,7 @@
 							// different image classes ("bar", "above") are positioned
 							// using a separate $.each routine in TimelineView rather than
 							// being given absolute positioning here.
-							img = "<div class='timeglider-event-image-" + b.image.display_class + "'><img src='" + b.image.src + "' " + img_style + "></div>";
+							img = "<div class='timeglider-event-image-" + b.image.display_class + "'><img data-max_height='" + b.image.height + "' src='" + b.image.src + "' " + img_style + "></div>";
 							
 							
 						} else {
@@ -181,7 +193,7 @@
 							checkAgainstLevel(b, 0);
 						}
 						
-						guageHighest(Math.abs(b.top));
+						// guageHighest(Math.abs(b.top));
 	
 						b_span_color = (b.span_color) ? ";background-color:" + b.span_color: "";
 		            
@@ -205,13 +217,13 @@
 						// note: divs that are higher have lower "top" values
 						// `ceiling` being set at 0 (event_overflow set to "scroll") 
 						// may require/allow for event scrolling possibilities...
-						if (ceiling && (me.pol == -1) && (Math.abs(b.top) > (ceiling - ceiling_padding))) {
+						if (ceiling && (me.pol == -1) && (Math.abs(b.top) > (ceiling - 32))) {
 							
 						 	// + + + symbols in place of events just under ceiling
 						 	// if things are higher than the ceiling, show plus signs instead,
 						 	// and we'll zoom in with these.
-							html += "<div class='timeglider-more-plus' style='left:" + b.left  + 
-						        "px; top:-" + (ceiling - (Math.floor(ceiling_padding/3))) + "px'>+</div>";
+							html += "<div data-event_id='" + b.id + "' class='timeglider-more-plus' style='left:" + b.left  + 
+						        "px; top:-" + (ceiling - 16) + "px'>+</div>";
 						         
 						        
 						} else {
@@ -291,42 +303,54 @@
    *
    * @param {object} b1 Timeline-event object already in place
    * @param {object} b2 Timeline-event object being added to blocks
-   */       
-   var isOverlapping = function (b1, b2) {
+   */
+   
+   
+   	var isOverlapping = function (b1, b2) {
       
-      if ((b2.left > b1.right) || (b2.right < b1.left)) {
-        // Whew: it's clear to left or right.
-        return false;
-
-      } else {
-
-        if (  
-          ((b2.left >= b1.left) && (b2.left <= b1.right)) || 
-          ((b2.right >= b1.left) && (b2.right <= b1.right)) || 
-          ((b2.right >= b1.right) && (b2.left <= b1.left)) ||
-          ((b2.right <= b1.right) && (b2.left >= b1.left))  
-            ) {
-    
-          // OK, some kind of left-right overlap is happening, but
-          // there also has to be top-bottom overlap for collision
-          if (  ((b2.bottom <= b1.bottom) && (b2.bottom >= b1.top)) || 
-          		((b2.top <= b1.bottom) && (b2.top >= b1.top)) || 
-          		((b2.top == b1.bottom) && (b2.top == b1.top))
-          	  ) {
-            // passes 2nd test -- it's overlapping!
-            return true;
-
-          } else {
-            return false;
-          }
-          // end first big if: fails initial test
-        }  
-        return false;
-      }
+      //!TODO ******* POLARITY IS NOT WORKED INTO THIS YET
+		
+		var vPadding = -6,
+			lPadding = -16;
+		
+		
+		if ((b2.left + lPadding > b1.right) || (b2.right < b1.left + lPadding) || (b2.bottom < b1.top + vPadding)) {
+			// clear to left or right.
+			return false;
+		
+		} else {
+		
+			if (  
+				((b2.left >= b1.left) && (b2.left <= b1.right)) ||
+				((b2.right >= b1.left) && (b2.right <= b1.right)) ||
+				((b2.right >= b1.right) && (b2.left <= b1.left)) ||
+				((b2.right <= b1.right) && (b2.left >= b1.left))
+		    ) {
+		
+			  	// OK, some kind of left-right overlap is happening, but
+			  	// there also has to be top-bottom overlap for collision
+				if (
+	          		// 
+	          		((b2.bottom <= b1.bottom) && (b2.bottom >= b1.top)) || 
+	          		((b2.top <= b1.bottom) && (b2.top >= b1.top)) || 
+	          		((b2.bottom == b1.bottom) && (b2.top == b1.top))
+	          	  ) {
+		    		// passes 2nd test -- it's overlapping!
+		    		return true;
+		
+		  		} else {
+		    		return false;
+				}
+				
+		  	// end first big if: fails initial test
+			}  
+		return false;
+		}
 
       // return false;
 
     };
+
 
 
 	// private function
@@ -337,7 +361,11 @@
       		tree = me.tree,
 
 			// level_blocks is the array of blocks at a level
-			level_blocks = tree[level_num],
+			level_blocks = _.union(tree[level_num], tree[level_num + 1]),
+			
+			// level_blocks = tree[level_num],
+			
+			
 			next_level = level_num + 1,
 			collision = false,
 			bricks_high = 2,

@@ -19,8 +19,8 @@
         "high_threshold": "100",
         "importance": "80"
     },
-
-
+    
+    
     {
         "id": "1391",
         "title": "Smallpox Strikes the Shoshone",
@@ -34,8 +34,9 @@
         "importance": "50",
         "ypix": "0",
         "slug":""
-    }
-    ,
+    },
+
+
     {
         "id": "1392",
         "title": "Indian/European Trading",
