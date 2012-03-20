@@ -186,17 +186,18 @@
 						if (b.y_position > 0) {
 							// absolute positioning
 							b.top = me.pol * b.y_position;
-							hightest = 100;
+							
+							
 						} else {
 							// starts out checking block against the bottom layer
 							//!RECURSIVE
 							// *** alters the `b` block object
 							b.attempts = 0;
-							highest = ceiling - ceiling_padding;
-							
 							checkAgainstPlaced(b, highest);
 							
 						}
+						
+						highest = ceiling - ceiling_padding;
 						
 						
 						// note: divs that are higher have lower "top" values
