@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang='en'>
+<html>
 <head>
-<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html" />
 <title>Timeglider jQuery Plugin</title>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-
+<meta charset="utf-8" />
 
 <link rel="stylesheet" href="css/aristo/jquery-ui-1.8.5.custom.css" type="text/css" media="screen" title="no title" charset="utf-8">
 
@@ -14,56 +14,27 @@
 <style type='text/css'>
 		
 		body {
-			font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+			font-family: Helvetica, Arial, sans-serif;
 		}
 		
+		h2 {
+			margin-left:32px;
+		}
 		#p1 {
 			margin:32px;
 			margin-bottom:0;
 			height:500px;
 		}
-
-		.methods h4 {
-			background-color:#F0F0F0;
-			color:#CC0000;
-			font-size:12px;
-			font-weight:normal;
-			margin-left:32px;
-		}
 		
-		.methods ul {
-			list-style:none;
+		#output {
+			font-size:10px;
 		}
-		
-		.methods ul li {
-			display:inline;
-			cursor:pointer;
-			font-size:12px;
-			margin-right:16px;
-		}
-		
-		.test-view {
-			position:absolute;
-			top:100px;
-			left:100px;
-			width:400px;
-			height:200px;
-			border:8px solid black;
-			background-color:pink;
-		}
-		
-		#map_modal_map2 {
-			border:4px solid black;
-			height:400px;
-			width:400px;
-		}
-		
 		
 		.shadow-years .timeglider-event-title {
 			color:#F0F0F0;
 		}
 		.shadow-years .timeglider-event-spanner {
-			background-color:#222;
+			background-color:#4C5408;
 		}
 		
 		.bibliocene .timeglider-event-title {
@@ -74,91 +45,53 @@
 		}
 		
 		.js-era .timeglider-event-title {
-			color:#FFF;
+			color:#323230;
 		}
 		.js-era .timeglider-event-spanner {
-			background-color:green;
-		}
-		
-		.tg-timeline-envelope {
-		
+			background-color:#f0db4e;
 		}
 		
 		
-		.timeglider-legend {
-			width:180px;
+		.hawt .timeglider-event-title {
+			color:white;
+		}
+		.hawt .timeglider-event-spanner {
+			background-color:#CC106B;
 		}
 		
-		.scrubber {
-			height:32px;
-			margin:0px 32px;
-			background-color:black;
-			border:1px solid black;
-			margin-bottom:32px;
-			position:relative;
-			overflow:hidden;
+		.browserwars .timeglider-event-title {
+			color:black;
+		}
+		.browserwars .timeglider-event-spanner {
+			background-color:#CC0000;
+		}
+			
+		.inception .timeglider-event-title {
+			color:green;
+		}
+		.inception .timeglider-event-spanner {
+			background-color:white;
 		}
 		
 		
-		.scrubber-handle {
-			height:32px;
-			width:150px;
-			background-color:green;
-			position:absolute;
-			top:0;
-			left:0;
-		}	
+		
+		.tg-timeline-envelope .titleBar {
+			opacity:.2;
+		}
+		
 		
 		</style>
 </head>
 <body>
 
 
-
+<h2>A timeline of Javascript's historical context</h2>
 <div id='p1'></div>
+<br><br><p>You can see my slides about the Lambda Calculus and other "DNA" of Javascript <a href="_js_history/slides/index.html">here</a></p>
 
-
-
-<br><br><br>
-
-
-<div id='p2'></div>
-
-
-
-
-<div class='methods'>
-
-<h4>goto date and zoom</h4>
-<ul>
-<li class='goto' date='2001-09-11 08:24:00' zoom='22'>Sept 11, 2001</li>
-<li class='goto' date='today'>Today</li>
-
-</ul>
-
-
-<h4>navigation</h4>
-<ul>
-<li class='zoom' z='-1'>zoom in</li>
-<li class='zoom' z='1'>zoom out</li>
-<li class='pan-left'>pan to left</li>
-<li class='pan-right'>pan to right</li>
-<li id='refresh'>Refresh</li>
-</ul>
-
-<div class='scrolls'><a id='scrolldown'>down</a> <a id='scrollup'>up</a></div>
-
-<h4>loading</h4>
-<ul>
-<li class='zoom' z='-1'><span id='loadData'>load:</span> <input size='50' type='text' id='loadDataSrc' value='json_tests/idaho.json'></li>
-
-</ul>
-
-</div>
-
-
-</div>
-
+<!--
+<div id='output'>...</div>
+-->
 	
 
 		<!-- 3rd party libs -->
@@ -210,24 +143,28 @@
 
   <script type='text/javascript'>
   
-   var tg_actor = {};
-   
-   
-	
-	
+  /*
+  	window.namespacer = {
+		clickCallback:function(obj) {
+			alert("hello");
+		}
+	}
+	*/
 	$(function () { 
+	
+		var tg_actor = {};
+	
+				
+		
 		
 		var tg1 = $("#p1").timeline({
 				"timezone":"-07:00",
 				"min_zoom":1, 
-				"max_zoom":35, 
+				"max_zoom":52, 
 				"show_centerline":true,
-				"icon_folder":"js/timeglider/icons/",
-				"data_source":"json_tests/nasa_test.json",
+				"data_source":"json_tests/js_history.json",
 				"show_footer":true,
-				"display_zoom_level":true,
-				"constrain_to_data":true
-				// "event_overflow":"scroll"
+				"display_zoom_level":true
 		}).resizable({
 			stop:function(){ 
 				$(this).data("timeline").resize();
@@ -237,63 +174,23 @@
 	
 		tg_actor = tg1.data("timeline");
 		
-		
-		$(".goto").click(function() {
-			var d = $(this).attr("date");
-			var z = $(this).attr("zoom");
-			tg_actor.goTo(d,z);
-		});
-		
-		$(".zoom").click(function() {
-			var z = Number($(this).attr("z"));
-			tg_actor.zoom(z);
-		});
-		
-		tg_actor.panButton($(".pan-left"), "left");
-		tg_actor.panButton($(".pan-right"), "right");
-		
-		
-		$("#loadData").click(function() {
-			var src = $("#loadDataSrc").val();
-			tg_actor.load(src);
-		});
-		
-		$("#refresh").click(function() {
-			// 
-			var med = tg_actor.getMediator();
-			med.runTest();
-		});
-		
-		
-		
-		$("#scrolldown").bind("click", function() {
-			$(".timeglider-timeline-event").animate({top:"+=100"})
-		})
-		
-		$("#scrollup").bind("click", function() {
-			$(".timeglider-timeline-event").animate({top:"-=100"})
-		})
-		
+		timeglider.methods = {
+			zoomIn:function() { tg_actor.zoom("in"); }
+		};
 
+		
+		// test to bring up filter by default, on load
+		setTimeout(function() {
+			$(".tg-timeline-legend-bt").trigger("click");
+		}, 2000);
+		
+		
+		$("#tags-button").bind("click", function() {
+			var txt = $("#tags-input").val();
+			tg_actor.filterBy("tags", txt);
+		});
 	
-	  	timeglider.eventActions = {
-			nagavigateTo:function(obj) {
-				// event object must have a "navigateTo"
-				// element with zoom, then ISO date delimited
-				// with a pipe | 
-				// one can use
-				var nav = obj.navigateTo;
-				tg_actor.goTo(nav.focus_date,nav.zoom_level);
-				
-				setTimeout(function () {
-					$el = $(".timeglider-timeline-event#" + obj.id);
-					$el.find(".timeglider-event-spanner").css({"border":"1px solid green"}); // 
-				}, 50);
-				
-			}
-		}
-	
-				
+						
 	
     }); // end document-ready
     

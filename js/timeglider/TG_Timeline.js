@@ -193,7 +193,9 @@
 			tdata.startSeconds = [];
 			tdata.endSeconds = [];
 			
-			tdata.size_importance = (tdata.size_importance == "false")? false : true;
+			// render possible adjective/numeral strings to numeral
+			tdata.size_importance = (tdata.size_importance == "false" || tdata.size_importance == "0")? 0 : 1;
+			tdata.is_public = (tdata.is_public == "false" || tdata.is_public == "0")? 0 : 1;
 			
 			// widget options timezone default is "00:00";
 			var tzoff = tdata.timezone || "00:00";
@@ -244,6 +246,9 @@
 						}
 					}
 					
+					
+					ev.callbacks = ev.callbacks || {};
+					
 					// date_limit is old JSON prop name, replaced by date_display
 					ddisp = ev.date_display || ev.date_limit || "da";
 					ev.date_display = ddisp.toLowerCase().substr(0,2);
@@ -282,10 +287,7 @@
 							tdata.hasImagesAbove = true; 
 						}
 					}
-					
-					
-					
-					
+										
 					tdata.startSeconds.push(ev.startdateObj.sec);
 					tdata.endSeconds.push(ev.enddateObj.sec);
 

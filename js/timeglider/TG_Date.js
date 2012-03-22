@@ -1062,6 +1062,21 @@ timeglider.TG_Date = {};
 	}; // toFromUTC
 	
 	
+	/*
+	 * TGSecToUnixSec
+	 * translates Timeglider seconds to unix-usable
+	 * seconds. Multiply by 1000 to get unix seconds
+	 * for JS dates, etc.
+	 *
+	 * @return {Number} SECONDS (not milliseconds)
+	 *
+	 */
+	TG_Date.TGSecToUnixSec = function(tg_sec) {
+		// 62135686740
+		return tg_sec - (62135686740 - 24867);
+	};
+	
+	
 	
 	TG_Date.timezones = [
 	    {"offset": "-12:00", "name": "Int'l Date Line West"},

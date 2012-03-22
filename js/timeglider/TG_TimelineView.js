@@ -395,23 +395,26 @@ tg.TG_PlayerView = function (widget, mediator) {
 			
 		} else {
 			// custom callback for an event
-			if (ev.click_callback) {
+			if (ev.click_callback || ev.callbacks.click) {
+		    		
 		    		try {
-			    	var ccarr = ev.click_callback.split(".");
-			    	var cclen = ccarr.length;
-			    	if (cclen == 1) {
-			    		// fn
-			    		window[ccarr[0]](ev);
-			    	} else if (cclen == 2) {
-			    		// ns.fn
-			    		window[ccarr[0]][ccarr[1]](ev);
-			    	} else if (cclen == 3) {
-			    		// ns.ns.fn
-			    		window[ccarr[0]][ccarr[1]][ccarr[2]](ev);
-			    	}
+		    		
+		    			var cb = ev.click_callback || ev.callbacks.click;
+				    	var ccarr = cb.split(".");
+				    	var cclen = ccarr.length;
+				    	if (cclen == 1) {
+				    		// fn
+				    		window[ccarr[0]](ev);
+				    	} else if (cclen == 2) {
+				    		// ns.fn
+				    		window[ccarr[0]][ccarr[1]](ev);
+				    	} else if (cclen == 3) {
+				    		// ns.ns.fn
+				    		window[ccarr[0]][ccarr[1]][ccarr[2]](ev);
+				    	}
 			    	
 			    	} catch (e) {
-			    		debug.log(ev.click_callback + " method cannot be found");
+			    		debug.log(ev.click_callback + " method cannot be found", e);
 			    	}
 			
 		  // no custom callback ÑÊjust regular old modal
@@ -2259,7 +2262,7 @@ tg.TG_PlayerView.prototype = {
       			
       		if (expCol == "expanded") {
 				
-				impq = (tl.size_importance !== false) ? this.scaleToImportance(ev.importance, zl) : 1;
+				impq = (tl.size_importance == 1) ? this.scaleToImportance(ev.importance, zl) : 1;
 
       			ev.width = (ev.titleWidth * impq) + buffer;
       			ev.fontsize = this.basicFontSize * impq;
