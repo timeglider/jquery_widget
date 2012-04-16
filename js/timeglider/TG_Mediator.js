@@ -95,10 +95,11 @@ tg.TG_Mediator = function (wopts, $el) {
 
 	tg.TG_Mediator.prototype = {
 	
+		
 		focusToEvent: function(ev){
 			// !TODO open event, bring to zoom
 			this.focusedEvent = ev;
-			this.setFocusDate(ev.startdateObj)
+			this.gotoDateZoom(ev.startdateObj.dateStr, ev.importance)
 			$.publish(container_name + ".mediator.focusToEvent");
 		},
 		
@@ -132,6 +133,8 @@ tg.TG_Mediator = function (wopts, $el) {
 	        if (!zoom || zl == false) { 
 	        	this.refresh(); 
 	        }
+	        
+	        $.publish(container_name + ".mediator.scopeChange");
 	    },
 	    
 	    
@@ -143,20 +146,35 @@ tg.TG_Mediator = function (wopts, $el) {
 	    
 	    getScope : function () {
 	    
-	      var zi = this.getZoomInfo();
-	      var fd = this.getFocusDate();
-	      
-	      var tBounds = this.getActiveTimelinesBounds();
-	      
-	      return {
-	      	"spp":Math.round(zi.spp), 
-	      	"width":this.dimensions.container.width,
-	      	"focusDateSec":Math.round(fd.sec),
-	      	"timelines":this.activeTimelines,
-	      	"timelineBounds":tBounds,
-	      	"container": $container
-	      }
+			var zi = this.getZoomInfo(),
+				fd = this.getFocusDate(),
+				tBounds = this.getActiveTimelinesBounds(),
+				focusDateSec = Math.round(fd.sec),
+				focus_seconds = tg.TG_Date.TGSecToUnixSec(focusDateSec),
+				width = this.dimensions.container.width,
+				half_width = width/2,
+				spp = Math.round(zi.spp),
+			
+				// calculate milliseconds from focus date seconds
+				// and dimensions of the timeline frame
+				left_ms = (focus_seconds - (half_width * spp)) * 1000,
+				focus_ms = focus_seconds * 1000,
+				right_ms = (focus_seconds + (half_width * spp)) * 1000;
+
+			return {
+				"spp": spp, 
+				"width": width,
+				"focusDateSec": focusDateSec,
+				"timelines": this.activeTimelines,
+				"timelineBounds": tBounds,
+				"container": $container,
+				"leftMS":left_ms,
+				"rightMS":right_ms,
+				"focusMS":focus_ms
+			}
+			
 	    },
+	    
 	    
 	    
 	    addFilterAction: function(actionName, actionFilter, actionFunction) {
@@ -166,6 +184,7 @@ tg.TG_Mediator = function (wopts, $el) {
 	    
 	    removeFilterAction: function(actionName) {
 	    	delete this.filterActions[actionName];
+	    	this.refresh();
 	    },
 	    
 	    
@@ -639,6 +658,7 @@ tg.TG_Mediator = function (wopts, $el) {
 				this.filters.exclude = obj.exclude;
 			break;
 			
+			
 			case "tags":
 				if (obj.tags) {
 					this.filters.tags = obj.tags.split(",");
@@ -646,6 +666,7 @@ tg.TG_Mediator = function (wopts, $el) {
 					this.filters.tags = [];
 				}
 			break;
+			
 			
 			case "legend":
 				
@@ -670,6 +691,16 @@ tg.TG_Mediator = function (wopts, $el) {
 				
 				 } // end if/else for "clear"
 				  
+			break;
+			
+			
+			case "custom": 
+				if (obj.action == "add") {
+					this.filters.custom = obj.fn;
+					debug.log("this.filters.custom:", this.filters.custom);
+				} else {
+					delete this.filters.custom;
+				}
 			break;
 		
 		} // end switch

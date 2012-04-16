@@ -1065,7 +1065,7 @@ timeglider.TG_Date = {};
 	/*
 	 * TGSecToUnixSec
 	 * translates Timeglider seconds to unix-usable
-	 * seconds. Multiply by 1000 to get unix seconds
+	 * SECONDS. Multiply by 1000 to get unix milliseconds
 	 * for JS dates, etc.
 	 *
 	 * @return {Number} SECONDS (not milliseconds)
@@ -1074,6 +1074,17 @@ timeglider.TG_Date = {};
 	TG_Date.TGSecToUnixSec = function(tg_sec) {
 		// 62135686740
 		return tg_sec - (62135686740 - 24867);
+	};
+	
+	
+	TG_Date.JSDateToISODateString = function (d){  
+  		var pad = function(n){return n<10 ? '0'+n : n}  
+  		return d.getUTCFullYear()+'-'  
+	      + pad(d.getUTCMonth()+1)+'-'  
+	      + pad(d.getUTCDate())+' '  
+	      + pad(d.getUTCHours())+':'  
+	      + pad(d.getUTCMinutes())+':'  
+	      + pad(d.getUTCSeconds());  
 	};
 	
 	

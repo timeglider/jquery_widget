@@ -127,7 +127,7 @@ tg.TG_PlayerView = function (widget, mediator) {
 		test : "testola",
 		
 		event_modal_small: "<div class='tg-modal timeglider-ev-modal ui-widget-content' id='${id}_modal'>" 
-      	   + "<div class='close-button-remove'></div>" 
+      	   + "<div class='close-button close-button-remove'></div>" 
       	   + "<div class='dateline'>{{html dateline}}</div>"
       	   + "<h4 id='title'>${title}</h4>"
       	   + "<p>{{html image}}{{html description}}</p>"
@@ -248,8 +248,7 @@ tg.TG_PlayerView = function (widget, mediator) {
 			me.legendModal(id);
 	})
 		.delegate(".close-button-remove", "click", function () {
-			var parent_id = $(this).parent().attr("id");
-			$("#" + parent_id).remove();
+			$(this).parent().remove()
 	})
 		.delegate(".full_modal_scrim, .full_modal_close", "click", function () {
 			$(".full_modal").remove();
@@ -395,26 +394,23 @@ tg.TG_PlayerView = function (widget, mediator) {
 			
 		} else {
 			// custom callback for an event
-			if (ev.click_callback || ev.callbacks.click) {
-		    		
+			if (ev.click_callback) {
 		    		try {
-		    		
-		    			var cb = ev.click_callback || ev.callbacks.click;
-				    	var ccarr = cb.split(".");
-				    	var cclen = ccarr.length;
-				    	if (cclen == 1) {
-				    		// fn
-				    		window[ccarr[0]](ev);
-				    	} else if (cclen == 2) {
-				    		// ns.fn
-				    		window[ccarr[0]][ccarr[1]](ev);
-				    	} else if (cclen == 3) {
-				    		// ns.ns.fn
-				    		window[ccarr[0]][ccarr[1]][ccarr[2]](ev);
-				    	}
+			    	var ccarr = ev.click_callback.split(".");
+			    	var cclen = ccarr.length;
+			    	if (cclen == 1) {
+			    		// fn
+			    		window[ccarr[0]](ev);
+			    	} else if (cclen == 2) {
+			    		// ns.fn
+			    		window[ccarr[0]][ccarr[1]](ev);
+			    	} else if (cclen == 3) {
+			    		// ns.ns.fn
+			    		window[ccarr[0]][ccarr[1]][ccarr[2]](ev);
+			    	}
 			    	
 			    	} catch (e) {
-			    		debug.log(ev.click_callback + " method cannot be found", e);
+			    		debug.log(ev.click_callback + " method cannot be found");
 			    	}
 			
 		  // no custom callback ÑÊjust regular old modal
@@ -686,7 +682,13 @@ tg.TG_PlayerView.prototype = {
 	
 		
 	scaleToImportance : function(imp, zoo) {
-		return imp / zoo;
+		// flash version: return ((importance - zoomLev) * 4.5) + 100;
+		// 100 being 1:1 or 12 px
+		
+		
+		// first basic version: return imp / zoo;
+		
+		return (((imp - zoo) * 4.5) + 100) / 100;
 	},
 	
 	
@@ -1906,7 +1908,6 @@ tg.TG_PlayerView.prototype = {
 		}
 		
 		// TAGS FILTER
-		
 		if (MED.filters.tags.length > 0) {
 			if (ev.tags) {
 				ev_tags = ev.tags.split(",");
@@ -1921,6 +1922,12 @@ tg.TG_PlayerView.prototype = {
 				ret = false;
 			}
 		}
+		
+		// CUSTOM FILTER
+		if (MED.filters.custom && typeof MED.filters.custom == "function") {
+			ret = MED.filters.custom(ev);
+		}
+		
 		
 		/////////////
 		
@@ -2209,8 +2216,15 @@ tg.TG_PlayerView.prototype = {
   
   // events array, MED, tl, borg, 
   // "sweep" vs tick.serial  (or fresh/append)
+  /*
+   *
+   * @param btype {String} "sweep" || "append"
+   *
+   *
+  */
   compileTickEventsAsHtml : function (tl, idArr, tick_serial, btype, tickUnit) {
-   
+   		
+   		
 		var me=this,
 			posx = 0,
 			cx = this.dimensions.container.centerx,
@@ -2228,6 +2242,7 @@ tg.TG_PlayerView.prototype = {
 			ev = {},
 			impq,
 			block_arg = "sweep"; // default for initial load
+			
 			
 			tl.borg.clearFresh();
 			
@@ -2262,7 +2277,7 @@ tg.TG_PlayerView.prototype = {
       			
       		if (expCol == "expanded") {
 				
-				impq = (tl.size_importance == 1) ? this.scaleToImportance(ev.importance, zl) : 1;
+				impq = (tl.size_importance !== false) ? this.scaleToImportance(ev.importance, zl) : 1;
 
       			ev.width = (ev.titleWidth * impq) + buffer;
       			ev.fontsize = this.basicFontSize * impq;
@@ -2397,6 +2412,7 @@ tg.TG_PlayerView.prototype = {
 			ev_id;
 	
 		if (!_.isEmpty(fa)) {
+
 			// For performance reasons, having just
 			// one filter function is probably smart : )
 			_.each(fa, function (f) {

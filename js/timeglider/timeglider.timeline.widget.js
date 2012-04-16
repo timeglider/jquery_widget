@@ -207,6 +207,25 @@
 			return MED.getEventByID(id, prop);
 		},
 		
+		
+		
+		/*
+		 * focusToEvent
+		 * By passing just an id, this returns the whole event object
+		 * (or the attributes of the Backbone model)
+		 * By adding a property such as "title", you can just get one property
+		 * @param id {String} The event id, as it was passed in JSON data
+		 * @param prop {String} optional property name string in case you 
+		 *        only want that one property
+		*/
+		focusToEvent : function (event_id) {
+			var ev = MED.getEventByID(event_id);
+			MED.focusToEvent(ev);
+			
+			return this;
+		},
+		
+				
 		getScope : function () {
 			return MED.getScope();
 		},
@@ -230,6 +249,8 @@
 			if (n > 99 || n < -99) { return false; }
 			
 			MED.zoom(n);
+			
+			return this;
 		},
 		
 		
@@ -243,6 +264,8 @@
 		*/
 		load : function (src) {
 			MED.loadTimelineData(src);
+			
+			return this;
 		},
 		
 		

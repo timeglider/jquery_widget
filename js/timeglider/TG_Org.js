@@ -182,7 +182,12 @@
 							// no image
 							img = "";
 						} 
-		      		           				           		
+		      		    
+		      		    
+		      		    highest = ceiling - ceiling_padding;
+		      		    
+		      		    
+		      		     				           		
 						if (b.y_position > 0) {
 							// absolute positioning
 							b.top = me.pol * b.y_position;
@@ -197,14 +202,14 @@
 							
 						}
 						
-						highest = ceiling - ceiling_padding;
+						
 						
 						
 						// note: divs that are higher have lower "top" values
 						// `ceiling` being set at 0 (event_overflow set to "scroll") 
 						// may require/allow for event scrolling possibilities...
 						if (ceiling && (me.pol == -1) && (Math.abs(b.top) > highest)) {
-							
+						
 						 	// + + + symbols in place of events just under ceiling
 						 	// if things are higher than the ceiling, show plus signs instead,
 						 	// and we'll zoom in with these.
@@ -213,7 +218,7 @@
 						        
 						} else {
 						
-						
+							
 							b_span_color = (b.span_color) ? ";background-color:" + b.span_color: "";
 			            
 							b.fontsize < 10 ? b.opacity = b.fontsize / 10 : b.opacity=1;
@@ -362,7 +367,7 @@
 			// bricks_high = 2,
 			/// last_lev = 0,
 			shape_ol = false;
-			
+
 		
 		if ((placed_len == 0) || (Math.abs(block.top) > ceil)) {
         	// just place it!
@@ -370,7 +375,6 @@
         	
         } else {
 		
-        	// debug.log("placed:", placed);
 			// Go through all the blocks on that level...
 			for (var e=0; e < placed_len; e++) {
 				
@@ -410,17 +414,12 @@
 		}
 
 		if (collision == false) {
-          	// debug.log("no collision, add it to placed");
-          	  
-            if (me.pol == -1) {
-            	// block.top -= block.fontsize; 
-            } else {
-           		// block.top += block.fontsize; 
-            }
           	
           	// ADD TO TREE OF PLACED EVENTS
             // Place block in level
-            placed.push(block);
+            $("#output2").prepend("<br>" + block.title);
+            
+            me.placedBlocks.push(block);
                
 
 			} // end if collision is false
