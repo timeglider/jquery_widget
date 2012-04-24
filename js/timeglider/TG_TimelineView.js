@@ -64,6 +64,8 @@ tg.TG_PlayerView = function (widget, mediator) {
       	container_name = options.base_namespace + "#" + WIDGET_ID;
 	
 		this.gens = 0;
+		
+		this.setImageLaneHeight(options.image_lane_height);
 
 	/*  references specific to the instance (rather than timeglider) so
 		one can have more than one instance of the widget on a page */ 	      
@@ -94,11 +96,11 @@ tg.TG_PlayerView = function (widget, mediator) {
 	
 	
 	// height for images in the top image lane
-	this.imageLaneHeight = 40;
+	// this.imageLaneHeight = 32;
 	
 	// distance from bottom of container (not vertically from ticks)
-	// for timelines to be by default; if a timeline has a "top" value,
-	// it will be set according to that
+	// for timelines to be by default; but if a timeline has a "top" value,
+	// it's position will be set according to that
  	this.initTimelineVOffset = 100;
  	
  	// this needs to be less than or equal to
@@ -598,7 +600,7 @@ tg.TG_PlayerView = function (widget, mediator) {
 		//$("#output").append("<br>start zoom:" + MED.gestureStartZoom);
 		
 		// This basically works, but it's funky still....
-	    var g = Math.ceil(MED.gestureStartZoom / (e.scale));
+	    var g = Math.ceil(MED.gestureStartZoom / (e.scale / 2));
 		
 		//$("#output").append("<br>new gest zoom:" + g);
 		
@@ -2101,7 +2103,10 @@ tg.TG_PlayerView.prototype = {
 			if (options.event_overflow == "scroll") {
 				ceiling = 0;
 			} else {
-				ceiling = (tl.hasImagesAbove) ? tl_top - me.imageLaneHeight : tl_top;
+				
+				ceiling = (tl.hasImagesAbove) ? (tl_top - me.imageLaneHeight) - 16 : tl_top;
+				
+				// ceiling = ceiling - 16;
 			}
 			
 			// var beforeStuff = +new Date();
@@ -2277,7 +2282,7 @@ tg.TG_PlayerView.prototype = {
       			
       		if (expCol == "expanded") {
 				
-				impq = (tl.size_importance !== false) ? this.scaleToImportance(ev.importance, zl) : 1;
+				impq = (tl.size_importance === true || tl.size_importance === 1) ? this.scaleToImportance(ev.importance, zl) : 1;
 
       			ev.width = (ev.titleWidth * impq) + buffer;
       			ev.fontsize = this.basicFontSize * impq;
@@ -2343,9 +2348,11 @@ tg.TG_PlayerView.prototype = {
 	},
 	
 
-	setImageLaneHeight: function(new_height) {
+	setImageLaneHeight: function(new_height, ref) {
 		this.imageLaneHeight = new_height;
-		MED.refresh();
+		if (ref) {
+			MED.refresh();
+		}
 	},
   
 	/*

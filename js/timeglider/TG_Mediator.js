@@ -223,13 +223,13 @@ tg.TG_Mediator = function (wopts, $el) {
 	/*
 	* loadTimelineData
 	* @param src {object} object OR json data to be parsed for loading
-	* !TODO: create option for XML
+	* !TODO: create option for XML?
 	*/
-	loadTimelineData : function (src) {
+	loadTimelineData : function (src, callback) {
 		
 		var M = this; // model ref
 		// Allow to pass in either the url for the data or the data itself.
-	
+		
 		if (src) {
 		  
 		    if (typeof src === "object") {
@@ -244,9 +244,9 @@ tg.TG_Mediator = function (wopts, $el) {
 		      
 		    } else {
 		    	// FROM NEW JSON
-				// getJSON is shorthand for $.ajax...
+
 		        $.getJSON(src, function (data) {
-		        	M.parseTimelineData(data);
+					M.parseTimelineData(data, callback);
 		        });
 		
 		    }// end [obj vs remote]
@@ -352,8 +352,10 @@ tg.TG_Mediator = function (wopts, $el) {
 	* @param data {object} Multiple (1+) timelines object 
 	* derived from data in loadTimelineData
 	*/
-	parseTimelineData : function (data) {
-				
+	parseTimelineData : function (data, callback) {
+		
+		
+		
 		var M = this,
 			ct = 0,
 			dl = data.length, 
@@ -370,16 +372,48 @@ tg.TG_Mediator = function (wopts, $el) {
 				ct++;
 				M.swallowTimeline(ti);
 			}
+			
 	
 		}
 	
+	
+		// TYPICALLY A SECONDARY (user-called from page) LOAD
+		// WHICH MIGHT HAVE CUSTOMIZD CALLBACK ACTIONS...
+		if (callback && typeof callback.fn == "function") {
+			
+			$.publish(container_name + ".mediator.timelineDataLoaded");
+			
+			setTimeout(function() {
+				var args = callback.args || "";
+				
+				callback.fn(args, data);
+				
+				if (args.display == true) {
+					M.showSingleTimeline(data[0].id);
+				}
+			}, 200);
+			
+			
+			if (callback.seize == true) {
+					return false;
+			}
+
+
+		} 
+		
+		
+		// THE INITIAL LOAD
+
 		if (ct === 0) {
 			alert("ERROR loading data: Check JSON with jsonLint");
 		} else {
-		  
 			this.timelineDataLoaded = true;
 			this.tryLoading();
 		}
+		
+	
+			
+		
 	},
 	
 	
@@ -468,7 +502,7 @@ tg.TG_Mediator = function (wopts, $el) {
 				// resetting zoomLevel will refresh
 				me.setZoomLevel(tl.get("initial_zoom"));
 				
-			}, 1000);
+			}, 500);
 			
 		} else {
 			// could be no timelines to load
@@ -479,7 +513,7 @@ tg.TG_Mediator = function (wopts, $el) {
 
 
 	refresh : function () {
-		
+		debug.log("refresh call!");
 		$.publish(container_name + ".mediator.refreshSignal");       
     },
 
@@ -786,10 +820,19 @@ tg.TG_Mediator = function (wopts, $el) {
 	},
 
 
+	showSingleTimeline: function(id) {
+			this.activeTimelines = [];
+			this.toggleTimeline(id);
+	},
+
+
 	toggleTimeline : function (id) {
-	
+		
+		
+		
 		// patch until we have better multi-timeline support
-		// this.activeTimelines = [];
+		// this is a true "toggle" in that it clears visible
+		// timelines and loads the new timeline by id
 
 		var tl = this.timelineCollection.get(id).attributes;
 		
@@ -798,8 +841,7 @@ tg.TG_Mediator = function (wopts, $el) {
 		if (active == -1) {
 			// timeline not active ---- bring it on
 			this.activeTimelines.push(id);
-			
-			
+
 			// timeline focus_date is ISO-8601 basic;
 			// interface focusdate needs a TG_Date()
 			var tl_fd = new TG_Date(tl.focus_date);
@@ -813,11 +855,16 @@ tg.TG_Mediator = function (wopts, $el) {
 		
 		} else {
 			// it's active, remove it
+			debug.log("toggle it, remove", id);
+			
+			
 			this.activeTimelines.splice(active,1);
 			
 			
 			// this will change the menu list/appearance
 		}
+		
+		
 		this.refresh();
 		$.publish(container_name + ".mediator.activeTimelinesChange");
 	

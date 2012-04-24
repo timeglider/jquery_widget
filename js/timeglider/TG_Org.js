@@ -19,9 +19,8 @@
   // standard "brick" height for placement grid
   var lev_ht = tg.levelHeight = 12,
       // number of available levels for events
-      tree_levels = 300,
       $ = jQuery,
-      ceiling_padding = 16;
+      ceiling_padding = 32;
       
 
   /*
@@ -35,7 +34,6 @@
     this.blocks = [];
     this.ids = [];
     this.vis = [];
-    this.tree = [];
     this.pol = -1;
     this.placedBlocks = [];
     this.freshBlocks = [];
@@ -107,7 +105,6 @@
     this.getHTML = function (tickScope, ceiling) {
       
 		if (tickScope == "sweep") { 
-			// freshTree();
 			this.vis = [];
 		}
 	
@@ -185,9 +182,7 @@
 		      		    
 		      		    
 		      		    highest = ceiling - ceiling_padding;
-		      		    
-		      		    
-		      		     				           		
+			           		
 						if (b.y_position > 0) {
 							// absolute positioning
 							b.top = me.pol * b.y_position;
@@ -214,50 +209,54 @@
 						 	// if things are higher than the ceiling, show plus signs instead,
 						 	// and we'll zoom in with these.
 							html += "<div class='timeglider-more-plus' style='left:" + b.left  + 
-						        "px; top:-" + (ceiling - (Math.floor(ceiling_padding/3))) + "px'>+</div>";
+						        "px; top:-" + (ceiling - (ceiling_padding/3)) + "px'>+</div>";
 						        
 						} else {
-						
 							
-							b_span_color = (b.span_color) ? ";background-color:" + b.span_color: "";
-			            
-							b.fontsize < 10 ? b.opacity = b.fontsize / 10 : b.opacity=1;
-			            
-							if (b.span == true) {
-								span_selector_class = "timeglider-event-spanning";
-								span_div = "<div class='timeglider-event-spanner' style='top:" + "px;height:" + b.fontsize + "px;width:" + b.spanwidth + "px" + b_span_color + "'></div>"
-							} else {
-								span_selector_class = ""; 
-								span_div = "";
-							}
-		
-							if (b.icon) {
-							  icon = "<img class='timeglider-event-icon' src='" + icon_f + b.icon + "' style='height:"
-							+ b.fontsize + "px;left:-" + (b.fontsize + 2) + "px; top:" + title_adj + "px'>";
-							} else {
-							  icon = '';
-							}
-						 
-						 	// pad inverted (polarity 1) events to exceed the height
-						 	// of the timeline title bar; pad "normal" top-up events
-						 	// to have some space between them and the title bar
-							south_padding = (me.pol === 1) ? 42 : -12;
-						
-						 
-							// TODO: function for getting "standard" event shit
-							html += "<div class='timeglider-timeline-event " 
-								+ b.css_class + " " + span_selector_class 
-								+ "' id='" + b.id + "' "
-								+ "style='width:" + b.width  + "px;"
-								+ "height:" + b.height + "px;"
-								+ "left:" + b.left  + "px;" 
-								+ "opacity:" + b.opacity + ";"
-								+ "top:" + (b.top + south_padding) + "px;"
-								+ "font-size:" + b.fontsize  + "px;'>"
-								+ icon + img + span_div 
-								+ "<div class='timeglider-event-title' style='top:" + title_adj + "px'>" 
-								+ b.title
-								+ "</div></div>";
+							if (b.fontsize > 2) {
+							
+								b_span_color = (b.span_color) ? ";background-color:" + b.span_color: "";
+							
+								b.fontsize < 10 ? b.opacity = b.fontsize / 10 : b.opacity=1;
+							
+								if (b.span == true) {
+									span_selector_class = "timeglider-event-spanning";
+									span_div = "<div class='timeglider-event-spanner' style='top:" + "px;height:" + b.fontsize + "px;width:" + b.spanwidth + "px" + b_span_color + "'></div>"
+								} else {
+									span_selector_class = ""; 
+									span_div = "";
+								}
+			
+								if (b.icon) {
+								  icon = "<img class='timeglider-event-icon' src='" + icon_f + b.icon + "' style='height:"
+								+ b.fontsize + "px;left:-" + (b.fontsize + 2) + "px; top:" + title_adj + "px'>";
+								} else {
+								  icon = '';
+								}
+							 
+								// pad inverted (polarity 1) events to exceed the height
+								// of the timeline title bar; pad "normal" top-up events
+								// to have some space between them and the title bar
+								south_padding = (me.pol === 1) ? 42 : -12;
+							
+								
+							 
+								// TODO: function for getting "standard" event shit
+								html += "<div class='timeglider-timeline-event " 
+									+ b.css_class + " " + span_selector_class 
+									+ "' id='" + b.id + "' "
+									+ "style='width:" + b.width  + "px;"
+									+ "height:" + b.height + "px;"
+									+ "left:" + b.left  + "px;" 
+									+ "opacity:" + b.opacity + ";"
+									+ "top:" + (b.top + south_padding) + "px;"
+									+ "font-size:" + b.fontsize  + "px;'>"
+									+ icon + img + span_div 
+									+ "<div class='timeglider-event-title' style='top:" + title_adj + "px'>" 
+									+ b.title
+									+ "</div></div>";
+							
+							} // endif fontsize is > 1
 						
 						} // end if/else :: height > ceiling
 	
@@ -356,16 +355,12 @@
 	var checkAgainstPlaced = function (block, ceil) {
        	
 		var ol = false, 
-      		// tree = me.tree,
 
-			// level_blocks is the array of blocks at a level
-			// level_blocks = tree[level_num],
 			placed = me.placedBlocks,
 			placed_len = me.placedBlocks.length,
-			// next_level = level_num + 1,
+			
 			collision = false,
-			// bricks_high = 2,
-			/// last_lev = 0,
+
 			shape_ol = false;
 
 		
@@ -414,10 +409,6 @@
 		}
 
 		if (collision == false) {
-          	
-          	// ADD TO TREE OF PLACED EVENTS
-            // Place block in level
-            $("#output2").prepend("<br>" + block.title);
             
             me.placedBlocks.push(block);
                

@@ -55,6 +55,7 @@
 			mouse_wheel: "zoom", // !TODO | pan 
 			initial_timeline_id:'',
 			icon_folder:'js/timeglider/icons/',
+			image_lane_height: 32,
 			show_footer:true,
 			display_zoom_level:true,
 			constrain_to_data:false,
@@ -127,15 +128,13 @@
 			
 				tg.TG_Date.setCulture(this.options.culture);
 			
-			
-			
 				MED = new tg.TG_Mediator(this.options, this.element);
 				timelinePlayer = new tg.TG_PlayerView(this, MED);
 				
 			
 				// after timelinePlayer is created this stuff can be done
 				MED.setFocusDate(new TG_Date(this.options.initial_focus));
-				MED.loadTimelineData(this.options.data_source);
+				MED.loadTimelineData(this.options.data_source, this.options.loaded);
 			
 			} else {
 				alert("Rats. There's a problem with your widget settings:" + optionsCheck);
@@ -262,8 +261,9 @@
 		*          numerical: -1 (or less) for zooming in, 1 (or more) for zooming out
 		*          string:    "in" is the same as -1, "out" the same as 1
 		*/
-		load : function (src) {
-			MED.loadTimelineData(src);
+		load : function (src, callback_object) {
+			
+			MED.loadTimelineData(src, callback_object);
 			
 			return this;
 		},
