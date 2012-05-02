@@ -762,15 +762,16 @@
 
 
 {
-"id":"jshist-flash-death",
+"id":"deathofflash",
 "title": "Slow death of Flash",
 "description": "Flash begins its slow death. Many factors led to this: The rise of Javascript as a viable rich-application framework. Being a compiled, proprietary system reliant on IDEs, Flash never got developers <em>truly</em> excited; Integrating events in Flash with the DOM is headache defined; Even on Android mobile systems that allowed Flash, Adobe couldn't get a bug-free, non-gluttonous version. Apple's refusal to include it in iOS is a coup de grace, and Adobe finally (sort of) admits defeat.",
-"enddate": "today",
 "startdate": "2009-06-01",
-"date_display":"da",
+"enddate": "today",
+"date_display":"ho",
 "high_threshold":40,
 "importance":"35",
-"icon":"flag_black.png"
+"icon":"flag_black.png",
+"keepCurrent": "end"
 },
 
 
@@ -1302,18 +1303,6 @@
 	}
 },
 
-{
-"id":"bbconf2012",
-"title": "Backbone Conf 2012",
-"description": "BackboneConf is a two-day conference about the Backbone.js library, large scale JavaScript applications,and JavaScript common sense, featuring a keynote from Jeremy Ashkenas.",
-"startdate":"2012-05-30 08:00:00",
-"enddate":"2012-05-31 18:00:00",
-"link":"http://backboneconf.com/",
-"high_threshold":40,
-"importance":"35",
-"icon":"circle_blue.png",
-"tags":"conference,boston,jeremy"
-},
 
 {
 "id":"jsconf2012",
@@ -1326,7 +1315,20 @@
 "importance":"40",
 "icon":"circle_blue.png",
 "tags":"conference,arizona,chris"
+},
+
+{
+"id":"_now",
+"title": "nowEvent",
+"date_display":"ho",
+"description": "present moment",
+"startdate": "today",
+"high_threshold":60,
+"importance":"40",
+"icon":"triangle_red.png",
+"keepCurrent": "start"
 }
+
 
 
 ],

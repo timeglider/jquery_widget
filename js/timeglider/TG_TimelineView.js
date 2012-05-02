@@ -1285,6 +1285,21 @@ tg.TG_PlayerView.prototype = {
 		
 		this.displayFocusDate();
 	},
+	
+	
+	getTickTop: function () {
+
+		var tttype = typeof MED.options.tick_top;
+
+		if (tttype == "number") {
+			return MED.options.tick_top;
+		} else if (tttype == "function") {
+			return MED.options.tick_top(me.dimensions);
+		} else {
+			return parseInt(this.dimensions.tick.top);
+		}
+
+	},
   
   
 	
@@ -1299,12 +1314,12 @@ tg.TG_PlayerView.prototype = {
 			tperu = 0,       serial = 0,     shiftLeft = 0,   ctr = 0,  
 			tid = "",        tickHtml = "",  sub_label = "",  label = {}, 
 			$tickDiv = {},   tInfo = {},     pack = {},       mInfo = {},
-			sub_labels = "",
+			sub_labels = "", oeClass = '',
 			
 			tickUnit = MED.getZoomInfo().unit,
 			tickWidth = MED.getZoomInfo().width,
 			focusDate = MED.getFocusDate(),
-			tick_top = parseInt(this.dimensions.tick.top),	
+			tick_top = me.getTickTop(),	
 			serial = MED.addToTicksArray({type:info.type, unit:tickUnit}, focusDate);
 			
 			
@@ -1343,14 +1358,20 @@ tg.TG_PlayerView.prototype = {
 		// turn this into a function...
 		MED.getTickBySerial(serial).width = tickWidth;
 		MED.getTickBySerial(serial).left = pos;
+		
+		oeClass = (serial % 2 == 0) ? "tg-even-tick": "tg-odd-tick";
 
 		tid = this._views.PLACE + "_" + tickUnit + "_" + serial + "-" + this.tickNum;
 
-		$tickDiv= $("<div class='timeglider-tick' id='" + tid + "'>"
+		$tickDiv= $("<div class='timeglider-tick " + oeClass + "' id='" + tid + "'>"
 		            + "<div class='timeglider-tick-label' id='label'></div></div>")
 		  .appendTo(TICKS);
 		
-		$tickDiv.css({width:tickWidth, left:pos, top:tick_top});
+		
+		// tick_top = 0;
+		
+		
+		$tickDiv.css({width:tickWidth, left:pos, top:tick_top, zIndex:0});
 						
 		// GET TICK DIVS FOR unit AND width
 		tInfo = this.getTickMarksInfo({unit:tickUnit, width:tickWidth});
@@ -1403,7 +1424,7 @@ tg.TG_PlayerView.prototype = {
 					
 				}
 				
-				sub_labels += "<div class='timeglider-tick-sub-label' style='left:" + lpos + "px;width:" + dist + "px'>" + sub_label + "</div>";
+				sub_labels += "<div class='timeglider-tick-sub-label " + tickUnit + "' style='left:" + lpos + "px;width:" + dist + "px'>" + sub_label + "</div>";
 				
 				lpos += dist;
 			}
@@ -1412,7 +1433,7 @@ tg.TG_PlayerView.prototype = {
 			
 		// add hours gathered in loop above
 		if (sub_labels) {
-		  $tickDiv.append("<div style='background-color:none;height:24px;width:" + (tickWidth + 10) + "px;position:absolute;top:15px;left:0;overflow:hidden'>" + sub_labels + "</div>");
+		  $tickDiv.append("<div class='tg-tick-sublabel-group' style='width:" + (tickWidth + 10) + "px;'>" + sub_labels + "</div>");
 	  	} 
 		
 		pack = {"unit":tickUnit, "width":tickWidth, "serial":serial};

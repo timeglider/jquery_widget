@@ -27,8 +27,6 @@
 		MED;
 
 
-
-
 	tg.TG_EventCollection = Backbone.Collection.extend({
 		
 		// "master hash"
@@ -56,12 +54,9 @@
 	
 		defaults: {
 			"title":  "Untitled"
-	},
-	
-	
-	initialize: function(ev) { 
-	
-	
+		},
+		
+		initialize: function(ev) {
 			// Images start out being given a default width and height
 			// of 0, so that we can "find out for ourselves" what the
 			// size is.... pretty costly, though...
@@ -99,14 +94,12 @@
 			// preserve HTML entities 	
 			ev.title = ev.title.replace(/&amp;/g, "&");
 			
-			
 			ev.titleWidth = tg.getStringWidth(ev.title);
-			
-			
-			
+
 			this.set(ev);
 			
-		},		
+		},
+	
 		
 		// TODO: validate event attributes
 		validate: function (attrs) {
@@ -136,10 +129,129 @@
 				}
 			};
 	
-		} // end getEventImageSize
+		}, // end getEventImageSize
+		
+		
+		reIndex: function(do_delete) {
+		
+		  	var model = this,
+		  		deleting = do_delete || false,
+		  		cache = model.get("cache"),
+		  		event_id = model.get("id"),
+		  		new_start = model.get("startdateObj"),
+		  		new_end = model.get("enddateObj"),
+		  		ev_timelines = model.get("timelines"),
+		  		ev_timeline_cache = cache.timelines,
+		  		cache_start = cache.startdateObj || new_start,
+		  		span = cache.span,
+		  		timeline = {}, 
+		  		hash = {},
+		  		ser = 0, new_ser = 0,		
+		  		arr = [],
+		  		tl_union = _.union(ev_timeline_cache, ev_timelines),
+		  		TG_Date = tg.TG_Date,
+		  		MED = model.get("mediator"),
+		  		TIMELINES = MED.timelineCollection,
+		  		EVENTS = MED.eventCollection;
+		  	
+		 
+		  	// cycle through all event's past/present timelines
+		  	// OUTER .each
+		  	_.each(tl_union, function(timeline_id){ 
+				
+		  		timeline = TIMELINES.get(timeline_id);
+		  		
+		  		hash = EVENTS.getTimelineHash(timeline_id); 
+					
+		  		// remove from "all" array (used for bounds)
+				hash["all"] = _.reject(hash["all"], function(eid){ 
+					// truthy is rejected!!
+					return eid == event_id;
+				});
+			
+		  		
+		  		// UNITS: "da", "mo", "ye", "de", "ce", "thou", "tenthou", 
+		  		//        "hundredthou", "mill", "tenmill", "hundredmill", "bill"
+		  		// INNER .each
+		  		_.each(TG_Date.units, function(unit) {
+		  		
+					ser = TG_Date.getTimeUnitSerial(cache_start, unit);
+					
+					// REMOVE CACHED DATE INDICES FROM HASH 	
+					// ALL TIMELINES ARE CLEARED		
+					if (hash[unit][ser] !== undefined) {
+						hash[unit][ser] = _.reject(hash[unit][ser], function(eid){ 
+							// truthy is rejected!
+							return eid == event_id;
+						});
+					} 
+					
+					// RE-INDEX IN EVENT'S CURRENT TIMELINES ARRAY!!
+					if (deleting != true) {
+						if ($.inArray(timeline_id, ev_timelines) != -1) {
+							new_ser = TG_Date.getTimeUnitSerial(new_start, unit);
+							if (hash[unit][new_ser] !== undefined) {
+								hash[unit][new_ser].push(event_id);
+							} else {
+								// create the array
+								hash[unit][new_ser] = [event_id];
+							}
+						}
+					} // end if not deleting
+								
+		  		}); // end inner _.each
+		  		
+		  		
+		  		if (deleting != true) {
+			  		if ($.inArray(timeline_id, ev_timelines) != -1) {
+			  			hash["all"].push(event_id);
+			  		}
+		  		}
+		  		
+		  		
+		  		// REFRESH BOUNDS: CYCLE THROUGH HASH'S "all" INDEX
+		  		// INCLUDE ALL IN UNIONED TIMELINES
+		  		var bounds = timeline.get("bounds");
+		  		
+		  		var spill = [];
+		  		
+		  		_.each(hash["all"], function (id) {
+		  			var ev = EVENTS.get(id);
+		  			spill.push(ev.get("startdateObj").sec);
+		  			spill.push(ev.get("enddateObj").sec);
+		  		});
+		  		
+		  		// does it have any events
+					
+				// totally new set of bounds!
+		   		timeline.set({bounds:{first:_.min(spill), last:_.max(spill)}});
+		
+		  		var timeline_spans = timeline.get("spans");
+				
+				// WIPE OUT OLD SPAN REF NO MATTER WHAT
+		  		if (cache.span) {
+		  			delete timeline_spans["s_" + event_id];
+		  		} 
+		  		
+		  		// RE/LIST SPAN
+		  		if (deleting != true) {
+			  		if (model.get("span") == true) {
+			  			timeline_spans["s_" + event_id] = {id:event_id, start:new_start.sec, end:new_end.sec};
+			  		}
+			  			
+			  	} 
+			  	
+			  	// make sure timeline "has_events" is accurate
+			  	timeline.set({has_events:hash["all"].length});
+		  	
+		  	}); // end outer/first _.each, cycling across timelines cached/new
+  	  	
+  		
+		}	
 
 	
 	});
+	
 	
 	
 	tg.TG_TimelineCollection = Backbone.Collection.extend({
@@ -293,7 +405,7 @@
 
 					// cache the initial date for updating hash later
 					// important for edit/delete operations
-					ev.cache = {span:ev.span, startdateObj:_.clone(ev.startdateObj), enddateObj:_.clone(ev.enddateObj)}
+					ev.cache = {timelines:[tdata.timeline_id], span:ev.span, startdateObj:_.clone(ev.startdateObj), enddateObj:_.clone(ev.enddateObj)}
 										
 					if (!ev.icon || ev.icon === "none") {
 						ev.icon = "";
@@ -323,6 +435,7 @@
 							/////////////////////////////
 						} 
 						
+						ev.mediator = MED;
 			
 						/////////////////////////////////
 						
@@ -344,8 +457,12 @@
 							existing_model.get("timelines").push(tdata.timeline_id);
 	
 						}
+						
+						
 					
 					} // end if !NaN
+					
+					
 			
 				} // end for: cycling through timeline's events
 							
@@ -416,15 +533,24 @@
 			this.bind("change", function() {
   				// debug.log("changola");
 			});
-		}		
+		}
 	
 	});
 	
-	
-	
-	
-
-
-
 
 })(timeglider);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

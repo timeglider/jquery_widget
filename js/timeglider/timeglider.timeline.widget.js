@@ -193,6 +193,8 @@
 			return MED;
 		},
 		
+		
+		
 		/*
 		 * getEventByID
 		 * By passing just an id, this returns the whole event object
@@ -206,6 +208,12 @@
 			return MED.getEventByID(id, prop);
 		},
 		
+		
+		
+		
+		updateEvent: function (model_object) {
+			return MED.updateEvent(model_object);
+		},
 		
 		
 		/*
@@ -227,6 +235,24 @@
 				
 		getScope : function () {
 			return MED.getScope();
+		},
+		
+		
+		adjustNowEvents : function () {
+			return MED.adjustNowEvents();
+		},
+		
+		
+		/*
+		 * addEvent
+		 * adds and event to any of the existing, loaded timelines
+		 * @param new_event {Object} simple TG event
+		          including: .id, .title, .startdate
+		          (as simple ISO8601 string)
+		 *
+		 */
+		addEvent : function (new_event) {
+			return MED.addEvent(new_event);
 		},
 		
 		

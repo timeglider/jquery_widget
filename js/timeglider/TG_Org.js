@@ -20,7 +20,7 @@
   var lev_ht = tg.levelHeight = 12,
       // number of available levels for events
       $ = jQuery,
-      ceiling_padding = 32;
+      ceiling_padding = 18;
       
 
   /*
@@ -197,19 +197,19 @@
 							
 						}
 						
-						
-						
-						
+												
 						// note: divs that are higher have lower "top" values
 						// `ceiling` being set at 0 (event_overflow set to "scroll") 
 						// may require/allow for event scrolling possibilities...
 						if (ceiling && (me.pol == -1) && (Math.abs(b.top) > highest)) {
-						
+							
+							var p_icon = (b.icon) ? "<img src='" + icon_f + b.icon + "'>": "+";
+							
 						 	// + + + symbols in place of events just under ceiling
 						 	// if things are higher than the ceiling, show plus signs instead,
 						 	// and we'll zoom in with these.
 							html += "<div class='timeglider-more-plus' style='left:" + b.left  + 
-						        "px; top:-" + (ceiling - (ceiling_padding/3)) + "px'>+</div>";
+						        "px; top:-" + ceiling + "px'>" + p_icon + "</div>";
 						        
 						} else {
 							

@@ -87,7 +87,7 @@
 	-moz-border-radius:4px;
 	border-radius:4px;
 	-webkit-border-radius:4px;
-
+	z-index:25;
 }
 
 .tg-timeline-envelope .titleBar .timeline-title {
@@ -187,12 +187,21 @@
 	position:absolute;
 	height:34px;
 	font-size:11px;
-	background-color:#BBB;
+	background-color:#D3D3D3;
 	/* A line as bg doesn't alter the width of the div!*/
 	background-image:url("img/dotted.png");
 	background-repeat:no-repeat;
 	border-top:1px solid #FFF;
 	overflow:hidden;
+	z-index:0;
+}
+
+.tg-even-tick {
+
+}
+
+.tg-odd-tick {
+	background-color:#DFDFDF;
 }
 
 .timeglider-tick-label {
@@ -233,6 +242,24 @@
 	padding-left:4px;
 	margin-left:-3px;
 }
+
+
+.timeglider-tick-sub-label.da {
+	background-color:yellow;
+}
+
+
+
+
+.tg-tick-sublabel-group {
+	top:15px;
+	background-color:none;
+	height:24px;
+	position:absolute;
+	left:0;
+	overflow:hidden
+}
+
   
 .timeglider-handle {
 		position:absolute;
@@ -314,6 +341,7 @@
 	padding:0px;
 	font-size:.9em;
 	cursor:pointer;
+	z-index:100;
 }
 
 .timeglider-timeline-event:hover .timeglider-event-image-inline img {
@@ -800,6 +828,12 @@ ul.timeglider-ev-modal-links li a {
   font-weight:bold;
   font-size:10px;
   cursor:pointer;
+}
+
+.timeglider-more-plus img {
+  height:6px;
+  width:auto;
+  opacity:.5;
 }
 
 

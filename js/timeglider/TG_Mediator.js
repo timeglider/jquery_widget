@@ -198,6 +198,124 @@ tg.TG_Mediator = function (wopts, $el) {
 	    	}
 	    },
 	    
+	    
+	    /* 
+	     * adjustNowEvents
+	     * Keeps events with "keepCurrent" set to "start" or "end" up to
+	     * date with current time, useful for real-time timelines with
+	     * sensitive auto-adjusting event times. Automatically searches
+	     * all events in the collection.
+	     * NO PARAMS
+	     *
+	     */
+	    adjustNowEvents: function() {
+	    	
+	    	var refresh = false,
+	    		kC = "",
+	    		dd = "";
+	    	
+	    	_.each(this.eventCollection.models, function(ev) {
+	    		if (ev.get("keepCurrent")) {
+	    			// debug.log("ev has keepCurrent:", ev.get("keepCurrent"));
+	    			kC = ev.get("keepCurrent"),
+	    			dd = ev.get("date_display");
+	    			
+	    			if (kC == "start") {
+	    				ev.set({"startdateObj":new TG_Date("today", dd)});
+	    			} else if (kC == "end") {
+	    				ev.set({"enddateObj":new TG_Date("today", dd)});
+	    			}
+	    			
+	    			ev.reIndex();
+	    			
+	    			refresh = true;
+	    	
+	    		}
+	    	});
+	    
+	    	if (refresh) {
+	    		this.refresh();
+	    	}
+	    },
+	    
+	    
+	    
+	    
+	    
+	    /*
+	     * addEvent
+	     * @param new_event {Object} is a simple tg event object
+	     *        with .startdate and .enddate as ISO8601 strings,
+	     *        and would accept other TG_Event attribs
+	     *	
+	     * @return the new (Backbone) Model for the event
+	     *
+	    */
+	    addEvent: function(new_event) {
+	    
+			new_event.startdateObj = new tg.TG_Date(new_event.startdate);
+			
+			var enddate = new_event.enddate || new_event.startdate;
+			
+			new_event.enddateObj = new tg.TG_Date(enddate);
+
+			new_event.mediator = this;
+			
+			new_event.cache = {
+				timelines:new_event.timelines,
+				startdateObj:new_event.startdateObj,
+				enddateObj:new_event.enddateObj,
+				span:true
+			}
+			
+			var new_model = new tg.TG_Event(new_event);
+			
+			this.eventCollection.add(new_model);
+			
+			// incorporates TG_Event into hashes, re-evaluates
+			// timeline start/end points
+			new_model.reIndex();
+			
+			
+			this.refresh();
+			
+	    	$.publish(container_name + ".mediator.addEvent"); 
+	    	
+	    	return new_model;
+	    
+	    },
+	    
+	    /*
+	     * updateEvent
+	     * @param event_edits {Object} is a 
+	     *	
+	     * @return the new (Backbone) Model for the event
+	     *
+	    */
+	    updateEvent:function (event_edits) {
+	    	if (!event_edits.id) {
+	    		alert("error: you need a valid id set on the object in updateEvent()");
+	    		return false;
+	    	}
+	    	
+	    	var ev = this.eventCollection.get(event_edits.id);
+	    	
+	    	ev.set(event_edits);
+	    	
+	    	// re-index if dates have changed
+	    	if (event_edits.startdateObject || event_edits.enddateObject) {
+	    		ev.reIndex();
+	    	}
+
+	    	this.refresh();
+	    	
+	    	$.publish(container_name + ".mediator.updateEvent"); 
+	    	
+	    	return ev;
+
+	    },
+	    
+	    
 	    /*
 	     * Gets the bounds for 1+ timelines in view
 	     */
@@ -513,7 +631,6 @@ tg.TG_Mediator = function (wopts, $el) {
 
 
 	refresh : function () {
-		debug.log("refresh call!");
 		$.publish(container_name + ".mediator.refreshSignal");       
     },
 

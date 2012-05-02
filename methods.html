@@ -82,7 +82,34 @@
 			position:absolute;
 			top:0;
 			left:0;
-		}	
+		}
+		
+		/*
+		
+		.timeglider-tick {
+			position:absolute;
+			height:900px;
+			font-size:11px;
+
+			background-image:url("img/dotted.png");
+			background-repeat:repeat;
+			border-top:none;
+			overflow:hidden;
+			
+			z-index:0;
+		}
+		
+		
+		.timeglider-tick-label {
+			top:445px;
+		}
+		
+		.tg-tick-sublabel-group {
+			top:455px;
+		}
+		
+		*/
+		
 		
 		</style>
 </head>
@@ -118,6 +145,9 @@
 <li class='pan-left'>pan to left</li>
 <li class='pan-right'>pan to right</li>
 <li id='refresh'>Refresh</li>
+<li id='adjustNow'>adjustNow</li>
+<li id='addEvent'>addEvent</li>
+<li id='updateEvent'>updateEvent</li>
 </ul>
 
 <div class='scrolls'><a id='scrolldown'>down</a> <a id='scrollup'>up</a></div>
@@ -158,20 +188,17 @@
 	<script src="js/timeglider/TG_TimelineView.js" type="text/javascript" charset="utf-8"></script>
 	<script src="js/timeglider/TG_Mediator.js" type="text/javascript" charset="utf-8"></script> 
 	<script src="js/timeglider/timeglider.timeline.widget.js" type="text/javascript"></script>
-	
+		
 
   <script type='text/javascript'>
   
    var tg_actor = {};
    
-   
-	
-	
 	$(function () { 
 		
 		var tg1 = $("#p1").timeline({
-				"timezone":"-07:00",
-				"min_zoom":20, 
+				
+				"min_zoom":2, 
 				"max_zoom":60, 
 				"show_centerline":true,
 				"icon_folder":"js/timeglider/icons/",
@@ -179,7 +206,8 @@
 				"show_footer":true,
 				"display_zoom_level":true,
 				"constrain_to_data":true,
-				"image_lane_height":60
+				"image_lane_height":60,
+				"tick_top":0
 				// "event_overflow":"scroll"
 		}).resizable({
 			stop:function(){ 
@@ -237,7 +265,9 @@
 			$(".timeglider-timeline-event").animate({top:"-=100"})
 		})
 		
-
+		
+	
+	
 	
 	  	timeglider.eventActions = {
 			nagavigateTo:function(obj) {
@@ -255,9 +285,52 @@
 				
 			}
 		}
+
 	
-				
+		
+		$("#adjustNow").click(function() {
+			tg_actor.adjustNowEvents();
+		});	
+		
+		
+		
+		
+		$("#addEvent").click(function() {
+		
+			var rando = Math.floor((Math.random()*1000)+1); 
+			var impo = Math.floor((Math.random()*50)+20); 
+			
+			var obj = {
+				id:"new_" + rando,
+				title:"New Added Event",
+				startdate:"today",
+				importance:impo,
+				icon:"shapes/star_red.png",
+				timelines:["js_history"]
+			}
+			
+			tg_actor.addEvent(obj);
+			
+		});	
+		
+		
+		
+		$("#updateEvent").click(function() {
+			
+			// specific id from specific timeline
+			var id="deathofflash";
+			
+			var updatedEventModel = {
+				id:id,
+				"title": "Flash dies slow cancer death"
+			}
+			
+			tg_actor.updateEvent(updatedEventModel);
+
+		});	
+		
 	
+		
     }); // end document-ready
     
     
