@@ -417,7 +417,7 @@ tg.TG_Mediator = function (wopts, $el) {
 		  tl.id = table_id.substr(1);		 
 		  tl.title = $table.attr("title") || "untitled";
 		  tl.description = $table.attr("description") || "";
-		  tl.focus_date = $table.attr("focus_date") || TG_Date.getToday;
+		  tl.focus_date = $table.attr("focus_date") || TG_Date.getToday();
 		  tl.initial_zoom = $table.attr("initial_zoom") || 20;
 		  tl.events = [];
 	
@@ -1057,6 +1057,7 @@ tg.validateOptions = function (widget_settings) {
     	show_footer:{type:"boolean"},
     	display_zoom_level:{type:"boolean"},
     	constrain_to_data:{type:"boolean"},
+    	boost:{type:"number", min:0, max:99},
     	event_modal:{type:"object"},
     	event_overflow:{type:"string"}
   	}

@@ -122,6 +122,8 @@
   -moz-border-radius-bottomleft: 6px;
   border-top-right-radius: 6px;
   border-bottom-left-radius: 6px;
+  
+  z-index:500;
   }
 
 .timeglider-slider { 	/* style set in jQuery UI css file */   }
@@ -242,12 +244,6 @@
 	padding-left:4px;
 	margin-left:-3px;
 }
-
-
-.timeglider-tick-sub-label.da {
-	background-color:yellow;
-}
-
 
 
 

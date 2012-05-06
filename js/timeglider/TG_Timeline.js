@@ -333,7 +333,9 @@
 					} else { 
 						// if lacking an id, we'll make one...
 						ev.id = id = "anon" + this.anonEventId++; 
-					}				
+					}
+					
+					ev.importance = parseInt(ev.importance, 10) + widget_options.boost;
 					
 					/*
 				 		We do some pre-processing ** INCLUDING HASHING THE EVENT *
@@ -361,8 +363,18 @@
 					
 					ev.callbacks = ev.callbacks || {};
 					
-					// date_limit is old JSON prop name, replaced by date_display
-					ddisp = ev.date_display || ev.date_limit || "da";
+					
+					if (typeof ev.date_display == "object") {
+						ddisp = "da";
+					} else {
+						// date_limit is allowed old JSON prop name,
+						// replaced by date_display
+						ddisp = ev.date_display || ev.date_limit || "da";
+					}
+					
+					
+					
+					
 					ev.date_display = ddisp.toLowerCase().substr(0,2);
 								
 					// if a timezone offset is set on the timeline, adjust
