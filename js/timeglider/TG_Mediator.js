@@ -705,12 +705,14 @@ tg.TG_Mediator = function (wopts, $el) {
     },
     
     
-    runTest:function() {
-    	var startsec = -158112000043140;
-    	var d = TG_Date.getDateFromSec(startsec);
-    	
-    	debug.log("test date:", d);
+        
+    mouseWheelChange: function(dir) {
     
+    	var zl = this.getZoomLevel();
+		this.setZoomLevel(zl += dir);
+		
+		$.publish(container_name + ".mediator.mouseWheelChange");
+		
     },
 
 

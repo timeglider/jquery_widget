@@ -72,9 +72,12 @@
 
   <script type='text/javascript'>
 
+	var tg1 = {};
+	
+	
 	$(function () { 
 		
-		var tg1 = $("#placement").timeline({
+		tg1 = $("#placement").timeline({
 				"min_zoom":5, 
 				"max_zoom":100, 
 				"show_centerline":true,
@@ -91,7 +94,34 @@
 		
 		$("#scrollup").bind("click", function() {
 			$(".timeglider-timeline-event").animate({top:"-=100"})
-		})
+		});
+		
+		
+		
+		timeglider.eventActions = {
+			nagavigateTo:function(obj) {
+				// event object must have a "navigateTo"
+				// element with zoom, then ISO date delimited
+				// with a pipe | 
+				// one can use
+				var nav = obj.navigateTo;
+				tg_actor.goTo(nav.focus_date,nav.zoom_level);
+				
+				setTimeout(function () {
+					$el = $(".timeglider-timeline-event#" + obj.id);
+					$el.find(".timeglider-event-spanner").css({"border":"1px solid green"}); // 
+				}, 50);
+			},
+			
+			
+			loadTimeline: function(obj) {
+				debug.log("loadTimeline:", obj.loadTimeline);
+				tg1.loadTimeline(obj.loadTimeline.url, function () {alert("loaded...")});
+				debug.log("tg1:", tg1);
+			}
+		}
+		
+		
 		
     }); // end document-ready
 	

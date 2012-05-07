@@ -34,23 +34,6 @@
         "importance": "50",
         "ypix": "0",
         "slug":""
-    },
-
-
-    {
-        "id": "1392",
-        "title": "Indian/European Trading",
-        "startdate": "1800-07-01 12:00",
-        "enddate": "1840-07-01 12:00",
-        "date_limit": "ye",
-        "description": "Early historic Indian culture, with adaptation brought on by white contact, trade goods, and other fur-trade activities is represented across the state.",
-        "event_type": "event",
-        "icon": "triangle_green.png",
-        "low_threshold": "1",
-        "high_threshold": "60",
-        "importance": "45",
-        "ypix": "0",
-        "slug": ""
     }
     ,
     {
@@ -71,9 +54,9 @@
     ,
     {
         "id": "1394",
-        "title": "Lewis and Clark Enter Idaho",
-        "startdate": "1805-07-01 12:00",
-        "enddate": "1805-07-01 12:00",
+        "title": "Lewis and Clark Expeditions",
+        "startdate": "1804-01-01 12:00",
+        "enddate": "1806-12-31 12:00",
         
         "description": "Captains Meriwether Lewis and William Clark enter area that would become Idaho at Lemhi Pass.",
         "event_type": "event",
@@ -1595,6 +1578,9 @@
         "enddate": "2009-12-31 08:00",
         "date_limit": "da",
         "description": "Larry Edwin Craig (born July 20, 1945) is a former Republican politician from the U.S. state of Idaho. He served eighteen years in the U.S. Senate (1991–2009), preceded by ten years in the U.S. House, representing Idaho's first district (1981–91). His 28 years in the Congress rank as the second-longest in Idaho history, trailing only William Borah, who served over 32 years in the Senate. In addition to serving in Congress, Craig has been a member of the Board of Directors of the National Rifle Association since 1983. Craig has also been selected for induction into the Idaho Hall of Fame. Although he was selected in March 2007, the announcement was made in October 2007.",
+        
+		"click_callback":"timeglider.eventActions.loadTimeline",
+		"loadTimeline":{"url":"json_tests/larry_craig.json"},
         "event_type": "event",
         "icon": "square_blue.png",
         "low_threshold": "1",

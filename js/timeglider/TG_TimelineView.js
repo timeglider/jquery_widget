@@ -258,7 +258,7 @@ tg.TG_PlayerView = function (widget, mediator) {
 		.delegate(".timeglider-more-plus", "click", function () {
 			MED.zoom(-1);
 	})
-	.	delegate(".timeglider-more-plus", "hover", function () {
+		.delegate(".timeglider-more-plus", "hover", function () {
 			
 			var evid = $(this).data("event_id");
 			
@@ -313,13 +313,16 @@ tg.TG_PlayerView = function (widget, mediator) {
 		})
 		
 		.bind('mousewheel', function(event, delta) {
-			var dir = Math.ceil(-1 * (delta * 3));
-			var zl = MED.getZoomLevel();
-			MED.setZoomLevel(zl += dir);
 			
+			var vec = (delta < 0) ? Math.floor(delta): Math.ceil(delta);
+			var dir = -1 * vec;
+			
+			MED.mouseWheelChange(dir);
+						
 			return false;    
 		}); // end TRUCK EVENTS
-
+	
+	
 	function registerTicksSpeed () {
 		//!TODO: for gliding
 	}
@@ -327,7 +330,7 @@ tg.TG_PlayerView = function (widget, mediator) {
 	$(TICKS)
   	.draggable({ axis: 'x',
 		start: function(event, ui) {
-			// anything??	
+			me.eventUnHover();
 		},
 		drag: function(event, ui) {
 			
@@ -386,6 +389,8 @@ tg.TG_PlayerView = function (widget, mediator) {
 	.delegate(CONTAINER + " .timeglider-timeline-event", CLICKORTOUCH, function () { 
 		
 		// EVENT ON-CLICK !!!!!!
+		me.eventUnHover();
+		
 		var eid = $(this).attr("id"); 
 		var ev = MED.eventCollection.get(eid).attributes;
 		
@@ -424,14 +429,14 @@ tg.TG_PlayerView = function (widget, mediator) {
 	  
 	})	
 	.delegate(".timeglider-timeline-event", "mouseover", function () { 
-
+		me.eventUnHover();
 		var ev = MED.eventCollection.get($(this).attr("id")).attributes;
-		me.eventHover($(this), ev)
+		me.eventHover($(this), ev);
 	})
 	.delegate(".timeglider-timeline-event", "mouseout", function () { 
 
 		var ev = MED.eventCollection.get($(this).attr("id")).attributes;
-		me.eventUnHover($(this), ev)
+		me.eventUnHover();
 	})
 	.delegate(".timeglider-event-collapsed", "hover", function () { 
 
@@ -1225,9 +1230,9 @@ tg.TG_PlayerView.prototype = {
 	},
 	
 	
-	eventUnHover : function ($ev, ev_obj) {
+	eventUnHover : function () {
 		$(".timeglider-event-hover-info").css("left", "-1000px");
-		$ev.removeClass("tg-event-hovered");
+		$(".timeglider-timeline-event").removeClass("tg-event-hovered");
 	},
   
   

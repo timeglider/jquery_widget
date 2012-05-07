@@ -292,6 +292,7 @@
 	/* For IE 5.5 - 7 */
 	filter: progid:DXImageTransform.Microsoft.Shadow(Strength=4, Direction=135, Color='#333333');
 	position:absolute;
+	z-index:99999999;
 }
 
 .close-button-remove, .close-button-filter, .close-button-toggleMenu {
@@ -471,7 +472,7 @@
 	border-radius:6px;
 	-moz-border-radius:6px;
 	-webkit-border-radius:6px;
-	z-index:20;
+	z-index:9999;
 	padding:2px;
 	
 	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#555555', endColorstr='#000000'); /* for IE */

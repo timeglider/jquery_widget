@@ -281,15 +281,11 @@
 		
 		
 		/**
-		* zoom
-		* zooms the timeline in or out, adding an amount, often 1 or -1
-		*
-		* @param n {number|string}
-		*          numerical: -1 (or less) for zooming in, 1 (or more) for zooming out
-		*          string:    "in" is the same as -1, "out" the same as 1
+		* load
+		* 
 		*/
-		load : function (src, callback_object) {
-			
+		loadTimeline : function (src, callback_object) {
+			debug.log("load??");
 			MED.loadTimelineData(src, callback_object);
 			
 			return this;
