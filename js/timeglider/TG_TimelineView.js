@@ -135,6 +135,13 @@ tg.TG_PlayerView = function (widget, mediator) {
       	   + "<p>{{html image}}{{html description}}</p>"
       	   + "<ul class='timeglider-ev-modal-links'>{{html links}}</ul>"
       	   + "</div>",
+      	   
+      	event_modal_iframe: "<div class='tg-modal timeglider-ev-modal ui-widget-content tg-iframe-modal' id='${id}_modal'>" 
+      	   + "<div class='close-button close-button-remove'></div>" 
+      	   + "<div class='dateline'>{{html dateline}}</div>"
+      	   + "<h4 id='title'>{{html title}}</h4>"
+      	   + "<iframe frameborder='none' src='${link}'></iframe>"
+      	   + "</div>",
 	
 		// generated, appended on the fly, then removed
 		event_modal_full : $.template( null,
@@ -2542,7 +2549,7 @@ tg.TG_PlayerView.prototype = {
 			templ_obj = { 
 				title:ev.title,
 				description:ev.description,
-				id:eid,
+				link:ev.link,
 				dateline: me.getEventDateLine(ev),
 				links:links,
 				image:ev_img
@@ -2650,6 +2657,30 @@ tg.TG_PlayerView.prototype = {
       				.hover(function () { $(this).css("z-index", me.ztop++); });
 				
 				break;
+				
+				case "link-iframe":
+					// show the link (i.e. Wikipedia, etc) in an iframe
+					
+					debug.log("templ_obj:", templ_obj);
+					
+					
+					$modal = $.tmpl(me._templates.event_modal_iframe,templ_obj);
+					$modal
+						.appendTo(TICKS)
+						.css("z-index", me.ztop++)
+						.position({
+							my: "center top",
+							at: "center top",
+							of: $(CONTAINER),
+							offset: "0, 50", // left, top
+							collision: "flip fit"
+					})
+      				.hover(function () { $(this).css("z-index", me.ztop++); });
+      				
+				
+				break;
+				
+				
 			
 				// Add custom modal type here
 				// and position, etc accordingly

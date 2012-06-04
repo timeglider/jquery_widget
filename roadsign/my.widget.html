@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+<meta charset="utf-8" />
+<title>The jQuery UI Widget Factory</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+
+
+<link rel="stylesheet" href="css/aristo/jquery-ui-1.8.5.custom.css" type="text/css" media="screen" title="no title" charset="utf-8">
+
+
+
+<style type='text/css'>
+
+	body {
+		font-family:Helvetica, Arial;
+	}
+	
+	.guages {
+		width:680px;
+		margin:16px auto;
+	}
+	
+	.needleGuage-container {
+		width:200px;
+		height:100px;
+		border:3px solid #000;
+		position:relative;
+		overflow:hidden;
+		background-color:#F0F0F0;
+		
+		-webkit-border-top-left-radius: 100px;
+		-webkit-border-top-right-radius: 100px;
+		-moz-border-radius-topleft: 100px;
+		-moz-border-radius-topright: 100px;
+		border-top-left-radius: 100px;
+		border-top-right-radius: 100px;
+		float:left;
+		margin:10px;
+	}
+	
+	.needleGuage-container .ng-needle {
+		width:2px;
+		background-color:green;
+		position:absolute;
+		left:100px;
+		top:4px;
+		height:200px;
+	}
+
+
+	.needleGuage-container .ng-label1 {
+		position:absolute;
+		color:blue;
+		font-size:10px;
+		top:85px;
+		left:5px;
+		width:80px;
+	}
+	
+	.needleGuage-container .ng-label2 {
+		position:absolute;
+		color:red;
+		font-size:10px;
+		width:80px;
+		top:85px;
+		right:5px;
+		text-align:right;
+	}
+	
+	.needleGuage-container .ng-quant {
+		text-align:center;
+		color:green;
+		margin-top:32px;
+	}
+	
+	.needleGuage-container .ng-unit {
+		text-align:center;
+		color:#333;
+		margin-top:8px;
+	}
+	
+	.hoverable {
+		padding:16px;
+		clear:both;
+		margin:100px auto;
+		width:500px;
+		border:1px dashed red;
+	}
+	
+	.hoverable:hover {
+		background-color:yellow;
+	}
+	
+	.hoverable h2 {
+		margin:4px auto;
+		font-size:12px;
+		color:black;
+		text-align:center;
+	}
+	
+	.buttonset {
+		clear:both;
+		margin-top:32px;
+		text-align:center;
+	}
+	
+	#output {
+		color:orange;
+		text-align:center;
+		margin-top:16px;
+		font-size:24px;
+	}
+	
+	
+	
+</style>
+
+
+</head>
+<body>
+
+
+<div class='guages'>
+	<div id='ng1'></div>
+	<div id='ng2'></div>
+	<div id='ng3'></div>
+</div>
+
+
+<div class='hoverable'>
+
+<h2>Hover over me!</h2>
+
+<div id='output'>Click on buttons for reports!</div>
+
+<div id='buttons' class='buttonset'>
+<input type='radio' name='rdos' id='ng1_getVal'><label for="ng1_getVal">get highest speed</label>
+<input type='radio' name='rdos' id='ng2_getVal'><label for="ng2_getVal">get clicks</label>
+<input type='radio' name='rdos' id='ng3_getVal'><label for="ng3_getVal">get hovers</label>
+</div>
+
+</div>
+
+
+
+
+
+
+
+
+<script src="js/jquery.js" type="text/javascript" charset="utf-8"></script>
+<script src="js/jquery-ui.js" type="text/javascript" charset="utf-8"></script>
+
+<script src="js/ba-debug.min.js" type="text/javascript" charset="utf-8"></script>
+
+
+<script src="js/ui/jquery.ui.button.js" type="text/javascript" charset="utf-8"></script>
+
+<script src="my.needleGuage.widget.js" type="text/javascript" charset="utf-8"></script>
+
+
+<script type='text/javascript'>
+  
+  
+  
+	$(function () { 
+	
+		var build_ng1 = $("#ng1").needleGuage({
+				max_value:500,
+				unit:"speed",
+				initial_value:0,
+				show_highest:true,
+				newhigh: function(e,ui) {
+					debug.log("speeder new high");
+				}
+		});
+		
+	
+		// This is the really useful item!
+		var ng1 = build_ng1.data("needleGuage");
+
+		// For mouse speed we need to store some
+		// vars on the main closure
+		var rmx=-1, mx = -1,
+			rmy=-1, my = -1,
+			mouseVel = 1;
+		
+		$('html').mousemove(function(e) {
+				mx = e.pageX;
+				my = e.pageY;
+		});
+	 
+	 	
+	 	window.setTimeout(
+	 		function() {
+			 	window.setInterval(
+			 		function () {
+			 			yd = Math.abs(my - rmy),
+						xd = Math.abs(mx - rmx);
+						
+			 			mouseVel = Math.floor(Math.abs(Math.sqrt((yd * yd ) + (xd * xd))));
+			 			
+			 			rmx = mx;
+						rmy = my;
+						
+						// $("#output").text("vel:" + mouseVel);
+						if (mouseVel > 0) { ng1.setValue(mouseVel); }
+						
+			 	}, 50);
+		 }, 3000);
+	 	
+	 	$('#ng1_getVal').bind("click", function(e) {
+	 		$("#output").text("highest:" + ng1.getHigestValue());
+	 	});
+	 	
+	
+		
+		// NG2
+
+		var build_ng2 = $("#ng2").needleGuage({
+				max_value:100,
+				unit:"clicks",
+				initial_value:0,
+				newhigh: function(e, ui) {
+					debug.log("clicker new high!");
+				}
+			});
+	
+		var ng2 = build_ng2.data("needleGuage");
+	
+	 	var clicks = 0;
+	 	
+	 	$('html').bind("click", function(e) {
+			ng2.setValue(clicks++);
+		});
+		
+		$('#ng2_getVal').bind("click", function(e) {
+	 		$("#output").text("clicks:" + (ng2.getValue() + 1));
+	 	});
+
+
+
+
+
+		// NG3
+
+		var build_ng3 = $("#ng3").needleGuage({
+			max_value:100,
+			unit:"hovers",
+			initial_value:0
+		});
+	
+		var ng3 = build_ng3.data("needleGuage");
+
+		var hovers = 0;
+		
+		$('.hoverable').bind("hover", function(e) {
+			
+				ng3.setValue(hovers++);
+			
+		});
+		
+		
+		$('#ng3_getVal').bind("click", function(e) {
+
+	 		$("#output").text("hovers:" + (ng3.getValue()));
+	 	});
+	 	
+	 	
+	 	
+		
+		
+		$("#buttons").buttonset();
+		
+		
+	
+		
+    }); // end document-ready
+
+
+</script>
+
+
+
+</body>
+</html>
+
+

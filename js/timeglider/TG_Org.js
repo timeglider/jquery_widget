@@ -221,7 +221,9 @@
 							
 								if (b.span == true) {
 									span_selector_class = "timeglider-event-spanning";
-									span_div = "<div class='timeglider-event-spanner' style='top:" + "px;height:" + b.fontsize + "px;width:" + b.spanwidth + "px" + b_span_color + "'></div>"
+									// add seconds into span data in case calculations
+									// are in demand in DOM
+									span_div = "<div data-starts='" + b.startdateObj.sec + "' data-ends='" + b.enddateObj.sec + "' class='timeglider-event-spanner' style='top:" + "px;height:" + b.fontsize + "px;width:" + b.spanwidth + "px" + b_span_color + "'></div>";
 								} else {
 									span_selector_class = ""; 
 									span_div = "";

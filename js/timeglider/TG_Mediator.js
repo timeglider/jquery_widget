@@ -62,7 +62,7 @@ tg.TG_Mediator = function (wopts, $el) {
     // 
     this.filterActions = {};
 
-
+	this.loadedSources = [];
     this.timelineCollection = new tg.TG_TimelineCollection;
     this.eventCollection = new tg.TG_EventCollection;
     
@@ -174,6 +174,28 @@ tg.TG_Mediator = function (wopts, $el) {
 			}
 			
 	    },
+	    
+	    
+	    /*
+	     * fitToContainer
+	     * Considers the time-width of the current timeline(s) and
+	     * finds the best zoom level to fit all events in one view
+	    */
+	    fitToContainer: function() {
+	    	
+	    	var bds = this.getActiveTimelinesBounds();
+	    	var seconds_wide = bds.last - bds.first;
+	    	var middle_sec = (bds.first + bds.last) / 2;
+	    	var width = this.dimensions.container.width;
+	    	
+	    	var z = _.find(tg.zoomTree, function (zl) {
+	    		return seconds_wide/zl.spp < width;
+	    	});
+
+	    	this.gotoDateZoom(middle_sec, z.level);
+	    		
+	    },
+	    
 	    
 	    
 	    
@@ -350,24 +372,35 @@ tg.TG_Mediator = function (wopts, $el) {
 		
 		if (src) {
 		  
-		    if (typeof src === "object") {
-				// OBJECT (already loaded, created)
-				M.parseTimelineData(src);
-		      
-		    } else if (src.substr(0,1) == "#") {
-				// TABLE
-				var tableData = [M.getTableTimelineData(src)];
-				// debug.log(JSON.stringify(tableData));
-				M.parseTimelineData(tableData);
-		      
-		    } else {
-		    	// FROM NEW JSON
-
-		        $.getJSON(src, function (data) {
-					M.parseTimelineData(data, callback);
-		        });
-		
-		    }// end [obj vs remote]
+			// if we've not loaded it already!
+			if (_.indexOf(M.loadedSources, src) == -1) {
+			
+			
+			    if (typeof src === "object") {
+			    
+					// OBJECT (already loaded, created)
+					M.parseTimelineData(src);
+			      
+			    } else if (src.substr(0,1) == "#") {
+					// TABLE
+					var tableData = [M.getTableTimelineData(src)];
+					// debug.log(JSON.stringify(tableData));
+					M.parseTimelineData(tableData);
+			      
+			    } else {
+			    	// FROM NEW JSON
+	
+			        $.getJSON(src, function (data) {
+						M.parseTimelineData(data, callback);
+			        });
+			
+			    }// end [obj vs remote]
+			    
+			    
+			    M.loadedSources.push(src);
+		    
+		    
+		    } 
 		
 		
 		} else {
@@ -463,6 +496,22 @@ tg.TG_Mediator = function (wopts, $el) {
 	},
 	
 	
+	runLoadedTimelineCallback: function(callback, data) {
+	
+		
+		var args = callback.args || "";
+				
+		callback.fn(args, data);
+		
+		if (callback.display) {
+			debug.log("callback DISPLAY true...");
+			this.showSingleTimeline(data[0].id);
+		} else if (callback.toggle) {
+			debug.log("callback TOGGLE true...");
+			this.toggleTimeline(data[0].id);
+		}
+		
+	},
 	
  
 	/*
@@ -471,8 +520,7 @@ tg.TG_Mediator = function (wopts, $el) {
 	* derived from data in loadTimelineData
 	*/
 	parseTimelineData : function (data, callback) {
-		
-		
+	
 		
 		var M = this,
 			ct = 0,
@@ -493,29 +541,25 @@ tg.TG_Mediator = function (wopts, $el) {
 			
 	
 		}
-	
-	
+
 		// TYPICALLY A SECONDARY (user-called from page) LOAD
 		// WHICH MIGHT HAVE CUSTOMIZD CALLBACK ACTIONS...
-		if (callback && typeof callback.fn == "function") {
+		if (callback && (typeof callback.fn == "function" || typeof callback == "function")) {
+		
+			if (typeof callback == "function") {
+				callback = {fn:callback};
+			}
 			
 			$.publish(container_name + ".mediator.timelineDataLoaded");
-			
+		
 			setTimeout(function() {
-				var args = callback.args || "";
-				
-				callback.fn(args, data);
-				
-				if (args.display == true) {
-					M.showSingleTimeline(data[0].id);
-				}
-			}, 200);
+				M.runLoadedTimelineCallback(callback, data);
+			}, 100);
 			
 			
-			if (callback.seize == true) {
-					return false;
+			if (callback.display || callback.toggle) {
+				return false;
 			}
-
 
 		} 
 		
@@ -528,10 +572,7 @@ tg.TG_Mediator = function (wopts, $el) {
 			this.timelineDataLoaded = true;
 			this.tryLoading();
 		}
-		
 	
-			
-		
 	},
 	
 	
@@ -578,6 +619,7 @@ tg.TG_Mediator = function (wopts, $el) {
     */
     setInitialTimelines : function () {
         
+        debug.log("!! setInitialTimelines ??");
 		var me = this,
 			initial_timelines = this.initial_timeline_id,
 			first_focus_id = "";
@@ -940,14 +982,16 @@ tg.TG_Mediator = function (wopts, $el) {
 
 
 	showSingleTimeline: function(id) {
-			this.activeTimelines = [];
-			this.toggleTimeline(id);
+		this.activeTimelines = [];
+		this.toggleTimeline(id);
+		
+		debug.log("clear active timelines, ought to be just the single showing timeline ", this.activeTimelines);
+		
+		
 	},
 
 
 	toggleTimeline : function (id) {
-		
-		
 		
 		// patch until we have better multi-timeline support
 		// this is a true "toggle" in that it clears visible
@@ -955,7 +999,12 @@ tg.TG_Mediator = function (wopts, $el) {
 
 		var tl = this.timelineCollection.get(id).attributes;
 		
+		debug.log("uh, is this..", id + " in " + this.activeTimelines + "?");
+		
 		var active = _.indexOf(this.activeTimelines, id);
+		
+		debug.log("is it active??", active);
+		
 		
 		if (active == -1) {
 			// timeline not active ---- bring it on
@@ -973,10 +1022,8 @@ tg.TG_Mediator = function (wopts, $el) {
 			
 		
 		} else {
+		
 			// it's active, remove it
-			debug.log("toggle it, remove", id);
-			
-			
 			this.activeTimelines.splice(active,1);
 			
 			

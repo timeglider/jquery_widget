@@ -203,11 +203,12 @@
 				"max_zoom":60, 
 				"show_centerline":true,
 				"icon_folder":"js/timeglider/icons/",
-				"data_source":"json_tests/larry_craig.json",
+				"data_source":"json_tests/monarchs.json",
 				"show_footer":true,
 				"display_zoom_level":true,
 				"constrain_to_data":true,
-				"image_lane_height":60
+				"image_lane_height":60,
+				"loaded":function (args, data) { alert("loaded!"); }
 				// "tick_top":0
 				// "event_overflow":"scroll"
 		}).resizable({
@@ -288,6 +289,8 @@
 		}
 
 	
+	
+	
 		
 		$("#adjustNow").click(function() {
 			tg_actor.adjustNowEvents();
@@ -313,6 +316,7 @@
 			tg_actor.addEvent(obj);
 			
 		});	
+		
 		
 		
 		

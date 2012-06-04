@@ -135,6 +135,7 @@
 			
 				// after timelinePlayer is created this stuff can be done
 				MED.setFocusDate(new TG_Date(this.options.initial_focus));
+				
 				MED.loadTimelineData(this.options.data_source, this.options.loaded);
 			
 			} else {
@@ -209,9 +210,7 @@
 			return MED.getEventByID(id, prop);
 		},
 		
-		
-		
-		
+				
 		updateEvent: function (model_object) {
 			return MED.updateEvent(model_object);
 		},
@@ -239,6 +238,29 @@
 		},
 		
 		
+				
+		fitToContainer : function () {
+			MED.fitToContainer();
+			
+			return this;
+		},
+		
+		
+		
+		/*
+		 * adjustNowEvents
+		 * keeps ongoing events current to the latest time
+		 * For this to work, events need a property in them
+		 * that looks like this:
+		 *    "keepCurrent": "start"
+		 *    OR
+		 *    "keepCurrent": "end"
+		 * The "start" value would update the startdate to be the 
+		 * current time and if start & end are the same, it would
+		 * update both;  the "end" value would update the enddate
+		 * only, creating a "leading edge" event with a continuous
+		 * "still happening" state
+		 */
 		adjustNowEvents : function () {
 			return MED.adjustNowEvents();
 		},
@@ -281,11 +303,20 @@
 		
 		
 		/**
-		* load
+		* loadTimeline
+		* basic wrapper for Mediator loadTimeline
+		* callback_object includes:
+		*     .fn = function that will be called
+		*     .args = arguments Object that can be passed
+		*     .display = boolean, set to true to swap in just
+		                 the first timeline loaded; otherwise
+		                 it will load but won't immediately display
+		*     (fn also has timeline(s) available as "data" in 2nd arg)
+		*               
 		* 
 		*/
 		loadTimeline : function (src, callback_object) {
-			debug.log("load??");
+	
 			MED.loadTimelineData(src, callback_object);
 			
 			return this;

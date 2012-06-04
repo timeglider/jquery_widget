@@ -1,41 +1,14 @@
 [
 {
     "id": "idahoTimeline",
-    "title": "A Really Long, But Incomplete History of Idaho",
-    "focus_date": "1863-07-01 12:00",
-    "initial_zoom": "47",
+    "title": "A History of Idaho",
+    "focus_date": "1981-07-01 12:00",
+    "initial_zoom": "45",
 	"color": "#82530d",
 	"size_importance": "true",
     "events":
     [
-
-  {
-        "id": "1391bce",
-        "title": "TEST BCE EVENT",
-        "startdate": "-1000-07-01 12:00",
-        "description": "TEST BCE EVENT.",
-        "icon": "triangle_green.png",
-        "low_threshold": "1",
-        "high_threshold": "100",
-        "importance": "80"
-    },
     
-    
-    {
-        "id": "1391",
-        "title": "Smallpox Strikes the Shoshone",
-        "startdate": "1740-07-01 12:00",
-        "enddate": "1800-07-01 12:00",
-        
-        "description": "Shoshone bands obtain horses for transportation but are decimated by smallpox spread from European sources.",
-        "icon": "triangle_green.png",
-        "low_threshold": "1",
-        "high_threshold": "60",
-        "importance": "50",
-        "ypix": "0",
-        "slug":""
-    }
-    ,
     {
         "id": "1393",
         "title": "Louisiana Purchase",
@@ -902,16 +875,16 @@
     ,
     {
         "id": "1447",
-        "title": "Forest Fires",
+        "title": "The Big Burn: Devastating Forest Fires",
         "startdate": "1910-07-01 12:00",
-        "enddate": "1910-07-01 12:00",
+        "enddate": "1910-09-01 12:00",
         "date_limit": "mo",
         "description": "Forest fires consume one-sixth of north Idaho's forests.",
         "event_type": "event",
         "icon": "triangle_red.png",
         "low_threshold": "1",
         "high_threshold": "60",
-        "importance": "46",
+        "importance": "52",
         "ypix": "0",
         "slug":""
     }
@@ -1055,7 +1028,7 @@
         "icon": "triangle_green.png",
         "low_threshold": "1",
         "high_threshold": "60",
-        "importance": "55",
+        "importance": "35",
         "ypix": "0",
         "slug": ""
     }
@@ -1119,7 +1092,7 @@
         "icon": "triangle_green.png",
         "low_threshold": "1",
         "high_threshold": "60",
-        "importance": "50 ",
+        "importance": "45",
         "ypix": "0",
         "slug": ""
     }
@@ -1150,7 +1123,7 @@
         "icon": "triangle_green.png",
         "low_threshold": "1",
         "high_threshold": "60",
-        "importance": "50",
+        "importance": "45",
         "ypix": "0",
         "slug": ""
     }
@@ -1158,8 +1131,8 @@
     {
         "id": "1464",
         "title": "Japanese American Internment",
-        "startdate": "1942-07-01 12:00",
-        "enddate": "1942-07-01 12:00",
+        "startdate": "1942-02-19 12:00",
+        "enddate": "1944-12-18 12:00",
         
         "description": "Japanese-Americans are placed in internment camp near Eden.",
         "event_type": "event",
@@ -1413,7 +1386,7 @@
     ,
     {
         "id": "1480",
-        "title": "Mount St Helens erupts",
+        "title": "Mount St. Helens erupts",
         "startdate": "1981-07-01 12:00",
         "enddate": "1981-07-01 12:00",
         
@@ -1422,7 +1395,7 @@
         "icon": "triangle_red.png",
         "low_threshold": "1",
         "high_threshold": "60",
-        "importance": "60",
+        "importance": "50",
         "ypix": "0",
         "slug": ""
     }
@@ -1445,7 +1418,7 @@
     ,
     {
         "id": "1482",
-        "title": "Earthquake",
+        "title": "Challis Earthquake",
         "startdate": "1983-07-01 12:00",
         "enddate": "1983-07-01 12:00",
         
@@ -1454,7 +1427,7 @@
         "icon": "triangle_red.png",
         "low_threshold": "1",
         "high_threshold": "60",
-        "importance": "52",
+        "importance": "45",
         "ypix": "0",
         "slug": ""
     }
@@ -1573,7 +1546,7 @@
 	,
     {
         "id": "lcraig",
-        "title": "Larry Craig in the Senate",
+        "title": "Larry Craig in the Senate (Click to drill down)",
         "startdate": "1991-01-01 08:00",
         "enddate": "2009-12-31 08:00",
         "date_limit": "da",
@@ -1585,7 +1558,7 @@
         "icon": "square_blue.png",
         "low_threshold": "1",
         "high_threshold": "100",
-        "importance": "35",
+        "importance": "42",
         "ypix": "0",
         "slug": ""
     },
@@ -1602,7 +1575,7 @@
 	        "icon": "circle_orange.png",
 	        "low_threshold": "1",
 	        "high_threshold": "100",
-	        "importance": "60",
+	        "importance": "55",
 	        "ypix": "0",
 	        "slug": ""
 	    }

@@ -14,33 +14,34 @@
 <style type='text/css'>
 		#placement {
 			margin:32px;
-			height:500px;
+			height:600px;
 		}
 		
-		.scrolls {
-			margin-top:14px;
-			text-align:center;
+		
+		h1 {
+			color:black;
+			margin:16px 32px;
+			font-size:18px;
 		}
 		
-		.scrolls a {
-			font-size:14px;
-			font-weight:bold;
-			color:blue;
-			cursor:pointer;
+		.tg-timeline-env-buttons {
+			display:none;
+		}
+		
+		.intro {
+			margin-left:32px;
+			color:#666;
+			font-style:italic;
 		}
 </style>
 </head>
 <body>
 
-
-
+<h1>A History of Idaho: A Sample Timeglider Timeline</h1>
+<p class='intro'>Data sourced from the Idaho State Historical Society, the Idaho Statesman, and Wikipedia. Click on the &quot;Larry Craig in the Senate&quot; event span to drill down, then on &quot;A Rollercoaster Resignation&quot; to drill even further, to related Idaho Statesman articles. This drills down, but as of yet, we don't have a &quot;drill up&quot; method : ). You can refresh the page to go back to the main Idaho timeline.</p>
 <div id='placement'></div>
 
-<div class='controls'>
-<table>
-<tr><td id='zoomlevel' width='33%'>...</td><td id='tickwidth' width='33%'>tw</td><td id='focusdate'>...</td></tr>
-<tr><td id='tickpos'></td><td colspan='2' id='note'>...</td></tr>
-</table>
+
 
 <div id='output'></div>
 </div>
@@ -79,13 +80,15 @@
 		
 		tg1 = $("#placement").timeline({
 				"min_zoom":5, 
-				"max_zoom":100, 
+				"max_zoom":55, 
 				"show_centerline":true,
 				"data_source":"json_tests/idaho.json",
 				"show_footer":true,
-				"display_zoom_level":true
-				
+				"display_zoom_level":true	
 		});
+		
+		tg_actor = tg1.data("timeline");
+		
 		
 		
 		$("#scrolldown").bind("click", function() {
@@ -115,9 +118,16 @@
 			
 			
 			loadTimeline: function(obj) {
-				debug.log("loadTimeline:", obj.loadTimeline);
-				tg1.loadTimeline(obj.loadTimeline.url, function () {alert("loaded...")});
-				debug.log("tg1:", tg1);
+				
+				tg_actor.loadTimeline(
+					obj.loadTimeline.url, 
+					{	
+						fn:function(args, data) { debug.log("data:", data[0]); }, 
+					 	args:"",
+					 	display:true
+					}
+				);
+				
 			}
 		}
 		
