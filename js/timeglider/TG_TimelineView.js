@@ -48,7 +48,7 @@ var TG_Date = tg.TG_Date,
 *  
 *
 */
-tg.TG_PlayerView = function (widget, mediator) {
+tg.TG_TimelineView = function (widget, mediator) {
     
     
 	var me = this;
@@ -662,7 +662,7 @@ tg.TG_PlayerView = function (widget, mediator) {
 
 
 
-tg.TG_PlayerView.prototype = {
+tg.TG_TimelineView.prototype = {
 
 
 	resize: function() {

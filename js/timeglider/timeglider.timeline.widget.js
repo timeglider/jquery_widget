@@ -130,7 +130,7 @@
 				tg.TG_Date.setCulture(this.options.culture);
 			
 				MED = new tg.TG_Mediator(this.options, this.element);
-				timelinePlayer = new tg.TG_PlayerView(this, MED);
+				timelinePlayer = new tg.TG_TimelineView(this, MED);
 				
 			
 				// after timelinePlayer is created this stuff can be done
