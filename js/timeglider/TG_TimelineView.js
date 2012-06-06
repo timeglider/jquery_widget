@@ -398,7 +398,9 @@ tg.TG_PlayerView = function (widget, mediator) {
 		// EVENT ON-CLICK !!!!!!
 		me.eventUnHover();
 		
-		var eid = $(this).attr("id"); 
+		var $ev = $(this);
+		
+		var eid = $ev.attr("id"); 
 		var ev = MED.eventCollection.get(eid).attributes;
 		
 		// debug.log("event id on touchstart/click:" + eid);
@@ -429,7 +431,7 @@ tg.TG_PlayerView = function (widget, mediator) {
 			
 		  // no custom callback ÑÊjust regular old modal
 			} else {
-	      		me.eventModal(eid);
+	      		me.eventModal(eid, $ev);
 			}
 			
 		} // end if/else for authoring
@@ -2527,7 +2529,7 @@ tg.TG_PlayerView.prototype = {
   
   
   
-	eventModal : function (eid) {
+	eventModal : function (eid, $event) {
 	
 		// remove if same event already has modal opened
 		$(CONTAINER + " #" + eid + "_modal").remove();
@@ -2537,7 +2539,6 @@ tg.TG_PlayerView.prototype = {
 			video_view=false, 
 			map = "", map_options = {}, $modal, llar=[], mapZoom = 0,
 			
-			$par = $("#" + eid),
 			ev = MED.eventCollection.get(eid).attributes,
 			
 			// modal type: first check event, then timeline-wide option
@@ -2554,7 +2555,6 @@ tg.TG_PlayerView.prototype = {
 				links:links,
 				image:ev_img
 			}
-			
 		  	
 			if (ev.video) { 
 				templ_obj.video = ev.video;
@@ -2564,6 +2564,13 @@ tg.TG_PlayerView.prototype = {
 			} else if (ev.map && ev.map.latlong) {
 				map_view = true;
 				modal_type = "full";
+				
+			// if the embed size is small
+			} else if (me.dimensions.container.width < 500) {
+				
+				// create a "full_small" version here
+				// to handle small embeds
+				
 			}
 
 	    
@@ -2642,6 +2649,7 @@ tg.TG_PlayerView.prototype = {
 			
 				break;
 				
+				
 				case "video":
 					$modal = $.tmpl(me._templates.event_modal_video,templ_obj);
 					$modal
@@ -2650,13 +2658,15 @@ tg.TG_PlayerView.prototype = {
 						.position({
 							my: "right center",
 							at: "left center",
-							of: $par,
+							of: $event,
 							offset: "-12, -1", // left, top
 							collision: "flip fit"
 					})
       				.hover(function () { $(this).css("z-index", me.ztop++); });
 				
 				break;
+				
+				
 				
 				case "link-iframe":
 					// show the link (i.e. Wikipedia, etc) in an iframe
@@ -2672,7 +2682,7 @@ tg.TG_PlayerView.prototype = {
 							my: "center top",
 							at: "center top",
 							of: $(CONTAINER),
-							offset: "0, 50", // left, top
+							offset: "0, -12", // left, top
 							collision: "flip fit"
 					})
       				.hover(function () { $(this).css("z-index", me.ztop++); });
@@ -2681,25 +2691,61 @@ tg.TG_PlayerView.prototype = {
 				break;
 				
 				
-			
-				// Add custom modal type here
-				// and position, etc accordingly
-		
-		  		// normal small, draggable modal
 				default:
-					$modal = $.tmpl(me._templates.event_modal_small,templ_obj);
-					$modal
-						.appendTo(TICKS)
-						.css("z-index", me.ztop++)
-						.position({
-							my: "center top",
-							at: "center top",
-							of: (CONTAINER),
-							offset: "0, 100", // left, top
-							collision: "fit fit"
-					})
-      				.draggable()
-      				.hover(function () { $(this).css("z-index", me.ztop++); });
+					
+					// !TODO: 
+					// abstract this into a common positioning function
+					// for any of the small modals...
+   					$modal = $.tmpl(me._templates.event_modal_small,templ_obj).appendTo($event.parent());
+					
+					
+					var pad = 8;
+					var arrow_class = "", tb_class = "", lr_class = "";
+					
+					var ev_left = $event.position().left;
+      				var ev_top = $event.position().top;
+      				
+      				var modal_ht = $modal.outerHeight();
+					var modal_wi = $modal.outerWidth();
+					
+					var co_off = me.dimensions.container.offset;
+					var ev_off = $event.offset();
+
+					var top_set = 0;
+					
+					if (ev_off.top - co_off.top < (modal_ht + pad)) {
+						// position modal below the event
+						top_set = ev_top + $event.height() + 8;
+						tb_class = "top";
+					} else {
+						// all is good: position above
+						top_set = ev_top - (modal_ht + 12);
+						tb_class = "bottom";
+					}
+					
+					var ev_rel = ev_off.left - co_off.left;
+					var farthest = me.dimensions.container.width - (modal_wi + pad);
+					
+					if (ev_rel < pad) {
+						// shift to the left
+						ev_left += Math.abs(ev_rel) + pad;
+						lr_class = "left";
+					} else if (ev_rel > farthest) {
+						// it's too far off to the right
+						ev_left -= (ev_rel - farthest);
+						lr_class = "right";
+					} else {
+						lr_class = "left";
+					}
+					arrow_class = "arrow-" + tb_class + "-" + lr_class;
+					debug.log("arrow class:", arrow_class);
+					
+      				$modal.css({
+							"z-index": me.ztop++,
+							"top":top_set,
+							"left":ev_left
+							});
+      				
       
       		} // eof switch
       		
