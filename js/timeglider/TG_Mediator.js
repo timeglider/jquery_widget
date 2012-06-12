@@ -197,8 +197,11 @@ tg.TG_Mediator = function (wopts, $el) {
 	    },
 	    
 	    
+	    resize: function () {
+	    	$.publish(container_name + ".mediator.resize");
+	    },
 	    
-	    
+
 	    addFilterAction: function(actionName, actionFilter, actionFunction) {
 	    	this.filterActions[actionName] = {filter:actionFilter, fn:actionFunction};
 	    	this.refresh();

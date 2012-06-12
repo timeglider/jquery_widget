@@ -42,13 +42,13 @@ var TG_Date = tg.TG_Date,
     
     
 /*
-*  timeglider.TG_PlayerView
+*  timeglider.TG_TimelineView
 *  This is _not_ a backbone view, though
 *  other elements inside of it are.
 *  
 *
 */
-tg.TG_TimelineView = function (widget, mediator) {
+tg.TG_TimelinePlayer = function (widget, mediator) {
     
     
 	var me = this;
@@ -209,7 +209,7 @@ tg.TG_TimelineView = function (widget, mediator) {
     
     
     
-  	this.timelineModal = tg.TG_TimelineView.extend({
+  	this.timelineModal = tg.TG_Timeline.extend({
   	
   		tagName: "div",
 		
@@ -285,6 +285,15 @@ tg.TG_TimelineView = function (widget, mediator) {
 			MED.setFilters({origin:"legend", icon: "all"});
 	})
 		.css("height", $(PL).height());
+	
+	
+
+	$(window).resize(_.throttle(function() {
+		MED.resize();
+	}, 700));
+	
+	
+		
 	// END CONTAINER CHAIN
 	
 	
@@ -437,6 +446,7 @@ tg.TG_TimelineView = function (widget, mediator) {
 		} // end if/else for authoring
 	  
 	})	
+	
 	.delegate(".timeglider-timeline-event", "mouseover", function () { 
 		me.eventUnHover();
 		var ev = MED.eventCollection.get($(this).attr("id")).attributes;
@@ -447,6 +457,7 @@ tg.TG_TimelineView = function (widget, mediator) {
 		var ev = MED.eventCollection.get($(this).attr("id")).attributes;
 		me.eventUnHover();
 	})
+	
 	.delegate(".timeglider-event-collapsed", "hover", function () { 
 
 		var title = MED.eventCollection.get($(this).attr("id")).attributes.title;
@@ -458,7 +469,7 @@ tg.TG_TimelineView = function (widget, mediator) {
 	
 	// TODO: make function displayCenterline()
 	// TODO: simply append a centerline template rather than .css'ing it!
-	me.setCenterline();
+	me.setResizeElements();
 	
 	
 	/* PUB-SUB "LISTENERS" SUBSCRIBERS */
@@ -467,6 +478,7 @@ tg.TG_TimelineView = function (widget, mediator) {
 		
 		
 		me.tickHangies();
+		
 		// TOO MUCH! CRASHES Firefox
 		me.registerDragging();
 		me.registerTitles();
@@ -595,7 +607,15 @@ tg.TG_TimelineView = function (widget, mediator) {
 	});
 	/* END PUB-SUB SUBSCRIBERS */
 
-
+	
+	
+	$.subscribe(container_name + ".mediator.resize", function () {
+		me.resize();
+	});
+	
+	
+	
+	
 
 	/// TESTING /////
 	
@@ -662,15 +682,16 @@ tg.TG_TimelineView = function (widget, mediator) {
 
 
 
-tg.TG_TimelineView.prototype = {
+tg.TG_TimelinePlayer.prototype = {
 
 
 	resize: function() {
+		
 		var new_height = $(PL).height();
 		$(CONTAINER).height(new_height);
 		this.dimensions = this.getWidgetDimensions();
 		MED.setDimensions(this.dimensions);
-		this.setCenterline();
+		this.setResizeElements();
 		MED.refresh();
 	},
 	
@@ -1214,34 +1235,44 @@ tg.TG_TimelineView.prototype = {
 	},
 
 
+	
 	eventHover : function ($ev, ev) {
-
-    	var me = this, 
-        	$hov = $(".timeglider-event-hover-info");
-        	// using true in format() sets up display limit
-        	        	
-        	    
-    	// This works, but what if it has to sit on the bottom?
-    	if (ev.date_display != "no") {
-			$hov
-			.position({
-				my: "left bottom",
-		  	    at: "left top",
-		  	    of: $ev,
-		  	    offset: "1, -10",
-		  	    collision: "flip flip"}
-			)
-		  	.html(me.getEventDateLine(ev));
+		
+		if (typeof MED.options.eventHover == "function") {
+			MED.options.eventHover($ev, ev);
+		
+		} else {
+	    	
+	    	var me = this, 
+	        	$hov = $(".timeglider-event-hover-info");	        	
+	        	    
+	    	if (ev.date_display != "no") {
+				$hov
+				.position({
+					my: "left bottom",
+			  	    at: "left top",
+			  	    of: $ev,
+			  	    offset: "1, -10",
+			  	    collision: "flip flip"}
+				)
+			  	.html(me.getEventDateLine(ev));
+			  	
+	    	}
+		  	   
+		  	$ev.addClass("tg-event-hovered");
 		  	
-    	}
-	  	   
-	  	$ev.addClass("tg-event-hovered");
+		}
 	},
 	
 	
 	eventUnHover : function () {
-		$(".timeglider-event-hover-info").css("left", "-1000px");
-		$(".timeglider-timeline-event").removeClass("tg-event-hovered");
+		if (typeof MED.options.eventUnHover == "function") {
+			MED.options.eventUnHover();
+		
+		} else {
+			$(".timeglider-event-hover-info").css("left", "-1000px");
+			$(".timeglider-timeline-event").removeClass("tg-event-hovered");
+		}
 	},
   
   
@@ -1470,14 +1501,25 @@ tg.TG_TimelineView.prototype = {
 	}, 
 	
 	
-	setCenterline: function () {
-		var me = this;
+	setResizeElements: function () {
+		
+		var me = this,
+			cx = me.dimensions.container.centerx,
+			ch = me.dimensions.container.height,
+			$C = $(this._views.CENTERLINE),
+			$D = $(this._views.DATE),
+			dleft = cx - ($D.width() / 2);
+			
+		debug.log("cx:", cx);
 		
 		if (MED.options.show_centerline === true) {
-			$(this._views.CENTERLINE).css({"height":me.dimensions.container.height, "left": me.dimensions.container.centerx});
+			$C.css({"height":ch, "left": cx});
 		} else {
-			$(this._views.CENTERLINE).css({"display":"none"});
+			$C.css({"display":"none"});
 		}
+		
+		$D.css({"left":dleft});
+
 	},
 	
 	/* 
@@ -2023,7 +2065,7 @@ tg.TG_TimelineView.prototype = {
 		*/
 		
 		//////////////////////////////////////////
-		
+		$.publish(container_name + ".viewer.rendering");
 		
 		for (var a=0; a<active.length; a++) {
 			
@@ -2146,6 +2188,7 @@ tg.TG_TimelineView.prototype = {
 			
 			// var beforeStuff = +new Date();
 			
+			
 			if (expCol == "expanded") {
 				stuff = borg.getHTML("sweep", ceiling);
 				tl.borg = borg.getBorg();
@@ -2166,8 +2209,7 @@ tg.TG_TimelineView.prototype = {
 		
 		setTimeout(function () { me.applyFilterActions(); }, 300);
 		
-		
-		$.publish("viewer.rendered"); 
+		$.publish(container_name + ".viewer.rendered");
 		
 	}, // ends freshTimelines()
 
@@ -2184,6 +2226,8 @@ tg.TG_TimelineView.prototype = {
 			    $tl, tl, tl_top, 
 			    stuff = "", diff = 0,
 			    me = this;
+			
+			$.publish(container_name + ".viewer.rendering");
 			
 			// !PROCESS: EXTRASPANS
 			// debug.log("ADD A TICK", tick.serial);
@@ -2246,7 +2290,7 @@ tg.TG_TimelineView.prototype = {
 		  // below larger if things are crashing : )
 		  setTimeout(function () { me.applyFilterActions(); }, 500);
 		  
-		  $.publish("viewer.rendered"); 
+		  $.publish(container_name + ".viewer.rendered");
 				
 	}, // end appendTimelines()
 	

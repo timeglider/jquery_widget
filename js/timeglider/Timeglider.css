@@ -157,19 +157,22 @@
 
 .timeglider-date-display {
 	position:absolute;
-	right:72px;
 	top:-3px;
-	font-size:16px;
-	color:#F0F0F0;
-	font-weight:bold;
+	left:300px;
+	text-align:center;
+	width:80px;
+	font-size:12px;
+	font-weight:normal;
+	color:#FFF;
 	padding:6px;
-	border:2px solid #777;
+	border:1px solid #777;
 	-moz-border-radius-bottomright: 4px;
 	-moz-border-radius-bottomleft: 4px;
 	-webkit-border-radius: 0px 0px 4px 4px;
 	border-radius: 0px 0px 4px 4px;
 	background-color:#555;
 	z-index:999999999;
+	opacity:.4;
 }
   
   

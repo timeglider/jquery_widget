@@ -198,7 +198,9 @@
 	$(function () { 
 		
 		var tg1 = $("#p1").timeline({
-				
+				eventHover: function($ev, ev) {
+					debug.log("ev hover:", ev);
+				},
 				"min_zoom":2, 
 				"max_zoom":60, 
 				"show_centerline":true,
@@ -246,7 +248,7 @@
 			
 			var cb_args = {display:true};
 			
-			tg_actor.load(src, {fn:cb_fn, args:cb_args});
+			tg_actor.loadTimeline(src, {fn:cb_fn, args:cb_args});
 		});
 		
 		
