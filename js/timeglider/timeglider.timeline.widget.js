@@ -60,6 +60,7 @@
 			display_zoom_level:true,
 			constrain_to_data:false,
 			boost:0,
+			tick_top:0,
 			event_modal:{href:'', type:'default'},
 			event_overflow:"plus"  // plus | scroll 
 		},
@@ -158,7 +159,15 @@
 		* @param z {Number} zoom level to change to; optional
 		*/
 		goTo : function (d, z) {
-			MED.gotoDateZoom(d,z);
+			
+			if (d == "next") {
+				MED.gotoNextEvent();
+			} else if (d == "previous") {
+				MED.gotoPreviousEvent();
+			} else {
+				MED.gotoDateZoom(d,z);
+			}	
+			
 			return this;
 		},
 		

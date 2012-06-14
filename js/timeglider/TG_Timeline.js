@@ -31,6 +31,10 @@
 		
 		// "master hash"
 		eventHash:{},
+		
+		comparator: function(ev) {
+			return ev.get("startdateObj").sec;
+		},
 
 		setTimelineHash: function(timeline_id, hash) {
 			this.eventHash[timeline_id] = hash;
@@ -336,6 +340,9 @@
 					}
 					
 					ev.importance = parseInt(ev.importance, 10) + widget_options.boost;
+					
+					ev.low_threshold = ev.low_threshold || 1;
+					ev.high_threshold = ev.high_threshold || 100;
 					
 					/*
 				 		We do some pre-processing ** INCLUDING HASHING THE EVENT *

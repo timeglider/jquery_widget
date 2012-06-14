@@ -1337,10 +1337,13 @@ tg.TG_TimelinePlayer.prototype = {
 		var tttype = typeof MED.options.tick_top;
 
 		if (tttype == "number") {
+			// default number, zero for ticks at top
 			return MED.options.tick_top;
 		} else if (tttype == "function") {
+			// could be a custom setter function
 			return MED.options.tick_top(me.dimensions);
 		} else {
+			// at the bottom
 			return parseInt(this.dimensions.tick.top);
 		}
 
@@ -1411,9 +1414,6 @@ tg.TG_TimelinePlayer.prototype = {
 		$tickDiv= $("<div class='timeglider-tick " + oeClass + "' id='" + tid + "'>"
 		            + "<div class='timeglider-tick-label' id='label'></div></div>")
 		  .appendTo(TICKS);
-		
-		
-		// tick_top = 0;
 		
 		
 		$tickDiv.css({width:tickWidth, left:pos, top:tick_top, zIndex:0});

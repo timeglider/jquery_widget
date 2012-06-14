@@ -111,6 +111,16 @@
 		
 		*/
 		
+		.nextprev {
+			text-align:center;
+			padding:8px;
+		}
+		
+		.nextprev span {
+			color:green;
+			font-weight:bold;
+			cursor:pointer;
+		}
 		
 		</style>
 </head>
@@ -121,12 +131,9 @@
 <div id='p1'></div>
 
 
-
-<br><br><br>
-
-
-<div id='p2'></div>
-
+<div class='nextprev'>
+<span id='gotoPrev'>PREV</span>&nbsp;&nbsp;&nbsp;&nbsp;<span id='gotoNext'>NEXT</span>
+</div>
 
 
 <div class='methods'>
@@ -198,16 +205,18 @@
 	$(function () { 
 		
 		var tg1 = $("#p1").timeline({
+				/*
 				eventHover: function($ev, ev) {
 					debug.log("ev hover:", ev);
 				},
+				*/
 				"min_zoom":2, 
 				"max_zoom":60, 
 				"show_centerline":true,
 				"icon_folder":"js/timeglider/icons/",
 				"data_source":"json_tests/js_history.json",
 				"show_footer":true,
-				"display_zoom_level":true,
+				"display_zoom_level":false,
 				"constrain_to_data":true,
 				"image_lane_height":60,
 				"loaded":function (args, data) { /* alert("loaded!"); */ }
@@ -269,8 +278,7 @@
 			$(".timeglider-timeline-event").animate({top:"-=100"})
 		})
 		
-		
-	
+
 	
 	
 	  	timeglider.eventActions = {
@@ -290,8 +298,7 @@
 			}
 		}
 
-	
-	
+
 	
 		
 		$("#adjustNow").click(function() {
@@ -335,6 +342,17 @@
 			tg_actor.updateEvent(updatedEventModel);
 
 		});	
+		
+		
+		$("#gotoPrev").bind("click", function() {
+		
+			tg_actor.goTo("previous");
+		});
+		
+		$("#gotoNext").bind("click", function() {
+			tg_actor.goTo("next");
+		
+		});
 		
 	
 		

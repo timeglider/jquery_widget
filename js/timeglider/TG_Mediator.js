@@ -96,11 +96,17 @@ tg.TG_Mediator = function (wopts, $el) {
 	tg.TG_Mediator.prototype = {
 	
 		
-		focusToEvent: function(ev){
+		
+		
+		focusToEvent: function(ev, callback){
 			// !TODO open event, bring to zoom
 			this.focusedEvent = ev;
-			this.gotoDateZoom(ev.startdateObj.dateStr, ev.importance)
+			this.gotoDateZoom(ev.startdateObj.dateStr)
 			$.publish(container_name + ".mediator.focusToEvent");
+			
+			if (typeof callback == "function") {
+				callback(ev);
+			}
 		},
 		
 		/*
@@ -144,23 +150,28 @@ tg.TG_Mediator = function (wopts, $el) {
 	    },
 	    
 	    
+	    
+	    
 	    getScope : function () {
 	    
 			var zi = this.getZoomInfo(),
 				fd = this.getFocusDate(),
 				tBounds = this.getActiveTimelinesBounds(),
 				focusDateSec = Math.round(fd.sec),
-				focus_seconds = tg.TG_Date.TGSecToUnixSec(focusDateSec),
+				focus_unix_seconds = tg.TG_Date.TGSecToUnixSec(focusDateSec),
 				width = this.dimensions.container.width,
 				half_width = width/2,
 				spp = Math.round(zi.spp),
 			
 				// calculate milliseconds from focus date seconds
 				// and dimensions of the timeline frame
-				left_ms = (focus_seconds - (half_width * spp)) * 1000,
-				focus_ms = focus_seconds * 1000,
-				right_ms = (focus_seconds + (half_width * spp)) * 1000;
-
+				left_ms = (focus_unix_seconds - (half_width * spp)) * 1000,
+				focus_ms = focus_unix_seconds * 1000,
+				right_ms = (focus_unix_seconds + (half_width * spp)) * 1000,
+				
+				left_sec = focusDateSec - (half_width * spp),
+				right_sec = focusDateSec + (half_width * spp);
+				
 			return {
 				"spp": spp, 
 				"width": width,
@@ -168,6 +179,9 @@ tg.TG_Mediator = function (wopts, $el) {
 				"timelines": this.activeTimelines,
 				"timelineBounds": tBounds,
 				"container": $container,
+				"left_sec":left_sec,
+				"right_sec":right_sec,
+				// unix milliseconds!
 				"leftMS":left_ms,
 				"rightMS":right_ms,
 				"focusMS":focus_ms
@@ -223,6 +237,113 @@ tg.TG_Mediator = function (wopts, $el) {
 	    	}
 	    },
 	    
+	    
+	    
+	    /*
+	   	 * getPastEvents
+	   	 * Get an array of all events prior to focus date
+	   	 *
+	   	*/ 
+		getPastEvents: function(visible_only) {
+	    	var me=this,
+	    		scope = this.getScope();
+
+	    	if (scope.timelineBounds.first < scope.focusDateSec) {
+	    		// send back all events prior to focus
+	    		return _.filter(this.eventCollection.models, function(ev) {
+	    			var visf = (visible_only) ? me.isEventVisible(ev): true;
+	    			return (ev.get("startdateObj").sec < scope.focusDateSec);
+	    		});
+	    		
+	    	} else {
+	    		return false;
+	    	}
+		},
+	    
+	    
+	   	gotoPreviousEvent: function() {
+	    	var me=this,
+	    		backEvents = this.getPastEvents(true);
+			
+			if (backEvents) {
+				var cb = function(ev) {
+					$(".timeglider-timeline-event").removeClass("tg-event-selected");
+					$(".timeglider-timeline-event#" + ev.id).addClass("tg-event-selected");
+				}
+	    		this.focusToEvent(_.last(backEvents).attributes, cb);
+	    	} else {
+	    		return false;
+	    	}
+	    },
+	  
+	  
+	  
+	    
+	   	/*
+	   	 * getFutureEvents
+	   	 * Get an array of all events forward of focus date
+	   	 *
+	   	*/ 
+	    getFutureEvents: function (visible_only) {
+	    	var me=this,
+	    		scope = this.getScope();
+	
+	    	if (scope.timelineBounds.last > scope.focusDateSec) {
+				/*
+				_.each(this.eventCollection.models, function(ev) {
+	    			me.isEventVisible(ev);
+	    			// debug.log("visible > ", visf);
+	    		});
+
+	    		*/
+
+				
+
+	    		return _.filter(this.eventCollection.models, function(ev) {
+	    			var visf = (visible_only) ? me.isEventVisible(ev): true;
+	    			return (visf && ev.get("startdateObj").sec > scope.focusDateSec);
+	    		});
+	    		
+	    		
+	    		
+	    		
+	    	} else {
+	    		return false;
+	    	}
+	    },
+	    
+		gotoNextEvent: function() {
+			var me = this,
+				fwdEvents = this.getFutureEvents(true);
+		
+			if (fwdEvents) {
+				var cb = function(ev) {
+					$(".timeglider-timeline-event").removeClass("tg-event-selected");
+					$(".timeglider-timeline-event#" + ev.id).addClass("tg-event-selected");
+				}
+				this.focusToEvent(_.first(fwdEvents).attributes, cb);
+			} else {
+				return false;
+			}
+		},
+	    
+	   
+	   
+		isEventVisible: function(ev) {
+			
+			var z = this._zoomLevel;
+			if (z <= ev.get("high_threshold") && z >= ev.get("low_threshold")) {
+				// debug.log("vis: ", ev.get("title")); // 
+				return true;
+			} else {
+				// debug.log("nOt Vis: ", ev.get("title")); // 
+				return false;
+			}
+			
+		},
+		
+		
+
 	    
 	    /* 
 	     * adjustNowEvents
