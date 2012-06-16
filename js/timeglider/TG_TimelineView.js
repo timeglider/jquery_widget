@@ -93,20 +93,18 @@ tg.TG_TimelinePlayer = function (widget, mediator) {
 	CONTAINER = this._views.CONTAINER;
 	TICKS = this._views.TICKS;
 	DATE = this._views.DATE;
-	
-	
-	// height for images in the top image lane
-	// this.imageLaneHeight = 32;
-	
-	// distance from bottom of container (not vertically from ticks)
-	// for timelines to be by default; but if a timeline has a "top" value,
-	// it's position will be set according to that
- 	this.initTimelineVOffset = 100;
+
  	
  	// this needs to be less than or equal to
  	// timeglider.css value for .timeglider-tick 
  	// height property
  	this.tick_height = 34;
+ 	
+ 	
+ 	// distance from bottom of container (not vertically from ticks)
+	// for timelines to be by default; but if a timeline has a "top" value,
+	// it's position will be set according to that
+ 	this.initTimelineVOffset = options.image_lane_height + this.tick_height + 12;
  	
  	
  	// a state var for the left-right position of the timeline
@@ -209,12 +207,10 @@ tg.TG_TimelinePlayer = function (widget, mediator) {
     
     
     
-  	this.timelineModal = tg.TG_Timeline.extend({
+  	this.timelineModal = Backbone.View.extend({
   	
   		tagName: "div",
-		
-		model:tg.TG_Timeline,
-		
+				
 		className: 'tg-modal timeglider-timeline-modal ui-widget-content',
 		
 		events: {
@@ -225,13 +221,19 @@ tg.TG_TimelinePlayer = function (widget, mediator) {
 			+ "<h4 id='title'>${title}</h4>"
 			+ "<p>{{html description}}</p>",
 
-		initialize: function() {
-			this.model.bind('change', this.render, this);
+		initialize: function(m) {
+			debug.log("tModal model:", m);
+			
+			// this.model.bind('change', this.render, this);
 		},
 		
 		render: function() {
-		$(this.el).html($.tmpl(this.template, this.model.attributes)).attr("id", this.model.get("id") + "_timelineModal");
-		return this;
+			var me = this;
+			$modal = $.tmpl(me.template, this.model.attributes);
+			
+			$(this.el).html($modal).attr("id", this.model.get("id") + "_timelineModal");
+			
+			return this;
 		},
 		
 		remove: function() {
@@ -1258,8 +1260,8 @@ tg.TG_TimelinePlayer.prototype = {
 			  	.html(me.getEventDateLine(ev));
 			  	
 	    	}
-		  	   
-		  	$ev.addClass("tg-event-hovered");
+		  	
+		  	$ev.append("<div class='tg-event-tieline'></div>").addClass("tg-event-hovered");
 		  	
 		}
 	},
@@ -1271,7 +1273,9 @@ tg.TG_TimelinePlayer.prototype = {
 		
 		} else {
 			$(".timeglider-event-hover-info").css("left", "-1000px");
-			$(".timeglider-timeline-event").removeClass("tg-event-hovered");
+			$(".timeglider-timeline-event")
+				.removeClass("tg-event-hovered")
+				.find(".tg-event-tieline").remove();
 		}
 	},
   
@@ -1412,8 +1416,6 @@ tg.TG_TimelinePlayer.prototype = {
 		            + "<div class='timeglider-tick-label' id='label'></div></div>")
 		  .appendTo(TICKS);
 		
-		
-		// tick_top = 0;
 		
 		
 		$tickDiv.css({width:tickWidth, left:pos, top:tick_top, zIndex:0});
@@ -2081,7 +2083,7 @@ tg.TG_TimelinePlayer.prototype = {
 			
 			// TODO establish the 120 below in some kind of constant!
 			// meanwhile: tl_top is the starting height of a loaded timeline 
-			tl_top = (tl.top) ? parseInt(tl.top.replace("px", "")) : (cht-me.initTimelineVOffset); 
+			tl_top = (tl.top) ? parseInt(tl.top.replace("px", "")) : (me.initTimelineVOffset); 
 							
 			tlView = new tg.TG_TimelineView({model:tlModel});
 			
@@ -2102,14 +2104,19 @@ tg.TG_TimelinePlayer.prototype = {
 						// reset its .top value and refresh, mainly
 						// to reset ceiling (+/visible) properties
 						MED.timelineCollection.get(tid).set({top:ntop}); // .attributes;
-					
+
+						var ilh = parseInt(ntop.replace("px", "")) - (me.tick_height + 12);
+						debug.log("image lane ht:", ntop, me.tick_height);
+						me.setImageLaneHeight(ilh, false);
+						
 						MED.refresh();	
 					}
 				})
 				.css({"top":tl_top, "left": tz_offset});
 
 			$title = $tl.find(".titleBar");
-			
+			$bg = $tl.find(".tg-timeline-bg");
+
 			if (typeof tl.bounds != "undefined") {
 				t_f = cx + ((tl.bounds.first - foSec) / spp);
 				t_l = cx + ((tl.bounds.last - foSec) / spp);
@@ -2141,7 +2148,8 @@ tg.TG_TimelinePlayer.prototype = {
 			
 
 			$title.css({"top":tl_ht, "left":t_f, "width":tbwidth}).data({"lef":t_f, "wid":tbwidth});
-
+			$bg.css({"left":t_f, "width":tbwidth})
+			
 			/// for initial sweep display, setup fresh borg for organizing events
 			if (expCol == "expanded") { tl.borg = borg = new timeglider.TG_Org(); }
  
@@ -2463,8 +2471,11 @@ tg.TG_TimelinePlayer.prototype = {
     		    function () {
     		    	var alti = me.imageLaneHeight,
     		    		$div = $(this),
+    		    		$tl = $div.closest(".tg-timeline-envelope");
+    		    		
+    		    		
     		    		$img = $(this).find("img"),
-    		    		yoff = 12,
+    		    		yoff = -4,
     		    		imax = $img.data("max_height"),
     		    		
     		    		// if the image is smaller than the tallest
@@ -2472,13 +2483,13 @@ tg.TG_TimelinePlayer.prototype = {
     		    		imght = (imax < alti) ?  imax: alti;
   						
   						if (imax < alti) {
-  							yoff += ((alti - imax) / 2)
+  							// yoff += ((alti - imax) / 2)
   						} 
 					$div.css({"display":"block"})
 						.position({
-		        			my: "top",
+		        			my: "bottom",
 	    					at: "top",
-	    					of: $(CONTAINER),
+	    					of: $($tl),
 	    					offset: "0, " + yoff
     	        		})
     	        		.css({left:0});
@@ -2535,8 +2546,12 @@ tg.TG_TimelinePlayer.prototype = {
   openTimelineModal : function (id) {
   
   	var me=this,
-  		tl = MED.timelineCollection.get(id),
-  		item = new this.timelineModal({model:tl}),
+  		tl = MED.timelineCollection.get(id);
+  		debug.log("tl:", tl);
+  		
+  		
+  	var item = new me.timelineModal({model:tl}),
+  		
   		$modal = $(item.render().el)
   		.appendTo("body")
 		.position({
@@ -2715,9 +2730,6 @@ tg.TG_TimelinePlayer.prototype = {
 				case "link-iframe":
 					// show the link (i.e. Wikipedia, etc) in an iframe
 					
-					debug.log("templ_obj:", templ_obj);
-					
-					
 					$modal = $.tmpl(me._templates.event_modal_iframe,templ_obj);
 					$modal
 						.appendTo(TICKS)
@@ -2741,7 +2753,6 @@ tg.TG_TimelinePlayer.prototype = {
 					// abstract this into a common positioning function
 					// for any of the small modals...
    					$modal = $.tmpl(me._templates.event_modal_small,templ_obj).appendTo($event.parent());
-					
 					
 					var pad = 8;
 					var arrow_class = "", tb_class = "", lr_class = "";
@@ -2921,7 +2932,7 @@ tg.TG_TimelineView = Backbone.View.extend({
       	
       	tmpl += "<span class='expand-collapse' data-timeline_id='${id}'>exp/col</span>"; 
 		
-		tmpl += "</div></div></div>";
+		tmpl += "</div></div></div><div class='tg-timeline-bg'></div>";
  	
 		return tmpl;	
 	},

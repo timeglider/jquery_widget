@@ -42,6 +42,7 @@
 		
 		// defaults!
 		options : { 
+			tick_top:0,
 			base_namespace:"tg",
 			timezone:"00:00",
 			initial_focus:tg.TG_Date.getToday(), 
@@ -55,7 +56,7 @@
 			mouse_wheel: "zoom", // !TODO | pan 
 			initial_timeline_id:'',
 			icon_folder:'js/timeglider/icons/',
-			image_lane_height: 32,
+			image_lane_height: 60,
 			show_footer:true,
 			display_zoom_level:true,
 			constrain_to_data:false,

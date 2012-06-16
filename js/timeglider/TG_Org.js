@@ -34,7 +34,7 @@
     this.blocks = [];
     this.ids = [];
     this.vis = [];
-    this.pol = -1;
+    this.pol = 1;
     this.placedBlocks = [];
     this.freshBlocks = [];
        
@@ -181,7 +181,8 @@
 						} 
 		      		    
 		      		    
-		      		    highest = ceiling - ceiling_padding;
+		      		    highest = (me.pol == -1) ? (ceiling - ceiling_padding) : 9999;
+			           		
 			           		
 						if (b.y_position > 0) {
 							// absolute positioning
@@ -193,7 +194,7 @@
 							//!RECURSIVE
 							// *** alters the `b` block object
 							b.attempts = 0;
-							checkAgainstPlaced(b, highest);
+							checkAgainstPlaced(b, highest, me.pol);
 							
 						}
 						
@@ -239,7 +240,7 @@
 								// pad inverted (polarity 1) events to exceed the height
 								// of the timeline title bar; pad "normal" top-up events
 								// to have some space between them and the title bar
-								south_padding = (me.pol === 1) ? 42 : -12;
+								south_padding = (me.pol == 1) ? 62 : -12;
 							
 								
 							 
@@ -354,7 +355,7 @@
 
 
 	// private function
-	var checkAgainstPlaced = function (block, ceil) {
+	var checkAgainstPlaced = function (block, ceil, polarity) {
        	
 		var ol = false, 
 
@@ -399,7 +400,7 @@
 					// *** RECURSIVE ***
 					block.attempts++;
 					
-					checkAgainstPlaced(block, ceil);
+					checkAgainstPlaced(block, ceil, me.pol);
 			
 					collision = true;
 					
