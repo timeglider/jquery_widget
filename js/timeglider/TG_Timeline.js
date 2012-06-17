@@ -118,13 +118,14 @@
 				img_src = imgTesting.src = img.src;
 		
 			imgTesting.onerror= delegatr(imgTesting, function () {
-				debug.log("error loading image:" + img_src);
+				// debug.log("error loading image:" + img_src);
 				that.set({"image":""});
 			});
 		
 			imgTesting.onload = delegatr(imgTesting, function () {
 				that.get("image").height = this.height;
 				that.get("image").width = this.width;
+				that.get("image").max_height = this.height;
 			});
 		
 			function delegatr(contextObject, delegateMethod) {

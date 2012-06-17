@@ -743,7 +743,6 @@ tg.TG_Mediator = function (wopts, $el) {
     */
     setInitialTimelines : function () {
         
-        debug.log("!! setInitialTimelines ??");
 		var me = this,
 			initial_timelines = this.initial_timeline_id,
 			first_focus_id = "";

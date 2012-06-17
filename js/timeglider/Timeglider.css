@@ -150,14 +150,14 @@
 
   
 .timeglider-centerline {
-  	border-left:1px dashed #CCC;
+  	border-left:1px dotted #E0E0E0;
 	  position:absolute;
 	  margin:0px auto 0px auto;
 }
 
 .timeglider-date-display {
 	position:absolute;
-	top:-3px;
+	bottom:4px;
 	left:300px;
 	text-align:center;
 	width:80px;

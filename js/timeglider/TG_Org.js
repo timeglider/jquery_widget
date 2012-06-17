@@ -176,7 +176,7 @@
 							// different image classes ("bar", "above") are positioned
 							// using a separate $.each routine in TimelineView rather than
 							// being given absolute positioning here.
-							img = "<div class='timeglider-event-image-" + b.image.display_class + "'><img src='" + b.image.src + "' " + img_style + "></div>";
+							img = "<div data-max_height='" + b.image.max_height + "' class='timeglider-event-image-" + b.image.display_class + "'><img src='" + b.image.src + "' " + img_style + "></div>";
 							
 							
 						} else {

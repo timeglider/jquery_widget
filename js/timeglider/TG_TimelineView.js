@@ -1509,9 +1509,7 @@ tg.TG_TimelinePlayer.prototype = {
 			$C = $(this._views.CENTERLINE),
 			$D = $(this._views.DATE),
 			dleft = cx - ($D.width() / 2);
-			
-		debug.log("cx:", cx);
-		
+					
 		if (MED.options.show_centerline === true) {
 			$C.css({"height":ch, "left": cx});
 		} else {
@@ -2435,7 +2433,7 @@ tg.TG_TimelinePlayer.prototype = {
 	},
   
 	/*
-	* registerEventImages
+	*  registerEventImages
 	*  Events can have classes applied to their images; these routines
 	*  take care of doing non-css-driven positioning after the layout
 	*  has finished placing events in the tick sphere.
@@ -2463,17 +2461,25 @@ tg.TG_TimelinePlayer.prototype = {
     		    function () {
     		    	var alti = me.imageLaneHeight,
     		    		$div = $(this),
+    		    		
+    		    		$tb = $div.parent().parent(); // closest(".titleBar");
+    		    		
     		    		$img = $(this).find("img"),
     		    		yoff = 12,
-    		    		imax = $img.data("max_height"),
+    		    		
+    		    		imax = parseInt($div.data("max_height"), 10);
     		    		
     		    		// if the image is smaller than the tallest
     		    		// allowed image, keep height smaller
-    		    		imght = (imax < alti) ?  imax: alti;
-  						
+    	
   						if (imax < alti) {
-  							yoff += ((alti - imax) / 2)
-  						} 
+  							imght = imax;
+  							yoff += ((alti - imax) / 2);
+  						} else {
+  							imght = alti;
+  						}
+  						
+  						
 					$div.css({"display":"block"})
 						.position({
 		        			my: "top",
@@ -2486,6 +2492,7 @@ tg.TG_TimelinePlayer.prototype = {
 					$img.css("height", imght);
     	      }
         );
+  
 	  
 	},
   
