@@ -209,7 +209,7 @@ tg.TG_TimelinePlayer = function (widget, mediator) {
     
     
     
-  	this.timelineModal = tg.TG_Timeline.extend({
+  	this.timelineModal = Backbone.View.extend({
   	
   		tagName: "div",
 		
@@ -2462,7 +2462,8 @@ tg.TG_TimelinePlayer.prototype = {
     		    	var alti = me.imageLaneHeight,
     		    		$div = $(this),
     		    		
-    		    		$tb = $div.parent().parent(); // closest(".titleBar");
+    		    		$tb = $div.closest(".tg-timeline-envelope");
+    		    		// debug.log("$tb:", $tb.attr("class"))
     		    		
     		    		$img = $(this).find("img"),
     		    		yoff = 12,
@@ -2483,9 +2484,9 @@ tg.TG_TimelinePlayer.prototype = {
 					$div.css({"display":"block"})
 						.position({
 		        			my: "top",
-	    					at: "top",
-	    					of: $(CONTAINER),
-	    					offset: "0, " + yoff
+	    					at: "bottom",
+	    					of: $tb,
+	    					offset: "0, 28"
     	        		})
     	        		.css({left:0});
     	        

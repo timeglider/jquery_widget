@@ -60,7 +60,7 @@
 			display_zoom_level:true,
 			constrain_to_data:false,
 			boost:0,
-			tick_top:'',
+			tick_top:0,
 			event_modal:{href:'', type:'default'},
 			event_overflow:"plus"  // plus | scroll 
 		},

@@ -5,6 +5,7 @@
     "focus_date": "1981-07-01 12:00",
     "initial_zoom": "45",
 	"color": "#82530d",
+	"description":"yes",
 	"size_importance": "true",
     "events":
     [
