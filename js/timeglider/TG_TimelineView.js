@@ -209,7 +209,7 @@ tg.TG_TimelinePlayer = function (widget, mediator) {
     
     
     
-  	this.timelineModal = tg.TG_Timeline.extend({
+	this.timelineModal = Backbone.View.extend({
   	
   		tagName: "div",
 		
@@ -2457,46 +2457,43 @@ tg.TG_TimelinePlayer.prototype = {
       );
       */
       
-      $(CONTAINER + " .timeglider-event-image-above").each(
-    		    function () {
-    		    	var alti = me.imageLaneHeight,
-    		    		$div = $(this),
-    		    		
-    		    		$tb = $div.parent().parent(); // closest(".titleBar");
-    		    		
-    		    		$img = $(this).find("img"),
-    		    		yoff = 12,
-    		    		
-    		    		imax = parseInt($div.data("max_height"), 10);
-    		    		
-    		    		// if the image is smaller than the tallest
-    		    		// allowed image, keep height smaller
-    	
-  						if (imax < alti) {
-  							imght = imax;
-  							yoff += ((alti - imax) / 2);
-  						} else {
-  							imght = alti;
-  						}
-  						
-  						
-					$div.css({"display":"block"})
-						.position({
-		        			my: "top",
-	    					at: "top",
-	    					of: $(CONTAINER),
-	    					offset: "0, " + yoff
-    	        		})
-    	        		.css({left:0});
-    	        
-					$img.css("height", imght);
-    	      }
-        );
-  
-	  
-	},
-  
+  $(CONTAINER + " .timeglider-event-image-above").each(
+		    function () {
+		    	var alti = me.imageLaneHeight,
+		    		$div = $(this),
+		    		
+		    		$tb = $div.closest(".tg-timeline-envelope");
+		    		// debug.log("$tb:", $tb.attr("class"))
+		    		
+		    		// $img = $(this).find("img"),
+		    		
+		    		imax = parseInt($div.data("max_height"), 10);
+		    		
+		    		// if the image is smaller than the tallest
+		    		// allowed image, keep height smaller
+	
+					if (imax < alti) {
+						imght = imax;
+					} else {
+						imght = alti;
+					}
+					
+					
+				$div.css({"display":"block"})
+					.position({
+	        			my: "top",
+    					at: "bottom",
+    					of: $tb,
+    					offset: "0, 28"
+	        		})
+	        		.css({left:0});
+	        
+				$img.css("height", imght);
+	     	 }
+    	);
 
+  
+	},
 
 	applyFilterActions: function() {
 		
