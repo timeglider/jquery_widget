@@ -2462,9 +2462,6 @@ tg.TG_TimelinePlayer.prototype = {
     		    	var alti = me.imageLaneHeight,
     		    		$div = $(this),
     		    		
-    		    		$tb = $div.closest(".tg-timeline-envelope");
-    		    		// debug.log("$tb:", $tb.attr("class"))
-    		    		
     		    		$img = $(this).find("img"),
     		    		yoff = 12,
     		    		
@@ -2480,13 +2477,12 @@ tg.TG_TimelinePlayer.prototype = {
   							imght = alti;
   						}
   						
-  						
 					$div.css({"display":"block"})
 						.position({
 		        			my: "top",
-	    					at: "bottom",
-	    					of: $tb,
-	    					offset: "0, 28"
+	    					at: "top",
+	    					of: $(CONTAINER),
+	    					offset: "0, " + yoff
     	        		})
     	        		.css({left:0});
     	        
