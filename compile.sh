@@ -18,3 +18,4 @@ java -jar compiler.jar --js js/underscore-min.js --js js/backbone-min.js --js js
 
 # version 0.1.4 [2012-06-06] modal positioning improved; new TG_Org that has better
 #               collision detection; 
+#               [2012-06-16] date display set to bottom; subtle design changes

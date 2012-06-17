@@ -2618,7 +2618,7 @@ tg.TG_TimelinePlayer.prototype = {
 				
 			// if the embed size is small
 			} else if (me.dimensions.container.width < 500) {
-				
+				debug.log("small version!");
 				// create a "full_small" version here
 				// to handle small embeds
 				
