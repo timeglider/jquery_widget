@@ -2465,7 +2465,7 @@ tg.TG_TimelinePlayer.prototype = {
 		    		$tb = $div.closest(".tg-timeline-envelope");
 		    		// debug.log("$tb:", $tb.attr("class"))
 		    		
-		    		// $img = $(this).find("img"),
+		    		$img = $(this).find("img"),
 		    		
 		    		imax = parseInt($div.data("max_height"), 10);
 		    		
