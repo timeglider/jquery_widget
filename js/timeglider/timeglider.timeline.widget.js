@@ -58,7 +58,7 @@
 			image_lane_height: 32,
 			show_footer:true,
 			display_zoom_level:true,
-			constrain_to_data:false,
+			constrain_to_data:true,
 			boost:0,
 			tick_top:0,
 			event_modal:{href:'', type:'default'},
@@ -88,7 +88,7 @@
 			*/
 			// no need for template here as no data being passed
 			var MAIN_TEMPLATE = "<div class='timeglider-container'>"
-				+ "<div class='timeglider-loading'>loading</div>"
+				+ "<div class='timeglider-loading'><div>loading</div></div>"
 				+ "<div class='timeglider-centerline'></div>"
 				+ "<div class='timeglider-date-display'></div>"
 				+ "<div class='timeglider-truck' id='tg-truck'>"

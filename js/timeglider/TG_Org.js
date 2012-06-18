@@ -24,7 +24,7 @@
   var lev_ht = tg.levelHeight = 12,
       // number of available levels for events
       $ = jQuery,
-      ceiling_padding = 18;
+      ceiling_padding = 30;
       
 
   /*
@@ -213,7 +213,7 @@
 						 	// if things are higher than the ceiling, show plus signs instead,
 						 	// and we'll zoom in with these.
 							html += "<div class='timeglider-more-plus' style='left:" + b.left  + 
-						        "px; top:-" + ceiling + "px'>" + p_icon + "</div>";
+						        "px; top:-" + (ceiling -4) + "px'>" + p_icon + "</div>";
 						        
 						} else {
 							

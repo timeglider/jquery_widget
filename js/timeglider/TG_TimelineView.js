@@ -23,24 +23,27 @@ timeglider.TimelineView
 */
 (function(tg){
 
-// MED below is a reference to the mediator reference
-// that will be passed into the main Constructor below
-var TG_Date = tg.TG_Date, 
-	PL = "", 
-	MED = "", 
-	options = {},
-	ticksSpeed = 0,
-	t1Left = 0,
-	t2Left = 0,
-	ticksSpeedIv,
-	container_name = '',
-	$ = jQuery, 
-	intervals ={}, 
-	WIDGET_ID = "", 
-	CONTAINER, TICKS, DATE,
-	CLICKORTOUCH = $.support.touch ? "touchstart": "click";
-    
-    
+	// MED below is a reference to the mediator reference
+	// that will be passed into the main Constructor below
+	var TG_Date = tg.TG_Date, 
+		PL = "", 
+		MED = "", 
+		options = {},
+		ticksSpeed = 0,
+		t1Left = 0,
+		t2Left = 0,
+		ticksSpeedIv,
+		container_name = '',
+		$ = jQuery, 
+		intervals ={}, 
+		WIDGET_ID = "", 
+		CONTAINER, TICKS, DATE,
+		CLICKORTOUCH = $.support.touch ? "touchstart": "click";
+	    
+	var stripPx = function (somethingPx) {
+		return parseInt(somethingPx.replace("px", ""), 10);
+	}
+
 /*
 *  timeglider.TG_TimelineView
 *  This is _not_ a backbone view, though
@@ -52,6 +55,8 @@ tg.TG_TimelinePlayer = function (widget, mediator) {
     
     
 	var me = this;
+	
+
 	
 
 		// vars declared in closure above
@@ -98,10 +103,7 @@ tg.TG_TimelinePlayer = function (widget, mediator) {
 	// height for images in the top image lane
 	// this.imageLaneHeight = 32;
 	
-	// distance from bottom of container (not vertically from ticks)
-	// for timelines to be by default; but if a timeline has a "top" value,
-	// it's position will be set according to that
- 	this.initTimelineVOffset = 100;
+
  	
  	// this needs to be less than or equal to
  	// timeglider.css value for .timeglider-tick 
@@ -302,7 +304,8 @@ tg.TG_TimelinePlayer = function (widget, mediator) {
 	if (options.show_footer == false) {
 		$(this._views.FOOTER).css("display", "none");
 	}
-
+	
+	
 	this.dragSpeed = 0;
 	this.dimensions = MED.dimensions = this.getWidgetDimensions();
 	this.tickNum = 0;
@@ -580,10 +583,26 @@ tg.TG_TimelinePlayer = function (widget, mediator) {
 	
 	// CREATE TIMELINES MENU
 	$.subscribe(container_name + ".mediator.timelineDataLoaded", function (arg) {
-	
+		
+		var tlen = MED.timelineCollection.length;
+		
+		if (tlen == 1) {		
+			// IF SINGLE TIMELINE
+			
+			// !TODO
+			// Create a backbone view of the single timeline title
+			// area, with "info", "legend", etc. buttons...
+			
+			var tl = MED.timelineCollection.at(0);
+    		$(CONTAINER).append("<div class='tg-single-timeline-title'>" + tl.get("title") + "</div>");
+    	}
+    	
+    	
 		$(".timeglider-loading").fadeOut(500);  
 		me.buildSettingsMenu();
     	me.buildTimelineMenu();
+    	
+    	
     	
 	});
 	
@@ -706,14 +725,21 @@ tg.TG_TimelinePlayer.prototype = {
 				t_height = this.tick_height,
 				lft = c.position().left,
 				offset = c.offset(),
-				f_height = (options.show_footer == true) ? $(this._views.FOOTER).height() : 0,
+				f_height = (options.show_footer == true) ? $(this._views.FOOTER).outerHeight() : 0,
 				t_top = h - f_height - t_height,
 				// objects to return
 				container = {"width":w, "height":h, "centerx":wc, "centery":hc, "left": lft, "offset": offset},
 				footer = {"height":f_height},
-				tick = {"top":t_top};
+				tick = {"top":t_top, "height":t_height};
 			
-			return {container:container, tick:tick, footer:footer}
+			
+				// distance from bottom of container (not vertically from ticks)
+				// for timelines to be by default; but if a timeline has a "top" value,
+				// it's position will be set according to that
+ 				this.initTimelineVOffset = h-150;
+ 				
+ 				
+ 				return {container:container, tick:tick, footer:footer}
 		  
 	},
 	
@@ -2073,24 +2099,38 @@ tg.TG_TimelinePlayer.prototype = {
 			tlModel = MED.timelineCollection.get(active[a]);
 
 			tl = tlModel.attributes;
+		
 			tl.visibleEvents = [];
 						
 			expCol = tl.display;
 			
 			// TODO establish the 120 below in some kind of constant!
 			// meanwhile: tl_top is the starting height of a loaded timeline 
-			tl_top = (tl.top) ? parseInt(tl.top.replace("px", "")) : (cht-me.initTimelineVOffset); 
-							
+			tl_top = (tl.top) ? stripPx(tl.top) : (me.initTimelineVOffset); 
+			
+						
+						
 			tlView = new tg.TG_TimelineView({model:tlModel});
 			
 			tz_offset = MED.timeOffset.seconds / spp;
 						
       		$tl = $(tlView.render().el).appendTo(TICKS);
    			
+   			$title = $tl.find(".titleBar");
    			// this is the individual (named) timeline, not the entire interface
+   			
+   			
+			// if a single timeline, set images to the bottom
+			var tbh = $title.outerHeight();
+						
+						
+			
+			me.room = (cht - (Math.abs(tl_top) + tbh)) - me.dimensions.footer.height;
+			
    			$tl.draggable({
 					axis:"y",
 					handle:".titleBar", 
+					
 					stop: function () {
 						
 						var ntop = $(this).css("top");
@@ -2099,14 +2139,20 @@ tg.TG_TimelinePlayer.prototype = {
 						// if we've dragged the timeline up or down
 						// reset its .top value and refresh, mainly
 						// to reset ceiling (+/visible) properties
-						MED.timelineCollection.get(tid).set({top:ntop}); // .attributes;
-					
+						MED.timelineCollection.get(tid).set({top:ntop});
+						
+						
+						// if a single timeline, set images to the bottom
+						var tbh = $title.outerHeight();
+						// debug.log("ntop:", ntop);
+						me.room = (cht - (Math.abs(stripPx(ntop)) + tbh)) - me.dimensions.footer.height;
+			
 						MED.refresh();	
 					}
 				})
 				.css({"top":tl_top, "left": tz_offset});
 
-			$title = $tl.find(".titleBar");
+			
 			
 			if (typeof tl.bounds != "undefined") {
 				t_f = cx + ((tl.bounds.first - foSec) / spp);
@@ -2174,13 +2220,13 @@ tg.TG_TimelinePlayer.prototype = {
 			// clean out dupes with _.uniq
 			stuff = this.compileTickEventsAsHtml(tl, _.uniq(idArr), 0, "sweep", tickUnit);
 			
-			// TODO: make 56 below part of layout constants collection
+						// TODO: make 56 below part of layout constants collection
 			if (options.event_overflow == "scroll") {
 				ceiling = 0;
 			} else {
 				
-				ceiling = (tl.hasImagesAbove) ? (tl_top - me.imageLaneHeight) - 16 : tl_top;
-				
+				// ceiling = (tl.hasImagesAbove) ? (tl_top - me.imageLaneHeight) - 16 : tl_top;
+				ceiling = tl_top - me.dimensions.tick.height;
 				// ceiling = ceiling - 16;
 			}
 			
@@ -2221,8 +2267,9 @@ tg.TG_TimelinePlayer.prototype = {
       		
 			var active = MED.activeTimelines, 
 				idArr = [],
-			    $tl, tl, tl_top, 
+			    $tl, tl, f, 
 			    stuff = "", diff = 0,
+			    ceiling = 0,
 			    me = this;
 			
 			$.publish(container_name + ".viewer.rendering");
@@ -2233,7 +2280,7 @@ tg.TG_TimelinePlayer.prototype = {
 			for (var a=0; a<active.length; a++) {
 				
 				tl = MED.timelineCollection.get(active[a]).attributes;
-        		
+
 				// get the events from timeline model hash
 				idArr = this.getTimelineEventsByTick({tick:tick, timeline:tl});
 				
@@ -2267,10 +2314,17 @@ tg.TG_TimelinePlayer.prototype = {
 				// stuff here would be null if expanded...
 				stuff = this.compileTickEventsAsHtml(tl, idArr, tick.serial, "append", tick.unit);
 				
+				// TODO: make 56 below part of layout constants collection
+				if (options.event_overflow == "scroll") {
+					ceiling = 0;
+				} else {
+					ceiling = stripPx(tl.top) - me.dimensions.tick.height;
+				}
+			
 				// borg it if it's expanded.
 				if (tl.display == "expanded"){ 
 					// tl.top is the ceiling
-					stuff = tl.borg.getHTML(tick.serial, tl.top); 
+					stuff = tl.borg.getHTML(tick.serial, ceiling); 
 				}
 			
 				var $vu = $(CONTAINER + " .tg-timeline-envelope#" + tl.id);
@@ -2442,6 +2496,8 @@ tg.TG_TimelinePlayer.prototype = {
 	*/
 	registerEventImages : function ($timeline) {
 	  var me = this;
+	  
+	 
 	  /*
 	  // decommissioned for now, since images in the bar
 	  // collide with the title so often
@@ -2457,17 +2513,18 @@ tg.TG_TimelinePlayer.prototype = {
       );
       */
       
-  $(CONTAINER + " .timeglider-event-image-above").each(
+		$(CONTAINER + " .timeglider-event-image-above").each(
 		    function () {
-		    	var alti = me.imageLaneHeight,
+		    	var alti = me.room - 12,
 		    		$div = $(this),
 		    		
-		    		$tb = $div.closest(".tg-timeline-envelope");
-		    		// debug.log("$tb:", $tb.attr("class"))
+		    		$tb = $div.closest(".tg-timeline-envelope"),
 		    		
 		    		$img = $(this).find("img"),
 		    		
 		    		imax = parseInt($div.data("max_height"), 10);
+		    		
+		    		if (alti > 150) { alti = 150; }
 		    		
 		    		// if the image is smaller than the tallest
 		    		// allowed image, keep height smaller
@@ -2477,9 +2534,9 @@ tg.TG_TimelinePlayer.prototype = {
 					} else {
 						imght = alti;
 					}
-					
-					
-				$div.css({"display":"block"})
+				
+				if (imght > 10) {
+					$div.css({"display":"block"})
 					.position({
 	        			my: "top",
     					at: "bottom",
@@ -2488,7 +2545,12 @@ tg.TG_TimelinePlayer.prototype = {
 	        		})
 	        		.css({left:0});
 	        
-				$img.css("height", imght);
+					$img.css("height", imght);
+				} else {
+					$div.css({"display":"none"});
+				}
+					
+				
 	     	 }
     	);
 
@@ -2719,9 +2781,6 @@ tg.TG_TimelinePlayer.prototype = {
 				case "link-iframe":
 					// show the link (i.e. Wikipedia, etc) in an iframe
 					
-					debug.log("templ_obj:", templ_obj);
-					
-					
 					$modal = $.tmpl(me._templates.event_modal_iframe,templ_obj);
 					$modal
 						.appendTo(TICKS)
@@ -2786,7 +2845,6 @@ tg.TG_TimelinePlayer.prototype = {
 						lr_class = "left";
 					}
 					arrow_class = "arrow-" + tb_class + "-" + lr_class;
-					debug.log("arrow class:", arrow_class);
 					
       				$modal.css({
 							"z-index": me.ztop++,
@@ -3132,6 +3190,8 @@ String.prototype.removeWhitespace = function () {
 	var rg = new RegExp( "\\n", "g" )
 	return this.replace(rg, "");
 }
+
+
 
 if (debug) {
 	// adding a screen display for anything needed
