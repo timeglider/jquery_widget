@@ -3,6 +3,25 @@
 
 
 
+	
+	/* float clearing for IE6 */
+	.timeglider-container .clearfix{
+	  height: 1%;
+	  overflow: visible;
+	}
+
+	/* float clearing for everyone else */
+	.timeglider-container .clearfix:after{
+	  clear: both;
+	  content: ".";
+	  display: block;
+	  height: 0;
+	  visibility: hidden;
+	  font-size: 0;
+	}
+	
+	
+
 
 /* only font-family reference here, 
    including overriding jquery ui css */
@@ -54,9 +73,10 @@
 	top:42px;
 	left:8px;
 	width:250px;
-	font-size:16px;
+	font-size:14px;
 	font-weight:bold;
-	color:green;
+	color:#333;
+	font-style:italic;
 }
 
 
@@ -89,8 +109,6 @@
 	cursor:pointer;
 }
 
-
-
 .tg-timeline-envelope {
 	width:100%;
 	vertical-align:bottom;
@@ -99,9 +117,10 @@
 .tg-timeline-envelope .titleBar {
 	background-color:#444;
 	color:#FFF;
-	height:16px;
+	height:8px;
 	width:auto;
-	padding:4px;
+	padding-top:2px;
+	padding-bottom:8px;
 	position:absolute;
 	left:0;
 	-moz-border-radius:4px;
@@ -111,39 +130,80 @@
 }
 
 .tg-timeline-envelope .titleBar .timeline-title {
-	color:#FFF;
-	font-size:14px;
 	width:auto;
 	position:absolute;
 	display:inline;
 	margin-top:0px;
-	font-weight:bold;
-	text-shadow:1px 1px #000;
 	z-index:10;
 }
+
+.timeline-title-span {
+	float:left;
+	display:block;
+	font-size:12px;
+	font-weight:bold;
+	text-shadow:1px 1px #000;
+	color:#FFF;
+	-webkit-border-bottom-right-radius: 6px;
+	-webkit-border-bottom-left-radius: 6px;
+	-moz-border-radius-bottomright: 6px;
+	-moz-border-radius-bottomleft: 6px;
+	border-bottom-right-radius: 6px;
+	border-bottom-left-radius: 6px;
+	background-color:black;
+	padding:4px 8px;
+	margin-top:-4px;
+}
+
+
 
 /* Correction of aristo ui css */
 .ui-slider-vertical .ui-slider-handle { 
     left:0;margin-left: -.6em; margin-bottom: -.6em; 
     }
 
+
+.tg-slider-plusminus {
+	width:24px; height:24px;
+	border-radius:12px;
+	background-color:#333;
+	margin-left:-10px;
+	text-align:center;
+	color:white;
+	font-size:20px;
+	font-weight:bold;
+	overflow:hidden;
+}
+
+.tg-slider-plusminus span {
+	margin-top:-4px;
+}
+
+.tg-slider-plusminus.tg-slider-plus {
+	margin-bottom:4px;
+}
+
+.tg-slider-plusminus.tg-slider-minus {
+	clear:both;
+	margin-top:4px;
+}
+
+
 .timeglider-slider-container {
-  width:24px;
-  padding-left:16px;
+	width:24px;
+	padding-left:16px;
 	position:absolute;
 	height:auto;
 	z-index:10;
-	top:2px;
+	top:40px;
 	right:2px;
 	padding-top:8px;
-  -webkit-border-top-right-radius: 6px;
-  -webkit-border-bottom-left-radius: 6px;
-  -moz-border-radius-topright: 6px;
-  -moz-border-radius-bottomleft: 6px;
-  border-top-right-radius: 6px;
-  border-bottom-left-radius: 6px;
+	-webkit-border-radius:6px;
+	-moz-border-radius:6px;
+	border-radius:6px;
   
-  z-index:500;
+  	z-index:500;
+  	
   }
 
 .timeglider-slider { 	/* style set in jQuery UI css file */   }
@@ -382,6 +442,14 @@
   color:#CC0000;
 }
 
+.tg-event-hoverline {
+	height:3000px;
+	width:1px;
+	position:absolute;
+	top:-1500px;
+	border-left:1px dotted orange;
+}
+
 .timeglider-dateline-startdate {
 	color:green;
 }
@@ -431,17 +499,28 @@
 }
 
 
-
-.timeline-title-span {
+.tg-title-prev-events {
 	float:left;
 	display:block;
+	margin-right:8px;
+	color:#BBB;
+	font-size:10px;
+	cursor:pointer;
 }
 
-
+.tg-title-next-events {
+	position:absolute;
+	top:0px;
+	left:0px;
+	display:block;
+	color:#BBB;
+	font-size:10px;
+	cursor:pointer;
+}
 
 .tg-timeline-env-buttons {
 	float:left;
-	color:pink;
+	
 	cursor:pointer;
 	font-size:10px;
 	margin-left:16px;
@@ -450,12 +529,8 @@
 }
 
 
-
-
-
-
-.tg-timeline-env-buttons .expand-collapse, .tg-timeline-env-buttons .timeline-info {
-  margin-right:12px;
+.tg-timeline-env-buttons span {
+	color:orange;
 }
 
 .timeglider-event-icon {
@@ -737,12 +812,18 @@
 
 .timeglider-event-collapsed {
 	position:absolute;
-	border-left:1px solid red;
 	top:0px;
-	height:20px;
-	width:1px;
+	z-index:999999999;
+	margin-left:-10px;
+	margin-top:3px;
 }
 
+.timeglider-event-collapsed img {
+	height:10px;
+	width:auto;
+	opacity:.8;
+	cursor:pointer;
+}
 
 
 /* EVENT MODAL:  

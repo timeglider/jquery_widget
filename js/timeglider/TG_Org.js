@@ -190,8 +190,7 @@
 						if (b.y_position > 0) {
 							// absolute positioning
 							b.top = me.pol * b.y_position;
-							
-							
+
 						} else {
 							// starts out checking block against the bottom layer
 							//!RECURSIVE

@@ -132,7 +132,7 @@
 <div id='output'></div>
 
 <div class='nextprev'>
-<span id='gotoPrev'>PREV</span>&nbsp;&nbsp;&nbsp;&nbsp;<span id='gotoNext'>NEXT</span>
+<span class='tg-title-prev-events'>PREV</span>&nbsp;&nbsp;&nbsp;&nbsp;<span class='tg-title-next-events'>NEXT</span>
 </div>
 
 
@@ -344,12 +344,13 @@
 		});	
 		
 		
-		$("#gotoPrev").bind("click", function() {
-		
+		$(".tg-title-prev-events").live("click", function() {
+			debug.log("prev?");
 			tg_actor.goTo("previous");
 		});
 		
-		$("#gotoNext").bind("click", function() {
+		$(".tg-title-next-events").live("click", function() {
+			debug.log("next?");
 			tg_actor.goTo("next");
 		
 		});

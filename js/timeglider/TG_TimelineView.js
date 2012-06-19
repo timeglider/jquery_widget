@@ -41,6 +41,7 @@ timeglider.TimelineView
 		CLICKORTOUCH = $.support.touch ? "touchstart": "click";
 	    
 	var stripPx = function (somethingPx) {
+		if (!somethingPx) return false;
 		return parseInt(somethingPx.replace("px", ""), 10);
 	}
 
@@ -246,15 +247,15 @@ tg.TG_TimelinePlayer = function (widget, mediator) {
 
 
 	$(CONTAINER)
-		.delegate(".tg-timeline-envelope .timeline-info", "click", function () {
+		.delegate(".tg-timeline-envelope .env-timeline-info", "click", function () {
 			var id = $(this).data("timeline_id");
 			me.openTimelineModal(id);
 	})	
-		.delegate(".tg-timeline-envelope .expand-collapse", "click", function () {
+		.delegate(".tg-timeline-envelope .env-expand-collapse", "click", function () {
 			var id = $(this).data("timeline_id");
 			me.expandCollapseTimeline(id);
 	})
-		.delegate(".tg-timeline-envelope .tg-timeline-legend-bt", "click", function () {
+		.delegate(".tg-timeline-envelope .env-legend-bt", "click", function () {
 			var id = $(this).data("timeline_id");
 			me.legendModal(id);
 	})
@@ -395,28 +396,25 @@ tg.TG_TimelinePlayer = function (widget, mediator) {
 		},
 	
 		stop: function(event, ui) {
-			
-			// debug.trace("::||" + ticksSpeed, "note");
-			
+ 			
 			me.resetTicksHandle();
 			me.registerDragging();
 			me.registerTitles();
- 
+			me.registerPrevNext();
 		}
 		
 	}) // end draggable
 	.delegate(CONTAINER + " .timeglider-timeline-event", CLICKORTOUCH, function () { 
 		
-		// EVENT ON-CLICK !!!!!!
-		me.eventUnHover();
+		
 		
 		var $ev = $(this);
 		
+		me.eventUnHover($ev);
+		
 		var eid = $ev.attr("id"); 
 		var ev = MED.eventCollection.get(eid).attributes;
-		
-		// debug.log("event id on touchstart/click:" + eid);
-		
+				
 		if (timeglider.mode == "authoring") {
 			// authoring will have its own handler
 			
@@ -458,7 +456,7 @@ tg.TG_TimelinePlayer = function (widget, mediator) {
 	.delegate(".timeglider-timeline-event", "mouseout", function () { 
 
 		var ev = MED.eventCollection.get($(this).attr("id")).attributes;
-		me.eventUnHover();
+		me.eventUnHover($(this));
 	})
 	
 	.delegate(".timeglider-event-collapsed", "hover", function () { 
@@ -479,10 +477,7 @@ tg.TG_TimelinePlayer = function (widget, mediator) {
  
 	$.subscribe(container_name + ".mediator.ticksOffsetChange", function () {
 		
-		
 		me.tickHangies();
-		
-		// TOO MUCH! CRASHES Firefox
 		me.registerDragging();
 		me.registerTitles();
 		
@@ -516,6 +511,7 @@ tg.TG_TimelinePlayer = function (widget, mediator) {
 		// if you want to hide either titles or icons:
 		// $(".timeglider-event-icon").hide();
 		// $(".timeglider-event-title").hide();
+		me.registerPrevNext();
 	});
 
 	
@@ -929,8 +925,7 @@ tg.TG_TimelinePlayer.prototype = {
 				
 				}
 		); 
-		
-			
+
 	}, // end register titles
 	
 	
@@ -965,6 +960,25 @@ tg.TG_TimelinePlayer.prototype = {
 		
 		// remove this???
 		this.displayFocusDate();
+	},
+	
+	
+	registerPrevNext: function() {
+	
+		var scope = MED.getScope();
+		
+		debug.log("scope:",  scope);
+		
+		
+		var cw = this.dimensions.container.width,
+			btw = 0;
+		
+		$(CONTAINER + " .tg-title-next-events").each(function () {
+			$bt = $(this);
+			btw = 28;
+			$bt.css("left", (cw - btw) + "px");
+
+		});
 	},
 	
 	
@@ -1285,19 +1299,23 @@ tg.TG_TimelinePlayer.prototype = {
 			  	
 	    	}
 		  	   
-		  	$ev.addClass("tg-event-hovered");
+		  	$ev.append("<div class='tg-event-hoverline'></div>").addClass("tg-event-hovered");
 		  	
 		}
 	},
+
 	
-	
-	eventUnHover : function () {
-		if (typeof MED.options.eventUnHover == "function") {
-			MED.options.eventUnHover();
+	eventUnHover : function ($ev) {
+		var $ev = $ev || "";
 		
+		if (typeof MED.options.eventUnHover == "function") {
+			MED.options.eventUnHover($ev);
 		} else {
 			$(".timeglider-event-hover-info").css("left", "-1000px");
 			$(".timeglider-timeline-event").removeClass("tg-event-hovered");
+			if ($ev) {
+				$ev.find(".tg-event-hoverline").remove();
+			}
 		}
 	},
   
@@ -2462,7 +2480,7 @@ tg.TG_TimelinePlayer.prototype = {
       	  } else if (expCol == "collapsed") {
       			stuff += "<div id='" + ev.id + 
       			"' class='timeglider-event-collapsed' style='top:" + 
-      			(ht-2) + "px;left:" +	posx + "px'></div>";
+      			(ht-2) + "px;left:" +	posx + "px'><img src='" + tg.icon_folder + ev.icon + "'></div>";
       	  }
         } // end if it passes filters
 
@@ -2887,10 +2905,10 @@ tg.TG_TimelinePlayer.prototype = {
   			.css("z-index", me.ztop++)
       		.toggleClass("timeglider-display-none")
       		.position({
-      				my: "left top",
-      				at: "left top",
-      				of: (CONTAINER),
-      				offset: "16, -4", // x, y
+      				my: "right top",
+      				at: "right top",
+      				of: $(CONTAINER),
+      				offset: "-60, 16", // x, y
       				collision: "none none"
       		});
 			
@@ -2898,7 +2916,7 @@ tg.TG_TimelinePlayer.prototype = {
 				
 	  		$(i_sel).bind("mouseup", function(e) { 
 	  			// if dragged, return false...
-	  		    var $legend_item = $(e.target).parent();
+	  		    var $legend_item = $(e.target).parent(); 
 	  		    var icon = ($legend_item.children("img").attr("src"));
 	  		    $(this).parent().toggleClass("tg-legend-icon-selected");
 	  		    MED.setFilters({origin:"legend", icon: icon}); 
@@ -2968,20 +2986,21 @@ tg.TG_TimelineView = Backbone.View.extend({
 		var me = this;
 		
 		var tmpl = "<div class='titleBar'>"
-				+ "<div class='timeline-title'>"
-      			+ "<span class='timeline-title-span'>${title}</span>"
+				+ "<div class='timeline-title'><span class='tg-title-prev-events'>&lt;&lt;</span>"
+      			+ "<span class='timeline-title-span'>${title}</span><span class='tg-title-next-events'>&gt;&gt;</span>"
       			+ "<div class='tg-timeline-env-buttons'>";
       	
       	if (me.model.get("description")) {
-      		tmpl += "<span class='timeline-info' data-timeline_id='${id}'>info</span>";
+      		tmpl += "<span class='env-timeline-info' data-timeline_id='${id}'>info</span>&nbsp;&nbsp;";
       	}
       	
       	if (me.model.get("hasLegend")) {
-      		tmpl += "<span class='tg-timeline-legend-bt' data-timeline_id='${id}'>legend</span>";
+      		tmpl += "<span class='env-legend-bt' data-timeline_id='${id}'>legend</span>&nbsp;&nbsp;";
       	}
       	
+      	// TODO: options for "allow_expand_collapse" ?
+      	tmpl += "<span class='env-expand-collapse' data-timeline_id='${id}'>exp/col</span>&nbsp;&nbsp;"; 
       	
-      	tmpl += "<span class='expand-collapse' data-timeline_id='${id}'>exp/col</span>"; 
 		
 		tmpl += "</div></div></div>";
  	
