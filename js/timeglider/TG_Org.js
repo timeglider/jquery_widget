@@ -211,7 +211,7 @@
 						 	// + + + symbols in place of events just under ceiling
 						 	// if things are higher than the ceiling, show plus signs instead,
 						 	// and we'll zoom in with these.
-							html += "<div class='timeglider-more-plus' style='left:" + b.left  + 
+							html += "<div id='" + b.id + "' class='timeglider-timeline-event timeglider-event-overflow' style='left:" + b.left  + 
 						        "px; top:-" + (ceiling -4) + "px'>" + p_icon + "</div>";
 						        
 						} else {

@@ -20,9 +20,9 @@
 		#p1 {
 			margin:32px;
 			margin-bottom:0;
-			height:600px;
+			height:400px;
 		}
-
+		
 		.methods h4 {
 			background-color:#F0F0F0;
 			color:#CC0000;
@@ -64,63 +64,6 @@
 			width:180px;
 		}
 		
-		.scrubber {
-			height:32px;
-			margin:0px 32px;
-			background-color:black;
-			border:1px solid black;
-			margin-bottom:32px;
-			position:relative;
-			overflow:hidden;
-		}
-		
-		
-		.scrubber-handle {
-			height:32px;
-			width:150px;
-			background-color:green;
-			position:absolute;
-			top:0;
-			left:0;
-		}
-		
-		/*
-		
-		
-		.timeglider-tick {
-			position:absolute;
-			height:900px;
-			font-size:11px;
-
-			background-image:url("img/dotted.png");
-			background-repeat:repeat;
-			border-top:none;
-			overflow:hidden;
-			
-			z-index:0;
-		}
-		
-		
-		.timeglider-tick-label {
-			top:445px;
-		}
-		
-		.tg-tick-sublabel-group {
-			top:455px;
-		}
-		
-		*/
-		
-		.nextprev {
-			text-align:center;
-			padding:8px;
-		}
-		
-		.nextprev span {
-			color:green;
-			font-weight:bold;
-			cursor:pointer;
-		}
 		
 		</style>
 </head>
@@ -131,9 +74,7 @@
 <div id='p1'></div>
 <div id='output'></div>
 
-<div class='nextprev'>
-<span class='tg-title-prev-events'>PREV</span>&nbsp;&nbsp;&nbsp;&nbsp;<span class='tg-title-next-events'>NEXT</span>
-</div>
+
 
 
 <div class='methods'>
@@ -212,7 +153,6 @@
 				*/
 				"min_zoom":2, 
 				"max_zoom":60, 
-				"show_centerline":true,
 				"icon_folder":"js/timeglider/icons/",
 				"data_source":"json_tests/js_history.json",
 				"show_footer":true,
@@ -277,7 +217,7 @@
 		$("#scrollup").bind("click", function() {
 			$(".timeglider-timeline-event").animate({top:"-=100"})
 		})
-		
+				
 
 	
 	
@@ -344,18 +284,7 @@
 		});	
 		
 		
-		$(".tg-title-prev-events").live("click", function() {
-			debug.log("prev?");
-			tg_actor.goTo("previous");
-		});
-		
-		$(".tg-title-next-events").live("click", function() {
-			debug.log("next?");
-			tg_actor.goTo("next");
-		
-		});
-		
-	
+
 		
     }); // end document-ready
     

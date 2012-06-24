@@ -523,7 +523,7 @@
 "high_threshold":40,
 "importance":"30",
 "link":"http://en.wikipedia.org/wiki/MochiKit",
-"image_class":"above",
+
 "icon":"triangle_orange.png"
 },
 
@@ -539,7 +539,7 @@
 "high_threshold":40,
 "importance":"30",
 "link":"http://en.wikipedia.org/wiki/qooxdoo",
-"image_class":"above",
+
 "icon":"triangle_orange.png"
 },
 
@@ -553,7 +553,7 @@
 "startdate": "2005-06-01 12:00:00",
 "high_threshold":40,
 "importance":"30",
-"image_class":"above",
+
 "icon":"triangle_orange.png"
 },
 
@@ -566,7 +566,7 @@
 "high_threshold":40,
 "importance":"35",
 "modal_type":"full",
-"image_class":"above",
+
 "icon":"square_orange.png"
 },
 
@@ -998,11 +998,6 @@
 "icon":"triangle_green.png"
 },
 
-
-
-
-
-
 {
 "id":"jshist-05",
 "title": "Dojo Toolkit",
@@ -1010,8 +1005,9 @@
 "startdate": "2004-06-01 12:00:00",
 "enddate": "2004-06-01 12:00:00",
 "link":"http://dojotoolkit.org/",
+"video":"http://www.youtube.com/embed/RYlCVwxoL_g",
 "image":"img/dojo.jpg",
-"image_class":"above",
+
 "high_threshold":40,
 "importance":"35",
 "icon":"triangle_orange.png"
@@ -1040,7 +1036,7 @@
 "high_threshold":40,
 "importance":"45",
 "image":"_js_history/resig.jpg",
-"image_class":"above",
+
 "icon":"triangle_orange.png"
 },
 

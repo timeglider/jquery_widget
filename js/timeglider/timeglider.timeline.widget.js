@@ -34,8 +34,8 @@
 	*/
 	
 	var timelinePlayer, 
-		MED, 
 		tg = timeglider, 
+		MED,
 		TG_Date = timeglider.TG_Date;
 	
 	$.widget( "timeglider.timeline", {
@@ -48,7 +48,7 @@
 			editor:'none', 
 			min_zoom : 1, 
 			max_zoom : 100, 
-			show_centerline: true, 
+			show_centerline:true, 
 			data_source:"", 
 			culture:"en",
 			basic_fontsize:12, 
@@ -57,10 +57,10 @@
 			icon_folder:'js/timeglider/icons/',
 			image_lane_height: 32,
 			show_footer:true,
-			display_zoom_level:true,
+			display_zoom_level:false,
 			constrain_to_data:true,
 			boost:0,
-			tick_top:0,
+			tick_top:"",
 			event_modal:{href:'', type:'default'},
 			event_overflow:"plus"  // plus | scroll 
 		},
@@ -90,25 +90,25 @@
 			var MAIN_TEMPLATE = "<div class='timeglider-container'>"
 				+ "<div class='timeglider-loading'><div>loading</div></div>"
 				+ "<div class='timeglider-centerline'></div>"
-				+ "<div class='timeglider-date-display'></div>"
+				+ "<div class='timeglider-date-display noselect'><div class='date-display-arrow'></div><span></span></div>"
 				+ "<div class='timeglider-truck' id='tg-truck'>"
-				+ "<div class='timeglider-ticks'>"
+				+ "<div class='timeglider-ticks noselect'>"
 				+ "<div class='timeglider-handle'></div>"
 				+ "</div>"
 				+ "</div>"
-				+ "<div class='timeglider-slider-container'>"
-				+ "<div class='tg-slider-plusminus tg-slider-plus'><span>+</span></div>"
+				+ "<div class='timeglider-slider-container noselect'>"
+				+ "<div class='tg-slider-plusminus tg-slider-plus tg-zoom-in'><span>+</span></div>"
 				+ "<div class='timeglider-slider'></div>"
-				+ "<div class='tg-slider-plusminus tg-slider-minus'><span>&ndash;</span></div>"
+				+ "<div class='tg-slider-plusminus tg-slider-minus tg-zoom-out'><span>&ndash;</span></div>"
 				+ "<div class='timeglider-pan-buttons'>"
 				+ "<div class='timeglider-pan-left'></div><div class='timeglider-pan-right'></div>"
 				+ "</div>"
 				+ "</div>"
+				+ "<div class='tg-scrim'></div>"
 				+ "<div class='timeglider-footer'>"
-				+ "<div class='timeglider-logo'></div>"                      
-				+ "<div class='timeglider-footer-button timeglider-filter-bt'></div>"
-				+ "<div class='timeglider-footer-button timeglider-settings-bt'></div>"
-				+ "<div class='timeglider-footer-button timeglider-list-bt'></div>"
+				+ "	<div class='timeglider-logo'></div>"                      
+				+ "	<div class='timeglider-footer-button timeglider-filter-bt'></div>"
+				+ "	<div class='timeglider-footer-button timeglider-settings-bt'></div>"
 				+ "</div>"
 				+ "<div class='timeglider-event-hover-info'></div>"
 				+ "</div><span id='timeglider-measure-span'></span>";
@@ -199,6 +199,7 @@
 		},
 		
 		getMediator : function () {
+			debug.log("hello, get Med", MED);
 			return MED;
 		},
 		
@@ -323,7 +324,7 @@
 		* 
 		*/
 		loadTimeline : function (src, callback_object) {
-	
+			
 			MED.loadTimelineData(src, callback_object);
 			
 			return this;

@@ -71,13 +71,13 @@
 				
 				if (typeof img == "string") {
 				
-					var display_class = ev.image_class || "above";
+					var display_class = ev.image_class || "lane";
 
 					ev.image = {id: ev.id, src:ev.image, display_class:display_class, width:0, height:0};
 				
 				} else {
 						
-					ev.image.display_class = ev.image.display_class || "above";
+					ev.image.display_class = ev.image.display_class || "lane";
 					ev.image.width = 0;
 					ev.image.height = 0;
 					
@@ -306,7 +306,7 @@
 			};
 			
 			tdata.spans = {};
-			tdata.hasImagesAbove = false;
+			tdata.hasImageLane = false;
 			tdata.startSeconds = [];
 			tdata.endSeconds = [];
 			
@@ -415,8 +415,7 @@
 					if (ev.image) {
 						
 						if (ev.image.display_class != "inline") { 
-							
-							tdata.hasImagesAbove = true; 
+							tdata.hasImageLane = true; 
 						}
 					}
 										

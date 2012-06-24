@@ -39,7 +39,7 @@ tg.TG_Mediator = function (wopts, $el) {
     // these relate to the display ------ not individual timeline attributes
     this._focusDate = {};
     this._zoomInfo = {};
-    this._zoomLevel = 1;
+    this._zoomLevel = 0;
     
     this.ticksReady = false;
     this.ticksArray = [];
@@ -250,21 +250,25 @@ tg.TG_Mediator = function (wopts, $el) {
 
 	    	if (scope.timelineBounds.first < scope.focusDateSec) {
 	    		// send back all events prior to focus
-	    		return _.filter(this.eventCollection.models, function(ev) {
+	    		var flred = _.filter(this.eventCollection.models, function(ev) {
 	    			var visf = (visible_only) ? me.isEventVisible(ev): true;
-	    			return (ev.get("startdateObj").sec < scope.focusDateSec);
+ 
+	    			return (visf && ev.get("startdateObj").sec < scope.focusDateSec);
 	    		});
+	    		
+	    		
+	    		return flred;
 	    		
 	    	} else {
 	    		return false;
 	    	}
 		},
-	    
-	    
+	
 	   	gotoPreviousEvent: function() {
 	    	var me=this,
 	    		backEvents = this.getPastEvents(true);
-			
+				debug.log("backEvents:", backEvents);
+				
 			if (backEvents) {
 				var cb = function(ev) {
 					$(".timeglider-timeline-event").removeClass("tg-event-selected");
@@ -289,23 +293,12 @@ tg.TG_Mediator = function (wopts, $el) {
 	    		scope = this.getScope();
 	
 	    	if (scope.timelineBounds.last > scope.focusDateSec) {
-				/*
-				_.each(this.eventCollection.models, function(ev) {
-	    			me.isEventVisible(ev);
-	    			// debug.log("visible > ", visf);
-	    		});
-
-	    		*/
-
 				
-
 	    		return _.filter(this.eventCollection.models, function(ev) {
 	    			var visf = (visible_only) ? me.isEventVisible(ev): true;
 	    			return (visf && ev.get("startdateObj").sec > scope.focusDateSec);
 	    		});
-	    		
-	    		
-	    		
+	 
 	    		
 	    	} else {
 	    		return false;
@@ -315,7 +308,7 @@ tg.TG_Mediator = function (wopts, $el) {
 		gotoNextEvent: function() {
 			var me = this,
 				fwdEvents = this.getFutureEvents(true);
-		
+				debug.log("fwdEvents:", fwdEvents);
 			if (fwdEvents) {
 				var cb = function(ev) {
 					$(".timeglider-timeline-event").removeClass("tg-event-selected");
@@ -644,8 +637,7 @@ tg.TG_Mediator = function (wopts, $el) {
 	* derived from data in loadTimelineData
 	*/
 	parseTimelineData : function (data, callback) {
-	
-		
+			
 		var M = this,
 			ct = 0,
 			dl = data.length, 
@@ -674,7 +666,7 @@ tg.TG_Mediator = function (wopts, $el) {
 				callback = {fn:callback};
 			}
 			
-			$.publish(container_name + ".mediator.timelineDataLoaded");
+			// $.publish(container_name + ".mediator.timelineDataLoaded");
 		
 			setTimeout(function() {
 				M.runLoadedTimelineCallback(callback, data);
@@ -714,8 +706,8 @@ tg.TG_Mediator = function (wopts, $el) {
 	    	b = (this.timelineDataLoaded == true);
 	
 		if (a && b) {
+	    	
 	    	this.setInitialTimelines();
-	   
 	    	$.publish(container_name + ".mediator.timelineDataLoaded");
 		}
 	},
@@ -889,13 +881,15 @@ tg.TG_Mediator = function (wopts, $el) {
 	*  
 	*/
 	setZoomLevel : function (z) {
-	   
-		if (z <= this.max_zoom && z >= this.min_zoom) {
+	   	
+	   if (z < 1) { z = 1; }
+	   	
+	   	
+		if (z==1 || (z <= this.max_zoom && z >= this.min_zoom)) {
 		
 			// focusdate has to come first for combined zoom+focusdate switch
 			this.startSec = this._focusDate.sec;
-			
-			  
+
 			if (z != this._zoomLevel) {
 			    this._zoomLevel = z;
 			    this._zoomInfo = tg.zoomTree[z];
