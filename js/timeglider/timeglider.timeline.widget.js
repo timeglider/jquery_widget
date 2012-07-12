@@ -94,6 +94,7 @@
 				+ "<div class='timeglider-truck' id='tg-truck'>"
 				+ "<div class='timeglider-ticks noselect'>"
 				+ "<div class='timeglider-handle'></div>"
+				
 				+ "</div>"
 				+ "</div>"
 				+ "<div class='timeglider-slider-container noselect'>"
@@ -105,6 +106,7 @@
 				+ "</div>"
 				+ "</div>"
 				+ "<div class='tg-scrim'></div>"
+				+ "<div class='tg-prev tg-prevnext'><a>&lt;&lt;</a></div><div class='tg-next tg-prevnext'><a>&gt;&gt;</a></div>"
 				+ "<div class='timeglider-footer'>"
 				+ "	<div class='timeglider-logo'></div>"                      
 				+ "	<div class='timeglider-footer-button timeglider-filter-bt'></div>"

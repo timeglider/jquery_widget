@@ -72,14 +72,16 @@
 				if (typeof img == "string") {
 				
 					var display_class = ev.image_class || "lane";
+					var image_scale = ev.image_scale || 100;
 
-					ev.image = {id: ev.id, src:ev.image, display_class:display_class, width:0, height:0};
-				
+					ev.image = {id: ev.id, scale:image_scale, src:ev.image, display_class:display_class, width:0, height:0};
+					
 				} else {
-						
+					// id, src etc already set
 					ev.image.display_class = ev.image.display_class || "lane";
 					ev.image.width = 0;
 					ev.image.height = 0;
+					ev.image.scale = ev.image.scale || 100;
 					
 				}
 
@@ -97,7 +99,7 @@
 			// by replacing the &amp; with & we actually
 			// preserve HTML entities 	
 			ev.title = ev.title.replace(/&amp;/g, "&");
-			
+			ev.description = ev.description || "";
 			ev.titleWidth = tg.getStringWidth(ev.title);
 
 			this.set(ev);
@@ -309,6 +311,8 @@
 			tdata.hasImageLane = false;
 			tdata.startSeconds = [];
 			tdata.endSeconds = [];
+			tdata.initial_zoom = parseInt(tdata.initial_zoom, 10) || 25;
+			
 			
 			// render possible adjective/numeral strings to numeral
 			tdata.size_importance = (tdata.size_importance == "false" || tdata.size_importance == "0")? 0 : 1;

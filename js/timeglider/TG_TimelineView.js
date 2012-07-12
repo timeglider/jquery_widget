@@ -70,12 +70,14 @@ tg.TG_TimelinePlayer = function (widget, mediator) {
 
 	this.gens = 0;
 	
+	
 	this.titleBar = true;
 	this.singleTitleHeight = 0;
 	
+	
+	
 	this.setImageLaneHeight(options.image_lane_height);
 	
-
 	/*  references specific to the instance (rather than timeglider) so
 		one can have more than one instance of the widget on a page */ 	      
 	this._views = {
@@ -141,15 +143,16 @@ tg.TG_TimelinePlayer = function (widget, mediator) {
 		test : "testola",
 		
 		event_modal_small: "<div class='tg-modal timeglider-ev-modal ui-widget-content' id='${id}_modal'>" 
-      	   + "<div class='close-button close-button-remove'></div>" 
+      	   + "<div class='tg-close-button tg-close-button-remove'>x</div>" 
       	   + "<div class='dateline'>{{html dateline}}</div>"
       	   + "<h4 id='title'>${title}</h4>"
       	   + "<p>{{html image}}{{html description}}</p>"
       	   + "<ul class='timeglider-ev-modal-links'>{{html links}}</ul>"
       	   + "</div>",
-      	   
+      	  
+      	// For displaying an exterior page directly in the modal
       	event_modal_iframe: "<div class='tg-modal timeglider-ev-modal ui-widget-content tg-iframe-modal' id='${id}_modal'>" 
-      	   + "<div class='close-button close-button-remove'></div>" 
+      	   + "<div class='tg-close-button tg-close-button-remove'>x</div>" 
       	   + "<div class='dateline'>{{html dateline}}</div>"
       	   + "<h4 id='title'>{{html title}}</h4>"
       	   + "<iframe frameborder='none' src='${link}'></iframe>"
@@ -158,28 +161,25 @@ tg.TG_TimelinePlayer = function (widget, mediator) {
 		// generated, appended on the fly, then removed
 		event_modal_full : $.template( null,
 		////////
-		"<div class='tg-modal full_modal' id='ev_${id}_modal'>"
-		+ "<div class='full_modal_scrim'></div>"
-		+ "<div class='full_modal_panel'>"
-		+ "<div class='close-button full_modal_close'>x</div>"
+		"<div class='tg-modal tg-full_modal' id='ev_${id}_modal'>"
+		+ "<div class='tg-full_modal_scrim'></div>"
+		+ "<div class='tg-full_modal_panel'>"
+		+ "<div class='tg-close-button tg-full_modal_close'>x</div>"
 		+ "<div class='dateline'>{{html dateline}}</div>"
-		+ "<table><tr><td>"
 		+ "<h4>${title}</h4>"
-		+ "<div class='description'>"
-		+ "<p>{{html description}}</p>"
-		+ "</div>"
-		+ "</td><td>"
-		+ "<div>{{html image}}</div>"
+		+ "<div class='tg-full_modal-body'>"
+		+ "<p>{{html image}}{{html description}}</p>"
 		+ "<div id='insert'></div>"
-		+ "</td></tr></table>"
-		+ "<div class='footer'><ul>{{html links}}</ul></div>"
+		+ "</div>"
+		+ "<div class='tg-full_modal-links'><ul>{{html links}}</ul></div>"
+		// end of modal
 		+ "</div>"),
 			
 
      	// generated, appended on the fly, then removed
      	filter_modal : $.template( null,
           "<div class='tg-modal timeglider-menu-modal timeglider-filter-box'>"+
-          "<div class='close-button'></div>"+
+          "<div class='tg-close-button'></div>"+
           "<h3>filter</h3>"+
           "<div class='timeglider-menu-modal-content'>"+
           "<div class='timeglider-formline'>show: "+
@@ -193,7 +193,7 @@ tg.TG_TimelinePlayer = function (widget, mediator) {
           
       	timeline_list_modal : $.template( null,
           "<div class='timeglider-menu-modal timeglider-timeline-menu'>"+
-          "<div class='close-button'></div>"+
+          "<div class='tg-close-button'></div>"+
           "<h3>timelines</h3>"+
           "<div class='timeglider-menu-modal-content'><ul></ul></div>"+
           "<div class='timeglider-menu-modal-point-right'>"+
@@ -201,49 +201,56 @@ tg.TG_TimelinePlayer = function (widget, mediator) {
           
         settings_modal : $.template( null,
           "<div class='timeglider-menu-modal timeglider-settings-modal'>"+
-          "<div class='close-button'></div>"+
+          "<div class='tg-close-button'></div>"+
           "<h3>settings</h3>"+
           "<div class='timeglider-menu-modal-content'><div class='timeglider-settings-timezone'></div></div>"+
           "<div class='timeglider-menu-modal-point-right'>"+
           "</div>"),
         
       	legend_modal : $.template( null,
-          "<div class='timeglider-menu-modal timeglider-legend tg-display-none'  id='${id}_legend'>"+
+          "<div class='timeglider-menu-modal tg-legend tg-display-none'  id='${id}_legend'>"+
           "<div class='timeglider-menu-modal-content'><ul id='${id}'>{{html legend_list}}</ul>"+
-          "<div class='timeglider-close-button-small timeglider-legend-close'></div>"+
-          "<div class='timeglider-legend-all'>all</div>"+
+          "<div class='tg-close-button-small tg-legend-close'></div>"+
+          "<div class='tg-legend-all'>all</div>"+
           "</div>"+
           "</div>")
 
     };
     
-    
-    
-    
-    
-	this.timelineModal = Backbone.View.extend({
+	this.timelineInfoModal = Backbone.View.extend({
   	
   		tagName: "div",
 		
 		model:tg.TG_Timeline,
 		
-		className: 'tg-modal timeglider-timeline-modal ui-widget-content',
+		className: 'tg-modal tg-timeline-modal ui-widget-content',
 		
 		events: {
-			"click .close-button-remove": "remove"
+			"click .tg-close": "remove",
+			"click .tg-timeline-start": "timelineStart"
 		},
 		
-		template: "<div class='close-button-remove'></div>"
-			+ "<h4 id='title'>${title}</h4>"
-			+ "<p>{{html description}}</p>",
-
+		template: function () {
+			
+			return "<h4>${title}</h4>"
+			+ "<div class='tg-timeline-description jscroll'>{{html description}}</div>"
+			+ "<ul><li class='tg-close'>close</li><li data-timeline_id='" + this.model.get("id") + "' class='tg-timeline-start'>start</li></ul>";
+			
+			},
+		
+		timelineStart: function() {
+			
+			MED.focusTimeline(this.model.get("id"));
+			this.remove();
+		},
+		
 		initialize: function() {
 			this.model.bind('change', this.render, this);
 		},
 		
 		render: function() {
-		$(this.el).html($.tmpl(this.template, this.model.attributes)).attr("id", this.model.get("id") + "_timelineModal");
-		return this;
+			$(this.el).html($.tmpl(this.template(), this.model.attributes)).attr("id", this.model.get("id") + "_timelineInfoModal");
+			return this;
 		},
 		
 		remove: function() {
@@ -258,48 +265,61 @@ tg.TG_TimelinePlayer = function (widget, mediator) {
 	$(CONTAINER)
 		.delegate(".timeline-info-bt", CLICKORTOUCH, function () {
 			var id = $(this).data("timeline_id");
-			me.openTimelineModal(id);
-	})	
+			me.openTimelineInfoModal(id);
+		})	
 		.delegate(".expand-collapse-bt", CLICKORTOUCH, function () {
 			var id = $(this).data("timeline_id");
 			me.expandCollapseTimeline(id);
-	})
-		.delegate(".legend-bt", CLICKORTOUCH, function () {
-			debug.log("helo legend");
-			
+		})
+		.delegate(".tg-legend-bt", CLICKORTOUCH, function () {
 			var id = $(this).data("timeline_id");
 			me.legendModal(id);
-	})
-		.delegate(".close-button-remove", CLICKORTOUCH, function () {
+		})
+		.delegate(".tg-close-button-remove", CLICKORTOUCH, function () {
 			$(this).parent().remove()
-	})
-		.delegate(".full_modal_scrim, .full_modal_close", CLICKORTOUCH, function () {
-			$(".full_modal").remove();
-	})
-		.delegate(".timeglider-event-overflow", CLICKORTOUCH, function () {
+		})
+		.delegate(".tg-full_modal_scrim, .tg-full_modal_close", CLICKORTOUCH, function () {
+			$(".tg-full_modal").remove();
+		})
+		.delegate(".tg-event-overflow", CLICKORTOUCH, function () {
 			me.med.zoom(-1);
-	})
-		.delegate(".timeglider-event-overflow", "hover", function () {
+		})
+		.delegate(".tg-event-overflow", "hover", function () {
 			
 			var evid = $(this).data("event_id");
 			
 			//!TODO
 			// take id and focus to it, then zoom in until it's
 			// visible: then highlight and fade out highlight
-	})
-		.delegate(".timeglider-legend-close", CLICKORTOUCH, function () {
-			var $legend = $(CONTAINER + " .timeglider-legend");
+		})
+		.delegate(".tg-legend-close", CLICKORTOUCH, function () {
+			var $legend = $(CONTAINER + " .tg-legend");
 			$legend.fadeOut(300, function () { $legend.remove(); });
-	})
-		.delegate(".timeglider-legend-all", CLICKORTOUCH, function () {
-			$(CONTAINER + " .timeglider-legend li").each(function () {
+		})
+		.delegate(".tg-legend-all", CLICKORTOUCH, function () {
+			$(CONTAINER + " .tg-legend li").each(function () {
 				$(this).removeClass("tg-legend-icon-selected");
 			});
 		
 			MED.setFilters({origin:"legend", icon: "all"});
-	})
+		})
+		.delegate(".tg-timeline-start", CLICKORTOUCH, function() {
+			//
+			var tid = $(this).data("timeline_id");
+			MED.focusTimeline(tid);
+		})
+		.delegate(".tg-prev", CLICKORTOUCH, function() {
+			MED.gotoPreviousEvent();
+		})
+		.delegate(".tg-next", CLICKORTOUCH, function() {
+			MED.gotoNextEvent();
+		})
+		
+		
 		.css("height", $(PL).height());
 		
+	
+	
 	
 	$(".tg-zoom-in").bind(CLICKORTOUCH, function() {
 		MED.zoom(-1);
@@ -374,9 +394,13 @@ tg.TG_TimelinePlayer = function (widget, mediator) {
 	
 	$(TICKS)
   	.draggable({ axis: 'x',
+		
 		start: function(event, ui) {
 			me.eventUnHover();
 		},
+		
+		cancel:".tg-modal",
+		
 		drag: function(event, ui) {
 			
 			t1Left = Math.floor($(this).position().left);
@@ -444,7 +468,7 @@ tg.TG_TimelinePlayer = function (widget, mediator) {
 		} else {
 			// custom callback for an event
 			if (ev.click_callback) {
-		    		debug.log("click callback:", timeglider.eventActions);
+		    		
 		    		try {
 			    		var ccarr = ev.click_callback.split(".");
 			    		var cclen = ccarr.length;
@@ -456,15 +480,9 @@ tg.TG_TimelinePlayer = function (widget, mediator) {
 			    			// ns.fn
 			    			window[ccarr[0]][ccarr[1]](ev);
 			    		} else if (cclen == 3) {
-			    			// ns.ns.fn
-			    			debug.log("length 3");
-			    			
-			    			debug.log("ccar...", ccarr[0], ccarr[1], ccarr[2]);
-			    			debug.log("tg...", timeglider.eventActions);
-			    			
-			    			// timeglider.eventActions.loadTimeline({url:"json_tests/revo.json",id:"revo"});
+	
 			    			window[ccarr[0]][ccarr[1]][ccarr[2]](ev);
-			    			// timeglider.eventActions.loadTimeline({url:"json_tests/revo.json",id:"revo"});
+			    			
 			    		}
 			    	
 			    	} catch (e) {
@@ -492,7 +510,7 @@ tg.TG_TimelinePlayer = function (widget, mediator) {
 		me.eventUnHover($(this));
 	})
 	
-	.delegate(".timeglider-event-collapsed", "hover", function () { 
+	.delegate(".tg-event-collapsed", "hover", function () { 
 
 		// var title = MED.eventCollection.get($(this).attr("id")).attributes.title;
 		// debug.trace("collapsed, title:" + title, "note");
@@ -591,14 +609,18 @@ tg.TG_TimelinePlayer = function (widget, mediator) {
 			// past right end of timeline(s): stop leftward drag
 			me.dragScopeState = {state:"over-right"};
 		} else if (focus < tbounds.first) {
-						// over left end of timeline(s): stop rightward drag
+			// over left end of timeline(s): stop rightward drag
 			me.dragScopeState = {state:"over-left"};
 		} else {
-		
 			me.dragScopeState = {state:"okay"};
-
 		}
 		
+		if (MED.scopeChanges  == 1) {
+			// first scope change after initial load
+			me.initiateNavigation();
+		}
+		
+		MED.scopeChanges++;
 	});
 	
 	
@@ -613,25 +635,15 @@ tg.TG_TimelinePlayer = function (widget, mediator) {
 	// CREATE TIMELINES MENU
 	$.subscribe(container_name + ".mediator.timelineDataLoaded", function (arg) {
 		
-		var tlen = MED.timelineCollection.length;
-		var tl = {};
-		
-		if (tlen == 1) {		
-			// IF SINGLE TIMELINE
-			tl = MED.timelineCollection.at(0);
-			me.setupSingleTimeline(tl);
-			
-			if (tl.get("description")) {
-    			me.openTimelineModal(tl.get("id"));
-    		}
+		if (MED.singleTimelineID) {		
+			me.setupSingleTimeline();
     	} else {
     		// We might need a "presentation" layer here
     		me.buildTimelineMenu(MED.timelineCollection);
-    	}  
-    	
-    	  	
+    	}
+
 		me.buildSettingsMenu();
-   
+
     	$(".timeglider-loading").fadeOut(500);  
 	});
 	
@@ -770,6 +782,16 @@ tg.TG_TimelinePlayer.prototype = {
 		  
 	},
 	
+	initiateNavigation: function() {
+		var me = this;
+		
+		$(".tg-single-timeline-header .tg-timeline-start").fadeIn();
+		$(".tg-single-timeline-header h2").live("click", function() {
+			me.openTimelineInfoModal(MED.singleTimelineID);
+			MED.focusTimeline(MED.singleTimelineID);
+			
+		});
+	},
 		
 	scaleToImportance : function(imp, zoo) {
 		// flash version: return ((importance - zoomLev) * 4.5) + 100;
@@ -1039,7 +1061,7 @@ tg.TG_TimelinePlayer.prototype = {
         
            
         $(CONTAINER)
-	    .delegate(".timeglider-filter-box .close-button", "click", function () {
+	    .delegate(".timeglider-filter-box .tg-close-button", "click", function () {
 			$filter.fadeOut();
 		})              
               
@@ -1056,7 +1078,7 @@ tg.TG_TimelinePlayer.prototype = {
 				me.filterBoxActivated =true;
 				
 				var $filter_apply = $(fbox + " .timeglider-filter-apply"),
-				$filter_close = $(".timeglider-filter-box .close-button"),
+				$filter_close = $(".timeglider-filter-box .tg-close-button"),
 				$filter_clear = $(fbox + " .timeglider-filter-clear"),
 				incl = "", excl = "";
 				
@@ -1151,7 +1173,7 @@ tg.TG_TimelinePlayer.prototype = {
 	    
 	    
 	    $(CONTAINER)
-	    .delegate(".timeglider-timeline-menu .close-button", "click", function () {
+	    .delegate(".timeglider-timeline-menu .tg-close-button", "click", function () {
 			$menu.fadeOut();
 		})
 		.delegate(this._views.TIMELINE_LIST_BT, "click", function() {
@@ -1211,9 +1233,8 @@ tg.TG_TimelinePlayer.prototype = {
 	      			offset: "-8, -30"
 	    }).hide();
 	    
-	    
 	    $(CONTAINER)
-	    .delegate(".timeglider-settings-modal .close-button", "click", function () {
+	    .delegate(".timeglider-settings-modal .tg-close-button", "click", function () {
 			$s.fadeOut();
 		})
 		.delegate(this._views.SETTINGS_BT, "click", function() {
@@ -1228,26 +1249,49 @@ tg.TG_TimelinePlayer.prototype = {
 	},
 	
 	
-	setupSingleTimeline: function(timeline) {
+	
+	setupSingleTimeline: function() {
 	
 		var me = this,
-			title = "<h2>" + timeline.get("title") + "</h2>",
-			tid = timeline.get("id");
+			tid = MED.singleTimelineID,
+			timeline = MED.timelineCollection.get(tid),
+			title = "<h2>" + timeline.get("title") + "</h2>";
 			
-		var inf = (timeline.get("description")) ? "<a id='info' class='timeline-info-bt' data-timeline_id='" + tid + "'>info</a>":"";
-		
-		var leg = (timeline.get("hasLegend")) ? "<a id='legend' class='legend-bt' data-timeline_id='" + tid + "'>legend</a>":"";
-		
-		var tmpl = "<div class='tg-single-timeline-title'>" + title + inf + leg + "</div>";
-		
-		
+			inf = (timeline.get("description")) ? "<li id='info' class='timeline-info-bt' data-timeline_id='" + tid + "'>info</li>":"",
+			
+			leg = (timeline.get("hasLegend")) ? "<li id='legend' class='tg-legend-bt' data-timeline_id='" + tid + "'>legend</li>":"",
+			
+			tools = "<a id='tools' class='tools-bt noselect'>tools</a>",
+			
+			tmpl = "<div class='tg-single-timeline-header'>" + title + "<ul>" + inf + leg + "<li class='tg-timeline-start' data-timeline_id='" + tid + "'>start</li></ul>" + tools + "</div>";
+			
+
 		$st = $(tmpl).appendTo(CONTAINER);
 		
 		me.singleTitleHeight = $st.outerHeight();
 		
+		
 		if (timeline.get("hasImageLane")) {
 			
-			var $imageLane = $("<div class='tg-image-lane-pull'></div>").appendTo(CONTAINER);
+			me.buildImageLane();
+			
+						
+		} // end if has imagelane
+		
+		// adjusts the zoom slider away from the timeline bar at top
+		$(me._views.SLIDER_CONTAINER).css("top", me.singleTitleHeight + 4);
+		
+    	
+    	me.openTimelineInfoModal(tid);
+		
+	},
+	
+	
+	
+  	buildImageLane: function() {
+  	
+  		var me = this,
+  			$imageLane = $("<div class='tg-image-lane-pull'></div>").appendTo(CONTAINER);
 			
 			$imageLane.draggable({
 				axis:"y",
@@ -1269,18 +1313,8 @@ tg.TG_TimelinePlayer.prototype = {
 				}
 			})
 			.css("top", me.imageLaneHeight + me.singleTitleHeight);
-			
-		} else {
-			
-		}
-		
-		$(me._views.SLIDER_CONTAINER).css("top", me.singleTitleHeight + 4);
-		
-	},
-	
-	
-	
-  
+
+  	},
   
 	
 	/* 
@@ -1290,7 +1324,8 @@ tg.TG_TimelinePlayer.prototype = {
 
 	buildSlider : function () {
 	
-		var iz = MED.getZoomLevel();
+		var me = this,
+			iz = MED.getZoomLevel();
 	  
 		if (options.min_zoom == options.max_zoom) {
 			// With a single zoom level, hide the zoom controller
@@ -1387,7 +1422,7 @@ tg.TG_TimelinePlayer.prototype = {
 	        	    
 	    	if (ev.date_display != "no") {
 	    	
-	    		if ($ev.hasClass("timeglider-event-collapsed") || $ev.hasClass("timeglider-event-overflow")) {
+	    		if ($ev.hasClass("tg-event-collapsed") || $ev.hasClass("tg-event-overflow")) {
 	    			// debug.log("it's collapsed...");
 	    			apnd = "<div>" + ev.title + "</div>";
 	    		} else {
@@ -2029,9 +2064,7 @@ tg.TG_TimelinePlayer.prototype = {
 			case "hundredthou": 
 			
 				prop = ((fdate.ye % 100000) / 100000);
-				debug.log("hundredthou prop:", prop);
 				p = w * prop;
-				debug.log("hundredthou p:", p);
 				break;
 				
 			case "mill": 
@@ -2240,6 +2273,8 @@ tg.TG_TimelinePlayer.prototype = {
 			tlModel = MED.timelineCollection.get(active[a]);
 
 			tl = tlModel.attributes;
+			
+			
 		
 			tl.visibleEvents = [];
 						
@@ -2282,7 +2317,7 @@ tg.TG_TimelinePlayer.prototype = {
 						
 						// if a single timeline, set images to the bottom
 						var tbh = $title.outerHeight();
-						// debug.log("ntop:", ntop);
+						
 						me.room = (cht - (Math.abs(stripPx(ntop)) + tbh)) - me.dimensions.footer.height;
 			
 						MED.refresh();	
@@ -2301,7 +2336,6 @@ tg.TG_TimelinePlayer.prototype = {
 				t_l = cx + 300;
 			}
 			
-			// debug.log("bounds", tl.bounds.first, tl.bounds.last);
 			tbwidth = Math.floor(t_l - t_f);
 						
 			var tmax = 1000000;
@@ -2363,18 +2397,17 @@ tg.TG_TimelinePlayer.prototype = {
 			if (options.event_overflow == "scroll") {
 				ceiling = 0;
 			} else {
-				
-				debug.log("tl_top:", tl_top);
-				
+							
 				ceiling = (tl.hasImageLane) ? (tl_top - me.imageLaneHeight) - me.singleTitleHeight : tl_top - me.singleTitleHeight ;
 
 			}
 			
 			// var beforeStuff = +new Date();
 			
+			var onIZoom = (tl.initial_zoom == MED.getZoomLevel());
 			
 			if (expCol == "expanded") {
-				stuff = borg.getHTML("sweep", ceiling);
+				stuff = borg.getHTML({tickScope:"sweep", ceiling:ceiling, onIZoom:onIZoom});
 				tl.borg = borg.getBorg();
 			} 
 			
@@ -2414,9 +2447,6 @@ tg.TG_TimelinePlayer.prototype = {
 			
 			$.publish(container_name + ".viewer.rendering");
 			
-			// !PROCESS: EXTRASPANS
-			// debug.log("ADD A TICK", tick.serial);
-			// FOR EACH TIMELINE...
 			for (var a=0; a<active.length; a++) {
 				
 				tl = MED.timelineCollection.get(active[a]).attributes;
@@ -2428,7 +2458,6 @@ tg.TG_TimelinePlayer.prototype = {
 				
 				tl_top = (tl.top) ? stripPx(tl.top) : (me.initTimelineVOffset); 
 				
-				// debug.log("visible events:", me.visibleEvents);
 				// we need to see if the right end of a long span
 				// is present in the newly added tick
 				if (side == "left") {
@@ -2463,10 +2492,13 @@ tg.TG_TimelinePlayer.prototype = {
 					ceiling = (tl.hasImageLane) ? (tl_top - me.imageLaneHeight) - me.singleTitleHeight : tl_top;
 				}
 			
+		
+				var onIZoom = (tl.initial_zoom == MED.getZoomLevel());
+				
 				// borg it if it's expanded.
 				if (tl.display == "expanded"){ 
 					// tl.top is the ceiling
-					stuff = tl.borg.getHTML(tick.serial, ceiling); 
+					stuff = tl.borg.getHTML({tickScope:tick.serial, ceiling:ceiling, onIZoom:onIZoom}); 
 				}
 			
 				var $vu = $(CONTAINER + " .tg-timeline-envelope#" + tl.id);
@@ -2518,6 +2550,7 @@ tg.TG_TimelinePlayer.prototype = {
 			img_wi = 0,
 			borg = tl.borg,
 			ev = {},
+			shape = {},
 			impq,
 			block_arg = "sweep"; // default for initial load
 			
@@ -2575,26 +2608,39 @@ tg.TG_TimelinePlayer.prototype = {
   				
 				ev.height = (font_ht + 4);
       			ev.top = (ht - font_ht);
-    
-				if (ev.image && ev.image.display_class === "inline") {
+      			ev.bottom = 0;
+    			
+    			
+				if (ev.image && ev.image.display_class == "inline") {
+					
+									
 					var img_scale = (ev.image.scale || 100) / 100;
 					img_ht = (img_scale * ev.image.height) + 2;
 					img_wi = (img_scale * ev.image.width) + 2;
 					// !TODO 
 					// THIS NEEDS TO BE REVERSABLE WITH POLARITY
+					
 					ev.shape = {
 						"img_ht":img_ht, 
 						"img_wi":img_wi, 
-						"top": (ev.top - img_ht), 
-						"bottom": ev.top - 4, 
+						"title": "shape",
+						"top": (ev.top - (img_ht + 8)), 
+						"bottom": ev.bottom, 
 						"left": ev.left, 
-						"right":ev.left + img_wi
+						"right":ev.left + (img_wi + 8)
 					};
 					
+					
 				} else {
-					ev.shape = null;
+					ev.shape = "";
 				}
 				
+				if (ev.id == "jshist-flan") {
+					debug.log("ev:", ev.top, ev.bottom, ev.left, ev.right);
+					var sh = ev.shape;
+					debug.log("sh:", sh.top, sh.bottom, sh.left, sh.right);
+				}
+								
             	// block_arg is either "sweep" for existing ticks
             	// or the serial number of the tick being added by dragging
       			borg.addBlock(ev, block_arg);
@@ -2603,7 +2649,7 @@ tg.TG_TimelinePlayer.prototype = {
           
       	  } else if (expCol == "collapsed") {
       			stuff += "<div id='" + ev.id + 
-      			"' class='timeglider-timeline-event timeglider-event-collapsed' style='top:" + 
+      			"' class='timeglider-timeline-event tg-event-collapsed' style='top:" + 
       			(ht - 20) + "px;left:" +	posx + "px'><img src='" + tg.icon_folder + ev.icon + "'></div>";
       	  }
         } // end if it passes filters
@@ -2625,7 +2671,6 @@ tg.TG_TimelinePlayer.prototype = {
 		
 		this.imageLaneHeight = new_height;
 		if (ref) {
-			debug.log("ref!");
 			MED.refresh();
 		}
 	},
@@ -2720,25 +2765,39 @@ tg.TG_TimelinePlayer.prototype = {
   
   
     //////// MODALS 
-  
-  openTimelineModal : function (id) {
-  
-  	var me=this,
-  		tl = MED.timelineCollection.get(id),
-  		item = new this.timelineModal({model:tl}),
-  		$modal = $(item.render().el)
-  		.appendTo("body")
-		.position({
-			my: "left top",
-			at: "left top",
-			of: (me._views.CONTAINER),
-			offset: "32, 32", // left, top
-			collision: "fit fit"
-		})
-		.css("z-index", me.ztop++)
-		.draggable({stack: ".timeglider-modal"})	
-	  
-  },
+	openTimelineInfoModal : function (id) {
+  		  		
+		$(".tg-timeline-modal").remove();
+		
+		var me = this,
+			tl = MED.timelineCollection.get(id);
+
+		if (tl.get("description")) {
+			
+			var ch = me.dimensions.container.height,
+				modal = new this.timelineInfoModal({model:tl});
+
+			$modal = $(modal.render().el)
+				.appendTo("body")
+				.position({
+					my: "left top",
+					at: "left top",
+					of: $(".timeglider-container"),
+					offset: "16, 24", // left, top
+					collision: "fit fit"
+				})
+				.css({"z-index":me.ztop++, "max-height":ch-64});
+			
+			if (MED.singleTimelineID) {
+				$modal.find("h4").hide();
+			}
+
+
+			$(".jscroll").jScrollPane();
+		
+		}
+		
+	},
   
   
 	createEventLinksMenu : function (linkage) {
@@ -2788,7 +2847,7 @@ tg.TG_TimelinePlayer.prototype = {
 				links:links,
 				image:ev_img
 			}
-		  	
+			
 			if (ev.video) { 
 				templ_obj.video = ev.video;
 				modal_type = "full";
@@ -2799,23 +2858,22 @@ tg.TG_TimelinePlayer.prototype = {
 				modal_type = "full";
 				
 			// if the embed size is small
-			} else if (me.dimensions.container.width < 500) {
-				debug.log("small version!");
-				// create a "full_small" version here
-				// to handle small embeds
-				
+			} else if ((ev.description.length > 400) || (me.dimensions.container.width < 500)) {
+				modal_type = "full";
 			}
 
+	    
 	    
 			switch (modal_type) {
 			
 				case "full":
+				
 					$modal = $.tmpl(me._templates.event_modal_full,templ_obj);
 		  			// full modal with scrim, etc
 		  			var pad = 32;
+		  			
        				$modal
     					.appendTo(CONTAINER)
-  			  			.css({"z-index": me.ztop++})
   			  			.position({
       						my: "left top",
       						at: "left top",
@@ -2824,8 +2882,33 @@ tg.TG_TimelinePlayer.prototype = {
       						collision: "none none"
       	  			   });
 
+						
+      	  			var ch = me.dimensions.container.height;
+      	  			var cw = me.dimensions.container.width;
+      	  			var $panel = $modal.find(".tg-full_modal_panel");
+     				var pw = cw - 64;
+     				var ph = ch - 64;
+     				var iw = 0;
+     				
+
+      	  			
+      				$panel.css({
+      					"width":pw,
+      					"height":ph,
+      	    			"top":"32px",
+    			  		"left":"32px"
+    	  			});
+    	  			
+    	  			var $pp = $panel.find("p");
+    	  			var pph = ph-120;
+    	  			
+    	  			
+    	  			
+    	  			
       	  			if (map_view == true) {
-      	  				$modal.find("#insert").append("<div id='map_modal_map'></div>");
+      	  			
+      	  			
+      	  				$map = $("<div id='map_modal_map' class='tg-modal_map'></div>").prependTo($pp);
       	  				
       	  				mapZoom = ev.map.zoom || 12;
       	  				var llarr = String(ev.map.latlong).split(",");
@@ -2865,26 +2948,37 @@ tg.TG_TimelinePlayer.prototype = {
 		
 		
       	  			} else if (video_view == true) {
-      	  			
-      	  				$modal.find("#insert").append("<iframe width='300' height='200' src='" + ev.video + "'></iframe></div>");
+      	  				
+      	  				var $insert = $modal.find("p");
+      	  				
+      	  				$vid = $("<div class='tg-modal-video'><iframe frameborder='0' src='" + ev.video + "'></iframe></div>").prependTo($pp);
+      	  				
+      	  				$vid.find("iframe").css("height", $vid.width() * .66)
       	  				
       	  				
       	  			}
       	  			
-      	  			
-      	  			
-      	  			var ch = me.dimensions.container.height;
-      	  			var cw = me.dimensions.container.width;
-      	  			var $panel = $(CONTAINER + " .full_modal_panel");
-      	  			var pw = $panel.width();
-      	  			var ph = $panel.height();
-      	  			
-      				$panel.css({
-      	    			"top":((ch - ph)/2) + "px",
-    			  		"left":((cw - pw)/2) + "px"
-    	  			});
+      	  		
+     				
+     				if (ev.image) {
+     				
+     					if (ev.image.width < pw/3) {
+     						// small image
+     						iw = ev.image.width;
+     						$panel.find("p img").css("width", iw);
+     					}
+     					
+     					
+     				} 
+     				
     	  			
-			
+    	  			if ($pp.height() > pph) {
+    	  				$pp.css({"height":pph, "overflow-y":"scroll"});
+    	  			}
+    	  			
+    	  			
+	
+					
 				break;
 				
 			
@@ -2902,7 +2996,7 @@ tg.TG_TimelinePlayer.prototype = {
 							my: "center top",
 							at: "center top",
 							of: $(CONTAINER),
-							offset: "0, -12", // left, top
+							offset: "0, 32", // left, top
 							collision: "flip fit"
 					})
       				.hover(function () { $(this).css("z-index", me.ztop++); });
@@ -2930,10 +3024,12 @@ tg.TG_TimelinePlayer.prototype = {
 					
 					var co_off = me.dimensions.container.offset;
 					var ev_off = $event.offset();
+					
+					var extra_top = (MED.timelineCollection.length == 1) ? 24: 0;
 
 					var top_set = 0;
 					
-					if (ev_off.top - co_off.top < (modal_ht + pad)) {
+					if (ev_off.top - co_off.top < (modal_ht + (pad + extra_top))) {
 						// position modal below the event
 						top_set = ev_top + $event.height() + 8;
 						tb_class = "top";
@@ -2974,7 +3070,8 @@ tg.TG_TimelinePlayer.prototype = {
 	
 	legendModal : function (id) {
 	  	// only one legend at a time ??
-	  
+	  	$(".tg-timeline-modal").remove();
+	  	
 	    var me=this,
 	    	leg = MED.timelineCollection.get(id).attributes.legend,
 	      	l=0, 
@@ -2986,28 +3083,28 @@ tg.TG_TimelinePlayer.prototype = {
 	    for (l=0; l < leg.length; l++) {
 				icon = options.icon_folder + leg[l].icon;
 				title = leg[l].title;				
-				html += "<li><img class='legend-icon' src='" + icon + "'><span class='legend-info'>" + title + "</span></li>";
+				html += "<li><img class='tg-legend-icon' src='" + icon + "'><span class='legend-info'>" + title + "</span></li>";
 				 
 	    }
 	   
 	    var templ_obj = {id:id, legend_list:html};
 	  	
 	  	// remove existing legend
-	    $(CONTAINER + " .timeglider-legend").remove();
+	    $(CONTAINER + " .tg-legend").remove();
 	  		
 	  	$.tmpl(me._templates.legend_modal,templ_obj)
   			.appendTo(CONTAINER)
   			.css("z-index", me.ztop++)
       		.toggleClass("tg-display-none")
       		.position({
-      				my: "right top",
-      				at: "right top",
-      				of: $(CONTAINER),
-      				offset: "-60, 16", // x, y
-      				collision: "none none"
+				my: "left top",
+				at: "left top",
+				of: $(CONTAINER),
+				offset: "16, 12", // left, top
+				collision: "fit fit"
       		});
 			
-			i_sel = CONTAINER + " .legend-info, " + CONTAINER + " .legend-icon";
+			i_sel = CONTAINER + " .legend-info, " + CONTAINER + " .tg-legend-icon";
 				
 	  		$(i_sel).bind("mouseup", function(e) { 
 	  			// if dragged, return false...
@@ -3103,7 +3200,7 @@ tg.TG_TimelineView = Backbone.View.extend({
 	      	}
 	      	
 	      	if (this.model.get("hasLegend")) {
-	      		tmpl += "<span class='env-legend-bt legend-bt' data-timeline_id='${id}'>legend</span>&nbsp;&nbsp;";
+	      		tmpl += "<span class='tg-env-legend-bt tg-legend-bt' data-timeline_id='${id}'>legend</span>&nbsp;&nbsp;";
 	      	}
 	      	
 	      	// TODO: options for "allow_expand_collapse" ?

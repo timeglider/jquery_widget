@@ -816,11 +816,15 @@ timeglider.TG_Date = {};
 	* @return {Object} date, time as strings with am or pm
 	*/
 	TG_Date.getDateTimeStrings = function (str) {
-	
+		
 		var obj = TG_Date.parse8601(str);
 	
-		// DATE IS EASY:
-		var date_val = obj.ye + "-" + unboil(obj.mo) + "-" + unboil(obj.da);
+		if (str == "today") {
+			return {"date": "today", "time":""}
+		} else {
+			var date_val = obj.ye + "-" + unboil(obj.mo) + "-" + unboil(obj.da);
+		}
+		
 		
 		var ampm = "pm";
 		
@@ -841,6 +845,10 @@ timeglider.TG_Date = {};
 	// This is for a separate date input field --- YYYY-MM-DD (DATE ONLY)
 	// field needs to be restricted by the $.alphanumeric plugin
 	TG_Date.transValidateDateString = function (date_str) {
+		
+		if (date_str == "today"){
+			return "today";
+		}
 		
 		if (!date_str) return false; // date needs some value
 		var reg = /^(\-?\d+|today|now) ?(bce?)?-?(\d{1,2})?-?(\d{1,2})?/,

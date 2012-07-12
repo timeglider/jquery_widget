@@ -1,26 +1,22 @@
 @charset "UTF-8";
 /* CSS Document */
 
-
-
 	
-	/* float clearing for IE6 */
-	.timeglider-container .clearfix{
-	  height: 1%;
-	  overflow: visible;
-	}
+/* float clearing for IE6 */
+.timeglider-container .clearfix{
+  height: 1%;
+  overflow: visible;
+}
 
-	/* float clearing for everyone else */
-	.timeglider-container .clearfix:after{
-	  clear: both;
-	  content: ".";
-	  display: block;
-	  height: 0;
-	  visibility: hidden;
-	  font-size: 0;
-	}
-	
-	
+/* float clearing for everyone else */
+.timeglider-container .clearfix:after{
+  clear: both;
+  content: ".";
+  display: block;
+  height: 0;
+  visibility: hidden;
+  font-size: 0;
+}
 
 
 /* only font-family reference here, 
@@ -50,7 +46,69 @@
 	z-index:99999999900;
 	display:none;
 }
-  
+
+
+
+.tg-prevnext {
+	position:absolute;
+	bottom:56px;
+	z-index:900;
+	cursor:pointer;
+	-moz-user-select: -moz-none;
+	-khtml-user-select: none;
+	-webkit-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+	width:28px;
+	height:24px;
+	background-color:#fff;
+	opacity:.5;
+}
+
+.tg-prevnext a {
+	color:#358F39;
+	position:absolute;
+	font-weight:bold;
+	font-size:16px;
+	top:3px;
+}
+
+.tg-prev a {
+	left:2px;
+}
+.tg-next a {
+	right:2px;
+}
+
+
+.tg-prev {
+	left:0;
+	-webkit-border-top-right-radius: 8px;
+	-webkit-border-bottom-right-radius: 8px;
+	-moz-border-radius-topright: 8px;
+	-moz-border-radius-bottomright: 8px;
+	border-top-right-radius: 8px;
+	border-bottom-right-radius: 8px;
+}
+
+
+
+.tg-next {
+	right:0;
+	-webkit-border-top-left-radius: 8px;
+	-webkit-border-bottom-left-radius: 8px;
+	-moz-border-radius-topleft: 8px;
+	-moz-border-radius-bottomleft: 8px;
+	border-top-left-radius: 8px;
+	border-bottom-left-radius: 8px;
+}
+
+
+
+.tg-prevnext:hover {
+	color:orange;
+	background-color:black;
+}
   
 .timeglider-loading {
 	background-color:green;
@@ -73,7 +131,7 @@
 	text-align:center;
 }
 
-.tg-single-timeline-title {
+.tg-single-timeline-header {
 	position:absolute;
 	top:0px;
 	left:0px;
@@ -82,29 +140,57 @@
 	height:20px;
 	background-color:#333;
 	z-index:5000;
+	overflow:hidden;
+	min-width:450px;
 }
 
-.tg-single-timeline-title h2 {
+.tg-single-timeline-header h2 {
 	float:left;
 	font-size:14px;
 	font-weight:bold;
 	font-style:italic;
-	margin:0 0 0 8px;
+	margin:0 0 0 28px;
 	color:white;
 	padding:0;
+	cursor:pointer;
 }
 
-.tg-single-timeline-title a {
-	display:block;
+.tg-single-timeline-header ul {
+	list-style:none;
+	float:left;
+	margin:0;
+	-moz-user-select: -moz-none;
+	-khtml-user-select: none;
+	-webkit-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+}
+
+.tg-single-timeline-header ul li {
+	display:inline;
+
 	float:left;
 	font-size:12px;
 	font-weight:normal;
 	color:#b3eb62;
-	margin-left:32px;
+	margin-right:16px;
 	margin-top:2px;
 	cursor:pointer;
-	
 }
+
+.tg-single-timeline-header ul li.tg-timeline-start {
+	display:none;
+}
+
+
+.tg-single-timeline-header a.tools-bt {
+	color:#ccc;
+	margin-right:8px;
+	float:right;
+	font-size:12px;
+}
+
+
 
 .timeglider-footer {
 	position:absolute;
@@ -117,7 +203,7 @@
 	font-size:10px;
 	padding:3px;
 	background-color:#333;
-	z-index:9999;
+	z-index:4500;
 }
 
 .timeglider-footer ul {
@@ -202,6 +288,8 @@
 .tg-slider-plusminus {
 	width:24px; height:24px;
 	border-radius:12px;
+	-moz-border-radius: 12px;
+	-webkit-border-radius: 12px;
 	background-color:#6DBF5F;
 	margin-left:-10px;
 	text-align:center;
@@ -281,15 +369,18 @@
 	text-align:center;
 	padding-top:6px;
 	padding-bottom:8px;
-	z-index:999999999;
+	z-index:5000;
 	font-size:14px;
 	color:#F0F0F0;
 	height:12px;
 
-	background-color:#333;
-	-webkit-border-radius: 6px;
-	-moz-border-radius: 6px;
-	border-radius: 6px;
+	background-color:#358F39;
+	-webkit-border-bottom-right-radius: 8px;
+-webkit-border-bottom-left-radius: 8px;
+-moz-border-radius-bottomright: 8px;
+-moz-border-radius-bottomleft: 8px;
+border-bottom-right-radius: 8px;
+border-bottom-left-radius: 8px;
 }
 
 .date-display-arrow {
@@ -299,7 +390,7 @@
 	margin-left: -5px;
 	border-left: 5px solid transparent;
 	border-right: 5px solid transparent;
-	border-bottom: 5px solid #333;
+	border-bottom: 5px solid #358F39;
 }
   
   
@@ -452,6 +543,7 @@
 	position:absolute;
 }
 
+/*
 .close-button-remove, .close-button-filter, .close-button-toggleMenu {
 	cursor:pointer;
 	width:30px;
@@ -461,11 +553,29 @@
 	top:-16px;
 	right:-16px;
 }
-
-.timeglider-close-button-small {
-  float:right;
+*/
+.tg-close-button-remove, .tg-close-button-filter, .tg-close-button-toggleMenu {
+	display:inline;
+	padding:1px 6px 3px 6px;
+	float:right;
+	margin-top:3px;
+	margin-right:3px;
 	cursor:pointer;
+	
+	color:white;
+	font-size:10px;
+	font-weight:bold;
+	width:auto;
+	background-color:#AA0000;
+	border:1px solid #330000;
+	-webkit-border-radius: 6px;
+	-moz-border-radius: 6px;
+	border-radius: 6px;
+}
 
+.tg-close-button-small {
+	float:right;
+	cursor:pointer;
 	width:15px;
 	height:15px;
 	background-image:url(buttons/close_small.png);
@@ -652,19 +762,15 @@
 /* MENU MODALS */
 
 
-.timeglider-menu-modal, .timeglider-settings-modal {
+.timeglider-menu-modal {
 	position:absolute;
-	background-color:#111;
+	background-color:#FFF;
 	border-radius:6px;
 	-moz-border-radius:6px;
 	-webkit-border-radius:6px;
 	z-index:9999;
 	padding:2px;
 	
-	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#555555', endColorstr='#000000'); /* for IE */
-	background: -webkit-gradient(linear, left top, left bottom, from(#555), to(#000)); /* for webkit browsers */
-	background: -moz-linear-gradient(top,  #555,  #000); /* for firefox 3.6+ */
-	background-repeat:no-repeat;
 	
 }
 
@@ -680,7 +786,7 @@
 	text-shadow:1px 1px black;
 }
 
-.timeglider-menu-modal .close-button {
+.timeglider-menu-modal .tg-close-button {
 	float:right;
 	cursor:pointer;
 	margin-right:-16px;
@@ -758,12 +864,8 @@
 
 .timeglider-menu-modal-content {
     clear:both;
-		background-color:#FFF;
-		border-radius:3px;
-		-moz-border-radius:3px;
-		-webkit-border-radius:3px;
-		margin:3px;
-		padding:6px 8px 8px 8px;
+	margin:3px;
+	padding:6px 8px 8px 8px;
 		
 }
 
@@ -794,7 +896,7 @@
 
 
 
-.timeglider-legend {
+.tg-legend {
   position:absolute;
   width:150px;
   -webkit-border-top-left-radius: 0;
@@ -805,20 +907,20 @@
   border-top-right-radius: 0;
 }
 
-.timeglider-legend img {
+.tg-legend img {
   width:12px;
   height:auto;
   margin-right:8px;
 }
 
-.timeglider-legend .timeglider-menu-modal-content {
+.tg-legend .timeglider-menu-modal-content {
   margin-top:8px;
 }
 
-.timeglider-legend ul li {
+.tg-legend ul li {
   color:#999;
 }
-.timeglider-legend ul li.tg-legend-icon-selected {
+.tg-legend ul li.tg-legend-icon-selected {
   color:#000;
 }
 
@@ -829,7 +931,7 @@
 
 
 
-.timeglider-legend-all {
+.tg-legend-all {
   float:right;
   font-size:9px;
   color:#777;
@@ -901,7 +1003,7 @@
 	z-index:5;
 }
 
-.timeglider-event-collapsed {
+.tg-event-collapsed {
 	position:absolute;
 	top:0px;
 	z-index:500;
@@ -909,7 +1011,7 @@
 	margin-top:3px;
 }
 
-.timeglider-event-collapsed img {
+.tg-event-collapsed img {
 	height:10px;
 	width:auto;
 	opacity:.8;
@@ -920,18 +1022,77 @@
 /* EVENT MODAL:  
  * override this with Timeglider_full_modal.css to make modal full-window
 */
-.timeglider-ev-modal, .timeglider-timeline-modal {
+.timeglider-ev-modal {
   	-webkit-border-radius:8px;
 	-moz-border-radius:8px;
 	border-radius:8px;
 	background:#FFF;
-	border:4px solid #333;
+	border:none; /* 4px solid #333; */
 	width:280px;
 	padding:2px;
 	height:auto;
 	
 	z-index:99999999905;
 }
+
+.tg-timeline-modal {
+	width:300px;
+	padding:0;
+	height:auto;
+	-webkit-border-bottom-right-radius: 8px;
+	-webkit-border-bottom-left-radius: 8px;
+	-moz-border-radius-bottomright: 8px;
+	-moz-border-radius-bottomleft: 8px;
+	border-bottom-right-radius: 8px;
+	border-bottom-left-radius: 8px;
+	z-index:99999999905;
+	
+	background-color:#444;
+	
+}
+
+
+.tg-timeline-modal .tg-timeline-description {
+	font-size:12px;
+	margin:16px;
+	color:#FCFCFC;
+	line-height:18px;
+	overflow-y:scroll;	
+	max-height:330px;
+
+}
+.tg-timeline-modal .tg-timeline-description:focus {
+    outline: 0;
+}
+
+
+.tg-timeline-modal ul {
+	clear:both;
+	list-style:none;
+	margin:16px;
+	padding:0 0 8px 0;
+}
+
+
+.tg-timeline-modal li {
+	float:right;
+	margin-right:8px;
+	font-size:12px;
+	font-weight:bold;
+	cursor:pointer;
+}
+
+
+.tg-timeline-modal li.tg-close {
+	color: #d88733;
+	margin-left:32px;
+}
+
+
+.tg-timeline-modal li.tg-timeline-start {
+	color: #b7f172;
+}
+
 
 .timeglider-ev-video-modal, .timeglider-ev-map-modal {
     -webkit-border-radius:8px;
@@ -946,6 +1107,8 @@
 	left:50px;
 }
 
+
+
 .tg-iframe-modal {
 	width:600px;
 	height:400px;
@@ -958,7 +1121,7 @@
 }
 
 
-.timeglider-ev-modal p, .timeglider-timeline-modal p {
+.timeglider-ev-modal p {
 	font-size:11px;
 	color:#555;
 	margin:8px;
@@ -967,7 +1130,9 @@
 	overflow-x:hidden;
 }
 
-.timeglider-ev-modal p img, .timeglider-timeline-modal p img{
+
+
+.timeglider-ev-modal p img, .tg-timeline-modal p img{
   width:100px;
   height:auto;
   float:left;
@@ -975,7 +1140,7 @@
   margin-bottom:8px;
 }
 
-.timeglider-ev-modal h4, .timeglider-timeline-modal h4  {
+.timeglider-ev-modal h4, .tg-timeline-modal h4  {
 	margin:4px 8px 2px 8px;
 	padding:0;
 	color:#222;
@@ -993,6 +1158,7 @@ ul.timeglider-ev-modal-links {
 	margin:6px 8px 2px 8px;
 	padding:0;
 	clear:both;
+	text-align:right;
 }
 ul.timeglider-ev-modal-links li {
 	font-size:10px;
@@ -1006,7 +1172,7 @@ ul.timeglider-ev-modal-links li a {
 }
 
 .timeglider-ev-modal .dateline {
-	margin:8px;
+	margin:8px 32px 8px 8px;
 	border-bottom:1px dotted #CCC;
 	font-size:11px;
 }
@@ -1026,7 +1192,7 @@ ul.timeglider-ev-modal-links li a {
 }
 
 
-.timeglider-event-overflow {
+.tg-event-overflow {
   position:absolute;
   color:#CC0000;
   font-weight:bold;
@@ -1034,7 +1200,7 @@ ul.timeglider-ev-modal-links li a {
   cursor:pointer;
 }
 
-.timeglider-event-overflow img {
+.tg-event-overflow img {
   height:6px;
   width:auto;
   opacity:.5;
@@ -1047,7 +1213,7 @@ ul.timeglider-ev-modal-links li a {
  * overrides timeglider-ev-modal in Timeglider.css
  * to make full-window (timeglider container) modal
 */
-.full_modal {
+.tg-full_modal {
 	
 	width:100%;
 	height:100%;
@@ -1055,10 +1221,11 @@ ul.timeglider-ev-modal-links li a {
 	position:absolute;
 	box-shadow:none;
 	/* gets positioned by $.position() in TimelineView.js */
+	z-index:6000;
 }
 
 
-.full_modal_scrim {
+.tg-full_modal_scrim {
     position:absolute;
     top:0;
     left:0;
@@ -1073,7 +1240,7 @@ ul.timeglider-ev-modal-links li a {
     z-index:0;
 }
 
-.full_modal_panel {
+.tg-full_modal_panel {
 	position:absolute;
 	width:800px;
 	height:400px;
@@ -1082,96 +1249,73 @@ ul.timeglider-ev-modal-links li a {
 	border-radius:12px;
 	-moz-border-radius:12px;
 	-webkit-border-radius:12px;
-	-ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=50)";
 
 	z-index:2;
 	
 	-moz-box-shadow: 5px 5px 5px #000;
   	-webkit-box-shadow: 5px 5px 5px #000;
   	box-shadow: 5px 5px 5px #000;
-  
-}
-
-.full_modal_panel .footer {
-	height:40px;
-	background-color:#F0F0F0;
-	border-top:1px solid #CCC;
-	-webkit-border-bottom-right-radius: 8px;
-	-webkit-border-bottom-left-radius: 8px;
-	-moz-border-radius-bottomright: 8px;
-	-moz-border-radius-bottomleft: 8px;
-	border-bottom-right-radius: 8px;
-	border-bottom-left-radius: 8px;
-	position:absolute;
-	bottom:0;
-	width:800px;
-  
+  	overflow:hidden;
 }
 
 
-.full_modal_panel table {
-  	width:100%;
-  	border-collapse:collapse;
+.tg-modal-video, .tg-modal_map {
+	float:right;
+	width:50%;
+	margin-right:4px;
+	margin-left:8px;
+	
 }
 
-.full_modal_panel table td {
-  	padding:12px;
-  	vertical-align:top;
-  	width:50%;
-}
-
-
-
-#map_modal_map {
-	border:4px solid #444;
-	height:260px;
-	width:320px;
+.tg-modal_map {
+	border:2px solid #333;
+	height:250px;
 	background-color:white;
-	margin:12px auto 0 auto;
-	border:2px solid #000;
-	border-radius:8px;
-	-moz-border-radius:8px;
-	-webkit-border-radius:8px;
+}
+
+.tg-modal-video iframe {
+	float:right;
+	width:100%;
 }
 
 
 
-.full_modal .dateline {
+.tg-full_modal .dateline {
 	font-size:14px;
 	color:#69A847;
-	margin:12px 0px 0px 24px;
+	margin:12px 0px 0px 12px;
 	font-weight:bold;
 	float:left;
-	width:400px;	
 }
 
-.full_modal h4 {
+.tg-full_modal h4 {
+	clear:both;
 	margin:8px 8px 0px 12px;
 	padding:0;
 	color:#333;
 	font-size:16px;
 }
 
-.full_modal .description {
+.tg-full_modal-body {
 	margin:12px;
 }
 
-.full_modal .description p {
-  margin-top:6px;
-  font-size:14px;
-  line-height:20px;
+.tg-full_modal-body p {
+	font-size:14px;
+	line-height:20px;
 }
 
-.full_modal .description img {
-  width:100px;
-  height:auto;
-  float:left;
-  margin-right:8px;
-  margin-bottom:8px;
+.tg-full_modal-body img {
+	width:30%;
+	height:auto;
+	float:left;
+	margin-top:6px;
+	margin-right:8px;
+	margin-bottom:8px;
 }
 
 
-.full_modal .close-button {
+.tg-full_modal .tg-close-button {
 	float:right;
 	margin-right:12px;
 	font-size:16px;
@@ -1182,28 +1326,180 @@ ul.timeglider-ev-modal-links li a {
 	text-align:center;
 	padding-top:2px;
 	padding-left:1px;
-	border-radius:4px;
-	-moz-border-radius:4px;
-	-webkit-border-radius:4px;
+	border-radius:6px;
+	-moz-border-radius:6px;
+	-webkit-border-radius:6px;
 	cursor:pointer;
-	background-color:#CCC;
+	background-color:#AA0000;
+	border:1px solid #330000;
 	color:white;
 }
 
-.full_modal_panel .footer ul {
+
+.tg-full_modal-links {
+	position:absolute;
+	top:8px;
+	right:64px;
+}
+
+
+.tg-full_modal-links ul {
+	position:absolute;
+	top:0;
+	width:100%;
 	list-style:none;
-	margin:6px 0 0 0;
+	margin:0 8px 0 8px;
 	padding:0;
 }
-.full_modal_panel .footer ul li {
+.tg-full_modal-links ul li {
 	font-size:16px;
 	font-weight:bold;
 	display:block;
-	padding:4px 18px;
+	padding:4px 16px;
 	float:right;
+	margin-right:16px;
+	background-color:blue;
+	border-radius:6px;
+	-moz-border-radius:6px;
+	-webkit-border-radius:6px;
 }
-.full_modal_panel .footer ul li a {
-	color: #0046aa;
+.tg-full_modal-links ul li a {
+	color:white;
+	text-decoration:none;
 }
 
 
+
+
+
+/*
+ * CSS Styles that are needed by jScrollPane for it to operate correctly.
+ *
+ * Include this stylesheet in your site or copy and paste the styles below into your stylesheet - jScrollPane
+ * may not operate correctly without them.
+ */
+
+.jspContainer
+{
+	overflow: hidden;
+	position: relative;
+}
+
+.jspPane
+{
+	position: absolute;
+}
+
+.jspVerticalBar
+{
+	position: absolute;
+	top: 0;
+	right: 0;
+	width: 16px;
+	height: 100%;
+	background: red;
+}
+
+.jspHorizontalBar
+{
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	width: 100%;
+	height: 16px;
+	background: red;
+}
+
+.jspVerticalBar *,
+.jspHorizontalBar *
+{
+	margin: 0;
+	padding: 0;
+}
+
+.jspCap
+{
+	display: none;
+}
+
+.jspHorizontalBar .jspCap
+{
+	float: left;
+}
+
+.jspTrack
+{
+	background: #000;
+	position: relative;
+}
+
+.jspDrag
+{
+	background: #CCC;
+	position: relative;
+	top: 0;
+	left: 0;
+	cursor: pointer;
+	
+	/* GRADIENT */
+background: #c6c6c6; /* Old browsers */
+background: -moz-linear-gradient(left,  #c6c6c6 0%, #282828 99%); /* FF3.6+ */
+background: -webkit-gradient(linear, left top, right top, color-stop(0%,#c6c6c6), color-stop(99%,#282828)); /* Chrome,Safari4+ */
+background: -webkit-linear-gradient(left,  #c6c6c6 0%,#282828 99%); /* Chrome10+,Safari5.1+ */
+background: -o-linear-gradient(left,  #c6c6c6 0%,#282828 99%); /* Opera 11.10+ */
+background: -ms-linear-gradient(left,  #c6c6c6 0%,#282828 99%); /* IE10+ */
+background: linear-gradient(left,  #c6c6c6 0%,#282828 99%); /* W3C */
+filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#c6c6c6', endColorstr='#282828',GradientType=1 ); /* IE6-9 */
+
+}
+
+.jspHorizontalBar .jspTrack,
+.jspHorizontalBar .jspDrag
+{
+	float: left;
+	height: 100%;
+}
+
+.jspArrow
+{
+	background: #50506d;
+	text-indent: -20000px;
+	display: block;
+	cursor: pointer;
+}
+
+.jspArrow.jspDisabled
+{
+	cursor: default;
+	background: #80808d;
+}
+
+.jspVerticalBar .jspArrow
+{
+	height: 16px;
+}
+
+.jspHorizontalBar .jspArrow
+{
+	width: 16px;
+	float: left;
+	height: 100%;
+}
+
+.jspVerticalBar .jspArrow:focus
+{
+	outline: none;
+}
+
+.jspCorner
+{
+	background: #eeeef4;
+	float: left;
+	height: 100%;
+}
+
+/* Yuk! CSS Hack for IE6 3 pixel bug :( */
+* html .jspCorner
+{
+	margin: 0 -3px 0 0;
+}

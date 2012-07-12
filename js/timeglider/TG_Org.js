@@ -102,12 +102,19 @@
 
     /*
     * TG_Org.getHTML
-    * @param {string|number} tickScope This either "sweep" or the serial of a single tick (Number)
-    * @param {number} ceiling The max height of the timeline display, after which a "+" appears
+    * inside of args:
+    * 	@param tickScope {string|number} This either "sweep" or the serial of a single tick (Number)
+    * 	@param ceiling {number} The max height of the timeline display, after which a "+" appears
+    * 	@param onZoom {boolean} is the timeline at its preferred/initial zoom?
+    *
     * @return {string} HTML with events passed back to view for actual layout of timeline
     */
-    this.getHTML = function (tickScope, ceiling) {
-      
+    this.getHTML = function (args) {
+    
+    	var tickScope = args.tickScope;
+    	var ceiling = args.ceiling;
+      	this.onIZoom = args.onIZoom;
+      	      
 		if (tickScope == "sweep") { 
 			this.vis = [];
 		}
@@ -130,7 +137,8 @@
 			title_adj = 0,
 			highest = 0,
 			img_scale = 100,
-			img_style = "";
+			img_style = "",
+			image_class = "lane";
 		
 	
 		for (var i=0; i<blength; i++) {
@@ -162,8 +170,21 @@
 		            	// if it has an image, it's either in "layout" mode (out on timeline full size)
 		            	// or it's going to be thumbnailed into the "bar"
 						if (b.image) {
+						
+							/*
+							if (this.onIZoom) {
+								debug.log("on izoom!");
+								image_class = b.image.display_class;
+							} else {
+								debug.log("on izoom!");
+								image_class = "lane";
+							}
+							*/
 							
-							if (b.shape && b.image.display_class == "inline") {
+							image_class = b.image.display_class;
+							
+							
+							if (b.shape && image_class == "inline") {
 								img_style = " style='width:" + b.shape.img_wi + "px;height:auto;top:-" + b.shape.img_ht + "px'";
 							} else {
 								img_style = "";
@@ -173,10 +194,11 @@
 								
 							title_adj = 0; // b.shape.img_ht + 4;
 							
+							
 							// different image classes ("bar", "above") are positioned
 							// using a separate $.each routine in TimelineView rather than
 							// being given absolute positioning here.
-							img = "<div data-max_height='" + b.image.max_height + "' class='timeglider-event-image-" + b.image.display_class + "'><img src='" + b.image.src + "' " + img_style + "></div>";
+							img = "<div data-max_height='" + b.image.max_height + "' class='timeglider-event-image-" + image_class + "'><img src='" + b.image.src + "' " + img_style + "></div>";
 							
 							
 						} else {
@@ -187,7 +209,7 @@
 		      		    
 		      		    highest = ceiling - ceiling_padding;
 			           		
-						if (b.y_position > 0) {
+						if (this.onIZoom && b.y_position > 0) {
 							// absolute positioning
 							b.top = me.pol * b.y_position;
 
@@ -211,7 +233,7 @@
 						 	// + + + symbols in place of events just under ceiling
 						 	// if things are higher than the ceiling, show plus signs instead,
 						 	// and we'll zoom in with these.
-							html += "<div id='" + b.id + "' class='timeglider-timeline-event timeglider-event-overflow' style='left:" + b.left  + 
+							html += "<div id='" + b.id + "' class='timeglider-timeline-event tg-event-overflow' style='left:" + b.left  + 
 						        "px; top:-" + (ceiling -4) + "px'>" + p_icon + "</div>";
 						        
 						} else {
@@ -233,8 +255,7 @@
 								}
 			
 								if (b.icon) {
-								  icon = "<img class='timeglider-event-icon' src='" + icon_f + b.icon + "' style='height:"
-								+ b.fontsize + "px;left:-" + (b.fontsize + 2) + "px; top:" + title_adj + "px'>";
+								  icon = "<img class='timeglider-event-icon' src='" + icon_f + b.icon + "' style='height:" + b.fontsize + "px;left:-" + (b.fontsize + 2) + "px; top:" + title_adj + "px'>";
 								} else {
 								  icon = '';
 								}
@@ -301,22 +322,31 @@
       
       return ((x < y) ? -1 : ((x > y) ? 1 : 0));
   };
+  
+  
+  
 
 	/**
 	* isOverlapping
 	* Takes two objects and sees if the prospect overlaps with
 	* an existing object [part of loop in checkAgainstPlaced()]
 	*
-	* @param {object} b1 Timeline-event object already in place
-	* @param {object} b2 Timeline-event object being added to blocks
+	* @param {object} b1 Timeline-event object IN PLACE
+	* @param {object} b2 Timeline-event object BEING ADDED
 	*/       
 	var isOverlapping = function (b1, b2) {
       
       //!TODO ******* POLARITY IS NOT WORKED INTO THIS YET
+      
+      	if (b2.shape) {
+      		var io = isOverlapping(b1, b2.shape);
+      		if (io == true) {
+      			return true;
+      		}
+      	}
 		
 		var vPadding = -6,
 			lPadding = -16;
-		
 		
 		if ((b2.left + lPadding > b1.right) || (b2.right < b1.left + lPadding) || (b2.bottom < b1.top + vPadding)) {
 			// clear to left or right.
@@ -364,10 +394,7 @@
 			placed = me.placedBlocks,
 			placed_len = me.placedBlocks.length,
 			
-			collision = false,
-
-			shape_ol = false;
-
+			collision = false;
 		
 		if ((placed_len == 0) || (Math.abs(block.top) > ceil)) {
         	// just place it!
@@ -375,33 +402,42 @@
         	
         } else {
 		
-			// Go through all the blocks on that level...
+			// Go through all the placed blocks
 			for (var e=0; e < placed_len; e++) {
 				
+				sh = false;
 				ol = isOverlapping(placed[e],block);
 				
-				/*
 				if (block.shape) {
-					shape_ol = isOverlapping(level_blocks[e], block.shape);
+					sh = isOverlapping(placed[e],block.shape);
 				}
-				*/
 				
-				if (ol == true) {
+				if (ol == true || sh == true) {
 					// BUMP UP
 					if (me.pol === -1) {
 						// DEFAULT, bottom up
 						block.top -= lev_ht; 
-						block.bottom -= lev_ht; 
+						block.bottom -= lev_ht;
+						if (block.shape) {
+							block.shape.top -= lev_ht; 
+							block.shape.bottom -= lev_ht;
+						}
 					} else {
 						// "SOUTH" side, top town
 						block.top += lev_ht; 
-						block.bottom += lev_ht; 
+						block.bottom += lev_ht;
+						if (block.shape) {
+							block.shape.top += lev_ht; 
+							block.shape.bottom += lev_ht;
+						} 
 					}
-			
-					// THEN CHECK @ NEXT LEVEL
+					
+										
 					// *** RECURSIVE ***
 					block.attempts++;
 					
+					
+					// ......aaaaaand then check again
 					checkAgainstPlaced(block, ceil);
 			
 					collision = true;
@@ -415,15 +451,17 @@
 
 		if (collision == false) {
             
-            me.placedBlocks.push(block);
-               
-
-			} // end if collision is false
+            me.placedBlocks.push(block);               	
+			
+			if (block.shape) {
+				me.placedBlocks.push(block.shape);   
+			}
+		} // end if collision is false
         
-		}; // end checkAgainstPlaced()
+	}; // end checkAgainstPlaced()
  
  
-	}; ///// END TG_Org
+}; ///// END TG_Org
       
       
 	

@@ -78,6 +78,9 @@ tg.TG_Mediator = function (wopts, $el) {
     
     this.focusedEvent = '';
     
+    this.singleTimelineID = 0;
+    this.scopeChanges = 0;
+    
     if (options.max_zoom === options.min_zoom) {
       this.fixed_zoom = options.min_zoom;
     }
@@ -89,7 +92,7 @@ tg.TG_Mediator = function (wopts, $el) {
 
     MED = this;
 
-    } // end mediator head
+} // end mediator head
     
     
 
@@ -119,7 +122,6 @@ tg.TG_Mediator = function (wopts, $el) {
 			// !TODO open event, bring to zoom
 			var fObj = {origin:type};
 			fObj[type] = content;
-			debug.log("fObj:", fObj);
 			this.setFilters(fObj);
 		},
 
@@ -150,6 +152,14 @@ tg.TG_Mediator = function (wopts, $el) {
 	    },
 	    
 	    
+	    focusTimeline: function(timeline_id) {
+	    	var tl = this.timelineCollection.get(timeline_id);
+	    	var fd = tl.get("focus_date");
+	    	var zl = tl.get("initial_zoom");
+	    	
+	    	this.gotoDateZoom(fd, zl);
+	    	
+	    },
 	    
 	    
 	    getScope : function () {
@@ -267,7 +277,6 @@ tg.TG_Mediator = function (wopts, $el) {
 	   	gotoPreviousEvent: function() {
 	    	var me=this,
 	    		backEvents = this.getPastEvents(true);
-				debug.log("backEvents:", backEvents);
 				
 			if (backEvents) {
 				var cb = function(ev) {
@@ -308,7 +317,6 @@ tg.TG_Mediator = function (wopts, $el) {
 		gotoNextEvent: function() {
 			var me = this,
 				fwdEvents = this.getFutureEvents(true);
-				debug.log("fwdEvents:", fwdEvents);
 			if (fwdEvents) {
 				var cb = function(ev) {
 					$(".timeglider-timeline-event").removeClass("tg-event-selected");
@@ -355,7 +363,7 @@ tg.TG_Mediator = function (wopts, $el) {
 	    	
 	    	_.each(this.eventCollection.models, function(ev) {
 	    		if (ev.get("keepCurrent")) {
-	    			// debug.log("ev has keepCurrent:", ev.get("keepCurrent"));
+	    			
 	    			kC = ev.get("keepCurrent"),
 	    			dd = ev.get("date_display");
 	    			
@@ -501,7 +509,6 @@ tg.TG_Mediator = function (wopts, $el) {
 			    } else if (src.substr(0,1) == "#") {
 					// TABLE
 					var tableData = [M.getTableTimelineData(src)];
-					// debug.log(JSON.stringify(tableData));
 					M.parseTimelineData(tableData);
 			      
 			    } else {
@@ -621,10 +628,10 @@ tg.TG_Mediator = function (wopts, $el) {
 		callback.fn(args, data);
 		
 		if (callback.display) {
-			debug.log("callback DISPLAY true...");
+			//debug.log("callback DISPLAY true...");
 			this.showSingleTimeline(data[0].id);
 		} else if (callback.toggle) {
-			debug.log("callback TOGGLE true...");
+			//debug.log("callback TOGGLE true...");
 			this.toggleTimeline(data[0].id);
 		}
 		
@@ -708,8 +715,21 @@ tg.TG_Mediator = function (wopts, $el) {
 		if (a && b) {
 	    	
 	    	this.setInitialTimelines();
-	    	$.publish(container_name + ".mediator.timelineDataLoaded");
-		}
+
+	    	if (this.timelineCollection.length == 1) {	
+	    			
+				// IF SINGLE TIMELINE
+				tl = MED.timelineCollection.at(0);
+				this.singleTimelineID = tl.get("id");
+			}
+			
+			
+			$.publish(container_name + ".mediator.timelineDataLoaded");
+			
+			
+    	}
+	    	
+		
 	},
 	
 	
@@ -1009,7 +1029,7 @@ tg.TG_Mediator = function (wopts, $el) {
 			case "custom": 
 				if (obj.action == "add") {
 					this.filters.custom = obj.fn;
-					debug.log("this.filters.custom:", this.filters.custom);
+					// debug.log("this.filters.custom:", this.filters.custom);
 				} else {
 					delete this.filters.custom;
 				}
@@ -1102,9 +1122,6 @@ tg.TG_Mediator = function (wopts, $el) {
 		this.activeTimelines = [];
 		this.toggleTimeline(id);
 		
-		debug.log("clear active timelines, ought to be just the single showing timeline ", this.activeTimelines);
-		
-		
 	},
 
 
@@ -1115,14 +1132,10 @@ tg.TG_Mediator = function (wopts, $el) {
 		// timelines and loads the new timeline by id
 
 		var tl = this.timelineCollection.get(id).attributes;
-		
-		debug.log("uh, is this..", id + " in " + this.activeTimelines + "?");
-		
+				
 		var active = _.indexOf(this.activeTimelines, id);
 		
-		debug.log("is it active??", active);
-		
-		
+	
 		if (active == -1) {
 			// timeline not active ---- bring it on
 			this.activeTimelines.push(id);
@@ -1162,7 +1175,6 @@ tg.TG_Mediator = function (wopts, $el) {
 	*/
 	reportImageSize : function (img) {
 	 
-	 	// debug.log("reporting image size...", img)
 		var ev = MED.eventCollection.get(img.id);
 		
 		if (ev.has("image")) {
