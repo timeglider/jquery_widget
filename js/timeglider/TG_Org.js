@@ -150,9 +150,9 @@
 			
 	    	// full sweep or just a tick added left or right
 			if (b.tickScope == tickScope) {
-
+				
 				// is it not yet visible?
-				if (_.indexOf(b.id, this.vis) == -1) {
+				if (_.indexOf(this.vis, b.id) == -1) {
 	
 					// it's not in the "visible" array, so add it
 					this.vis.push(b.id);

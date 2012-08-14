@@ -15,7 +15,6 @@
  relying solely on jquery.support ....
 
 
-
 /*
 ****************************************
 timeglider.TimelineView
@@ -73,10 +72,8 @@ tg.TG_TimelinePlayer = function (widget, mediator) {
 	
 	this.titleBar = true;
 	this.singleTitleHeight = 0;
-	
-	
-	
 	this.setImageLaneHeight(options.image_lane_height);
+	
 	
 	/*  references specific to the instance (rather than timeglider) so
 		one can have more than one instance of the widget on a page */ 	      
@@ -120,7 +117,7 @@ tg.TG_TimelinePlayer = function (widget, mediator) {
  	// this needs to be less than or equal to
  	// timeglider.css value for .timeglider-tick 
  	// height property
- 	this.tick_height = 29;
+ 	this.tick_height = 32;
  	
  	
  	// a state var for the left-right position of the timeline
@@ -348,7 +345,7 @@ tg.TG_TimelinePlayer = function (widget, mediator) {
 	// END CONTAINER CHAIN
 	
 	
-	this.basicFontSize = options.basic_fontsize;
+	MED.base_font_size = options.base_font_size;
 	
 	if (options.show_footer == false) {
 		$(this._views.FOOTER).css("display", "none");
@@ -374,8 +371,10 @@ tg.TG_TimelinePlayer = function (widget, mediator) {
 	
 		// doubleclicking will be used by authoring mode
 		.bind('dblclick', function(e) {
+			debug.log("foo dbl");
 			MED.registerUIEvent({name:"dblclick", event:e});		
 		})
+		
 		
 		.bind('mousewheel', function(event, delta) {
 			
@@ -416,27 +415,36 @@ tg.TG_TimelinePlayer = function (widget, mediator) {
 			// to true in main widget options
 			var dsState = me.dragScopeState;
 			
+			
+			
 			if (options.constrain_to_data && MED.activeTimelines.length == 1) {
 				
 				var $tb = $(".titleBar");			
 				var tbPos = $tb.data("lef");
 				var ctr = me.dimensions.container.centerx;
 				
-				if (dsState.state == "over-left") {
-					// set timeline left side to center of frame
-					var newPos = (-1 * tbPos) + (ctr-1);
-					$(TICKS).css("left", newPos);
-					me.dragScopeState = {state:"okay"};
-					me.registerDragging();
-					return false;
-					
-				} else if (dsState.state == "over-right") {
-					// set timeline right side to center of frame
-					var newPos = ((-1 * tbPos) + (ctr-1)) - ($tb.width() - 4);
-					$(TICKS).css("left", newPos);
-					me.dragScopeState = {state:"okay"};
-					me.registerDragging();
-					return false;
+				var evts = MED.timelineCollection.get(MED.activeTimelines[0]).get("events").length;
+				
+				// at least 2 events to constrain the timeline
+				if (evts > 1) {
+				
+					if (dsState.state == "over-left") {
+						// set timeline left side to center of frame
+						var newPos = (-1 * tbPos) + (ctr-1);
+						$(TICKS).css("left", newPos);
+						me.dragScopeState = {state:"okay"};
+						me.registerDragging();
+						return false;
+						
+					} else if (dsState.state == "over-right") {
+						// set timeline right side to center of frame
+						var newPos = ((-1 * tbPos) + (ctr-1)) - ($tb.width() - 4);
+						$(TICKS).css("left", newPos);
+						me.dragScopeState = {state:"okay"};
+						me.registerDragging();
+						return false;
+					}
+				
 				}
 			}
 			
@@ -776,6 +784,7 @@ tg.TG_TimelinePlayer.prototype = {
 				// objects to return
 				container = {"width":w, "height":h, "centerx":wc, "centery":hc, "left": lft, "offset": offset},
 				footer = {"height":f_height},
+				
 				tick = {"top":t_top, "height":t_height};
 			
  				return {container:container, tick:tick, footer:footer}
@@ -792,17 +801,7 @@ tg.TG_TimelinePlayer.prototype = {
 			
 		});
 	},
-		
-	scaleToImportance : function(imp, zoo) {
-		// flash version: return ((importance - zoomLev) * 4.5) + 100;
-		// 100 being 1:1 or 12 px
-		
-		
-		// first basic version: return imp / zoo;
-		
-		return (((imp - zoo) * 4.5) + 100) / 100;
-	},
-	
+
 	
 	displayZoomLevel : function() {
 		
@@ -1261,7 +1260,7 @@ tg.TG_TimelinePlayer.prototype = {
 			
 			leg = (timeline.get("hasLegend")) ? "<li id='legend' class='tg-legend-bt' data-timeline_id='" + tid + "'>legend</li>":"",
 			
-			tools = "<a id='tools' class='tools-bt noselect'>tools</a>",
+			tools = ""; // "<a id='tools' class='tools-bt noselect'>tools</a>",
 			
 			tmpl = "<div class='tg-single-timeline-header'>" + title + "<ul>" + inf + leg + "<li class='tg-timeline-start' data-timeline_id='" + tid + "'>start</li></ul>" + tools + "</div>";
 			
@@ -1291,7 +1290,7 @@ tg.TG_TimelinePlayer.prototype = {
   	buildImageLane: function() {
   	
   		var me = this,
-  			$imageLane = $("<div class='tg-image-lane-pull'></div>").appendTo(CONTAINER);
+  			$imageLane = $("<div class='tg-image-lane-pull'><div title='This is the image lane!' class='tg-image-lane-bg'></div></div>").appendTo(CONTAINER);
 			
 			$imageLane.draggable({
 				axis:"y",
@@ -1300,20 +1299,28 @@ tg.TG_TimelinePlayer.prototype = {
 					var $pull = $(this);
 					var ypos = $pull.position().top;
 					
-					if (ypos > 174) {
-						$pull.css("top", 174);
+					if (ypos > 175) {
+						$pull.css("top", 175);
 						return false;
-					} else if (ypos < 24) {
-						$pull.css("top", 24);
+					} else if (ypos < 5) {
+						$pull.css("top", 5);
 						return false;
 					}
 				},
 				stop:function() { 
 					me.setImageLaneHeight($(this).position().top - me.singleTitleHeight, true);
 				}
-			})
-			.css("top", me.imageLaneHeight + me.singleTitleHeight);
+			});
 
+			me.setImageLaneHandle();
+
+  	},
+  	
+  	setImageLaneHandle: function (ht) {
+  		var me = this;
+  		var newHt = parseInt(me.imageLaneHeight, 10) + parseInt(me.singleTitleHeight, 10);
+  		  		
+  		$(".tg-image-lane-pull").css("top", newHt + "px");
   	},
   
 	
@@ -2588,10 +2595,10 @@ tg.TG_TimelinePlayer.prototype = {
       			
       		if (expCol == "expanded") {
 				
-				impq = (tl.size_importance === true || tl.size_importance === 1) ? this.scaleToImportance(ev.importance, zl) : 1;
+				impq = (tl.size_importance === true || tl.size_importance === 1) ? tg.scaleToImportance(ev.importance, zl) : 1;
 
       			ev.width = (ev.titleWidth * impq) + buffer;
-      			ev.fontsize = this.basicFontSize * impq;
+      			ev.fontsize = MED.base_font_size * impq;
       			ev.left = posx;
 
 				ev.spanwidth = 0;
@@ -2668,7 +2675,6 @@ tg.TG_TimelinePlayer.prototype = {
 	
 
 	setImageLaneHeight: function(new_height, ref) {
-		
 		this.imageLaneHeight = new_height;
 		if (ref) {
 			MED.refresh();
@@ -2783,7 +2789,7 @@ tg.TG_TimelinePlayer.prototype = {
 					my: "left top",
 					at: "left top",
 					of: $(".timeglider-container"),
-					offset: "16, 24", // left, top
+					offset: "16, 8", // left, top
 					collision: "fit fit"
 				})
 				.css({"z-index":me.ztop++, "max-height":ch-64});
@@ -2792,8 +2798,9 @@ tg.TG_TimelinePlayer.prototype = {
 				$modal.find("h4").hide();
 			}
 
-
-			$(".jscroll").jScrollPane();
+			if ($.jScrollPane) {
+				$(".jscroll").jScrollPane();
+			}
 		
 		}
 		
@@ -3164,12 +3171,10 @@ tg.TG_TimelineView = Backbone.View.extend({
 			$(me.el).find(".timeline-title-span").text(me.model.get("title"));
 		});
 		
-		if (this.mediator.timelineCollection.length > 1) {
+		if (this.mediator.timelineCollection.length > 1 || tg.mode == "authoring") {
 			this.titleBar = "fullBar";
 		} else {
-		
-			this.titleBar = "hiddenBar";
-			
+			this.titleBar = "hiddenBar";	
 		}
 					
 		this.model.bind('destroy', this.remove, this);
@@ -3191,8 +3196,8 @@ tg.TG_TimelineView = Backbone.View.extend({
 		
 		if (this.titleBar == "fullBar") {
 			tmpl = "<div class='titleBar'>"
-					+ "<div class='timeline-title'><span class='tg-title-prev-events'>&lt;&lt;</span>"
-	      			+ "<span class='timeline-title-span'>${title}</span><span class='tg-title-next-events'>&gt;&gt;</span>"
+					+ "<div class='timeline-title'>"
+	      			+ "<span class='timeline-title-span'>${title}</span>"
 	      			+ "<div class='tg-timeline-env-buttons'>";
 	      	
 	      	if (this.model.get("description")) {
@@ -3260,8 +3265,6 @@ tg.TG_TimelineView = Backbone.View.extend({
 
 });
 
-
-
 /*
       zoomTree
       ****************
@@ -3272,100 +3275,104 @@ tg.TG_TimelineView = Backbone.View.extend({
       rather to 1 month to 10 years. For now, it's static according to 
       a "universal" system.
 */
+
 tg.zoomTree = [
     {},
-    {unit:"da", width:35000,level:1, label:"5 hours"},
-    {unit:"da", width:17600,level:2, label:"7 hours"},
-    {unit:"da", width:8800,level:3, label:"10 hours"},
-    {unit:"da", width:4400,level:4, label:"12 hours"},
-    {unit:"da", width:2200, level:5, label:"14 hours"},
-    {unit:"da", width:1100, level:6, label:"17 hours"},
-    {unit:"da", width:550, level:7, label:"22 hours"},
-    {unit:"da", width:432, level:8, label:"1 DAY"},
-    {unit:"da", width:343, level:9, label:"1.5 days"},
-    {unit:"da", width:272, level:10, label:"2 days"},
-    {unit:"da", width:216, level:11, label:"2.5 days"},
-    {unit:"da", width:171, level:12, label:"3 days"},
-    {unit:"da", width:136, level:13, label:"3.5 days"},
-    {unit:"da", width:108, level:14, label:"4 days"},
+    {unit:"da", width:35000,level:1, label:"30 minutes"},
+    {unit:"da", width:17600,level:2, label:"1 hour"},
+    {unit:"da", width:8800,level:3, label:"2 hours"},
+    {unit:"da", width:4400,level:4, label:"5 hours"},
+    {unit:"da", width:2200, level:5, label:"10 hours"},
+    {unit:"da", width:1100, level:6, label:"1 DAY"},
+    {unit:"da", width:550, level:7, label:"40 hours"},
+    {unit:"da", width:432, level:8, label:"2 days"},
+    {unit:"da", width:343, level:9, label:"2.5 days"},
+    {unit:"da", width:272, level:10, label:"3 days"},
+    {unit:"da", width:216, level:11, label:"4 days"},
+    {unit:"da", width:171, level:12, label:"5 days"},
+    {unit:"da", width:136, level:13, label:"1 WEEK"},
+    {unit:"da", width:108, level:14, label:"8 days"},
     /* 108 * 30 = equiv to a 3240 month */
-    {unit:"mo", width:2509, level:15, label:"6 days"},
-    {unit:"mo", width:1945, level:16, label:"1 WEEK"},
-    {unit:"mo", width:1508, level:17, label:"10 days"},
-    {unit:"mo", width:1169, level:18, label:"2 weeks"},
-    {unit:"mo", width:913, level:19, label:"2.5 weeks"},
-    {unit:"mo", width:719, level:20, label:"3 weeks"},
-    {unit:"mo", width:566, level:21, label:"3.5 weeks"},
-    {unit:"mo", width:453, level:22, label:"1 MONTH"},
-    {unit:"mo", width:362, level:23, label:"5.5 weeks"},
-    {unit:"mo", width:290, level:24, label:"7 weeks"},
-    {unit:"mo", width:232, level:25, label:"2 months"},
-    {unit:"mo", width:186, level:26, label:"2.5 months"},
-    {unit:"mo", width:148, level:27, label:"3 months"},
-    {unit:"mo", width:119, level:28, label:"4 months"},
-    {unit:"mo", width:95,  level:29, label:"5 months"},
-    {unit:"mo", width:76,  level:30, label:"6 months"},
+    {unit:"mo", width:2509, level:15, label:"10 days"},
+    {unit:"mo", width:1945, level:16, label:"2 WEEKS"},
+    {unit:"mo", width:1508, level:17, label:"18 days"},
+    {unit:"mo", width:1169, level:18, label:"3 weeks"},
+    {unit:"mo", width:913, level:19, label:"1 MONTH"},
+    {unit:"mo", width:719, level:20, label:"5 weeks"},
+    {unit:"mo", width:566, level:21, label:"6 weeks"},
+    {unit:"mo", width:453, level:22, label:"2 MONTHS"},
+    
+    
+    {unit:"mo", width:362, level:23, label:"10 weeks"},
+    {unit:"mo", width:290, level:24, label:"3 MONTHS"},
+    {unit:"mo", width:232, level:25, label:"4 months"},
+    {unit:"mo", width:186, level:26, label:"5 months"},
+    {unit:"mo", width:148, level:27, label:"6 MONTHS"},
+    {unit:"mo", width:119, level:28, label:"7 months"},
+    {unit:"mo", width:95,  level:29, label:"9 months"},
+    {unit:"mo", width:76,  level:30, label:"1 YEAR"},
     /* 76 * 12 = equiv to a 912 year */
-    {unit:"ye", width:723, level:31, label:"9 months"},
-    {unit:"ye", width:573, level:32, label:"1 YEAR"},
-    {unit:"ye", width:455, level:33, label:"1.25 years"},
-    {unit:"ye", width:361, level:34, label:"1.5 years"},
-    {unit:"ye", width:286, level:35, label:"2 years"},
-    {unit:"ye", width:227, level:36, label:"2.5 years"},
-    {unit:"ye", width:179, level:37, label:"3 years"},
-    {unit:"ye", width:142, level:38, label:"4 years"},
-    {unit:"ye", width:113,  level:39, label:"5 years"},
-    {unit:"ye", width:89,  level:40, label:"6 years"},
-    {unit:"de", width:705, level:41, label:"8 years"},
-    {unit:"de", width:559, level:42, label:"10 years"},
-    {unit:"de", width:443, level:43, label:"13 years"},
+    {unit:"ye", width:723, level:31, label:"15 months"},
+    {unit:"ye", width:573, level:32, label:"18 months"},
+    {unit:"ye", width:455, level:33, label:"2 YEARS"},
+    {unit:"ye", width:361, level:34, label:"2.5 years"},
+    {unit:"ye", width:286, level:35, label:"3 years"},
+    {unit:"ye", width:227, level:36, label:"4 years"},
+    {unit:"ye", width:179, level:37, label:"5 years"},
+    {unit:"ye", width:142, level:38, label:"6 years"},
+    {unit:"ye", width:113,  level:39, label:"8 years"},
+    {unit:"ye", width:89,  level:40, label:"10 years"},
+    {unit:"de", width:705, level:41, label:"13 years"},
+    {unit:"de", width:559, level:42, label:"16 years"},
+    {unit:"de", width:443, level:43, label:"20 years"},
 
-    {unit:"de", width:302, level:44, label:"16 years"},
-    {unit:"de", width:240, level:45, label:"20 years"},
-    {unit:"de", width:190, level:46, label:"25 years"},
-    {unit:"de", width:150, level:47, label:"30 years"},
-    {unit:"de", width:120, level:48, label:"40 years"},
-    {unit:"de", width:95,  level:49, label:"50 years"},
-    {unit:"de", width:76,  level:50, label:"65 years"},
-    {unit:"ce", width:600, level:51, label:"80 years"},
-    {unit:"ce", width:480, level:52, label:"100 years"},
-    {unit:"ce", width:381, level:53, label:"130 years"},
-    {unit:"ce", width:302, level:54, label:"160 years"},
-    {unit:"ce", width:240, level:55, label:"200 years"},
-    {unit:"ce", width:190, level:56, label:"250 years"},
-    {unit:"ce", width:150, level:57, label:"300 years"},
-    {unit:"ce", width:120, level:58, label:"400 years"},
-    {unit:"ce", width:95,  level:59, label:"500 years"},
-    {unit:"ce", width:76,  level:60, label:"600 years"},
-    {unit:"thou", width:603, level:61, label:"1000 years"},
-    {unit:"thou", width:478, level:62, label:"1200 years"},
-    {unit:"thou", width:379, level:63, label:"1800 years"},
-    {unit:"thou", width:301, level:64, label:"160 years"},
-    {unit:"thou", width:239, level:65, label:"xxx years"},
-    {unit:"thou", width:190, level:66, label:"xxx years"},
-    {unit:"thou", width:150, level:67, label:"xxx years"},
-    {unit:"thou", width:120, level:68, label:"xxx years"},
-    {unit:"thou", width:95, level:69, label:"8,000 years"},
-    {unit:"thou", width:76,  level:70, label:"10,000 years"},
+    {unit:"de", width:302, level:44, label:"25 years"},
+    {unit:"de", width:240, level:45, label:"30 years"},
+    {unit:"de", width:190, level:46, label:"40 years"},
+    {unit:"de", width:150, level:47, label:"50 years"},
+    {unit:"de", width:120, level:48, label:"65 years"},
+    {unit:"de", width:95,  level:49, label:"80 years"},
+    {unit:"de", width:76,  level:50, label:"100 YEARS"},
+    {unit:"ce", width:600, level:51, label:"130 years"},
+    {unit:"ce", width:480, level:52, label:"160 years"},
+    {unit:"ce", width:381, level:53, label:"200 YEARS"},
+    {unit:"ce", width:302, level:54, label:"250 years"},
+    {unit:"ce", width:240, level:55, label:"300 years"},
+    {unit:"ce", width:190, level:56, label:"400 years"},
+    {unit:"ce", width:150, level:57, label:"500 YEARS"},
+    {unit:"ce", width:120, level:58, label:"600 years"},
+    {unit:"ce", width:95,  level:59, label:"1000 YEARS"},
+    {unit:"ce", width:76,  level:60, label:"1100 years"},
+    {unit:"thou", width:603, level:61, label:"1500 years"},
+    
+    {unit:"thou", width:478, level:62, label:"2000 years"},
+    {unit:"thou", width:379, level:63, label:"2500 years"},
+    {unit:"thou", width:301, level:64, label:"3000 years"},
+    {unit:"thou", width:239, level:65, label:"4000 years"},
+    {unit:"thou", width:190, level:66, label:"5000 YEARS"},
+    {unit:"thou", width:150, level:67, label:"6000 years"},
+    {unit:"thou", width:120, level:68, label:"7500 years"},
+    {unit:"thou", width:95, level:69, label:"10,000 YEARS"},
+    {unit:"thou", width:76,  level:70, label:"12,000 years"},
     {unit:"tenthou", width:603, level:71, label:"15,000 years"},
-    {unit:"tenthou", width:358, level:72, label:"20,000 years"},
-    {unit:"tenthou", width:213, level:73, label:"30,000 years"},
-    {unit:"tenthou", width:126, level:74, label:"60,000 years"},
-    {unit:"tenthou", width:76, level:75, label:"100,000 years"},
-    {unit:"hundredthou", width:603, level:76, label:"180,000 years"},
-    {unit:"hundredthou", width:358, level:77, label:"300,000 years"},
-    {unit:"hundredthou", width:213, level:78, label:"500,000 years"},
-    {unit:"hundredthou", width:126, level:79, label:"800,000 years"},
+    {unit:"tenthou", width:358, level:72, label:"25,000 years"},
+    {unit:"tenthou", width:213, level:73, label:"40,000 years"},
+    {unit:"tenthou", width:126, level:74, label:"70,000 years"},
+    {unit:"tenthou", width:76, level:75, label:"100,000 YEARS"},
+    {unit:"hundredthou", width:603, level:76, label:"150,000 years"},
+    {unit:"hundredthou", width:358, level:77, label:"250,000 years"},
+    {unit:"hundredthou", width:213, level:78, label:"400,000 years"},
+    {unit:"hundredthou", width:126, level:79, label:"700,000 years"},
     {unit:"hundredthou", width:76,  level:80, label:"1 million years"},
-    {unit:"mill", width:603, level:81, label:"1.2 million years"},
-    {unit:"mill", width:358, level:82, label:"2 million years"},
-    {unit:"mill", width:213, level:83, label:"3 million years"},
-    {unit:"mill", width:126, level:84, label:"5 million years"},
+    {unit:"mill", width:603, level:81, label:"1.5 million years"},
+    {unit:"mill", width:358, level:82, label:"3 million years"},
+    {unit:"mill", width:213, level:83, label:"4 million years"},
+    {unit:"mill", width:126, level:84, label:"6 million years"},
     {unit:"mill", width:76, level:85, label:"10 million years"},
     {unit:"tenmill", width:603, level:86, label:"15 million years"},
-    {unit:"tenmill", width:358, level:87, label:"30 million years"},
-    {unit:"tenmill", width:213, level:88, label:"50 million years"},
-    {unit:"tenmill", width:126, level:89, label:"80 million years"},
+    {unit:"tenmill", width:358, level:87, label:"25 million years"},
+    {unit:"tenmill", width:213, level:88, label:"40 million years"},
+    {unit:"tenmill", width:126, level:89, label:"70 million years"},
     {unit:"tenmill", width:76,  level:90, label:"100 million years"},
     {unit:"hundredmill", width:603, level:91, label:"120 million years"},
     {unit:"hundredmill", width:358, level:92, label:"200 million years"},
@@ -3410,12 +3417,31 @@ tg.zoomTree = [
     
 /* a div with id of "hiddenDiv" has to be pre-loaded */
 tg.getStringWidth  = function (str) {
-  if (str) {
-		var ms = $("#timeglider-measure-span").html(str);
-		return ms.width();
-		}
+	
+	var $ms = $("#timeglider-measure-span");
+	$ms.css("font-size", MED.base_font_size);
+	
+  	if (str) {
+  		// for good measure, make it a touch larger
+		return $ms.html(str).width() + MED.base_font_size;
+	} else {
+		return false;
+	}
 };
-    
+
+
+		
+tg.scaleToImportance = function(imp, zoom_level) {
+		// flash version: return ((importance - zoomLev) * 4.5) + 100;
+		// 100 being 1:1 or 12 px
+
+		// first basic version: return imp / zoo;
+		
+		return (((imp - zoom_level) * 4.5) + 100) / 100;
+},
+	
+	
+	
         
 String.prototype.removeWhitespace = function () {
 	var rg = new RegExp( "\\n", "g" )

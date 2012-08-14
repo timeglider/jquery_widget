@@ -28,8 +28,7 @@
 
 
 	tg.TG_EventCollection = Backbone.Collection.extend({
-		
-		// "master hash"
+			
 		eventHash:{},
 		
 		comparator: function(ev) {
@@ -46,6 +45,16 @@
 		
 		model: tg.TG_Event
 	});
+	
+	
+	
+	tg.adjustAllTitleWidths = function (collection) {
+		
+		_.each(collection.models, function(ev) {
+			var nw = tg.getStringWidth(ev.get("title"));
+			ev.set({"titleWidth":nw})
+		})
+	};
   
 	
 	
@@ -101,6 +110,8 @@
 			ev.title = ev.title.replace(/&amp;/g, "&");
 			ev.description = ev.description || "";
 			ev.titleWidth = tg.getStringWidth(ev.title);
+			
+			ev.y_position = ev.y_position || 0;
 
 			this.set(ev);
 			
@@ -258,17 +269,24 @@
 
 	
 	});
-	
-	
-	
+
+
 	tg.TG_TimelineCollection = Backbone.Collection.extend({
+		initialize:function() {
+			debug.log("hello collection");
+		},
 		model: tg.TG_Timeline
 	});
+	
 	
 	
 	// map model onto larger timeglider namespace
 	/////////////////////////////////////////////
 	tg.TG_Timeline = Backbone.Model.extend({
+	
+		initialize: function() {
+			debug.log("init TG_Timeline");
+		},
 		
 		urlRoot : '/timeline',
 		

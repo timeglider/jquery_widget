@@ -51,7 +51,7 @@
 			show_centerline:true, 
 			data_source:"", 
 			culture:"en",
-			basic_fontsize:12, 
+			base_font_size:16, 
 			mouse_wheel: "zoom", // !TODO | pan 
 			initial_timeline_id:'',
 			icon_folder:'js/timeglider/icons/',
@@ -137,7 +137,8 @@
 				MED = new tg.TG_Mediator(this.options, this.element);
 				timelinePlayer = new tg.TG_TimelinePlayer(this, MED);
 				
-			
+				this.player = timelinePlayer;
+				
 				// after timelinePlayer is created this stuff can be done
 				MED.setFocusDate(new TG_Date(this.options.initial_focus));
 				
@@ -201,7 +202,6 @@
 		},
 		
 		getMediator : function () {
-			debug.log("hello, get Med", MED);
 			return MED;
 		},
 		

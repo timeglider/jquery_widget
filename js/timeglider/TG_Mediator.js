@@ -52,6 +52,8 @@ tg.TG_Mediator = function (wopts, $el) {
     
     // setting this without setTimeoffset to avoid refresh();
     this.timeOffset = TG_Date.getTimeOffset(options.timezone);
+    
+    this.base_font_size = 14;
   
     this.fixed_zoom = (this.max_zoom == this.min_zoom) ? true : false;
     this.gesturing = false;
@@ -98,7 +100,12 @@ tg.TG_Mediator = function (wopts, $el) {
 
 	tg.TG_Mediator.prototype = {
 	
-		
+	
+		// clears the events and timelines collections
+		emptyData: function() {
+			this.eventCollection.reset({});
+			this.timelineCollection.reset({});
+		}
 		
 		
 		focusToEvent: function(ev, callback){
@@ -491,7 +498,7 @@ tg.TG_Mediator = function (wopts, $el) {
 	* !TODO: create option for XML?
 	*/
 	loadTimelineData : function (src, callback) {
-		
+			
 		var M = this; // model ref
 		// Allow to pass in either the url for the data or the data itself.
 		
@@ -655,6 +662,9 @@ tg.TG_Mediator = function (wopts, $el) {
 	  
 			ondeck = data[i];
 			ondeck.mediator = M;
+			
+			debug.log("new tg.TG_timeline:", ondeck);
+			
 			ti = new tg.TG_Timeline(ondeck).toJSON(); // the timeline
 					
 			if (ti.id.length > 0) {
@@ -667,13 +677,15 @@ tg.TG_Mediator = function (wopts, $el) {
 
 		// TYPICALLY A SECONDARY (user-called from page) LOAD
 		// WHICH MIGHT HAVE CUSTOMIZD CALLBACK ACTIONS...
-		if (callback && (typeof callback.fn == "function" || typeof callback == "function")) {
 		
+		if (callback && (typeof callback.fn == "function" || typeof callback == "function")) {
+			debug.log("callback for timelineLoaded...");
+			
 			if (typeof callback == "function") {
 				callback = {fn:callback};
 			}
 			
-			// $.publish(container_name + ".mediator.timelineDataLoaded");
+			$.publish(container_name + ".mediator.timelineDataLoaded");
 		
 			setTimeout(function() {
 				M.runLoadedTimelineCallback(callback, data);
@@ -685,7 +697,6 @@ tg.TG_Mediator = function (wopts, $el) {
 			}
 
 		} 
-		
 		
 		// THE INITIAL LOAD
 
@@ -742,7 +753,7 @@ tg.TG_Mediator = function (wopts, $el) {
 		this.timelineCollection.add(obj);
       
 		// MAY NOT NEED THIS WITH Backbone Collection change-binding
-		$.publish(container_name + ".mediator.timelineListChangeSignal");
+		// $.publish(container_name + ".mediator.timelineListChangeSignal");
     },
     
 
@@ -959,11 +970,12 @@ tg.TG_Mediator = function (wopts, $el) {
 		var me = this;
 		
 		switch(info.name) {
-			case "dblclick": 
+			case "dblclick": case "dbltap":
 			// info comes with 
 				
 				var clickDate = me.getDateFromOffset(info.event.pageX);
 				////////////////////////////
+				debug.log("container name:", container_name);
 				
 				$.publish(container_name + ".mediator.dblclick", {date:clickDate});
 				
@@ -1132,6 +1144,7 @@ tg.TG_Mediator = function (wopts, $el) {
 		// timelines and loads the new timeline by id
 
 		var tl = this.timelineCollection.get(id).attributes;
+		var refresh = false;
 				
 		var active = _.indexOf(this.activeTimelines, id);
 		
@@ -1150,18 +1163,21 @@ tg.TG_Mediator = function (wopts, $el) {
 			// resetting zoomLevel will refresh
 			this.setZoomLevel(tl.initial_zoom);
 			
+			if (tl.initial_zoom == this.getZoomLevel()) {
+				refresh = true;
+			}
+			
 		
 		} else {
-		
 			// it's active, remove it
 			this.activeTimelines.splice(active,1);
-			
-			
-			// this will change the menu list/appearance
+			refresh = true;
 		}
 		
+		if (refresh) {
+			this.refresh();
+		}
 		
-		this.refresh();
 		$.publish(container_name + ".mediator.activeTimelinesChange");
 	
 	},
