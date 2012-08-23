@@ -35,7 +35,6 @@ tg.TG_Mediator = function (wopts, $el) {
    	
    	container_name = wopts.base_namespace + "#" + $container.attr("id");
 
-
     // these relate to the display ------ not individual timeline attributes
     this._focusDate = {};
     this._zoomInfo = {};
@@ -73,6 +72,7 @@ tg.TG_Mediator = function (wopts, $el) {
     this.timelineDataLoaded = false,
     
     // this.setZoomLevel(options.initial_zoom);
+    this.initial_timelines = [];
     this.initial_timeline_id = options.initial_timeline_id || "";
     this.sole_timeline_id = "";
     
@@ -105,7 +105,7 @@ tg.TG_Mediator = function (wopts, $el) {
 		emptyData: function() {
 			this.eventCollection.reset({});
 			this.timelineCollection.reset({});
-		}
+		},
 		
 		
 		focusToEvent: function(ev, callback){
@@ -489,6 +489,22 @@ tg.TG_Mediator = function (wopts, $el) {
 			return {"first":startSec, "last":endSec};
 	    
 	    },
+	    
+	    
+	    
+	    
+    removeFromActive: function (timeline_id) {
+    	var active = _.indexOf(this.activeTimelines,timeline_id);
+    	
+    	// if it's in the active array
+    	if (active != -1) {
+			this.activeTimelines.splice(active,1);
+			return true;
+		} else {
+			return false;
+		}
+		
+    },
     
     
     
@@ -501,9 +517,10 @@ tg.TG_Mediator = function (wopts, $el) {
 			
 		var M = this; // model ref
 		// Allow to pass in either the url for the data or the data itself.
-		
+
 		if (src) {
 		  
+		  	
 			// if we've not loaded it already!
 			if (_.indexOf(M.loadedSources, src) == -1) {
 			
@@ -535,7 +552,7 @@ tg.TG_Mediator = function (wopts, $el) {
 		
 		
 		} else {
-		
+			
 		  // NO INITIAL DATA:
 		  // That's cool. We still build the timeline
 		  // focusdate has been set to today
@@ -628,7 +645,6 @@ tg.TG_Mediator = function (wopts, $el) {
 	
 	
 	runLoadedTimelineCallback: function(callback, data) {
-	
 		
 		var args = callback.args || "";
 				
@@ -650,8 +666,33 @@ tg.TG_Mediator = function (wopts, $el) {
 	* @param data {object} Multiple (1+) timelines object 
 	* derived from data in loadTimelineData
 	*/
-	parseTimelineData : function (data, callback) {
+	parseTimelineData : function (json, callback) {
 			
+		var data = "",
+			me = this;
+		
+		if (typeof json.presentation == "string") {
+			
+			timeglider.mode = "presentation";
+			
+			data = json.timelines;
+			
+			// get presentation info
+			me.initial_timelines = json.initial_timelines;
+			
+			// ALSO, LEGEND
+			me.presentation = {
+				title:json.title,
+				description:json.description,
+				open_modal:json.open_modal,
+				focus_date:new tg.TG_Date(json.focus_date),
+				initial_zoom:json.initial_zoom
+			}
+		
+		} else {
+			data = json;
+		}
+		
 		var M = this,
 			ct = 0,
 			dl = data.length, 
@@ -662,9 +703,7 @@ tg.TG_Mediator = function (wopts, $el) {
 	  
 			ondeck = data[i];
 			ondeck.mediator = M;
-			
-			debug.log("new tg.TG_timeline:", ondeck);
-			
+					
 			ti = new tg.TG_Timeline(ondeck).toJSON(); // the timeline
 					
 			if (ti.id.length > 0) {
@@ -674,31 +713,29 @@ tg.TG_Mediator = function (wopts, $el) {
 			
 	
 		}
-
+		
 		// TYPICALLY A SECONDARY (user-called from page) LOAD
 		// WHICH MIGHT HAVE CUSTOMIZD CALLBACK ACTIONS...
 		
 		if (callback && (typeof callback.fn == "function" || typeof callback == "function")) {
-			debug.log("callback for timelineLoaded...");
+			
 			
 			if (typeof callback == "function") {
 				callback = {fn:callback};
 			}
 			
-			$.publish(container_name + ".mediator.timelineDataLoaded");
-		
+			// $.publish(container_name + ".mediator.timelineDataLoaded");
+
 			setTimeout(function() {
 				M.runLoadedTimelineCallback(callback, data);
 			}, 100);
-			
 			
 			if (callback.display || callback.toggle) {
 				return false;
 			}
 
 		} 
-		
-		// THE INITIAL LOAD
+	
 
 		if (ct === 0) {
 			alert("ERROR loading data: Check JSON with jsonLint");
@@ -719,14 +756,15 @@ tg.TG_Mediator = function (wopts, $el) {
 	*
 	*/
 	tryLoading : function () {
-	
+		
 		var a = (this.imagesSized == this.imagesToSize),
 	    	b = (this.timelineDataLoaded == true);
 	
+		
 		if (a && b) {
 	    	
 	    	this.setInitialTimelines();
-
+						
 	    	if (this.timelineCollection.length == 1) {	
 	    			
 				// IF SINGLE TIMELINE
@@ -766,31 +804,51 @@ tg.TG_Mediator = function (wopts, $el) {
     */
     setInitialTimelines : function () {
         
-		var me = this,
-			initial_timelines = this.initial_timeline_id,
+		var me = this;
+		
+		// PART I
+		// What are the initially loaded timelines (ids) ?
+			
+		if (me.initial_timelines.length > 0) {
+			debug.log("initial_timelines:", me.initial_timelines);
+			
+			me.activeTimelines = me.initial_timelines;			
+		
+		} else {			
+			// initial timelines set by widget settings
+			var initial_timelines = me.initial_timeline_id,
 			first_focus_id = "";
 			
-		// i.e. really, it's an array
-      	if (typeof initial_timelines == "object") {
-      		// set first timeline in array as one to focus on
-      		first_focus_id = this.initial_timeline_id[0];
-      		// make all specified ids active
-      		_.each(initial_timelines, function (id) {
-      			me.activeTimelines.push(id);
-      		});
+			// i.e. it's an array
+	      	if (typeof initial_timelines == "object") {
+	      		// set first timeline in array as one to focus on
+	      		first_focus_id = this.initial_timeline_id[0];
+	      		// make all specified ids active
+	      		_.each(initial_timelines, function (id) {
+	      			me.activeTimelines.push(id);
+	      		});
+	      		
+	      	} else if (initial_timelines.length > 0){
+	      		// not an array: a string would be single id or ""
+	      		first_focus_id = this.initial_timeline_id || this.sole_timeline_id;
+	      		me.activeTimelines = [first_focus_id];
+	      	} else if (this.timelineCollection.length > 0) {
+	      		// in case there is no initial id
+	      		first_focus_id = this.timelineCollection.pluck("id")[0];
+	      		me.activeTimelines = [first_focus_id];
+	      	}
+	    }
+	    
+	    // PART II
+	    // Set the timeline up according to initial_timeline
+	    // or single timeline or presentation
+	      
+	    
+      	if (timeglider.mode == "presentation") {
       		
-      	} else if (initial_timelines.length > 0){
-      		// not an array: a string would be single id or ""
-      		first_focus_id = this.initial_timeline_id || this.sole_timeline_id;
-      		me.activeTimelines = [first_focus_id];
-      	} else if (this.timelineCollection.length > 0) {
-      		// in case there is no initial id
-      		first_focus_id = this.timelineCollection.pluck("id")[0];
-      		me.activeTimelines = [first_focus_id];
-      	}
-      	
-      	
-      	if (timeglider.mode == "authoring") {
+      		// do nothing??
+      		
+      	} else if (timeglider.mode == "authoring") {
       		// no timelines loaded right away
       		me.setZoomLevel(40);
       		
@@ -975,7 +1033,6 @@ tg.TG_Mediator = function (wopts, $el) {
 				
 				var clickDate = me.getDateFromOffset(info.event.pageX);
 				////////////////////////////
-				debug.log("container name:", container_name);
 				
 				$.publish(container_name + ".mediator.dblclick", {date:clickDate});
 				
@@ -1001,7 +1058,7 @@ tg.TG_Mediator = function (wopts, $el) {
 				this.filters.include = obj.include;
 				this.filters.exclude = obj.exclude;
 			break;
-			
+						
 			
 			case "tags":
 				if (obj.tags) {
@@ -1144,6 +1201,7 @@ tg.TG_Mediator = function (wopts, $el) {
 		// timelines and loads the new timeline by id
 
 		var tl = this.timelineCollection.get(id).attributes;
+		
 		var refresh = false;
 				
 		var active = _.indexOf(this.activeTimelines, id);

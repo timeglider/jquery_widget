@@ -113,10 +113,19 @@
     
     	var tickScope = args.tickScope;
     	var ceiling = args.ceiling;
+        	
       	this.onIZoom = args.onIZoom;
       	      
 		if (tickScope == "sweep") { 
 			this.vis = [];
+		}
+		
+		if (args.inverted) {
+			// top down
+			this.pol = 1;
+		} else {
+			// bottom up
+			this.pol = -1;
 		}
 	
 		this.freshBlocks.sort(sortBlocksByImportance);
@@ -263,7 +272,7 @@
 								// pad inverted (polarity 1) events to exceed the height
 								// of the timeline title bar; pad "normal" top-up events
 								// to have some space between them and the title bar
-								south_padding = (me.pol === 1) ? 42 : -12;
+								south_padding = (me.pol === 1) ? 24 : -8;
 							
 								
 							 

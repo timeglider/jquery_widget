@@ -6,17 +6,22 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 
 
+	<script type="text/javascript" src="https://use.typekit.com/hjz1sud.js"></script>
+	<script type="text/javascript">try{Typekit.load();}catch(e){}</script>
+
 <link rel="stylesheet" href="css/aristo/jquery-ui-1.8.5.custom.css" type="text/css" media="screen" title="no title" charset="utf-8">
 
 <link rel="stylesheet" href="js/timeglider/Timeglider.css" type="text/css" media="screen" title="no title" charset="utf-8">
 
 
+
+
+
+
 <style type='text/css'>
-		
 		body {
-			font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+			font-family:"franklin-gothic-urw-cond", Helvetica, Arial, sans-serif;
 		}
-		
 		#p1 {
 			margin:32px;
 			margin-bottom:0;
@@ -64,6 +69,15 @@
 			width:180px;
 		}
 		
+		
+		*.no-select {
+		-moz-user-select: -moz-none;
+		-khtml-user-select: none;
+		-webkit-user-select: none;
+		user-select: none;
+		}
+
+
 		
 		</style>
 </head>
@@ -155,10 +169,10 @@
 					debug.log("ev hover:", ev);
 				},
 				*/
-				"min_zoom":2, 
-				"max_zoom":100, 
+				"min_zoom":10, 
+				"max_zoom":70, 
 				"icon_folder":"js/timeglider/icons/",
-				"data_source":"json_tests/bce.json",
+				"data_source":"json_tests/perry_craig.json",
 				"show_footer":true,
 				"display_zoom_level":true,
 				"constrain_to_data":false,

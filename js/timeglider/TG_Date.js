@@ -11,7 +11,7 @@
 // initial declaration of timeglider object for widget
 // authoring app will declare a different object, so
 // this will defer to window.timeglider
-timeglider = window.timeglider || {version:"0.1.0"};
+timeglider = window.timeglider || {mode:"basic", version:"0.1.0"};
 
 
 
