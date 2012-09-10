@@ -52,7 +52,7 @@ tg.TG_Mediator = function (wopts, $el) {
     // setting this without setTimeoffset to avoid refresh();
     this.timeOffset = TG_Date.getTimeOffset(options.timezone);
     
-    this.base_font_size = 14;
+    this.base_font_size = 12;
   
     this.fixed_zoom = (this.max_zoom == this.min_zoom) ? true : false;
     this.gesturing = false;
@@ -70,6 +70,9 @@ tg.TG_Mediator = function (wopts, $el) {
     this.imagesSized = 0;
     this.imagesToSize = 0;
     this.timelineDataLoaded = false,
+    
+    this.image_lane_height = 0;
+    
     
     // this.setZoomLevel(options.initial_zoom);
     this.initial_timelines = [];
@@ -131,7 +134,21 @@ tg.TG_Mediator = function (wopts, $el) {
 			fObj[type] = content;
 			this.setFilters(fObj);
 		},
-
+		
+		
+		setImageLaneHeight: function(new_height, ref, set_ui) {
+			this.image_lane_height = new_height;
+			
+			if (set_ui) {
+				$.publish(container_name + ".mediator.imageLaneHeightSetUi");
+			}
+			
+			if (ref) {
+				this.refresh();
+			}
+			
+			
+		},
 		
 
 	    /* PUBLIC METHODS MEDIATED BY $.widget front */
@@ -167,6 +184,53 @@ tg.TG_Mediator = function (wopts, $el) {
 	    	this.gotoDateZoom(fd, zl);
 	    	
 	    },
+	    
+	    
+	    
+	    loadPresentation: function(presentation_object) {
+	    	
+	    	var me = this,
+	    		po = presentation_object,
+	    		tls = po.timelines,
+	    		tid = "",
+	    		active = [],
+	    		inverted = 0,
+	    		bottom = 0,
+	    		display = "expanded",
+	    		real_tl = {};
+	    	
+	    	if (po.timelines.length > 0) {
+	    		
+	    		_.each(tls, function(tl) {
+	    			if (tl.open == 1) {
+		    			tid = tl.timeline_id;
+		    			active.push(tid);
+		    			bottom = tl.bottom || 30;
+		    			display = tl.display || "expanded";
+		    			inverted = tl.inverted || 0;
+		    			
+		    			real_tl = me.timelineCollection.get(tid);
+		    			real_tl.set({"inverted":inverted, "display":display, "bottom":bottom});
+	    			}
+	    		});	    		
+	    		
+	    		me.setFocusDate(new tg.TG_Date(po.focus_date));
+	    		me.activeTimelines = active;
+	    		me.setZoomLevel(po.initial_zoom);
+				
+				me.setImageLaneHeight(po.image_lane_height || 0, false, true);
+				
+				
+				me.refresh();
+				
+				
+
+	    	} else {
+	    		// WTF no timelines	
+	    		alert("There are no timelines in this presentation...");
+	    		return false;
+	    	}
+	    },	
 	    
 	    
 	    getScope : function () {
@@ -539,7 +603,25 @@ tg.TG_Mediator = function (wopts, $el) {
 			    	// FROM NEW JSON
 	
 			        $.getJSON(src, function (data) {
-						M.parseTimelineData(data, callback);
+			        
+			        	if (data.error) {
+			        	
+			        		if (data.password_required == 1) {
+			        			
+			        			// set up a password field!
+			        			alert("This presentation requires a password. Here at Timeglider, we're rebuilding our presentation system. Come back soon!");
+			        			
+			        		} else {
+			        			// some other kind of error
+			        			alert(data.error);
+			        		}
+			        		
+			        		
+			        		return false;
+			        	} else {
+			        		M.parseTimelineData(data, callback);
+			        	}
+						
 			        });
 			
 			    }// end [obj vs remote]

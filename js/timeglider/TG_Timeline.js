@@ -404,11 +404,20 @@
 						// replaced by date_display
 						ddisp = ev.date_display || ev.date_limit || "da";
 					}
-					
-					
-					
-					
+
 					ev.date_display = ddisp.toLowerCase().substr(0,2);
+
+					if (ev.link) {
+						if (typeof ev.link == "string" && ev.link.substr(0,4) == "http") {
+							// make an array
+							ev.link = [{"url":ev.link, "label":"link"}]
+						}
+					} else {
+						ev.link = "";
+					}
+
+					ev.date_display = ddisp.toLowerCase().substr(0,2);
+
 								
 					// if a timezone offset is set on the timeline, adjust
 					// any events that do not have the timezone set on them
@@ -438,7 +447,7 @@
 					
 					// haven't parsed the image/image_class business...
 					if (ev.image) {
-						
+						debug.log("has image!");
 						if (ev.image.display_class != "inline") { 
 							tdata.hasImageLane = true; 
 						}

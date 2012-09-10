@@ -217,7 +217,7 @@
 }
 
 
-.tg-timeline-envelope .titleBar .timeline-title.timeline-inverted {
+.tg-timeline-envelope.inverted .titleBar .timeline-title {
 	bottom:0;
 }
 
@@ -232,13 +232,13 @@
 }
 
 
-.timeline-title-span {
+.tg-timeline-envelope .timeline-title .timeline-title-span {
 	white-space: nowrap;
 	
 	float:left;
 	display:block;
-	font-size:14px;
-	color:#FFF;
+	font-size:16px;
+	color:#fdfbf4;
 	
 	-webkit-border-bottom-right-radius: 4px;
 	-webkit-border-bottom-left-radius: 4px;
@@ -248,11 +248,13 @@
 	border-bottom-left-radius: 4px;
 
 	background-color:rgba(114,109,98,0.8);
-	padding:4px 8px;
-	margin-top:0px;
+	padding:6px 8px 3px 8px;
+	margin-top:2px;
+	
+	text-shadow:1px 1px 0px #2f2c28;
 }
 
-.timeline-title.timeline-inverted .timeline-title-span {
+.tg-timeline-envelope.inverted .timeline-title .timeline-title-span {
 	
 	-webkit-border-bottom-right-radius: 0;
 	-webkit-border-bottom-left-radius: 0;
@@ -260,7 +262,6 @@
 	-moz-border-radius-bottomleft: 0;
 	border-bottom-right-radius: 0;
 	border-bottom-left-radius: 0;
-	
 	
 	-webkit-border-top-right-radius: 4px;
 	-webkit-border-top-left-radius: 4px;
@@ -409,8 +410,6 @@
 	-webkit-user-select: none;
 	-ms-user-select: none;
 	user-select: none;
-	
- 
 }
 
 
@@ -420,7 +419,7 @@
 	left:0;
 	height:5000px;
 	width:1px;
-	border-left:1px solid #FFF;
+	border-left:1px solid #b7b1a3;
 }
 
 .tg-tick-body {
@@ -456,7 +455,7 @@
 	color:#fefbf4;
 	height:22px;
 	width:150px;
-	background-color:#013C4B;
+	background-color:#42383D;
 	
 	-webkit-border-top-left-radius: 4px;
 	-webkit-border-top-right-radius: 4px;
@@ -480,14 +479,14 @@
 	border-left: 8px solid transparent;
 	border-right: 8px solid transparent;
 	/* needs to be same as bg of date-display */
-	border-bottom: 8px solid #013C4B;
+	border-bottom: 8px solid #42383D;
 	opacity:.9;
 }
  
 
 
 .timeglider-tick-label {
-	color:#fefbf4;
+	color:#FFF;
 	position:absolute;
 	top:3px;
 	left:4px;
@@ -506,7 +505,7 @@
  
 .timeglider-tick-sub-label {
  
-	color:#edb18d;
+	color:#d3cec2;
 	/* OLD float:left; display:inline; */
 	position:absolute;
 	height:14px;
@@ -522,11 +521,11 @@
 	background-repeat:no-repeat;
 }
 
-
+/* eae6db */
 .timeglider-tick-sub-label .minutes {
 	height:12px;
 	font-size:9px;
-	color:#edb18d;
+	color:#d3cec2;
 	float:left;
 	margin:0;
 	border-left:1px solid #FFF;
@@ -537,7 +536,7 @@
 
 
 .tg-tick-sublabel-group {
-	top:15px;
+	top:13px;
 	background-color:none;
 	height:24px;
 	position:absolute;
@@ -616,11 +615,10 @@
 .tg-close-button-small {
 	float:right;
 	cursor:pointer;
-	width:15px;
-	height:15px;
-	background-image:url(buttons/close_small.png);
-	margin-top:-8px;
-	margin-right:-7px;
+	width:20px;
+	height:20px;
+	background-image:url(img/icon_close.png);
+	
 }
 
 
@@ -717,8 +715,8 @@
 
 .tg-image-lane-bg {
 	position:absolute;
-	top:-300px;
-	height:300px;
+	top:-450px;
+	height:450px;
 	width:100%;
 	background-color:#ebe6db;
 	z-index:99;
@@ -774,6 +772,7 @@
 	cursor:pointer;
 	font-size:10px;
 	margin-left:16px;
+	margin-top:-2px;
 	font-weight:normal;
 	text-shadow:none;
 }
@@ -789,19 +788,19 @@
 
 
 .tg-env-buttons .tg-env-button.tg-env-info {
-	background-image:url(img/icon_info.png);
+	background-image:url(img/info_tan4.png);
 }
 
 .tg-env-buttons .tg-env-button.tg-env-legend {
-	background-image:url(img/icon_legend.png);
+	background-image:url(img/legend_tan4.png);
 }
 
 .tg-env-buttons .tg-env-button.tg-env-expcol {
-	background-image:url(img/icon_expcol.png);
+	background-image:url(img/expcol_tan4.png);
 }
 
 .tg-env-buttons .tg-env-button.tg-env-invert {
-	background-image:url(img/icon_invert.png);
+	background-image:url(img/invert_tan4.png);
 }
 
 
@@ -818,18 +817,17 @@
   	height:26px;
   	cursor:pointer;
   	margin-right:12px;
-  	display:none;
 }
 
 .timeglider-filter-bt {
 	margin-right:6px;
-	background-image:url(buttons/filter.png);
+	background-image:url(img/filter.png);
 }
 .timeglider-list-bt {
-	background-image:url(buttons/list.png);
+	background-image:url(img/list.png);
 }
 .timeglider-settings-bt {
- 	background-image:url(buttons/tools.png);
+ 	background-image:url(img/tools.png);
 }
 
 /* MENU MODALS */
@@ -866,7 +864,7 @@
 	margin-top:-16px;
 	width:30px;
 	height:30px;
-	background-image:url(buttons/close.png);
+	background-image:url(img/close.png);
 }
 	
 
@@ -903,11 +901,11 @@
     cursor:pointer;
 }
 .timeglider-pan-left {
-  background-image:url("buttons/pan_left.png");
+  background-image:url("img/pan_left.png");
   margin-right:1px;
 }
 .timeglider-pan-right {
-  background-image:url("buttons/pan_right.png");
+  background-image:url("img/pan_right.png");
 }
 /* add hover effects? */
 
@@ -970,14 +968,13 @@
 
 
 .tg-legend {
-  position:absolute;
-  width:150px;
-  -webkit-border-top-left-radius: 0;
-  -webkit-border-top-right-radius: 0;
-  -moz-border-radius-topleft: 0;
-  -moz-border-radius-topright: 0;
-  border-top-left-radius: 0;
-  border-top-right-radius: 0;
+	position:absolute;
+	width:150px;
+	-webkit-border-radius:3px;
+	-moz-border-radius:3px;
+	border-radius:3px;
+	border:4px solid #b7b1a3;
+	background-color:#fdfbf4;
 }
 
 .tg-legend img {
@@ -989,6 +986,11 @@
 .tg-legend .timeglider-menu-modal-content {
   margin-top:8px;
 }
+
+.tg-legend ul {
+ 	margin-top:-16px;
+}
+
 
 .tg-legend ul li {
   color:#999;
@@ -1005,12 +1007,11 @@
 
 
 .tg-legend-all {
-  float:right;
-  font-size:9px;
-  color:#777;
+  font-size:12px;
+  color:#8DB91C;
   cursor:pointer;
-  margin-right:12px;
-  margin-top:-4px;
+  margin-left:20px;
+  margin-top:8px;
 }
 
 
@@ -1057,6 +1058,8 @@
 
 .timeglider-event-spanner {
   position:absolute;
+  top:0;
+  left:0;
   background-color:#ccc;
 	height:16px;
 	z-index:1;
@@ -1139,10 +1142,10 @@
 }
 
 .tg-modal-corner-north {
-	width:28px;
-	height:18px;
+	width:18px;
+	height:12px;
 	left:32px;
-	top:-18px;
+	top:-12px;
 	background-image:url(img/modal_corner_north.png);
 	background-repeat:no-repeat;
 }

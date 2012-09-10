@@ -24,7 +24,9 @@
   var lev_ht = tg.levelHeight = 12,
       // number of available levels for events
       $ = jQuery,
-      ceiling_padding = 30;
+      ceiling_padding = 30,
+      topdown_pad = 30,
+      bottomup_pad = -8;
       
 
   /*
@@ -59,13 +61,11 @@
     * 
     */
     this.addBlock = function (evob, tickScope) {
-
 		evob.right = evob.left + evob.width;
 		evob.bottom = evob.top + evob.height;
 		evob.tickScope = tickScope;
 		me.freshBlocks.push(evob);
 		me.blocks.push(evob);
-
     };
     
     
@@ -139,7 +139,7 @@
 			img = '', 
 			icon = '',
 			html = '', 
-			south_padding = 0,
+			top_or_bottom_padding_from_title = 0,
 			b = {},
 			blength = this.freshBlocks.length,
 			b_span_color = "",
@@ -147,7 +147,11 @@
 			highest = 0,
 			img_scale = 100,
 			img_style = "",
-			image_class = "lane";
+			css_class = "",
+			p_icon = "",
+			p_overf = "",
+			image_class = "lane",
+			polarity_cond = "";
 		
 	
 		for (var i=0; i<blength; i++) {
@@ -235,15 +239,25 @@
 						// note: divs that are higher have lower "top" values
 						// `ceiling` being set at 0 (event_overflow set to "scroll") 
 						// may require/allow for event scrolling possibilities...
-						if (ceiling && (me.pol == -1) && (Math.abs(b.top) > highest)) {
+						
+						if (me.pol == -1) {
+							polarity_cond = (ceiling && (Math.abs(b.top) > highest));
+						} else {
+							polarity_cond = (ceiling && (Math.abs(b.top + 30) > highest));
+						}
+						
+						
+						if (polarity_cond){
 							
-							var p_icon = (b.icon) ? "<img src='" + icon_f + b.icon + "'>": "+";
+							p_overf = (me.pol == -1) ? "top:-" + (ceiling-10) + "px": "top:" + ceiling + "px"
+							
+							var white_cir = "<img src='" + icon_f + "shapes/circle_white.png'>";
+							p_icon = (b.icon) ? "<img src='" + icon_f + b.icon + "'>": white_cir;
 							
 						 	// + + + symbols in place of events just under ceiling
 						 	// if things are higher than the ceiling, show plus signs instead,
 						 	// and we'll zoom in with these.
-							html += "<div id='" + b.id + "' class='timeglider-timeline-event tg-event-overflow' style='left:" + b.left  + 
-						        "px; top:-" + (ceiling -4) + "px'>" + p_icon + "</div>";
+							html += "<div id='" + b.id + "' class='timeglider-timeline-event tg-event-overflow' style='left:" + b.left  + "px;" + p_overf + "'>" + p_icon + "</div>";
 						        
 						} else {
 							
@@ -272,19 +286,21 @@
 								// pad inverted (polarity 1) events to exceed the height
 								// of the timeline title bar; pad "normal" top-up events
 								// to have some space between them and the title bar
-								south_padding = (me.pol === 1) ? 24 : -8;
-							
+								top_or_bottom_padding_from_title = (me.pol === 1) ?
+									topdown_pad : bottomup_pad;
 								
+								// possible customized class
+								css_class = b.css_class || '';
 							 
 								// TODO: function for getting "standard" event shit
 								html += "<div class='timeglider-timeline-event " 
-									+ b.css_class + " " + span_selector_class 
+									+ css_class + " " + span_selector_class 
 									+ "' id='" + b.id + "' "
 									+ "style='width:" + b.width  + "px;"
 									+ "height:" + b.height + "px;"
 									+ "left:" + b.left  + "px;" 
 									+ "opacity:" + b.opacity + ";"
-									+ "top:" + (b.top + south_padding) + "px;"
+									+ "top:" + (b.top + top_or_bottom_padding_from_title) + "px;"
 									+ "font-size:" + b.fontsize  + "px;'>"
 									+ icon + img + span_div 
 									+ "<div class='timeglider-event-title' style='top:" + title_adj + "px'>" 
