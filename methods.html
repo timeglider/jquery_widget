@@ -12,17 +12,15 @@
 
 
 <style type='text/css'>
-		
 		body {
-			font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+			font-family:"franklin-gothic-urw-cond", Helvetica, Arial, sans-serif;
 		}
-		
 		#p1 {
 			margin:32px;
 			margin-bottom:0;
-			height:600px;
+			height:540px;
 		}
-
+		
 		.methods h4 {
 			background-color:#F0F0F0;
 			color:#CC0000;
@@ -64,63 +62,15 @@
 			width:180px;
 		}
 		
-		.scrubber {
-			height:32px;
-			margin:0px 32px;
-			background-color:black;
-			border:1px solid black;
-			margin-bottom:32px;
-			position:relative;
-			overflow:hidden;
+		
+		*.no-select {
+		-moz-user-select: -moz-none;
+		-khtml-user-select: none;
+		-webkit-user-select: none;
+		user-select: none;
 		}
-		
-		
-		.scrubber-handle {
-			height:32px;
-			width:150px;
-			background-color:green;
-			position:absolute;
-			top:0;
-			left:0;
-		}
-		
-		/*
-		
-		
-		.timeglider-tick {
-			position:absolute;
-			height:900px;
-			font-size:11px;
 
-			background-image:url("img/dotted.png");
-			background-repeat:repeat;
-			border-top:none;
-			overflow:hidden;
-			
-			z-index:0;
-		}
-		
-		
-		.timeglider-tick-label {
-			top:445px;
-		}
-		
-		.tg-tick-sublabel-group {
-			top:455px;
-		}
-		
-		*/
-		
-		.nextprev {
-			text-align:center;
-			padding:8px;
-		}
-		
-		.nextprev span {
-			color:green;
-			font-weight:bold;
-			cursor:pointer;
-		}
+
 		
 		</style>
 </head>
@@ -129,11 +79,9 @@
 
 
 <div id='p1'></div>
+<div id='output'></div>
 
 
-<div class='nextprev'>
-<span id='gotoPrev'>PREV</span>&nbsp;&nbsp;&nbsp;&nbsp;<span id='gotoNext'>NEXT</span>
-</div>
 
 
 <div class='methods'>
@@ -196,7 +144,11 @@
 	<script src="js/timeglider/TG_TimelineView.js" type="text/javascript" charset="utf-8"></script>
 	<script src="js/timeglider/TG_Mediator.js" type="text/javascript" charset="utf-8"></script> 
 	<script src="js/timeglider/timeglider.timeline.widget.js" type="text/javascript"></script>
-		
+	
+	<!-- New, as of June 2012 -->
+	<script src="js/jquery.jscrollpane.min.js" type="text/javascript"></script>
+
+
 
   <script type='text/javascript'>
   
@@ -210,14 +162,13 @@
 					debug.log("ev hover:", ev);
 				},
 				*/
-				"min_zoom":2, 
-				"max_zoom":60, 
-				"show_centerline":true,
-				"icon_folder":"js/timeglider/icons/",
+				"min_zoom":10, 
+				"max_zoom":70, 
+				"icon_folder":"js/timeglider/icons/shapes/",
 				"data_source":"json_tests/js_history.json",
 				"show_footer":true,
-				"display_zoom_level":false,
-				"constrain_to_data":true,
+				"display_zoom_level":true,
+				"constrain_to_data":false,
 				"image_lane_height":60,
 				"loaded":function (args, data) { /* alert("loaded!"); */ }
 				// "tick_top":0
@@ -277,7 +228,7 @@
 		$("#scrollup").bind("click", function() {
 			$(".timeglider-timeline-event").animate({top:"-=100"})
 		})
-		
+				
 
 	
 	
@@ -344,17 +295,7 @@
 		});	
 		
 		
-		$("#gotoPrev").bind("click", function() {
-		
-			tg_actor.goTo("previous");
-		});
-		
-		$("#gotoNext").bind("click", function() {
-			tg_actor.goTo("next");
-		
-		});
-		
-	
+
 		
     }); // end document-ready
     

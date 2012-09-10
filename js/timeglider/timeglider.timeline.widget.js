@@ -34,8 +34,8 @@
 	*/
 	
 	var timelinePlayer, 
-		MED, 
 		tg = timeglider, 
+		MED,
 		TG_Date = timeglider.TG_Date;
 	
 	$.widget( "timeglider.timeline", {
@@ -48,19 +48,19 @@
 			editor:'none', 
 			min_zoom : 1, 
 			max_zoom : 100, 
-			show_centerline: true, 
+			show_centerline:true, 
 			data_source:"", 
 			culture:"en",
-			basic_fontsize:12, 
+			base_font_size:16, 
 			mouse_wheel: "zoom", // !TODO | pan 
 			initial_timeline_id:'',
 			icon_folder:'js/timeglider/icons/',
 			image_lane_height: 32,
 			show_footer:true,
-			display_zoom_level:true,
-			constrain_to_data:false,
+			display_zoom_level:false,
+			constrain_to_data:true,
 			boost:0,
-			tick_top:'',
+			tick_top:"",
 			event_modal:{href:'', type:'default'},
 			event_overflow:"plus"  // plus | scroll 
 		},
@@ -88,25 +88,40 @@
 			*/
 			// no need for template here as no data being passed
 			var MAIN_TEMPLATE = "<div class='timeglider-container'>"
-				+ "<div class='timeglider-loading'>loading</div>"
+				+ "<div class='timeglider-loading'><div>loading</div></div>"
 				+ "<div class='timeglider-centerline'></div>"
-				+ "<div class='timeglider-date-display'></div>"
+				
 				+ "<div class='timeglider-truck' id='tg-truck'>"
-				+ "<div class='timeglider-ticks'>"
+				+ "<div class='timeglider-ticks noselect'>"
 				+ "<div class='timeglider-handle'></div>"
+				
 				+ "</div>"
 				+ "</div>"
-				+ "<div class='timeglider-slider-container'>"
+				
+				+ "<div class='timeglider-slider-container noselect'>"
+				+ "<div class='tg-slider-plusminus tg-slider-plus tg-zoom-in'></div>"
 				+ "<div class='timeglider-slider'></div>"
+				+ "<div class='tg-slider-plusminus tg-slider-minus tg-zoom-out'></div>"
 				+ "<div class='timeglider-pan-buttons'>"
 				+ "<div class='timeglider-pan-left'></div><div class='timeglider-pan-right'></div>"
 				+ "</div>"
 				+ "</div>"
+				
+				+ "<div class='tg-scrim'></div>"
+				
+				
 				+ "<div class='timeglider-footer'>"
-				+ "<div class='timeglider-logo'></div>"                      
-				+ "<div class='timeglider-footer-button timeglider-filter-bt'></div>"
-				+ "<div class='timeglider-footer-button timeglider-settings-bt'></div>"
-				+ "<div class='timeglider-footer-button timeglider-list-bt'></div>"
+				+ "<div class='timeglider-logo'></div>" 
+				
+				+ "<div class='tg-footer-center'>"
+				+ "<div class='tg-prev tg-prevnext'><a>prev</a></div>"
+				+ "<div class='tg-date-display noselect'><div class='tg-date-display-arrow'></div><span></span></div>"
+				+ "<div class='tg-next tg-prevnext'><a>next</a></div>"
+				+ "</div>"
+				
+				      
+				+ "	<div class='timeglider-footer-button timeglider-filter-bt'></div>"
+				+ "	<div class='timeglider-footer-button timeglider-settings-bt'></div>"
 				+ "</div>"
 				+ "<div class='timeglider-event-hover-info'></div>"
 				+ "</div><span id='timeglider-measure-span'></span>";
@@ -133,7 +148,8 @@
 				MED = new tg.TG_Mediator(this.options, this.element);
 				timelinePlayer = new tg.TG_TimelinePlayer(this, MED);
 				
-			
+				this.player = timelinePlayer;
+				
 				// after timelinePlayer is created this stuff can be done
 				MED.setFocusDate(new TG_Date(this.options.initial_focus));
 				
@@ -321,7 +337,7 @@
 		* 
 		*/
 		loadTimeline : function (src, callback_object) {
-	
+			
 			MED.loadTimelineData(src, callback_object);
 			
 			return this;

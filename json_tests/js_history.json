@@ -2,8 +2,8 @@
 {
 "id":"js_history",
 "title":"A little history of JavaScript",
-"description":"Javascript emerged in a specific context: the fast-paced development of Netscape's browser. When he was hired at Netscape, Brendan Eich was told that it would be \"Scheme for the browser\", but he was later told to make it more like C and Java. The first iteration of JS, created over a 10 day period, was a super-flexible, but also highly flawed child of the internet age.",
-"focus_date":"1996-06-20 12:00:00",
+"description":"<p>Javascript emerged in a specific context: the fast-paced development of Netscape's browser. When he was hired at Netscape, Brendan Eich was told that it would be \"Scheme for the browser\", but he was later told to make it more like C and Java. The first iteration of JS, created over a 10 day period, was a super-flexible, but also highly flawed child of the internet age.</p>",
+"focus_date":"1995-06-20 12:00:00",
 "timezone":"-07:00",
 "initial_zoom":"39",
 "events":[
@@ -12,13 +12,12 @@
 {
 "id":"jshist-Lambda",
 "title": "Lambda Calculus",
-"description":"The lambda calculus (also written as λ-calculus) is a formal system in mathematical logic for expressing computation by way of variable binding and substitution. It was first formulated by Alonzo Church as a way to formalize mathematics through the notion of functions, in contrast to the field of set theory. Although not very successful in that respect, the lambda calculus found early successes in the area of computability theory, such as a negative answer to Hilbert's Entscheidungsproblem.",
+"description":"The lambda calculus (also written as λ-calculus) is a formal system in mathematical logic for expressing computation by way of variable binding and substitution. It was first formulated by Alonzo Church as a way to formalize mathematics through the notion of functions, in contrast to the field of set theory. Although not very successful in that respect, the lambda calculus found early successes in the area of computability theory, such as a negative answer to Hilbert's Entscheidungsproblem.<br><br>Because of the importance of the notion of variable binding and substitution, there is not just one system of lambda calculus. Historically, the most important system was the untyped lambda calculus. In the untyped lambda calculus, function application has no restrictions (so the notion of the domain of a function is not built into the system). In the Church–Turing Thesis, the untyped lambda calculus is claimed to be capable of computing all effectively calculable functions. The typed lambda calculus is a variety that restricts function application, so that functions can only be applied if they are capable of accepting the given input's \"type\" of data.",
 "startdate": "1936-07-01 12:00:00",
 "high_threshold":50,
 "importance":"50",
 "image":"_js_history/alonzo_church.jpg",
 "link":"http://en.wikipedia.org/wiki/Lisp_(programming_language)",
-"modal_type":"full",
 "date_display":"ye",
 "icon":"circle_green.png"
 },         
@@ -487,8 +486,6 @@
 },
 
 
-
-
 {
 "id":"jshist-jscript",
 "title": "jScript in IE3",
@@ -496,10 +493,10 @@
 "startdate": "1996-08-01 12:00:00",
 "high_threshold":40,
 "importance":"30",
+"image":"http://farm1.staticflickr.com/25/45322591_8abd51d455_s.jpg",
 "link":"http://www.whatwg.org/",
 "icon":"circle_purple.png"
 },
-
 
 
 {
@@ -523,7 +520,7 @@
 "high_threshold":40,
 "importance":"30",
 "link":"http://en.wikipedia.org/wiki/MochiKit",
-"image_class":"above",
+
 "icon":"triangle_orange.png"
 },
 
@@ -539,7 +536,7 @@
 "high_threshold":40,
 "importance":"30",
 "link":"http://en.wikipedia.org/wiki/qooxdoo",
-"image_class":"above",
+
 "icon":"triangle_orange.png"
 },
 
@@ -553,7 +550,7 @@
 "startdate": "2005-06-01 12:00:00",
 "high_threshold":40,
 "importance":"30",
-"image_class":"above",
+
 "icon":"triangle_orange.png"
 },
 
@@ -566,7 +563,7 @@
 "high_threshold":40,
 "importance":"35",
 "modal_type":"full",
-"image_class":"above",
+
 "icon":"square_orange.png"
 },
 
@@ -666,6 +663,7 @@
 "link":"http://en.wikipedia.org/wiki/JavaScript",
 "high_threshold":40,
 "importance":"55",
+"video":"http://www.youtube.com/embed/0lvMgMrNDlg",
 "modal_type":"full",
 "icon":"triangle_green.png",
 "image":"_js_history/eich.gif"
@@ -939,7 +937,7 @@
 "date_display":"mo",
 "link":"http://www.davidflanagan.com/",
 "image":"_js_history/flanagan.jpg",
-"high_threshold":40,
+"high_threshold":100,
 "importance":"35",
 "icon":"triangle_green.png"
 },
@@ -998,11 +996,6 @@
 "icon":"triangle_green.png"
 },
 
-
-
-
-
-
 {
 "id":"jshist-05",
 "title": "Dojo Toolkit",
@@ -1010,8 +1003,9 @@
 "startdate": "2004-06-01 12:00:00",
 "enddate": "2004-06-01 12:00:00",
 "link":"http://dojotoolkit.org/",
+"video":"http://www.youtube.com/embed/RYlCVwxoL_g",
 "image":"img/dojo.jpg",
-"image_class":"above",
+
 "high_threshold":40,
 "importance":"35",
 "icon":"triangle_orange.png"
@@ -1040,7 +1034,7 @@
 "high_threshold":40,
 "importance":"45",
 "image":"_js_history/resig.jpg",
-"image_class":"above",
+
 "icon":"triangle_orange.png"
 },
 

@@ -28,8 +28,7 @@
 
 
 	tg.TG_EventCollection = Backbone.Collection.extend({
-		
-		// "master hash"
+			
 		eventHash:{},
 		
 		comparator: function(ev) {
@@ -46,6 +45,16 @@
 		
 		model: tg.TG_Event
 	});
+	
+	
+	
+	tg.adjustAllTitleWidths = function (collection) {
+		
+		_.each(collection.models, function(ev) {
+			var nw = tg.getStringWidth(ev.get("title"));
+			ev.set({"titleWidth":nw})
+		})
+	};
   
 	
 	
@@ -71,20 +80,26 @@
 				
 				if (typeof img == "string") {
 				
-					var display_class = ev.image_class || "above";
+					var display_class = ev.image_class || "lane";
+					var image_scale = ev.image_scale || 100;
+					var image_width = ev.image_width || 0;
+					var image_height = ev.image_height || 0;
 
-					ev.image = {id: ev.id, src:ev.image, display_class:display_class, width:0, height:0};
-				
+					ev.image = {id: ev.id, scale:image_scale, src:ev.image, display_class:display_class, width:image_width, height:image_height};
+					
+					
 				} else {
-						
-					ev.image.display_class = ev.image.display_class || "above";
+					// id, src etc already set
+					ev.image.display_class = ev.image.display_class || "lane";
 					ev.image.width = 0;
 					ev.image.height = 0;
+					ev.image.scale = ev.image.scale || 100;
+					
 					
 				}
 
 				// this will follow up with reporting size in separate "thread"
-				this.getEventImageSize(ev.image);
+				this.getEventImageSize(ev.image, ev);
 			
 				// MED.imagesToSize++;
 				
@@ -97,31 +112,30 @@
 			// by replacing the &amp; with & we actually
 			// preserve HTML entities 	
 			ev.title = ev.title.replace(/&amp;/g, "&");
-			
+			ev.description = ev.description || "";
 			ev.titleWidth = tg.getStringWidth(ev.title);
+			
+			ev.y_position = ev.y_position || 0;
 
 			this.set(ev);
 			
 		},
 	
+				
 		
-		// TODO: validate event attributes
-		validate: function (attrs) {
-			// TODO		
-		},
-		
-		
-		getEventImageSize:function(img) { 
-		
+		getEventImageSize:function(img, ev) { 
+			
 			var that = this,
 				imgTesting = new Image(),
 				img_src = imgTesting.src = img.src;
 		
 			imgTesting.onerror= delegatr(imgTesting, function () {
-				// debug.log("error loading image:" + img_src);
-				that.set({"image":""});
+				if (tg.app && typeof tg.app.reportMissingImage == "function") {
+					tg.app.reportMissingImage(img.src, ev);
+				}
+				that.set({"image":{src:img.src,status:"missing"}});
 			});
-		
+			
 			imgTesting.onload = delegatr(imgTesting, function () {
 				that.get("image").height = this.height;
 				that.get("image").width = this.width;
@@ -256,17 +270,24 @@
 
 	
 	});
-	
-	
-	
+
+
 	tg.TG_TimelineCollection = Backbone.Collection.extend({
+		initialize:function() {
+			// debug.log("hello collection");
+		},
 		model: tg.TG_Timeline
 	});
+	
 	
 	
 	// map model onto larger timeglider namespace
 	/////////////////////////////////////////////
 	tg.TG_Timeline = Backbone.Model.extend({
+	
+		initialize: function() {
+			
+		},
 		
 		urlRoot : '/timeline',
 		
@@ -306,9 +327,12 @@
 			};
 			
 			tdata.spans = {};
-			tdata.hasImagesAbove = false;
+			tdata.hasImageLane = false;
 			tdata.startSeconds = [];
 			tdata.endSeconds = [];
+			tdata.initial_zoom = parseInt(tdata.initial_zoom, 10) || 25;
+			
+			tdata.inverted = tdata.inverted || false;
 			
 			// render possible adjective/numeral strings to numeral
 			tdata.size_importance = (tdata.size_importance == "false" || tdata.size_importance == "0")? 0 : 1;
@@ -324,6 +348,7 @@
 			
 			if (tdata.events.length>0) {
 				
+				
 
 				var date, ddisp, ev, id, unit, ser, tWidth;
 				var l = tdata.events.length;
@@ -331,7 +356,7 @@
 				for(var ei=0; ei< l; ei++) {
 				
 					ev=tdata.events[ei];
-
+					
 					// make sure it has an id!
 					if (ev.id) { 
 						id = ev.id 
@@ -379,11 +404,20 @@
 						// replaced by date_display
 						ddisp = ev.date_display || ev.date_limit || "da";
 					}
-					
-					
-					
-					
+
 					ev.date_display = ddisp.toLowerCase().substr(0,2);
+
+					if (ev.link) {
+						if (typeof ev.link == "string" && ev.link.substr(0,4) == "http") {
+							// make an array
+							ev.link = [{"url":ev.link, "label":"link"}]
+						}
+					} else {
+						ev.link = "";
+					}
+
+					ev.date_display = ddisp.toLowerCase().substr(0,2);
+
 								
 					// if a timezone offset is set on the timeline, adjust
 					// any events that do not have the timezone set on them
@@ -413,10 +447,9 @@
 					
 					// haven't parsed the image/image_class business...
 					if (ev.image) {
-						
+						debug.log("has image!");
 						if (ev.image.display_class != "inline") { 
-							
-							tdata.hasImagesAbove = true; 
+							tdata.hasImageLane = true; 
 						}
 					}
 										

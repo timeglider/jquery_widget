@@ -11,7 +11,7 @@
 // initial declaration of timeglider object for widget
 // authoring app will declare a different object, so
 // this will defer to window.timeglider
-timeglider = window.timeglider || {version:"0.1.0"};
+timeglider = window.timeglider || {mode:"publish", version:"0.1.0"};
 
 
 
@@ -674,11 +674,23 @@ timeglider.TG_Date = {};
 			          	
           	if (this.ye > -270000){
 				
-				fromUTC = TG_Date.toFromUTC(_.clone(this), offset, "from");  
-          		  		
-    			jsDate = new Date(fromUTC.ye, (fromUTC.mo-1), fromUTC.da, fromUTC.ho, fromUTC.mi, fromUTC.se, 0);
-  
-				return $.global.format(jsDate, sig);
+				var cloner = _.clone(this);
+				fromUTC = TG_Date.toFromUTC(cloner, offset, "from");  
+          		
+          		var utcy = Number(fromUTC.ye);
+          		
+          		if (utcy > 0 && utcy < 100) {
+          			utcy = "0" + utcy;
+          			// we can use the same thing we use for the BIGNUM problem
+          			// below for this weird window that JS fails on
+          			return TG_Date.monthNamesAbbr[fromUTC.mo] + " " + fromUTC.da + ", " + fromUTC.ye;
+          			
+          		} else {
+          			jsDate = new Date(utcy, (fromUTC.mo-1), fromUTC.da, fromUTC.ho, fromUTC.mi, fromUTC.se, 0);
+  				
+					return $.global.format(jsDate, sig);
+          		}
+    			
 			
 			
     		} else {
@@ -816,11 +828,15 @@ timeglider.TG_Date = {};
 	* @return {Object} date, time as strings with am or pm
 	*/
 	TG_Date.getDateTimeStrings = function (str) {
-	
+		
 		var obj = TG_Date.parse8601(str);
 	
-		// DATE IS EASY:
-		var date_val = obj.ye + "-" + unboil(obj.mo) + "-" + unboil(obj.da);
+		if (str == "today") {
+			return {"date": "today", "time":""}
+		} else {
+			var date_val = obj.ye + "-" + unboil(obj.mo) + "-" + unboil(obj.da);
+		}
+		
 		
 		var ampm = "pm";
 		
@@ -841,6 +857,10 @@ timeglider.TG_Date = {};
 	// This is for a separate date input field --- YYYY-MM-DD (DATE ONLY)
 	// field needs to be restricted by the $.alphanumeric plugin
 	TG_Date.transValidateDateString = function (date_str) {
+		
+		if (date_str == "today"){
+			return "today";
+		}
 		
 		if (!date_str) return false; // date needs some value
 		var reg = /^(\-?\d+|today|now) ?(bce?)?-?(\d{1,2})?-?(\d{1,2})?/,
