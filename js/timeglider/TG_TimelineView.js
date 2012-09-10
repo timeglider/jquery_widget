@@ -218,15 +218,9 @@ tg.TG_TimelinePlayer = function (widget, mediator) {
 
     };
     
-<<<<<<< HEAD
-    
-    
-    
-    
-  	this.timelineModal = Backbone.View.extend({
-=======
+
 	this.timelineInfoModal = Backbone.View.extend({
->>>>>>> luna
+
   	
   		tagName: "div",
 		
@@ -2956,29 +2950,7 @@ tg.TG_TimelinePlayer.prototype = {
 			stht = this.singleTitleHeight;
 
 	  	if (laneHt > laneMax) { laneHt = laneMax; }
-      
-<<<<<<< HEAD
-      $(CONTAINER + " .timeglider-event-image-above").each(
-    		    function () {
-    		    	var alti = me.imageLaneHeight,
-    		    		$div = $(this),
-    		    		
-    		    		$img = $(this).find("img"),
-    		    		yoff = 12,
-    		    		
-    		    		imax = parseInt($div.data("max_height"), 10);
-    		    		
-    		    		// if the image is smaller than the tallest
-    		    		// allowed image, keep height smaller
-    	
-  						if (imax < alti) {
-  							imght = imax;
-  							yoff += ((alti - imax) / 2);
-  						} else {
-  							imght = alti;
-  						}
-  						
-=======
+ 
       
 		$(CONTAINER + " .timeglider-event-image-lane").each(
 		    function () {
@@ -2993,7 +2965,7 @@ tg.TG_TimelinePlayer.prototype = {
 					}
 				
 				if (imgHt > 10) {
->>>>>>> luna
+
 					$div.css({"display":"block"})
 					.position({
 	        			my: "top",
