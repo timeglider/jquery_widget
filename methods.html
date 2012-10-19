@@ -11,11 +11,9 @@
 <title>Timeglider jQuery Plugin</title>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 
-<link rel="stylesheet" href="/_src/css/aristo/jquery-ui-1.8.5.custom.css" type="text/css" media="screen" title="no title" charset="utf-8">
+<link rel="stylesheet" href="css/aristo/jquery-ui-1.8.5.custom.css" type="text/css" media="screen" title="no title" charset="utf-8">
 
 <link rel="stylesheet" href="js/timeglider/Timeglider.css" type="text/css" media="screen" title="no title" charset="utf-8">
-
-<link rel="stylesheet" href="js/plugins/select2/select2.css" type="text/css" media="screen" title="no title" charset="utf-8">
 
 
 
@@ -147,7 +145,7 @@
 	<script src="js/jquery.tmpl.js" type="text/javascript" charset="utf-8"></script>
 	<script src="js/ba-debug.min.js" type="text/javascript" charset="utf-8"></script>
 	<script src="js/ba-tinyPubSub.js" type="text/javascript" charset="utf-8"></script>
-	<script src="js/plugins/jquery.mousewheel.js" type="text/javascript" charset="utf-8"></script>
+	<script src="js/jquery.mousewheel.min.js" type="text/javascript" charset="utf-8"></script>
 	<script src="js/jquery.ui.ipad.js" type="text/javascript" charset="utf-8"></script>
 	<script src="js/jquery.global.js" type="text/javascript" charset="utf-8"></script>
 	
@@ -191,9 +189,9 @@
 				"display_zoom_level":true,
 				"constrain_to_data":false,
 				"image_lane_height":100,
-				"loaded":function (args, data) { /* alert("loaded!"); */ }
+				"loaded":function (args, data) { /* alert("loaded!"); */ },
 				// "tick_top":0
-				// "event_overflow":"scroll"
+				"event_overflow":"scroll"
 		}).resizable({
 			stop:function(){ 
 				$(this).data("timeline").resize();
@@ -243,11 +241,11 @@
 		
 		
 		$("#scrolldown").bind("click", function() {
-			$(".timeglider-timeline-event").animate({top:"+=100"})
+			$(".timeglider-timeline-envelope").animate({top:"+=100"})
 		})
 		
 		$("#scrollup").bind("click", function() {
-			$(".timeglider-timeline-event").animate({top:"-=100"})
+			$(".timeglider-timeline-envelope").animate({top:"-=100"})
 		})
 				
 

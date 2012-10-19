@@ -2895,7 +2895,7 @@ tg.TG_TimelinePlayer.prototype = {
 				
 				// TODO: make 56 below part of layout constants collection
 				if (options.event_overflow == "scroll") {
-					ceiling = 0;
+					ceiling = 10000;
 				} else {
 					ceiling = (tl.hasImageLane) ? (tl_top - MED.image_lane_height) - me.singleTitleHeight : tl_top;
 				}
