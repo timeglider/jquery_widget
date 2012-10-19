@@ -272,12 +272,18 @@
 	});
 
 
+
+	// tg.TG_TimelineCollection = new Backbone.Collection({model:tg.TG_Timeline});
+	
+	/*
 	tg.TG_TimelineCollection = Backbone.Collection.extend({
 		initialize:function() {
-			// debug.log("hello collection");
+			debug.log("hello collection", this);
 		},
 		model: tg.TG_Timeline
 	});
+	*/
+	
 	
 	
 	
@@ -297,7 +303,8 @@
 			"timezone":"00:00",
 			"title":  "Untitled",
 			"events": [],
-			"legend": []
+			"legend": [],
+			"tags":{}
 		},
 		
 		// processes init model data, adds certain calculated values
@@ -447,7 +454,6 @@
 					
 					// haven't parsed the image/image_class business...
 					if (ev.image) {
-						debug.log("has image!");
 						if (ev.image.display_class != "inline") { 
 							tdata.hasImageLane = true; 
 						}
@@ -537,7 +543,7 @@
 				
 			} else {
 			
-				
+				tdata.tags = tdata.tags || {"test":1};
 				tdata.focus_date = tdata.focus_date || "today";				
 				tdata.focusDateObj = new TG_Date(tdata.focus_date);
 				tdata.bounds = {"first": tdata.focusDateObj.sec, "last":tdata.focusDateObj.sec + 86400};

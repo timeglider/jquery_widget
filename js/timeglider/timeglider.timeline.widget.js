@@ -57,7 +57,9 @@
 			icon_folder:'js/timeglider/icons/',
 			image_lane_height: 32,
 			show_footer:true,
+			minimum_timeline_bottom: 24,
 			display_zoom_level:false,
+			display_single_timeline_info:true,
 			constrain_to_data:true,
 			boost:0,
 			tick_top:"",
@@ -87,7 +89,7 @@
 			*           options indicate otherwise
 			*/
 			// no need for template here as no data being passed
-			var MAIN_TEMPLATE = "<div class='timeglider-container'>"
+			var MAIN_TEMPLATE = "<div id='tg-container' class='timeglider-container'>"
 				+ "<div class='timeglider-loading'><div>loading</div></div>"
 				+ "<div class='timeglider-centerline'></div>"
 				
@@ -110,7 +112,7 @@
 				+ "<div class='tg-scrim'></div>"
 				
 				
-				+ "<div class='timeglider-footer'>"
+				+ "<div class='timeglider-footer' id='tg-footer'>"
 				+ "<div class='timeglider-logo'></div>" 
 				
 				+ "<div class='tg-footer-center'>"
@@ -119,9 +121,10 @@
 				+ "<div class='tg-next tg-prevnext'><a>next</a></div>"
 				+ "</div>"
 				
-				      
+				+ "	<div class='tg-footer-buttons'>"
 				+ "	<div class='timeglider-footer-button timeglider-filter-bt'></div>"
 				+ "	<div class='timeglider-footer-button timeglider-settings-bt'></div>"
+				+ "</div>"
 				+ "</div>"
 				+ "<div class='timeglider-event-hover-info'></div>"
 				+ "</div><span id='timeglider-measure-span'></span>";

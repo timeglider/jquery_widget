@@ -141,17 +141,17 @@ tg.TG_TimelinePlayer = function (widget, mediator) {
 	    // allows for customized templates imported
 		test : "testola",
 		
-		event_modal_small: "<div class='tg-modal timeglider-ev-modal ui-widget-content' id='${id}_modal'>" 
-      	   + "<div class='tg-close-button tg-close-button-remove'>x</div>" 
+		event_modal_small: "<div class='tg-modal timeglider-ev-modal ui-widget-content ${extra_class}' id='${id}_modal'>" 
+      	   + "<div class='tg-close-button tg-close-button-remove'></div>" 
       	   + "<div class='dateline'>{{html dateline}}</div>"
       	   + "<h4 id='title'>${title}</h4>"
-      	   + "<div class='tg-ev-modal-description'><p>{{html image}}{{html description}}</p></div>"
+      	   + "<div class='tg-ev-modal-description jscroll'><p>{{html image}}{{html description}}</p></div>"
       	   + "<ul class='timeglider-ev-modal-links'>{{html links}}</ul>"
       	   + "</div>",
       	  
       	// For displaying an exterior page directly in the modal
       	event_modal_iframe: "<div class='tg-modal timeglider-ev-modal ui-widget-content tg-iframe-modal' id='${id}_modal'>" 
-      	   + "<div class='tg-close-button tg-close-button-remove'>x</div>" 
+      	   + "<div class='tg-close-button tg-close-button-remove'></div>" 
       	   + "<div class='dateline'>{{html dateline}}</div>"
       	   + "<h4 id='title'>{{html title}}</h4>"
       	   + "<iframe frameborder='none' src='${link}'></iframe>"
@@ -164,7 +164,7 @@ tg.TG_TimelinePlayer = function (widget, mediator) {
 		+ "<div class='tg-full_modal_scrim'></div>"
 		+ "<div class='tg-full_modal_panel'>"
 		+ "<div class='tg-full_modal_content'>"
-		+ "<div class='tg-close-button tg-full_modal_close'>x</div>"
+		+ "<div class='tg-close-button tg-full_modal_close'></div>"
 		+ "<div class='dateline'>{{html dateline}}</div>"
 		+ "<h4>${title}</h4>"
 		+ "<div class='tg-full_modal-body'>"
@@ -178,17 +178,26 @@ tg.TG_TimelinePlayer = function (widget, mediator) {
 
      	// generated, appended on the fly, then removed
      	filter_modal : $.template( null,
-          "<div class='tg-modal timeglider-menu-modal timeglider-filter-box'>"+
+          "<div class='tg-modal timeglider-filter-box'>"+
           "<div class='tg-close-button'></div>"+
-          "<h3>filter</h3>"+
+          "<h3>search/filter</h3>"+
           "<div class='timeglider-menu-modal-content'>"+
-          "<div class='timeglider-formline'>show: "+
-          "<input type='text' class='timeglider-filter-include'></div>"+
-          "<div class='timeglider-formline'>hide: "+
-          "<input type='text' class='timeglider-filter-exclude'></div>"+
-          "<ul><li class='timeglider-filter-clear'>clear</li>"+
-          "<li class='timeglider-filter-apply'>apply</li></ul></div>"+
-           "<div class='timeglider-menu-modal-point-right'>"+
+          "<div class='timeglider-formline'>"+
+          "<input placeholder='keyword(s)' type='text' class='timeglider-filter-search'></div>"+
+          "<div class='tg-filter-cbs'>"+
+          "<input type='checkbox' id='filter_t' checked><label for='filter_t'>title</label>"+
+          "&nbsp;&nbsp;&nbsp;<input type='checkbox' id='filter_d'><label for='filter_d'>description</label>"+
+          "</div>"+
+          "<div class='timeglider-formline filter-tags'>"+
+          "<input type='text' id='filter-tags' class='timeglider-filter-tags'>"+
+          "</div>"+
+          // "<div class='timeglider-formline'>hide: "+
+          // "<input type='text' class='timeglider-filter-exclude'></div>"+
+          "<ul class='buttons'>"+
+          "<li class='timeglider-filter-apply'>go</li>"+
+          "<li class='timeglider-filter-clear'>clear</li>"+
+          "</ul></div>"+
+           "<div class='tg-modal-corner tg-modal-corner-south'>"+
            "</div>"),
           
       	timeline_list_modal : $.template( null,
@@ -200,11 +209,12 @@ tg.TG_TimelinePlayer = function (widget, mediator) {
           "</div>"),
           
         settings_modal : $.template( null,
-          "<div class='timeglider-menu-modal timeglider-settings-modal'>"+
+          "<div class='tg-modal timeglider-settings-modal'>"+
           "<div class='tg-close-button'></div>"+
           "<h3>settings</h3>"+
-          "<div class='timeglider-menu-modal-content'><div class='timeglider-settings-timezone'></div></div>"+
-          "<div class='timeglider-menu-modal-point-right'>"+
+          "<div class='timeglider-menu-modal-content'>"+
+          "<div class='timeglider-settings-timezone'></div></div>"+
+          "<div class='tg-modal-corner tg-modal-corner-south'>"+
           "</div>"),
         
       	legend_modal : $.template( null,
@@ -218,9 +228,7 @@ tg.TG_TimelinePlayer = function (widget, mediator) {
 
     };
     
-
 	this.timelineInfoModal = Backbone.View.extend({
-
   	
   		tagName: "div",
 		
@@ -230,16 +238,44 @@ tg.TG_TimelinePlayer = function (widget, mediator) {
 		
 		events: {
 			"click .tg-close": "remove",
-			"click .tg-timeline-start": "timelineStart"
+			"click .tg-timeline-start": "timelineStart",
+			"click .tg-modal-tags": "openTagsInfo"
 		},
-		
+		// "tags":{"mardigras":2,"chris":2,"arizona":2,"netscape":2,"flop":1},
 		template: function () {
 			
+			var tags1 = "", tags_intro = "", tags2 = "", thtm = [];
+			
+			var tl_tags = this.model.get("tags");
+			// if tags
+			if (_.size(tl_tags) > 0) {
+				tags1 = "<li class='tg-modal-tags'></li>";
+				
+				_.each(tl_tags, function(val, key) {
+					thtm.push(key + " (" + val + ")");	
+				});
+				
+				tags_intro = "<p class='tags-intro'>Use the search tool (at lower right) to filter this timeline according to these tags:</p>";
+				
+				tags2 = "<div class='tg-modal-tags-info'>" + tags_intro + thtm.join(", ") + "</div>"
+			}
 			return "<h4>${title}</h4>"
+			+ "<div class='tg-close tg-close-button'></div>"
 			+ "<div class='tg-timeline-description jscroll'>{{html description}}</div>"
-			+ "<ul><li class='tg-close'>close</li><li data-timeline_id='" + this.model.get("id") + "' class='tg-timeline-start'>start</li></ul>";
+			+ "<ul>" + tags1 + "<li data-timeline_id='" + this.model.get("id") + "' class='tg-timeline-start'>start</li></ul>" + tags2
+			+ "<div class='tg-modal-corner tg-modal-corner-north'></div>";
 			
 			},
+		
+		openTagsInfo: function() {
+			var $ti = $(this.el).find(".tg-modal-tags-info");
+			
+			if (!$ti.is(":visible")) {
+				$(this.el).find(".tg-modal-tags-info").slideDown();
+			} else {
+				$(this.el).find(".tg-modal-tags-info").slideUp();
+			}
+		},
 		
 		timelineStart: function() {
 			
@@ -343,6 +379,8 @@ tg.TG_TimelinePlayer = function (widget, mediator) {
 		.delegate(".tg-legend-close", CLICKORTOUCH, function () {
 			var $legend = $(CONTAINER + " .tg-legend");
 			$legend.fadeOut(300, function () { $legend.remove(); });
+			
+			MED.setFilters({origin:"legend", icon: "all"});
 		})
 		.delegate(".tg-legend-all", CLICKORTOUCH, function () {
 			$(CONTAINER + " .tg-legend li").each(function () {
@@ -422,7 +460,6 @@ tg.TG_TimelinePlayer = function (widget, mediator) {
 	
 	// INITIAL CONSTRUCTION
 	this.buildSlider();
-	this.setupFilter();
 	
 	this.setPanButton($(".timeglider-pan-right"),-30);
 	this.setPanButton($(".timeglider-pan-left"),30);
@@ -431,7 +468,7 @@ tg.TG_TimelinePlayer = function (widget, mediator) {
 	
 		// doubleclicking will be used by authoring mode
 		.bind('dblclick', function(e) {
-			MED.registerUIEvent({name:"dblclick", event:e});		
+			MED.registerUIEvent({name:"dblclick", event:e});	
 		})
 		
 		
@@ -726,6 +763,8 @@ tg.TG_TimelinePlayer = function (widget, mediator) {
     	}
 
 		me.buildSettingsMenu();
+		
+		me.setupFilter();
 
     	$(".timeglider-loading").fadeOut(500);  
     	    	
@@ -861,6 +900,7 @@ tg.TG_TimelinePlayer.prototype = {
 				ticks_ht = h-(f_height+t_height);
 				
 				head_ht = $(".tg-widget-header").outerHeight();
+				
 							
 				var container = {"width":w, "height":h, "centerx":wc, "centery":hc, "left": lft, "offset": offset},
 					ticks = {"height":ticks_ht},
@@ -903,12 +943,14 @@ tg.TG_TimelinePlayer.prototype = {
 		// this is expensive for real-time dragging...
 		// without throttle, leads to crashing in Firefox
 		var fd = MED.getFocusDate();
-		
+
 		//var sc = MED.getScope();
 		//$(this._views.LEFT_DATE).text(sc.left_sec);
 		//$(this._views.RIGHT_DATE).text(sc.right_sec);
+				
+		var str = fd.format("d MMM yyyy", true);
 		
-		$(this._views.FOCUS_DATE).find("span").text(fd.format("d MMM yyyy", false));
+		$(this._views.FOCUS_DATE).find("span").text(str);
 		
 		
 	
@@ -1124,6 +1166,19 @@ tg.TG_TimelinePlayer.prototype = {
 	},
 	
 	
+	getTimelinesTagsArray: function() {
+
+		var me=this, tl, tags = [], tags_obj;
+		_.each(MED.timelineCollection.models, function(tl) {
+			tags_obj = tl.get("tags");
+			_.each(tags_obj, function(val,key) {
+				tags.push(key);
+			});
+		});
+		
+		return tags;
+	},
+	
 	
 	
 	/* FILTER BOX SETUP */
@@ -1131,27 +1186,60 @@ tg.TG_TimelinePlayer.prototype = {
 	
 		var me = this, 
 			$bt = $(me._views.FILTER_BT),
-			$filter = $.tmpl(me._templates.filter_modal,{}).appendTo(me._views.CONTAINER);
+			$filter = $.tmpl(me._templates.filter_modal,{}).appendTo(me._views.CONTAINER),
+			use_title = false, 
+			use_desc = false,
+			fbox = me._views.FILTER_BOX;
 		
+		var clearFilterFront = function() {
+			MED.setFilters({origin:"title_andor_desc", title:'', tags:'', description:''});	
+			$(fbox + " .timeglider-filter-search").val('');
+			$(fbox + " .timeglider-filter-tags").val('');
+			$("#filter-tags").val("").trigger("change");
+		}
+		
+		var clearFilters = function() {
+			MED.clearFilters({"legend":false, "custom":false});
+		}
+		
+		// get tags array from active timelines
+		var activeTags = me.getTimelinesTagsArray();
+		if (activeTags.length > 0) {
+		
+			if ($.fn.select2) {
+				$("#filter-tags").select2({
+					tags:activeTags,
+					placeholder:"Click to select",
+					allowClear:true
+				});
+			}
+		
+		} else {
+			// no tags -- hide tags element
+			$(".filter-tags").hide();
+		}
+		
+
 		$filter.position({
-          		    my: "right bottom",
-        			    at: "right top",
-        			    of: $(me._views.FILTER_BT),
-        			    offset: "-8, -30"
-              }).css("z-index", me.ztop++).hide();
+		    my: "right bottom",
+		    at: "right top",
+		    of: $(me._views.FILTER_BT),
+		    offset: "32, -16"
+         }).css("z-index", me.ztop++).hide();
         
-        
+       
         $(CONTAINER)
 	    .delegate(".timeglider-filter-box .tg-close-button", "click", function () {
+	    	clearFilterFront();
 			$filter.fadeOut();
 		})              
               
       
 		$(me._views.FILTER_BT).bind("click", function() { 
-		
+			
 			$filter.fadeIn();
 
-  	      	var $bt = $(this), fbox = me._views.FILTER_BOX;
+  	      	var $bt = $(this);
 
 			// If it's never been opened, apply actions to the buttons, etc
 			if (me.filterBoxActivated == false) {
@@ -1159,27 +1247,47 @@ tg.TG_TimelinePlayer.prototype = {
 				me.filterBoxActivated =true;
 				
 				var $filter_apply = $(fbox + " .timeglider-filter-apply"),
-				$filter_close = $(".timeglider-filter-box .tg-close-button"),
 				$filter_clear = $(fbox + " .timeglider-filter-clear"),
-				incl = "", excl = "";
+				incl = "", tags = "", excl = "", title_txt = "", desc_txt = "";
 				
 				// set up listeners
 				$filter_apply.bind("click", function () {
-				incl = $(fbox + " .timeglider-filter-include").val();
-				excl = $(fbox + " .timeglider-filter-exclude").val();
-				MED.setFilters({origin:"clude", include:incl, exclude:excl});
-				$(fbox).toggleClass("tg-display-block");
+					
+					clearFilters();
+					
+					tags = $("#filter-tags").val();
+										
+					incl = $(fbox + " .timeglider-filter-search").val();
+					excl = ""; // $(fbox + " .timeglider-filter-exclude").val();
+					
+					use_title = $(fbox + " input#filter_t").is(":checked");
+					use_desc = $(fbox + " input#filter_d").is(":checked");
+					
+					if ((use_title && incl) || (use_desc && incl) || tags) {
+						title_txt = use_title ? incl: "";
+						desc_txt = use_desc ? incl: "";
+						
+						if(use_title && use_desc && incl) {
+							// EITHER title OR description match
+							MED.setFilters({origin:"clude", include:title_txt, exclude:"", tags:tags});
+						} else {
+							// just title, or just description match
+							MED.setFilters({origin:"title_andor_desc", title:title_txt, description:desc_txt, tags:tags});
+						}
+						
+					} else {
+						// clear
+						clearFilters();
+						clearFilterFront();						
+					}
+					
+					
 				});
-				
-				$filter_close.bind("click", function () {
-				$(fbox).toggleClass("tg-display-none");
-				});
+
 				
 				$filter_clear.bind("click", function () {
-				MED.setFilters({origin:"clude", include:'', exclude:''});
-				$(fbox + " .timeglider-filter-include").val('');
-				$(fbox + " .timeglider-filter-exclude").val('');
-				$(fbox).toggleClass("tg-display-block");
+					clearFilters();
+					clearFilterFront();
 				});
               
 			} // end if filterBoxActivated
@@ -1302,16 +1410,14 @@ tg.TG_TimelinePlayer.prototype = {
 		var tz_menu = this.getTimezonePulldown("timeglider-settings-timezone", MED.timeOffset.string);
 		
 		$s.find(".timeglider-settings-timezone")
-			.append('<p>Make changes below, then click on "save". More settings options to come!</p>')
-			.append('<span class="settings-label">timezone:</span> ' + tz_menu)
-			.append("<p style='clear:both'>&nbsp;</p><div class='btn success' id='timeglider-settings-save'>save</div>");
+			.append('<span class="settings-label">timezone:</span> ' + tz_menu + '<br><a class="btn" id="timeglider-settings-save">save</a>');
 			
 
 		$s.position({
 	        		my: "right bottom",
 	      			at: "right top",
 	      			of: $(me._views.SETTINGS_BT),
-	      			offset: "-8, -30"
+	      			offset: "32, -16"
 	    }).hide();
 	    
 	    $(CONTAINER)
@@ -1323,8 +1429,11 @@ tg.TG_TimelinePlayer.prototype = {
   		})
   		.delegate("#timeglider-settings-save", "click", function() {
   			// get timezone
+  			
   			var tz_off = $(CONTAINER + " #timeglider-settings-timezone").val();
-  			MED.setTimeoffset(tz_off); 			
+  			MED.setTimeoffset(tz_off); 
+  			
+  			$(".timeglider-settings-modal").fadeOut();	
   		});
 	    
 	},
@@ -1335,8 +1444,11 @@ tg.TG_TimelinePlayer.prototype = {
 	
 		var me = this,
 			tid = MED.singleTimelineID,
-			timeline = MED.timelineCollection.get(tid),
-			title = "<h2>" + timeline.get("title") + "</h2>";
+			timeline = MED.timelineCollection.get(tid);
+		
+		if (MED.options.display_single_timeline_info != false) {
+		
+			var title = "<h2>" + timeline.get("title") + "</h2>";
 			
 			inf = (timeline.get("description")) ? "<li id='info' class='timeline-info-bt' data-timeline_id='" + tid + "'>info</li>":"",
 			
@@ -1347,17 +1459,20 @@ tg.TG_TimelinePlayer.prototype = {
 			tmpl = "<div class='tg-widget-header tg-single-timeline-header'>" + title + "<ul>" + inf + leg + "<li class='tg-timeline-start' data-timeline_id='" + tid + "'>start</li></ul>" + tools + "</div>";
 			
 
-		$st = $(tmpl).appendTo(CONTAINER);
+			$st = $(tmpl).appendTo(CONTAINER);
+			
+			me.singleTitleHeight = $st.outerHeight();
 		
-		me.singleTitleHeight = $st.outerHeight();
+		} else {
+		
+			me.singleTitleHeight = 0;
+		}
 		
 		
 		if (timeline.get("hasImageLane")) {
-			
-			me.buildImageLane();
-			
-						
-		} // end if has imagelane
+			me.buildImageLane();		
+		} 
+		
 		
 		// adjusts the zoom slider away from the timeline bar at top
 		$(me._views.SLIDER_CONTAINER).css("top", me.singleTitleHeight + 4);
@@ -1397,7 +1512,7 @@ tg.TG_TimelinePlayer.prototype = {
 					my: "left top",
 					at: "left top",
 					of: $(".timeglider-container"),
-					offset: "16, 42", // left, top
+					offset: "16, 39", // left, top
 					collision: "fit fit"
 				})
 				.css({"z-index":me.ztop++, "max-height":ch-64});
@@ -1587,6 +1702,7 @@ tg.TG_TimelinePlayer.prototype = {
 	*/
 	
 	getEventDateLine: function(ev) {
+	
 		var startDateF = "<span class='timeglider-dateline-startdate'>" + ev.startdateObj.format('', true, MED.timeOffset) + "</span>",
     		endDateF = "";
     	
@@ -1993,17 +2109,17 @@ tg.TG_TimelinePlayer.prototype = {
 		},
 		tenmill: function(ser) {
 			var s = ser * 3154000000,
-				e = s + 3154000000;
+				e = s   + 3154000000;
 			return {start:s, end:e};
 		},
 		hundredmill: function(ser) {
-			var s = ser * 3154000000,
-				e = s + 3154000000;
+			var s = ser * 31540000000,
+				e = s   + 31540000000;
 			return {start:s, end:e};
 		},
 		bill: function(ser) {
-			var s = ser * 3154000000,
-				e = s + 3154000000;
+			var s = ser * 315400000000,
+				e = s   + 315400000000;
 			return {start:s, end:e};
 		}
 		
@@ -2300,8 +2416,8 @@ tg.TG_TimelinePlayer.prototype = {
 				break;
 				
 			case "hundredmill": 
-			
-				prop = ((fdate.ye % 100000000) / 10000000);
+								    
+				prop = ((fdate.ye % 100000000) / 100000000);
 				p = w * prop;
 				break;
 				
@@ -2360,6 +2476,7 @@ tg.TG_TimelinePlayer.prototype = {
 	},
 	
 	
+	
 	passesFilters : function (ev, zoomLevel) {
 		var ret = true,
 			ev_icon = "",
@@ -2379,32 +2496,51 @@ tg.TG_TimelinePlayer.prototype = {
 		if (MED.filters.imp_max && MED.filters.imp_max < 100) {
 			if (ev.importance > MED.filters.imp_max) { return false; }
 		}	
-		
-		// KEYWORDS FOR SHOWING THIS EVENT
-		if (MED.filters.title) {
-			titl = MED.filters.title;
-			ia = titl.split(",");
+
+
+		if (MED.filters.include) {
+			// title OR description
 			ret = false;
-			// cycle through comma separated include keywords
-			for (i=0; i<ia.length; i++) {
-				ii = new RegExp($.trim(ia[i]), "i");
-				if (ev.title.match(ii)) { ret = true; }
+			var incl = MED.filters.include;
+			ea = incl.split(",");
+			for (e=0; e<ea.length; e++) {
+				ei = new RegExp($.trim(ea[e]), "i");
+				if (ev.title.match(ei) || ev.description.match(ei)) { ret = true; }
 			}
-		}	
-		
-		// KEYWORDS FOR SHOWING THIS EVENT
-		if (MED.filters.description) {
-			desr = MED.filters.description;
-			da = desr.split(",");
-			ret = false;
-			// cycle through comma separated include keywords
-			for (i=0; i<da.length; i++) {
-				ii = new RegExp($.trim(da[i]), "i");
-				if (ev.description.match(ii)) { ret = true; }
-			}
-		}	
 			
+		} else {
 		
+			// KEYWORDS FOR SHOWING THIS EVENT
+			if (MED.filters.title) {
+				
+				titl = MED.filters.title;
+				ia = titl.split(",");
+				ret = false;
+				// cycle through comma separated include keywords
+				for (i=0; i<ia.length; i++) {
+					ii = new RegExp($.trim(ia[i]), "i");
+					if (ev.title.match(ii)) { ret = true; }
+				}
+			}	
+			
+			// KEYWORDS FOR SHOWING THIS EVENT
+			if (MED.filters.description) {
+				
+				desr = MED.filters.description;
+				da = desr.split(",");
+				ret = false;
+				// cycle through comma separated include keywords
+				for (i=0; i<da.length; i++) {
+					ii = new RegExp($.trim(da[i]), "i");
+					if (ev.description.match(ii)) { ret = true; }
+				}
+			}	
+			
+		}
+		
+
+
+
 		if (MED.filters.exclude) {
 			var excl = MED.filters.exclude;
 			ea = excl.split(",");
@@ -2489,6 +2625,7 @@ tg.TG_TimelinePlayer.prototype = {
 			expCol, tl_top=0,
 			cht = me.dimensions.container.height,
 			ceiling = 0,
+			tl_min_bottom = MED.options.minimum_timeline_bottom,
 			ticks_ht = me.dimensions.ticks.height;
 			
 		
@@ -2521,10 +2658,12 @@ tg.TG_TimelinePlayer.prototype = {
 			
 			// TODO establish the 120 below in some kind of constant!
 			// meanwhile: tl_top is the starting height of a loaded timeline 
-			tl_bottom = (tl.bottom) ? stripPx(tl.bottom) : 30; 	
-			if (tl_bottom < 30) tl_bottom = 30;	
+			tl_bottom = (tl.bottom) ? stripPx(tl.bottom) : tl_min_bottom; 	
+			if (tl_bottom < tl_min_bottom) tl_bottom = tl_min_bottom;	
 			
 			tl_top = ticks_ht - tl_bottom;	
+			
+			tl_min_bottom = MED.options.minimum_timeline_bottom;
 					
 			tlView = new tg.TG_TimelineView({model:tlModel});
 			
@@ -2554,9 +2693,9 @@ tg.TG_TimelinePlayer.prototype = {
 						// chrome doesn't allow access the new bottom
 						var new_bottom = (ticks_ht - stripPx($(this).css("top"))) -1;
 						
-						if (new_bottom < 24) {
-							$(this).css("bottom", 24);
-							new_bottom = 24;
+						if (new_bottom < tl_min_bottom) {
+							$(this).css("bottom", tl_min_bottom);
+							new_bottom = tl_min_bottom;
 						}
 						
 						var tid = $(this).attr("id");
@@ -2612,10 +2751,13 @@ tg.TG_TimelinePlayer.prototype = {
 
 			/// for initial sweep display, setup fresh borg for organizing events
 			if (expCol == "expanded") { tl.borg = borg = new timeglider.TG_Org(); }
- 
+ 			
+ 			
+ 			var tick;
 			//cycle through ticks for hashed events
 			for (var tx=0; tx<ticks.length; tx++) {
-				tArr = this.getTimelineEventsByTick({tick:ticks[tx], timeline:tl});
+				tick = ticks[tx];
+				tArr = this.getTimelineEventsByTick({tick:tick, timeline:tl});
 		    	idArr = _.union(idArr, tArr);	
 			}
 						
@@ -2648,7 +2790,7 @@ tg.TG_TimelinePlayer.prototype = {
 			// future planning for scrollable overflow
 			if (options.event_overflow == "scroll") {
 				
-				ceiling = 0;
+				ceiling = 10000;
 				
 			} else {
 				
@@ -2675,12 +2817,14 @@ tg.TG_TimelinePlayer.prototype = {
 				tl.borg = borg.getBorg();
 			} 
 			
+			
 			if (stuff != "undefined") { $tl.append(stuff.html); }
+			
 			
 			// var afterStuff = +new Date();	
 			setTimeout( function() {
 				me.registerEventImages($tl);
-			}, 3);
+			}, 100);
 			
 		}// end for each timeline
 		
@@ -2950,7 +3094,7 @@ tg.TG_TimelinePlayer.prototype = {
 			stht = this.singleTitleHeight;
 
 	  	if (laneHt > laneMax) { laneHt = laneMax; }
- 
+      
       
 		$(CONTAINER + " .timeglider-event-image-lane").each(
 		    function () {
@@ -2965,7 +3109,6 @@ tg.TG_TimelinePlayer.prototype = {
 					}
 				
 				if (imgHt > 10) {
-
 					$div.css({"display":"block"})
 					.position({
 	        			my: "top",
@@ -3047,16 +3190,17 @@ tg.TG_TimelinePlayer.prototype = {
 		if (tl.get("description")) {
 			
 			var ch = me.dimensions.container.height,
-				modal = new this.timelineInfoModal({model:tl}),
-				header_ht = me.dimensions.header.height;
+				modal = new this.timelineInfoModal({model:tl});
 			
+			var hh = $(".tg-widget-header").outerHeight() + 32;
+						
 			$modal = $(modal.render().el)
 				.appendTo("body")
 				.position({
 					my: "left top",
 					at: "left top",
 					of: $(".timeglider-container"),
-					offset: "16," + (header_ht + 8), // left, top
+					offset: "16, 39", // left, top
 					collision: "fit fit"
 				})
 				.css({"z-index":me.ztop++, "max-height":ch-64});
@@ -3065,7 +3209,9 @@ tg.TG_TimelinePlayer.prototype = {
 				$modal.find("h4").hide();
 			}
 
-			if ($.jScrollPane) {
+
+			
+			if ($.fn.jScrollPane) {
 				$(".jscroll").jScrollPane();
 			}
 		
@@ -3170,7 +3316,7 @@ tg.TG_TimelinePlayer.prototype = {
      				var ph = ch - 64;
      				var iw = 0;
      				
-
+					
       	  			
       				$panel.css({
       					"width":pw,
@@ -3290,33 +3436,46 @@ tg.TG_TimelinePlayer.prototype = {
 					// abstract this into a common positioning function
 					// for any of the small modals...
 					// $event.parent()
+					
+					templ_obj.extra_class = (templ_obj.image) ? "has-image":"no-image";
+					
+					
    					$modal = $.tmpl(me._templates.event_modal_small,templ_obj).appendTo($event.parent());
 					
 					
 					var pad = 8;
+					
 					var arrow_class = "", tb_class = "", lr_class = "";
 					
 					var ev_left = $event.position().left;
       				var ev_top = $event.position().top;
+      				var ev_off = $event.offset();
+      				
+      				var co_ht = me.dimensions.container.height;
+      				var co_off = me.dimensions.container.offset;
       				
       				var modal_ht = $modal.outerHeight();
 					var modal_wi = $modal.outerWidth();
 					
-					var co_off = me.dimensions.container.offset;
-					var ev_off = $event.offset();
+					var extra_top = (MED.timelineCollection.length == 1) ? 32: 0;
 					
-					var extra_top = (MED.timelineCollection.length == 1) ? 24: 0;
-
+					var space_above = co_ht - (Math.abs(ev_top)) -  60;
+					
+					var space_below = Math.abs(ev_top);
+					
 					var top_set = 0;
 					
-					if (ev_off.top - co_off.top < (modal_ht + (pad + extra_top))) {
+					if (space_below > modal_ht) {
 						// position modal below the event
 						top_set = ev_top + $event.height() + 8;
 						tb_class = "top";
-					} else {
+					} else if (space_above > modal_ht) {
 						// all is good: position above
 						top_set = ev_top - (modal_ht + 12);
 						tb_class = "bottom";
+					} else {
+						top_set = ev_top - (modal_ht / 2);
+						tb_class = "left";
 					}
 					
 					var ev_rel = ev_off.left - co_off.left;
@@ -3344,13 +3503,17 @@ tg.TG_TimelinePlayer.prototype = {
       
       		} // eof switch
       		
+      		if ($.fn.jScrollPane) {
+				$(".jscroll").jScrollPane();
+			}
+      		
 	}, // eof eventModal
 	
 	
 	
 	legendModal : function (id) {
 	  	// only one legend at a time ??
-	  	$(".tg-timeline-modal").remove();
+	  	// $(".tg-timeline-modal").remove();
 	  	
 	    var me=this,
 	    	leg = MED.timelineCollection.get(id).attributes.legend,

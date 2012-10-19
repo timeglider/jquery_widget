@@ -34,7 +34,9 @@ tg.TG_Mediator = function (wopts, $el) {
    	$container = $el;
    	
    	container_name = wopts.base_namespace + "#" + $container.attr("id");
-
+	
+	this.viewMode = "timeline";
+	
     // these relate to the display ------ not individual timeline attributes
     this._focusDate = {};
     this._zoomInfo = {};
@@ -52,7 +54,7 @@ tg.TG_Mediator = function (wopts, $el) {
     // setting this without setTimeoffset to avoid refresh();
     this.timeOffset = TG_Date.getTimeOffset(options.timezone);
     
-    this.base_font_size = 12;
+    this.base_font_size = 14;
   
     this.fixed_zoom = (this.max_zoom == this.min_zoom) ? true : false;
     this.gesturing = false;
@@ -64,16 +66,16 @@ tg.TG_Mediator = function (wopts, $el) {
     this.filterActions = {};
 
 	this.loadedSources = [];
-    this.timelineCollection = new tg.TG_TimelineCollection;
-    this.eventCollection = new tg.TG_EventCollection;
+    this.timelineCollection = new Backbone.Collection();
+    
+    this.eventCollection = new tg.TG_EventCollection();
     
     this.imagesSized = 0;
     this.imagesToSize = 0;
     this.timelineDataLoaded = false,
     
     this.image_lane_height = 0;
-    
-    
+
     // this.setZoomLevel(options.initial_zoom);
     this.initial_timelines = [];
     this.initial_timeline_id = options.initial_timeline_id || "";
@@ -600,14 +602,21 @@ tg.TG_Mediator = function (wopts, $el) {
 					M.parseTimelineData(tableData);
 			      
 			    } else {
-			    	// FROM NEW JSON
-	
-			        $.getJSON(src, function (data) {
-			        
-			        	if (data.error) {
+			    	
+					$.ajax({
+					  url: src,
+					  type: "GET",
+					  cache: false,
+					  dataType: "json",
+					  error: function (jqXHR, textStatus, errorThrown) {
+					  	
+					  	debug.log("json error:", JSON.stringify(jqXHR), JSON.stringify(textStatus), errorThrown);
+					  	
+					  },	
+					  success: function (data) {
 			        	
+			        	if (data.error) {
 			        		if (data.password_required == 1) {
-			        			
 			        			// set up a password field!
 			        			alert("This presentation requires a password. Here at Timeglider, we're rebuilding our presentation system. Come back soon!");
 			        			
@@ -615,14 +624,36 @@ tg.TG_Mediator = function (wopts, $el) {
 			        			// some other kind of error
 			        			alert(data.error);
 			        		}
+			        		return false;
+			        	} else {
+			        		M.parseTimelineData(data, callback);
 			        		
 			        		
+			        	}	
+			       	 }
+					});
+										
+
+					/*
+					// OLD getJSON, having issues with IE!
+			        $.getJSON(src, function (data) {
+			        
+			        	if (data.error) {
+			        	
+			        		if (data.password_required == 1) {
+			        			// set up a password field!
+			        			alert("This presentation requires a password. Here at Timeglider, we're rebuilding our presentation system. Come back soon!");
+			        			
+			        		} else {
+			        			// some other kind of error
+			        			alert(data.error);
+			        		}
 			        		return false;
 			        	} else {
 			        		M.parseTimelineData(data, callback);
 			        	}
-						
 			        });
+			       	*/
 			
 			    }// end [obj vs remote]
 			    
@@ -735,11 +766,13 @@ tg.TG_Mediator = function (wopts, $el) {
 		if (callback.display) {
 			//debug.log("callback DISPLAY true...");
 			this.showSingleTimeline(data[0].id);
+			
+			
 		} else if (callback.toggle) {
 			//debug.log("callback TOGGLE true...");
 			this.toggleTimeline(data[0].id);
 		}
-		
+
 	},
 	
  
@@ -826,6 +859,8 @@ tg.TG_Mediator = function (wopts, $el) {
 			this.tryLoading();
 		}
 	
+		
+		
 	},
 	
 	
@@ -852,6 +887,8 @@ tg.TG_Mediator = function (wopts, $el) {
 				// IF SINGLE TIMELINE
 				tl = MED.timelineCollection.at(0);
 				this.singleTimelineID = tl.get("id");
+				
+				this.setImageLaneHeight(tl.get("image_lane_height") || 0, false, true);
 			}
 			
 			
@@ -868,8 +905,9 @@ tg.TG_Mediator = function (wopts, $el) {
 
     /* Makes an indexed array of timelines */
     swallowTimeline : function (obj) {
-
+						
 		this.sole_timeline_id = obj.id;
+		
 		this.timelineCollection.add(obj);
       
 		// MAY NOT NEED THIS WITH Backbone Collection change-binding
@@ -892,7 +930,6 @@ tg.TG_Mediator = function (wopts, $el) {
 		// What are the initially loaded timelines (ids) ?
 			
 		if (me.initial_timelines.length > 0) {
-			debug.log("initial_timelines:", me.initial_timelines);
 			
 			me.activeTimelines = me.initial_timelines;			
 		
@@ -982,6 +1019,7 @@ tg.TG_Mediator = function (wopts, $el) {
     *      
     */
     setTimeoffset : function (offsetStr) {
+    	
         this.timeOffset = TG_Date.getTimeOffset(offsetStr);
         this.refresh();
     },
@@ -1035,11 +1073,11 @@ tg.TG_Mediator = function (wopts, $el) {
     
         
     mouseWheelChange: function(dir) {
-    
-    	var zl = this.getZoomLevel();
-		this.setZoomLevel(zl += dir);
-		
-		$.publish(container_name + ".mediator.mouseWheelChange");
+    	if (this.viewMode == "timeline") {
+    		var zl = this.getZoomLevel();
+			this.setZoomLevel(zl += dir);
+		}
+		$.publish(container_name + ".mediator.mouseWheelChange", dir);
 		
     },
 
@@ -1105,6 +1143,7 @@ tg.TG_Mediator = function (wopts, $el) {
 	},
 	
 	
+	
 	// incoming: {name:"dblclick", event:e, dimensions:me.dimensions}
 	registerUIEvent: function (info) {
 		var me = this;
@@ -1114,9 +1153,9 @@ tg.TG_Mediator = function (wopts, $el) {
 			// info comes with 
 				
 				var clickDate = me.getDateFromOffset(info.event.pageX);
-				////////////////////////////
-				
-				$.publish(container_name + ".mediator.dblclick", {date:clickDate});
+				var ui_event = info.event;
+			
+				$.publish(container_name + ".mediator.dblclick", {date:clickDate, event:ui_event});
 				
 			break;
 		}
@@ -1139,6 +1178,18 @@ tg.TG_Mediator = function (wopts, $el) {
 			case "clude":
 				this.filters.include = obj.include;
 				this.filters.exclude = obj.exclude;
+			break;
+			
+			case "title_andor_desc":
+				this.filters.description = obj.description;
+				this.filters.title = obj.title;
+				
+				if (obj.tags) {
+					this.filters.tags = obj.tags.split(",");
+				} else {
+					this.filters.tags = [];
+				}
+				
 			break;
 						
 			
@@ -1195,7 +1246,28 @@ tg.TG_Mediator = function (wopts, $el) {
            
         this.refresh();
 	},
-         
+      
+      
+    clearFilters: function(clear) {
+    	
+    	clear_legend = clear.legend || false;
+    	clear_custom = clear.custom || false;
+    	
+    	this.filters.exclude = "";
+    	this.filters.include = "";
+    	this.filters.title = "";
+    	this.filters.description = "";
+    	
+    	if (clear_legend) {
+    		this.filters.legend = [];
+    	}
+    	
+    	if (clear_custom) {
+    		this.filters.custom = "";
+    	}
+
+    },
+      
 
 	getTicksOffset : function () {
 		return this._ticksOffset;
@@ -1382,6 +1454,8 @@ tg.validateOptions = function (widget_settings) {
     	max_zoom:{type:"number", min:1, max:100}, 
     	initial_zoom:{type:"number", min:1, max:100}, 
     	show_centerline:{type:"boolean"}, 
+    	display_single_timeline_info: {type:"boolean"},
+    	minimum_timeline_bottom: {type:"number", min:0, max:1000},
     	display_zoom_level:{type:"boolean"}, 
     	data_source:{type:"url"}, 
     	basic_fontsize:{type:"number", min:9, max:100}, 

@@ -230,6 +230,10 @@ timeglider.TG_Date = {};
 			dob.mi = 0;
 			dob.ampm = "am";
 		}
+		
+		if (dob.mi < 9) {
+			dob.mi = "0" + dob.mi;
+		} 
 	
 		return dob;
 	};
@@ -633,33 +637,14 @@ timeglider.TG_Date = {};
 			var offset = tz_off || {"hours":0, "minutes":0};
 		
 			var jsDate, fromUTC; // jsDate
-		
-			/* "en" formats
-			// short date pattern
-			d: "M/d/yyyy",
-			// long date pattern
-			D: "dddd, MMMM dd, yyyy",
-			// short time pattern
-			t: "h:mm tt",
-			// long time pattern
-			T: "h:mm:ss tt",
-			// long date, short time pattern
-			f: "dddd, MMMM dd, yyyy h:mm tt",
-			// long date, long time pattern
-			F: "dddd, MMMM dd, yyyy h:mm:ss tt",
-			// month/day pattern
-			M: "MMMM dd",
-			// month/year pattern
-			Y: "yyyy MMMM",
-			// S is a sortable format that does not vary by culture
-			S: "yyyy\u0027-\u0027MM\u0027-\u0027dd\u0027T\u0027HH\u0027:\u0027mm\u0027:\u0027ss"
-			*/
+
 			
 			// If, for example, an event wants only year-level time being displayed
 			// (and not month, day...) filter out the undesired time levels
 			if (useLimit == true) {
 			  // reduce to 2 chars for consistency
 			  var ddlim = this.date_display.substr(0,2);
+			  
 			  switch (ddlim) {
 			    case "no": return ""; break;
 			    case "ye": sig = "yyyy"; break;
@@ -671,37 +656,41 @@ timeglider.TG_Date = {};
 			  }
 			}
 			
-			          	
-          	if (this.ye > -270000){
-				
-				var cloner = _.clone(this);
+			
+			var cloner = _.clone(this),
+			
 				fromUTC = TG_Date.toFromUTC(cloner, offset, "from");  
-          		
-          		var utcy = Number(fromUTC.ye);
-          		
-          		if (utcy > 0 && utcy < 100) {
-          			utcy = "0" + utcy;
-          			// we can use the same thing we use for the BIGNUM problem
-          			// below for this weird window that JS fails on
-          			return TG_Date.monthNamesAbbr[fromUTC.mo] + " " + fromUTC.da + ", " + fromUTC.ye;
+          		          		
+          		if (timeglider.i18n) {
+          			
+          			return timeglider.i18n.formatDate(fromUTC, ddlim);
           			
           		} else {
-          			jsDate = new Date(utcy, (fromUTC.mo-1), fromUTC.da, fromUTC.ho, fromUTC.mi, fromUTC.se, 0);
-  				
-					return $.global.format(jsDate, sig);
+          			if (fromUTC.ye < -270000){
+          				return this.ye;
+          			} else {
+          			
+			          	if (useLimit == true) {
+						  // reduce to 2 chars for consistency
+						  var ddlim = this.date_display.substr(0,2);
+						  switch (ddlim) {
+						    case "no": return ""; break;
+						    case "ye": sig = "yyyy"; break;
+						    case "mo": sig = "MMM yyyy"; break;
+						    case "da": sig = "MMM d, yyyy"; break;
+						    case "ho": sig = "MMM d, yyyy h:mm tt"; break;
+						    
+						    default: sig = "f";
+						  }
+						}
+			
+          				jsDate = new Date(fromUTC.ye, (fromUTC.mo-1), fromUTC.da, fromUTC.ho, fromUTC.mi, fromUTC.se, 0);
+          				return $.global.format(jsDate, sig);
+          			}
           		}
-    			
-			
-			
-    		} else {
-    			// BIGNUM_PROBLEM
-				// year < -271,000 will fail as js Date
-    			// JUST RETURN YEAR
-    			return this.ye;
-    		}
-			
-		}
 
+		}
+		
   	} // end .prototype
   	
   	
